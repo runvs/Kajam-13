@@ -1,0 +1,6 @@
+#ifndef JAMTEMPLATE_EMPTY_CLASS_H
+#define JAMTEMPLATE_EMPTY_CLASS_H
+
+class EmptyClass { };
+
+#endif // JAMTEMPLATE_EMPTY_CLASS_H

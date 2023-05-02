@@ -1,4 +1,4 @@
-#include "../../cmake-build-debug/_deps/asio-src/asio/include/asio.hpp"
+#include "asio.hpp"
 #include <network_properties.hpp>
 #include <array>
 #include <chrono>
