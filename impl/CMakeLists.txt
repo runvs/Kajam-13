@@ -1,3 +1,6 @@
 add_subdirectory(jamtemplate)
-add_subdirectory(gamelib)
-add_subdirectory(game)
+add_subdirectory(gamelib_common)
+add_subdirectory(game_client_lib)
+add_subdirectory(game_server_lib)
+add_subdirectory(client)
+add_subdirectory(server)
