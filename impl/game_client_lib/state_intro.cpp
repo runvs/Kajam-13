@@ -6,7 +6,8 @@
 #include <tweens/tween_alpha.hpp>
 #include <tweens/tween_position.hpp>
 
-void StateIntro::onCreate() {
+void StateIntro::onCreate()
+{
     m_sprite = std::make_shared<jt::Sprite>("assets/runvs_logo.png", textureManager());
     //    m_sprite->setScale(jt::Vector2f { 0.5f, 0.5f });
     m_sprite->setOffset(jt::OffsetMode::CENTER);
@@ -14,10 +15,11 @@ void StateIntro::onCreate() {
     m_jingle = getGame()->audio().addTemporarySound("assets/intro.mp3");
 }
 
-void StateIntro::onEnter() {
-    jt::Vector2f const startPos{GP::GetScreenSize().x / 2,
-                                -m_sprite->getGlobalBounds().height + 50.0f};
-    jt::Vector2f const endPos{GP::GetScreenSize().x / 2, GP::GetScreenSize().y / 2};
+void StateIntro::onEnter()
+{
+    jt::Vector2f const startPos { GP::GetScreenSize().x / 2,
+        -m_sprite->getGlobalBounds().height + 50.0f };
+    jt::Vector2f const endPos { GP::GetScreenSize().x / 2, GP::GetScreenSize().y / 2 };
     m_sprite->setPosition(startPos);
     m_sprite->update(0.0f);
 
@@ -31,7 +33,8 @@ void StateIntro::onEnter() {
     m_jingle->play();
 }
 
-void StateIntro::onUpdate(float elapsed) {
+void StateIntro::onUpdate(float elapsed)
+{
     m_sprite->update(elapsed);
     if (getAge() >= 1.7) {
         getGame()->stateManager().switchState(std::make_shared<StateMenu>());

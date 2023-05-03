@@ -4,11 +4,12 @@
 #include <iostream>
 #include <memory>
 
-void ServerConnector::doCreate() {}
+void ServerConnector::doCreate() { }
 
-void ServerConnector::doUpdate(float const /*elapsed*/) {}
+void ServerConnector::doUpdate(float const /*elapsed*/) { }
 
-void ServerConnector::doDraw() const {
+void ServerConnector::doDraw() const
+{
     ImGui::Begin("ServerConnector");
 
     ImGui::InputInt("Server Port", &m_serverPort, 1, 1);
@@ -29,6 +30,7 @@ void ServerConnector::doDraw() const {
     ImGui::End();
 }
 
-std::shared_ptr<ClientNetworkConnection> ServerConnector::getConnection() const {
+std::shared_ptr<ClientNetworkConnection> ServerConnector::getConnection() const
+{
     return m_connection;
 }

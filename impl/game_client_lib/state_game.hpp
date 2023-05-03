@@ -10,11 +10,11 @@
 
 // fwd decls
 namespace jt {
-    class Shape;
+class Shape;
 
-    class Sprite;
+class Sprite;
 
-    class Vignette;
+class Vignette;
 } // namespace jt
 
 class Hud;
@@ -26,20 +26,19 @@ public:
     void setConnection(std::shared_ptr<ClientNetworkConnection> connection);
 
 private:
+    std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
+    std::shared_ptr<ServerConnection> m_serverConnection { nullptr };
 
-    std::shared_ptr<ClientNetworkConnection> m_connection{nullptr};
-    std::shared_ptr<ServerConnection> m_serverConnection{nullptr};
+    std::shared_ptr<jt::Shape> m_background { nullptr };
+    std::shared_ptr<jt::Vignette> m_vignette { nullptr };
+    std::shared_ptr<Hud> m_hud { nullptr };
+    std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
 
-    std::shared_ptr<jt::Shape> m_background{nullptr};
-    std::shared_ptr<jt::Vignette> m_vignette{nullptr};
-    std::shared_ptr<Hud> m_hud{nullptr};
-    std::shared_ptr<jt::Box2DWorldInterface> m_world{nullptr};
+    bool m_running { true };
+    bool m_hasEnded { false };
 
-    bool m_running{true};
-    bool m_hasEnded{false};
-
-    int m_scoreP1{0};
-    int m_scoreP2{0};
+    int m_scoreP1 { 0 };
+    int m_scoreP2 { 0 };
 
     void onCreate() override;
 

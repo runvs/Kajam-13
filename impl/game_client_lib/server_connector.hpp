@@ -11,15 +11,13 @@ public:
 
 private:
     void doCreate() override;
-
     void doUpdate(float const elapsed) override;
-
     void doDraw() const override;
 
-    mutable std::shared_ptr<ClientNetworkConnection> m_connection{nullptr};
-    mutable std::string m_ip{"0:0:0:0:0:0:0:1"};
-    mutable int m_serverPort{NetworkProperties::DefaultServerPort()};
-    mutable int m_clientPort{NetworkProperties::DefaultClientPort()};
+    mutable std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
+    mutable std::string m_ip { "0:0:0:0:0:0:0:1" };
+    mutable int m_serverPort { NetworkProperties::DefaultServerPort() };
+    mutable int m_clientPort { NetworkProperties::DefaultClientPort() };
 };
 
 #endif // JAMTEMPLATE_SERVER_CONNECTOR_HPP

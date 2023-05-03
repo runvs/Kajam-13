@@ -7,18 +7,14 @@
 class ServerConnection : public jt::GameObject {
 public:
     void setConnection(std::shared_ptr<ClientNetworkConnection> connection);
-
     std::shared_ptr<ClientNetworkConnection> getConnection();
 
 private:
-
     std::shared_ptr<ClientNetworkConnection> m_connection;
 
     float m_alivePingTimer = 0.5f;
 
     void doUpdate(float const elapsed) override;
-
 };
 
-
-#endif //JAMTEMPLATE_SERVER_CONNECTION_H
+#endif // JAMTEMPLATE_SERVER_CONNECTION_H

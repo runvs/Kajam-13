@@ -5,17 +5,11 @@
 #include <game_state.hpp>
 
 namespace jt {
-
-    class Text;
-
-    class Shape;
-
-    class Animation;
-
-    class Sprite;
-
-    class Vignette;
-
+class Text;
+class Shape;
+class Animation;
+class Sprite;
+class Vignette;
 } // namespace jt
 
 class StateMenu : public jt::GameState {
@@ -37,9 +31,9 @@ private:
     std::shared_ptr<jt::Vignette> m_vignette;
 
     std::shared_ptr<ServerConnector> m_connector;
-    int m_score{0};
+    int m_score { 0 };
 
-    bool m_started{false};
+    bool m_started { false };
 
     void onCreate() override;
 
@@ -73,7 +67,7 @@ private:
 
     void onUpdate(float const elapsed) override;
 
-    void updateDrawables(const float &elapsed);
+    void updateDrawables(const float& elapsed);
 
     void checkForTransitionToStateGame();
 

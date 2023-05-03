@@ -4,24 +4,25 @@
 #include <chrono>
 #include <ctime>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <thread>
-#include <sstream>
 
-std::string make_daytime_string() {
+std::string make_daytime_string()
+{
     using namespace std; // For time_t, time and ctime;
     time_t now = time(nullptr);
     return ctime(&now);
 }
 
-int main() {
+int main()
+{
     try {
         asio::io_context io_context;
 
         asio::ip::udp::socket socket(io_context,
-                                     asio::ip::udp::endpoint(
-                                             NetworkProperties::NetworkProtocolType(),
-                                             NetworkProperties::DefaultServerPort()));
+            asio::ip::udp::endpoint(
+                NetworkProperties::NetworkProtocolType(), NetworkProperties::DefaultServerPort()));
 
         std::cout << "start listening for connections\n";
         for (;;) {
@@ -46,7 +47,7 @@ int main() {
             socket.send_to(asio::buffer(message), remote_endpoint, 0, ignored_error);
             std::cout << ignored_error.message() << std::endl;
         }
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
 
