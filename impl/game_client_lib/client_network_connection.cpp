@@ -3,10 +3,11 @@
 #include "asio/socket_base.hpp"
 #include "asio/write.hpp"
 #include <network_properties.hpp>
+#include <message.h>
+#include <string>
 #include <chrono>
 #include <functional>
 #include <iostream>
-#include <string>
 #include <thread>
 
 ClientNetworkConnection::ClientNetworkConnection(
@@ -14,7 +15,6 @@ ClientNetworkConnection::ClientNetworkConnection(
         : m_ip{ip}, m_serverPort{serverPort}, m_clientPort{clientPort} {
     // TODO load default from config file
     // TODO pass in logger and use logger instead of cout
-    // TODO use separate thread so main thread is not blocked
 }
 
 void ClientNetworkConnection::establishConnection() {
@@ -22,7 +22,6 @@ void ClientNetworkConnection::establishConnection() {
     m_socket = std::make_unique<asio::ip::udp::socket>(m_IOContext,
                                                        asio::ip::udp::endpoint{NetworkProperties::NetworkProtocolType(),
                                                                                m_clientPort});
-
     m_sendToEndpoint = *resolver
             .resolve(NetworkProperties::NetworkProtocolType(), m_ip,
                      std::to_string(m_serverPort))
@@ -31,24 +30,17 @@ void ClientNetworkConnection::establishConnection() {
     startReceive();
 }
 
-void ClientNetworkConnection::sendPing() {
-    if (!m_socket) {
-        std::cerr << "socket not open\n";
-        return;
-    }
 
-    // send ping
-    std::cout << "send ping to '" << m_sendToEndpoint.address() << " : " << m_sendToEndpoint.port()
-              << "'\n";
-    std::array<char, 1> send_buf = {{0}};
-    asio::error_code error;
-    auto size = m_socket->send_to(asio::buffer(send_buf), m_sendToEndpoint, 0, error);
+void ClientNetworkConnection::sendInitialPing() {
+    Message m;
+    m.type = MessageType::InitialPing;
+    sendMessage(m);
+}
 
-    m_socket->async_receive_from(asio::buffer(recv_buffer_), m_receivedFromEndpoint,
-                                 std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
-                                           std::placeholders::_2));
-    std::cout << "ping sent '" << size << "'\n";
-    std::cout << error.message() << std::endl;
+void ClientNetworkConnection::sendAlivePing() {
+    Message m;
+    m.type = MessageType::StayAlivePing;
+    sendMessage(m);
 }
 
 void ClientNetworkConnection::startReceive() {
@@ -58,6 +50,7 @@ void ClientNetworkConnection::startReceive() {
         while (true) {
             if (m_stopThread.load()) {
                 std::cerr << "thread stopped\n";
+                m_IOContext.stop();
                 break;
             }
 
@@ -74,7 +67,8 @@ void ClientNetworkConnection::handleReceive(
     // Note that recv_buffer might be a long buffer, but we only use the first "bytes transferred"
     // bytes from it.
 
-    std::cout.write(recv_buffer_.data(), bytes_transferred);
+    // TODO think about adding a mutex here
+    std::cout.write(m_receiveBuffer.data(), bytes_transferred);
 }
 
 void ClientNetworkConnection::handle_send(std::shared_ptr<std::array<char, 1>> /*message*/,
@@ -93,3 +87,27 @@ void ClientNetworkConnection::stopThread() {
     m_stopThread.store(true);
     m_thread.join();
 }
+
+void ClientNetworkConnection::sendMessage(const Message &m) {
+    if (!m_socket) {
+        std::cerr << "socket not open\n";
+        return;
+    }
+
+    nlohmann::json j = m;
+
+    sendString(j.dump());
+}
+
+void ClientNetworkConnection::sendString(const std::string &str) {
+    asio::error_code error;
+    auto size = m_socket->send_to(asio::buffer(str), m_sendToEndpoint, 0, error);
+
+    // TODO think about adding a mutex here
+    m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
+                                 std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
+                                           std::placeholders::_2));
+    std::cout << "ping sent '" << size << "'\n";
+    std::cout << error.message() << std::endl;
+}
+

@@ -1,15 +1,15 @@
-#include "network_connector.hpp"
+#include "server_connector.hpp"
 #include "imgui.h"
 #include "misc/cpp/imgui_stdlib.h"
 #include <iostream>
 #include <memory>
 
-void NetworkConnector::doCreate() { }
-void NetworkConnector::doUpdate(float const /*elapsed*/) { }
-void NetworkConnector::doDraw() const
-{
+void ServerConnector::doCreate() {}
 
-    ImGui::Begin("NetworkConnector");
+void ServerConnector::doUpdate(float const /*elapsed*/) {}
+
+void ServerConnector::doDraw() const {
+    ImGui::Begin("ServerConnector");
 
     ImGui::InputInt("Server Port", &m_serverPort, 1, 1);
     ImGui::InputInt("Client Port", &m_clientPort, 1, 1);
@@ -24,7 +24,11 @@ void NetworkConnector::doDraw() const
             ImGui::End();
             return;
         }
-        m_connection->sendPing();
+        m_connection->sendInitialPing();
     }
     ImGui::End();
+}
+
+std::shared_ptr<ClientNetworkConnection> ServerConnector::getConnection() const {
+    return m_connection;
 }
