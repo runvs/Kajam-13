@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_GAME_SERVER_HPP
 #define JAMTEMPLATE_GAME_SERVER_HPP
 
+#include "asio/ip/udp.hpp"
 #include "player_info.hpp"
 #include "server_network_connection.hpp"
 class GameServer {
@@ -18,6 +19,15 @@ private:
     int m_round { 1 };
     int m_playersReady { 0 };
     int m_connectedPlayers { 0 };
+
+    void handleMessage(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void handleMessageInitialPing(
+        std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void handleMessageStayAlivePing(
+        std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void handleMessageRoundReady(
+        std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void discard(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
 };
 
 #endif // JAMTEMPLATE_GAME_SERVER_HPP

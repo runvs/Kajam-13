@@ -24,7 +24,7 @@ public:
     void establishConnection();
 
     void sendInitialPing();
-    void sendAlivePing();
+    void sendAlivePing(int playerId);
     void sendMessage(Message const& m);
 
 private:

@@ -36,7 +36,7 @@ void ServerConnection::doUpdate(const float elapsed)
     m_alivePingTimer -= elapsed;
     if (m_alivePingTimer <= 0) {
         m_alivePingTimer += NetworkProperties::AlivePingTimer();
-        m_connection->sendAlivePing();
+        m_connection->sendAlivePing(m_playerId);
     }
 }
 void ServerConnection::readyRound(ClientEndPlacementData const& data)

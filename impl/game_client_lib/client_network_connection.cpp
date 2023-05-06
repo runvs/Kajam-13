@@ -6,6 +6,7 @@
 #include "asio/write.hpp"
 #include <message.hpp>
 #include <network_properties.hpp>
+#include <nlohmann.hpp>
 #include <chrono>
 #include <functional>
 #include <iostream>
@@ -78,10 +79,11 @@ void ClientNetworkConnection::sendInitialPing()
     sendMessage(m);
 }
 
-void ClientNetworkConnection::sendAlivePing()
+void ClientNetworkConnection::sendAlivePing(int playerId)
 {
     Message m;
     m.type = MessageType::StayAlivePing;
+    m.data = nlohmann::json { { "playerId", playerId } }.dump();
     sendMessage(m);
 }
 
