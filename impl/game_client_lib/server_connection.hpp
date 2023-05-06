@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_SERVER_CONNECTION_HPP
 #define JAMTEMPLATE_SERVER_CONNECTION_HPP
 
+#include "asio/ip/udp.hpp"
 #include "client_network_connection.hpp"
 #include "vector.hpp"
 #include <client_end_placement_data.hpp>
@@ -21,6 +22,9 @@ private:
     float m_alivePingTimer = 0.5f;
 
     void doUpdate(float const elapsed) override;
+
+    void handleMessage(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void handleMessagePlayerIdResponse(std::string const& messageContent);
 };
 
 #endif // JAMTEMPLATE_SERVER_CONNECTION_HPP

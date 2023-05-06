@@ -13,8 +13,9 @@ enum class MessageType : std::uint8_t {
 };
 
 struct Message {
-    MessageType type;
-    std::string data;
+    MessageType type { MessageType::InitialPing };
+    int playerId { -1 };
+    std::string data { "" };
 };
 
 void to_json(nlohmann::json& j, const Message& message);

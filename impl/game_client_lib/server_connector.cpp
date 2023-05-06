@@ -19,14 +19,14 @@ void ServerConnector::doDraw() const
         m_connection = std::make_shared<ClientNetworkConnection>(m_ip, m_serverPort, m_clientPort);
         m_connection->establishConnection();
     }
-    if (ImGui::Button("ping")) {
-        if (!m_connection) {
-            std::cerr << "no connection\n";
-            ImGui::End();
-            return;
-        }
-        m_connection->sendInitialPing();
-    }
+    //    if (ImGui::Button("ping")) {
+    //        if (!m_connection) {
+    //            std::cerr << "no connection\n";
+    //            ImGui::End();
+    //            return;
+    //        }
+    //        m_connection->sendInitialPing();
+    //    }
     ImGui::End();
 }
 

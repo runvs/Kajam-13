@@ -85,8 +85,8 @@ void ServerNetworkConnection::sendMessage(const Message& m, asio::ip::udp::endpo
     }
 
     nlohmann::json j = m;
-
     sendStringTo(j.dump(), sendToEndpoint);
+    std::cout << "sending message\n" << j.dump() << std::endl;
 }
 
 void ServerNetworkConnection::sendStringTo(

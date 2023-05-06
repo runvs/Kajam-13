@@ -35,7 +35,8 @@ void GameServer::update(float elapsed)
 void GameServer::handleMessage(
     const std::string& messageContent, const asio::ip::udp::endpoint& endpoint)
 {
-    std::cout << "message content:\n" << messageContent << std::endl;
+
+    std::cout << "handleMessage message content:\n" << messageContent << std::endl;
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message m = j;
     if (m.type == MessageType::InitialPing) {
@@ -60,7 +61,7 @@ void GameServer::handleMessageInitialPing(
 
     Message ret;
     ret.type = MessageType::PlayerIdResponse;
-    ret.data = nlohmann::json { { "playerId", m_connectedPlayers } }.dump();
+    ret.playerId = m_connectedPlayers;
     m_connection.sendMessage(ret, endpoint);
 
     std::cout << "assigned new player ID: " << m_connectedPlayers << std::endl;

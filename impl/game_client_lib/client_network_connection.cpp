@@ -56,20 +56,24 @@ void ClientNetworkConnection::handleReceive(
     const asio::error_code& /*error*/, std::size_t bytes_transferred)
 {
     std::cout << "message received from '" << m_receivedFromEndpoint.address() << ":"
-              << m_receivedFromEndpoint.port() << "'\n";
-    // Note that recv_buffer might be a long buffer, but we only use the first "bytes transferred"
-    // bytes from it.
+              << m_receivedFromEndpoint.port() << "'\nwith content\n";
+
+    // Note that recv_buffer might be a long buffer, but we only use the first "bytes
+    // transferred" bytes from it.
 
     // TODO think about adding a mutex here
-    std::cout.write(m_receiveBuffer.data(), bytes_transferred);
 
+    std::stringstream ss;
+    ss.write(m_receiveBuffer.data(), bytes_transferred);
+    auto const str = ss.str();
+    std::cout << str << std::endl;
     // pass message up to be processed
     if (m_handleInComingMessageCallback) {
-        std::stringstream ss;
-        ss.write(m_receiveBuffer.data(), bytes_transferred);
-        auto const str = ss.str();
         m_handleInComingMessageCallback(str, m_receivedFromEndpoint);
     }
+    m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
+        std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
+            std::placeholders::_2));
 }
 
 void ClientNetworkConnection::sendInitialPing()
@@ -83,7 +87,7 @@ void ClientNetworkConnection::sendAlivePing(int playerId)
 {
     Message m;
     m.type = MessageType::StayAlivePing;
-    m.data = nlohmann::json { { "playerId", playerId } }.dump();
+    m.playerId = playerId;
     sendMessage(m);
 }
 
@@ -119,7 +123,8 @@ void ClientNetworkConnection::sendString(const std::string& str)
     m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
         std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
             std::placeholders::_2));
-    std::cout << "ping sent '" << size << "'\n";
+    std::cout << "message sent with size:" << size << "\n";
+    std::cout << str << std::endl;
     std::cout << error.message() << std::endl;
 }
 
