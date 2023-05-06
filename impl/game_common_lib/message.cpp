@@ -1,5 +1,5 @@
 
-#include "message.h"
+#include "message.hpp"
 
 void to_json(nlohmann::json& j, const Message& message)
 {

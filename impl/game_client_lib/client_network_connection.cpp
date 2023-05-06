@@ -1,12 +1,15 @@
 #include "client_network_connection.hpp"
+#include "asio/executor_work_guard.hpp"
+#include "asio/io_context.hpp"
 #include "asio/ip/udp.hpp"
 #include "asio/socket_base.hpp"
 #include "asio/write.hpp"
+#include <message.hpp>
 #include <network_properties.hpp>
 #include <chrono>
 #include <functional>
 #include <iostream>
-#include <message.h>
+#include <sstream>
 #include <string>
 #include <thread>
 
@@ -16,8 +19,15 @@ ClientNetworkConnection::ClientNetworkConnection(
     , m_serverPort { serverPort }
     , m_clientPort { clientPort }
 {
-    // TODO load default from config file
     // TODO pass in logger and use logger instead of cout
+}
+
+ClientNetworkConnection::~ClientNetworkConnection()
+{
+    m_socket->close();
+    stopThread();
+
+    m_socket.reset();
 }
 
 void ClientNetworkConnection::establishConnection()
@@ -31,6 +41,34 @@ void ClientNetworkConnection::establishConnection()
                             .begin();
 
     startReceive();
+}
+
+void ClientNetworkConnection::startReceive()
+{
+    std::cout << "start thread to process async tasks\n";
+    m_workGuard = std::make_unique<asio::executor_work_guard<asio::io_context::executor_type>>(
+        asio::make_work_guard(m_IOContext));
+    m_thread = std::thread { [this]() { m_IOContext.run(); } };
+}
+
+void ClientNetworkConnection::handleReceive(
+    const asio::error_code& /*error*/, std::size_t bytes_transferred)
+{
+    std::cout << "message received from '" << m_receivedFromEndpoint.address() << ":"
+              << m_receivedFromEndpoint.port() << "'\n";
+    // Note that recv_buffer might be a long buffer, but we only use the first "bytes transferred"
+    // bytes from it.
+
+    // TODO think about adding a mutex here
+    std::cout.write(m_receiveBuffer.data(), bytes_transferred);
+
+    // pass message up to be processed
+    if (m_handleInComingMessageCallback) {
+        std::stringstream ss;
+        ss.write(m_receiveBuffer.data(), bytes_transferred);
+        auto const str = ss.str();
+        m_handleInComingMessageCallback(str, m_receivedFromEndpoint);
+    }
 }
 
 void ClientNetworkConnection::sendInitialPing()
@@ -47,53 +85,14 @@ void ClientNetworkConnection::sendAlivePing()
     sendMessage(m);
 }
 
-void ClientNetworkConnection::startReceive()
-{
-    std::cout << "start thread to process async tasks\n";
-
-    m_thread = std::thread { [this]() {
-        while (true) {
-            if (m_stopThread.load()) {
-                std::cerr << "thread stopped\n";
-                m_IOContext.stop();
-                break;
-            }
-
-            m_IOContext.run();
-            m_IOContext.restart();
-        }
-    } };
-}
-
-void ClientNetworkConnection::handleReceive(
-    const asio::error_code& /*error*/, std::size_t bytes_transferred)
-{
-    std::cout << "message received from '" << m_receivedFromEndpoint.address() << ":"
-              << m_receivedFromEndpoint.port() << "'\n";
-    // Note that recv_buffer might be a long buffer, but we only use the first "bytes transferred"
-    // bytes from it.
-
-    // TODO think about adding a mutex here
-    std::cout.write(m_receiveBuffer.data(), bytes_transferred);
-}
-
 void ClientNetworkConnection::handle_send(std::shared_ptr<std::array<char, 1>> /*message*/,
     const asio::error_code& /*error*/, std::size_t /*bytes_transferred*/)
 {
 }
 
-void ClientNetworkConnection::disconnect() { }
-
-ClientNetworkConnection::~ClientNetworkConnection()
-{
-    disconnect();
-    stopThread();
-    m_socket.reset();
-}
-
 void ClientNetworkConnection::stopThread()
 {
-    m_stopThread.store(true);
+    m_IOContext.stop();
     m_thread.join();
 }
 
@@ -120,4 +119,10 @@ void ClientNetworkConnection::sendString(const std::string& str)
             std::placeholders::_2));
     std::cout << "ping sent '" << size << "'\n";
     std::cout << error.message() << std::endl;
+}
+
+void ClientNetworkConnection::setHandleIncomingMessageCallback(
+    std::function<void(std::string const&, asio::ip::udp::endpoint sendToEndpoint)> callback)
+{
+    m_handleInComingMessageCallback = callback;
 }

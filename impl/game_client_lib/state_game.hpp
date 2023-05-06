@@ -2,9 +2,11 @@
 #define GAME_STATE_GAME_HPP
 
 #include "client_network_connection.hpp"
+#include "server_connection.hpp"
+#include "vector.hpp"
 #include <box2dwrapper/box2d_world_interface.hpp>
+#include <client_end_placement_data.hpp>
 #include <game_state.hpp>
-#include "server_connection.h"
 #include <memory>
 #include <vector>
 
@@ -34,18 +36,17 @@ private:
     std::shared_ptr<Hud> m_hud { nullptr };
     std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
 
+    // TODO replace with vector of unit positions later
+    ClientEndPlacementData m_clientEndPlacementData;
+
     bool m_running { true };
     bool m_hasEnded { false };
 
-    int m_scoreP1 { 0 };
-    int m_scoreP2 { 0 };
+    int m_round { 1 };
 
     void onCreate() override;
-
     void onEnter() override;
-
     void onUpdate(float const elapsed) override;
-
     void onDraw() const override;
 
     void endGame();
