@@ -36,7 +36,6 @@ private:
     std::shared_ptr<Hud> m_hud { nullptr };
     std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
 
-    // TODO replace with vector of unit positions later
     ClientEndPlacementData m_clientEndPlacementData;
 
     bool m_running { true };

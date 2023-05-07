@@ -4,9 +4,10 @@
 #include "asio/ip/udp.hpp"
 #include "player_info.hpp"
 #include "server_network_connection.hpp"
+#include <log/logger_interface.hpp>
 class GameServer {
 public:
-    GameServer();
+    GameServer(jt::LoggerInterface& logger);
     void update(float elapsed);
 
 private:
@@ -19,6 +20,8 @@ private:
     int m_round { 1 };
     int m_playersReady { 0 };
     int m_connectedPlayers { 0 };
+
+    jt::LoggerInterface& m_logger;
 
     void handleMessage(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
     void handleMessageInitialPing(

@@ -5,7 +5,6 @@ void jt::LogHistory::clear() { m_history.clear(); }
 void jt::LogHistory::addEntry(jt::LogEntry const& entry)
 {
     m_history.push_back(entry);
-
     if (m_history.size() > m_historyMaxSize) {
         m_history.erase(m_history.begin(), m_history.begin() + m_historyResizeTo + 1);
     }

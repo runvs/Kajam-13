@@ -1,19 +1,18 @@
-#include "asio.hpp"
-#include "game_server.hpp"
-#include <network_properties.hpp>
-#include <array>
+#include "log/default_logging.hpp"
+#include "log/logger.hpp"
+#include <game_server.hpp>
 #include <chrono>
-#include <ctime>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <thread>
 
 int main()
 {
+
+    jt::Logger logger;
+    jt::createDefaultLogTargets(logger);
     // TODO think about using jt::game with null window
     try {
-        GameServer server;
+        GameServer server { logger };
 
         std::chrono::steady_clock::time_point m_timeLast {};
 

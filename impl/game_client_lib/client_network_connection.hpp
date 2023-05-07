@@ -3,6 +3,7 @@
 
 #include "asio/buffer.hpp"
 #include "asio/executor_work_guard.hpp"
+#include "log/logger_interface.hpp"
 #include "message.hpp"
 #include <asio.hpp>
 #include <array>
@@ -13,8 +14,8 @@
 
 class ClientNetworkConnection {
 public:
-    ClientNetworkConnection(
-        std::string const& ip, std::uint16_t serverPort, std::uint16_t clientPort);
+    ClientNetworkConnection(std::string const& ip, std::uint16_t serverPort,
+        std::uint16_t clientPort, jt::LoggerInterface& logger);
 
     virtual ~ClientNetworkConnection();
 
@@ -32,6 +33,7 @@ private:
     std::string m_ip;
     std::uint16_t m_serverPort;
     std::uint16_t m_clientPort;
+    jt::LoggerInterface& m_logger;
 
     std::thread m_thread;
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;
@@ -47,8 +49,6 @@ private:
 
     void startReceive();
     void handleReceive(const asio::error_code& error, std::size_t /*bytes_transferred*/);
-    void handle_send(std::shared_ptr<std::array<char, 1>> message, const asio::error_code& error,
-        std::size_t bytes_transferred);
     void stopThread();
     void sendString(std::string const& str);
 };

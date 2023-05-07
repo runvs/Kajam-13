@@ -5,11 +5,13 @@
 #include "player_info.hpp"
 #include <nlohmann.hpp>
 #include <iostream>
+#include <sstream>
+#include <string>
 
-GameServer::GameServer()
+GameServer::GameServer(jt::LoggerInterface& logger)
+    : m_logger { logger }
 {
     m_connection.setHandleIncomingMessageCallback(
-        // TODO move to class function
         [this](auto const& messageContent, auto endpoint) {
             handleMessage(messageContent, endpoint);
         });
@@ -24,7 +26,11 @@ void GameServer::update(float elapsed)
         //        std::cout << "age: " << it->second << std::endl;
 
         if (it->second.timeSinceLastPing >= 5.0f * NetworkProperties::AlivePingTimer()) {
-            std::cout << "erase endpoint: " << it->second.endpoint.address() << "\n";
+            std::stringstream ss_log;
+            ss_log << "erase endpoint '" << it->second.endpoint.address()
+                   << "' because of missing ping for player " << it->first << "\n";
+            m_logger.info(ss_log.str(), { "network", "GameServer" });
+
             it = m_playerData.erase(it);
 
         } else {
@@ -35,8 +41,8 @@ void GameServer::update(float elapsed)
 void GameServer::handleMessage(
     const std::string& messageContent, const asio::ip::udp::endpoint& endpoint)
 {
-
-    std::cout << "handleMessage message content:\n" << messageContent << std::endl;
+    m_logger.debug(
+        "handleMessage message content: '" + messageContent + "'", { "network", "GameServer" });
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message m = j;
     if (m.type == MessageType::InitialPing) {
@@ -52,9 +58,9 @@ void GameServer::handleMessage(
 void GameServer::handleMessageInitialPing(
     std::string const& /*messageContent*/, asio::ip::udp::endpoint const& endpoint)
 {
-    std::cout << "initial ping received\n";
+    m_logger.debug("initial ping received", { "network", "GameServer" });
     // TODO check if player is already registered
-    // TODO check if already full
+    // TODO check if server is already full
     m_playerData[m_connectedPlayers] = PlayerInfo {};
     m_playerData[m_connectedPlayers].timeSinceLastPing = 0.0f;
     m_playerData[m_connectedPlayers].endpoint = endpoint;
@@ -64,7 +70,8 @@ void GameServer::handleMessageInitialPing(
     ret.playerId = m_connectedPlayers;
     m_connection.sendMessage(ret, endpoint);
 
-    std::cout << "assigned new player ID: " << m_connectedPlayers << std::endl;
+    m_logger.info("assigned new player ID: " + std::to_string(m_connectedPlayers),
+        { "network", "GameServer" });
     m_connectedPlayers++;
 }
 void GameServer::handleMessageStayAlivePing(
@@ -77,7 +84,7 @@ void GameServer::handleMessageRoundReady(
 }
 
 void GameServer::discard(
-    std::string const& /*messageContent*/, asio::ip::udp::endpoint const& /*endpoint*/)
+    std::string const& messageContent, asio::ip::udp::endpoint const& /*endpoint*/)
 {
-    std::cerr << "discarding message" << std::endl;
+    m_logger.warning("discard message '" + messageContent + "'", { "network", "GameServer" });
 }

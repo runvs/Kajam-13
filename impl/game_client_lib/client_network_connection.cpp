@@ -14,20 +14,24 @@
 #include <string>
 #include <thread>
 
-ClientNetworkConnection::ClientNetworkConnection(
-    std::string const& ip, std::uint16_t serverPort, std::uint16_t clientPort)
+ClientNetworkConnection::ClientNetworkConnection(std::string const& ip, std::uint16_t serverPort,
+    std::uint16_t clientPort, jt::LoggerInterface& logger)
     : m_ip { ip }
     , m_serverPort { serverPort }
     , m_clientPort { clientPort }
+    , m_logger { logger }
 {
-    // TODO pass in logger and use logger instead of cout
 }
 
 ClientNetworkConnection::~ClientNetworkConnection()
 {
+    m_logger.debug(
+        "ClientNetworkConnection destructor called", { "network", "ClientNetworkConnection" });
+    m_logger.verbose("close socket", { "network", "ClientNetworkConnection" });
     m_socket->close();
+    m_logger.verbose("stop thread", { "stop thread", "ClientNetworkConnection" });
     stopThread();
-
+    m_logger.verbose("reset socket pointer", { "network", "ClientNetworkConnection" });
     m_socket.reset();
 }
 
@@ -46,7 +50,7 @@ void ClientNetworkConnection::establishConnection()
 
 void ClientNetworkConnection::startReceive()
 {
-    std::cout << "start thread to process async tasks\n";
+    m_logger.debug("start thread to process async tasks", { "network", "ClientNetworkConnection" });
     m_workGuard = std::make_unique<asio::executor_work_guard<asio::io_context::executor_type>>(
         asio::make_work_guard(m_IOContext));
     m_thread = std::thread { [this]() { m_IOContext.run(); } };
@@ -55,8 +59,6 @@ void ClientNetworkConnection::startReceive()
 void ClientNetworkConnection::handleReceive(
     const asio::error_code& /*error*/, std::size_t bytes_transferred)
 {
-    std::cout << "message received from '" << m_receivedFromEndpoint.address() << ":"
-              << m_receivedFromEndpoint.port() << "'\nwith content\n";
 
     // Note that recv_buffer might be a long buffer, but we only use the first "bytes
     // transferred" bytes from it.
@@ -66,7 +68,12 @@ void ClientNetworkConnection::handleReceive(
     std::stringstream ss;
     ss.write(m_receiveBuffer.data(), bytes_transferred);
     auto const str = ss.str();
-    std::cout << str << std::endl;
+
+    std::stringstream ss_log;
+    ss_log << "message received from '" << m_receivedFromEndpoint.address() << ":"
+           << m_receivedFromEndpoint.port() << "'\nwith content\n"
+           << str;
+    m_logger.info(ss_log.str(), { "network", "network", "ClientNetworkConnection" });
     // pass message up to be processed
     if (m_handleInComingMessageCallback) {
         m_handleInComingMessageCallback(str, m_receivedFromEndpoint);
@@ -78,6 +85,7 @@ void ClientNetworkConnection::handleReceive(
 
 void ClientNetworkConnection::sendInitialPing()
 {
+    m_logger.debug("send initial ping", { "network", "ClientNetworkConnection" });
     Message m;
     m.type = MessageType::InitialPing;
     sendMessage(m);
@@ -85,15 +93,11 @@ void ClientNetworkConnection::sendInitialPing()
 
 void ClientNetworkConnection::sendAlivePing(int playerId)
 {
+    m_logger.debug("send alive ping", { "network", "ClientNetworkConnection" });
     Message m;
     m.type = MessageType::StayAlivePing;
     m.playerId = playerId;
     sendMessage(m);
-}
-
-void ClientNetworkConnection::handle_send(std::shared_ptr<std::array<char, 1>> /*message*/,
-    const asio::error_code& /*error*/, std::size_t /*bytes_transferred*/)
-{
 }
 
 void ClientNetworkConnection::stopThread()
@@ -105,12 +109,12 @@ void ClientNetworkConnection::stopThread()
 void ClientNetworkConnection::sendMessage(const Message& m)
 {
     if (!m_socket) {
-        std::cerr << "socket not open\n";
+        m_logger.warning(
+            "send message called with nullptr socket", { "network", "ClientNetworkConnection" });
         return;
     }
 
     nlohmann::json j = m;
-
     sendString(j.dump());
 }
 
@@ -123,9 +127,13 @@ void ClientNetworkConnection::sendString(const std::string& str)
     m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
         std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
             std::placeholders::_2));
-    std::cout << "message sent with size:" << size << "\n";
-    std::cout << str << std::endl;
-    std::cout << error.message() << std::endl;
+
+    std::stringstream ss_log;
+    ss_log << "message sent with size:" << size << "\n";
+    ss_log << str << std::endl;
+    ss_log << error.message() << std::endl;
+
+    m_logger.info(ss_log.str(), { "network", "ClientNetworkConnection" });
 }
 
 void ClientNetworkConnection::setHandleIncomingMessageCallback(

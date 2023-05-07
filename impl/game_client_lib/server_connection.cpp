@@ -15,10 +15,9 @@ ServerConnection::~ServerConnection()
 void ServerConnection::setConnection(std::shared_ptr<ClientNetworkConnection> connection)
 {
     if (!connection) {
-        throw std::invalid_argument { "ServerConnection passed nullptr" };
+        throw std::invalid_argument { "ServerConnection SetConnection received nullptr" };
     }
     m_connection = connection;
-    // TODO move to class function
     m_connection->setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto const& endpoint) {
             handleMessage(messageContent, endpoint);
