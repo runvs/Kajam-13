@@ -13,12 +13,9 @@ public:
 private:
     ServerNetworkConnection m_connection;
     // TODO split into player and spectators
-    // TODO make second type in map a PlayerInfoStruct
     std::map<int, PlayerInfo> m_playerData;
-    float m_receiveTimer { 0.0f };
 
     int m_round { 1 };
-    int m_playersReady { 0 };
     int m_connectedPlayers { 0 };
 
     jt::LoggerInterface& m_logger;

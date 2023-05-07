@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <thread>
 
 int main()
 {
@@ -25,6 +26,7 @@ int main()
             m_timeLast = now;
 
             server.update(elapsedSeconds);
+            std::this_thread::sleep_for(std::chrono::milliseconds { 16 });
         }
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;

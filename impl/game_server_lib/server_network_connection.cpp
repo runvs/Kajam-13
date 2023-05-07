@@ -69,8 +69,8 @@ void ServerNetworkConnection::awaitNextMessageInternal()
 void ServerNetworkConnection::handleMessage(
     std::string const& str, asio::ip::udp::endpoint endpoint)
 {
-    std::cout << "received message from endpoint: ' " << endpoint.address() << " : "
-              << endpoint.port() << " '\n";
+    std::cout << "received message from endpoint: " << endpoint.address() << ":" << endpoint.port()
+              << "'\n";
     // generic message handling
     if (m_handleInComingMessageCallback) {
         m_handleInComingMessageCallback(str, endpoint);

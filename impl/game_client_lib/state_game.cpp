@@ -34,7 +34,7 @@ void StateGame::onCreate()
     // StateGame will call drawObjects itself.
     setAutoDraw(false);
 
-    m_serverConnection = std::make_shared<ServerConnection>();
+    m_serverConnection = std::make_shared<ServerConnection>(getGame()->logger());
     m_serverConnection->setConnection(m_connection);
     add(m_serverConnection);
 }

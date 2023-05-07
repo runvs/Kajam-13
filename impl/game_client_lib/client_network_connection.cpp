@@ -59,10 +59,8 @@ void ClientNetworkConnection::startReceive()
 void ClientNetworkConnection::handleReceive(
     const asio::error_code& /*error*/, std::size_t bytes_transferred)
 {
-
     // Note that recv_buffer might be a long buffer, but we only use the first "bytes
     // transferred" bytes from it.
-
     // TODO think about adding a mutex here
 
     std::stringstream ss;
@@ -129,11 +127,11 @@ void ClientNetworkConnection::sendString(const std::string& str)
             std::placeholders::_2));
 
     std::stringstream ss_log;
-    ss_log << "message sent with size:" << size << "\n";
-    ss_log << str << std::endl;
-    ss_log << error.message() << std::endl;
+    ss_log << "message sent with size:" << size;
+    ss_log << ", content: '" << str << "'";
+    ss_log << ", and result: " << error.message();
 
-    m_logger.info(ss_log.str(), { "network", "ClientNetworkConnection" });
+    m_logger.debug(ss_log.str(), { "network", "ClientNetworkConnection" });
 }
 
 void ClientNetworkConnection::setHandleIncomingMessageCallback(
