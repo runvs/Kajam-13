@@ -2,11 +2,13 @@
 #define GAME_STATE_GAME_HPP
 
 #include "client_network_connection.hpp"
+#include "object_properties.hpp"
 #include "server_connection.hpp"
 #include "vector.hpp"
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <client_end_placement_data.hpp>
 #include <game_state.hpp>
+#include <unit.hpp>
 #include <memory>
 #include <vector>
 
@@ -36,12 +38,18 @@ private:
     std::shared_ptr<Hud> m_hud { nullptr };
     std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
 
+    // TODO make vector of Units
+    std::shared_ptr<Unit> m_unit { nullptr };
+
     ClientEndPlacementData m_clientEndPlacementData;
+
+    std::vector<ObjectProperties> m_properties;
 
     bool m_running { true };
     bool m_hasEnded { false };
 
     int m_round { 1 };
+    int m_tickId { 0 };
 
     void onCreate() override;
     void onEnter() override;

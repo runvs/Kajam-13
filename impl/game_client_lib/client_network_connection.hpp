@@ -45,7 +45,8 @@ private:
         m_handleInComingMessageCallback;
 
     asio::ip::udp::endpoint m_receivedFromEndpoint;
-    std::array<char, 1024> m_receiveBuffer;
+    std::mutex m_bufferMutex;
+    std::array<char, 8192> m_receiveBuffer;
 
     void startReceive();
     void handleReceive(const asio::error_code& error, std::size_t /*bytes_transferred*/);

@@ -9,7 +9,8 @@ enum class MessageType : std::uint8_t {
     PlayerIdResponse,
     DaytimeResponse,
     StayAlivePing,
-    RoundReady
+    RoundReady,
+    SimulationResult
 };
 
 struct Message {

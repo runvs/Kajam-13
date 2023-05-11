@@ -1,4 +1,3 @@
-
 #include "server_network_connection.hpp"
 #include "message.hpp"
 #include <network_properties.hpp>

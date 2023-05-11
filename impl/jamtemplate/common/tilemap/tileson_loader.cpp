@@ -1,12 +1,13 @@
 #include "tileson_loader.hpp"
+#include "object_properties.hpp"
 #include <conversions.hpp>
 #include <drawable_helpers.hpp>
 #include <pathfinder/node.hpp>
 
 namespace {
-jt::tilemap::InfoRectProperties parseProperties(tson::PropertyCollection& props)
+ObjectProperties parseProperties(tson::PropertyCollection& props)
 {
-    jt::tilemap::InfoRectProperties properties;
+    ObjectProperties properties;
     for (auto pkvp : props.getProperties()) {
         std::string const name = pkvp.first;
         if (pkvp.second.getType() == tson::Type::Boolean) {

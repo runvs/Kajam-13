@@ -1,8 +1,11 @@
 
 #include "server_connection.hpp"
+#include "game_properties.hpp"
 #include "message.hpp"
 #include "network_properties.hpp"
+#include "object_properties.hpp"
 #include <iostream>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 
@@ -46,10 +49,12 @@ void ServerConnection::doUpdate(const float elapsed)
         m_connection->sendAlivePing(m_playerId);
     }
 }
+
 void ServerConnection::readyRound(ClientEndPlacementData const& data)
 {
     Message m;
     m.type = MessageType::RoundReady;
+    m.playerId = m_playerId;
     nlohmann::json j = data;
     m.data = j.dump();
     m_connection->sendMessage(m);
@@ -67,6 +72,8 @@ void ServerConnection::handleMessage(
 
     if (m.type == MessageType::PlayerIdResponse) {
         handleMessagePlayerIdResponse(messageContent);
+    } else if (m.type == MessageType::SimulationResult) {
+        handleMessageSimulationResult(messageContent);
     } else {
         discard(messageContent);
     }
@@ -94,4 +101,30 @@ void ServerConnection::handleMessagePlayerIdResponse(std::string const& messageC
 void ServerConnection::discard(std::string const& messageContent)
 {
     m_logger.warning("discard message '" + messageContent + "'", { "network", "ServerConnection" });
+}
+
+void ServerConnection::handleMessageSimulationResult(std::string const& messageContent)
+{
+    nlohmann::json j = nlohmann::json::parse(messageContent);
+    Message const m = j;
+    nlohmann::json j_data = nlohmann::json::parse(m.data);
+    ObjectProperties props;
+    j_data.get_to(props);
+    std::unique_lock<std::mutex> lock { m_dataMutex };
+    m_properties.push_back(props);
+    m_logger.info(
+        std::to_string(m_properties.size()) + " / " + std::to_string(GP::NumberOfStepsPerRound()));
+    if (m_properties.size() == GP::NumberOfStepsPerRound()) {
+        m_logger.info("received all simulation results");
+        m_dataReady = true;
+    }
+    lock.unlock();
+}
+bool ServerConnection::isRoundDataReady() const { return m_dataReady; }
+
+std::vector<ObjectProperties> ServerConnection::getRoundData()
+{
+    std::unique_lock<std::mutex> lock { m_dataMutex };
+    m_dataReady = false;
+    return m_properties;
 }

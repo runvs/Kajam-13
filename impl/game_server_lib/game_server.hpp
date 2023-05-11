@@ -5,6 +5,8 @@
 #include "player_info.hpp"
 #include "server_network_connection.hpp"
 #include <log/logger_interface.hpp>
+#include <atomic>
+#include <shared_mutex>
 class GameServer {
 public:
     GameServer(jt::LoggerInterface& logger);
@@ -13,13 +15,23 @@ public:
 private:
     ServerNetworkConnection m_connection;
     // TODO split into player and spectators
+    std::shared_mutex m_mutex;
     std::map<int, PlayerInfo> m_playerData;
 
     int m_round { 1 };
     int m_connectedPlayers { 0 };
 
+    std::atomic_bool m_allPlayersReady { false };
+    std::atomic_bool m_simulationStarted { false };
+    std::atomic_bool m_simulationReady { false };
+
     jt::LoggerInterface& m_logger;
 
+    // explicit copy of playerdata is desired
+    void startRoundSimulation(std::map<int, PlayerInfo> const& playerData);
+
+    // all those functions will be called from the asio thread, synchronization is needed when
+    // things should be handled from the main thread
     void handleMessage(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
     void handleMessageInitialPing(
         std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
@@ -28,6 +40,7 @@ private:
     void handleMessageRoundReady(
         std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
     void discard(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void removePlayersIfNoAlivePingReceived(float elapsed);
 };
 
 #endif // JAMTEMPLATE_GAME_SERVER_HPP

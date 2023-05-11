@@ -10,6 +10,7 @@
 #include <chrono>
 #include <functional>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -62,10 +63,11 @@ void ClientNetworkConnection::handleReceive(
     // Note that recv_buffer might be a long buffer, but we only use the first "bytes
     // transferred" bytes from it.
     // TODO think about adding a mutex here
-
+    std::unique_lock<std::mutex> lock { m_bufferMutex };
     std::stringstream ss;
     ss.write(m_receiveBuffer.data(), bytes_transferred);
     auto const str = ss.str();
+    lock.unlock();
 
     std::stringstream ss_log;
     ss_log << "message received from '" << m_receivedFromEndpoint.address() << ":"
@@ -76,9 +78,11 @@ void ClientNetworkConnection::handleReceive(
     if (m_handleInComingMessageCallback) {
         m_handleInComingMessageCallback(str, m_receivedFromEndpoint);
     }
+    std::unique_lock<std::mutex> lock2 { m_bufferMutex };
     m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
         std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
             std::placeholders::_2));
+    lock2.unlock();
 }
 
 void ClientNetworkConnection::sendInitialPing()
@@ -122,9 +126,11 @@ void ClientNetworkConnection::sendString(const std::string& str)
     auto size = m_socket->send_to(asio::buffer(str), m_sendToEndpoint, 0, error);
 
     // TODO think about adding a mutex here
+    std::unique_lock<std::mutex> lock { m_bufferMutex };
     m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
         std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
             std::placeholders::_2));
+    lock.unlock();
 
     std::stringstream ss_log;
     ss_log << "message sent with size:" << size;
