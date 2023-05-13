@@ -1,19 +1,15 @@
 #include "game_server.hpp"
+#include "game_simulation.hpp"
 #include <client_end_placement_data.hpp>
-#include <game_properties.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
-#include <object_properties.hpp>
 #include <player_info.hpp>
-#include <server_unit.hpp>
-#include <chrono>
 #include <iostream>
 #include <mutex>
 #include <shared_mutex>
 #include <sstream>
 #include <string>
-#include <thread>
 
 GameServer::GameServer(jt::LoggerInterface& logger)
     // TODO create threadsafe logger wrapper
@@ -184,9 +180,8 @@ void GameServer::startRoundSimulation(std::map<int, PlayerInfo> const& playerDat
     m_logger.info("start round simulation", { "network", "GameServer" });
     m_simulationStarted.store(true);
 
+    GameSimulation gs { m_logger };
+    gs.updateSimulationForNewRound(playerData);
+    gs.performSimulation(m_connection);
     // TODO think about moving this into separate thread
-    // TODO move this into a separate class in any case!
-
-    // TODO make this work for more than one unit
-    // TODO move number of steps to GameProperties
 }

@@ -1,4 +1,6 @@
 ﻿#include "state_menu.hpp"
+#include "compression/compressor_impl.hpp"
+#include "compression/logging_compressor.hpp"
 #include "server_connector.hpp"
 #include <build_info.hpp>
 #include <color/color.hpp>
@@ -33,8 +35,9 @@ void StateMenu::onCreate()
 
     getGame()->stateManager().setTransition(std::make_shared<jt::StateManagerTransitionFadeToBlack>(
         GP::GetScreenSize(), textureManager()));
-
-    m_connector = std::make_shared<ServerConnector>();
+    m_compressor = std::make_shared<LoggingCompressor>(
+        getGame()->logger(), std::make_shared<CompressorImpl>());
+    m_connector = std::make_shared<ServerConnector>(m_compressor);
     add(m_connector);
 }
 

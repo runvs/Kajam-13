@@ -1,6 +1,7 @@
 ﻿#include "state_game.hpp"
 #include "client_end_placement_data.hpp"
 #include "input/keyboard/keyboard_defines.hpp"
+#include "object_group.hpp"
 #include "server_connection.hpp"
 #include "vector.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
@@ -11,6 +12,7 @@
 #include <shape.hpp>
 #include <state_menu.hpp>
 #include "imgui.h"
+#include <memory>
 
 void StateGame::onCreate()
 {
@@ -29,8 +31,8 @@ void StateGame::onCreate()
 
     createPlayer();
 
-    m_unit = std::make_shared<Unit>();
-    add(m_unit);
+    m_units = std::make_shared<jt::ObjectGroup<Unit>>();
+    add(m_units);
 
     m_vignette = std::make_shared<jt::Vignette>(GP::GetScreenSize());
     add(m_vignette);
@@ -60,11 +62,13 @@ void StateGame::onUpdate(float const elapsed)
 
         // TODO only do this in "placement mode"
         if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
+            auto unit = std::make_shared<Unit>();
+            m_units->push_back(unit);
+            add(unit);
+            unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
 
-            m_unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
             // TODO extend by unit type and other required things
-            m_clientEndPlacementData.m_position
-                = getGame()->input().mouse()->getMousePositionWorld();
+            m_clientEndPlacementData.m_properties.push_back(unit->saveState());
         }
 
         // Waiting state for data
@@ -75,13 +79,24 @@ void StateGame::onUpdate(float const elapsed)
 
         // TODO only do this in "running mode"
         if (m_properties.size() != 0) {
-
             if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
                 m_tickId++;
             }
-            jt::Vector2f const pos = jt::Vector2f { m_properties.at(m_tickId).floats.at("posX"),
-                m_properties.at(m_tickId).floats.at("posY") };
-            m_unit->setPosition(pos);
+            auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
+
+            for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
+                jt::Vector2f const pos = jt::Vector2f { propsForOneUnit.floats.at("posX"),
+                    propsForOneUnit.floats.at("posY") };
+                int const unitID = propsForOneUnit.ints.at("unitID");
+                for (auto& u : *m_units) {
+                    auto unit = u.lock();
+                    if (unit->getUnitID() != unitID) {
+                        continue;
+                    }
+                    unit->setPosition(pos);
+                    break;
+                }
+            }
         }
     }
 
@@ -98,8 +113,6 @@ void StateGame::onDraw() const
     ImGui::Begin("Network");
     ImGui::Text("round %i", m_round);
     ImGui::Separator();
-    ImGui::Text("pos: %.1f, %.1f", m_clientEndPlacementData.m_position.x,
-        m_clientEndPlacementData.m_position.y);
     ImGui::Separator();
     if (ImGui::Button("ready")) {
         m_serverConnection->readyRound(m_clientEndPlacementData);

@@ -3,6 +3,7 @@
 #define JAMTEMPLATE_SERVER_NETWORK_CONNECTION_HPP
 
 #include <asio.hpp>
+#include <compression/compressor_interface.hpp>
 #include <message.hpp>
 #include <memory>
 #include <set>
@@ -23,6 +24,7 @@ private:
     asio::io_context m_IOContext;
     std::unique_ptr<asio::ip::udp::socket> m_socket { nullptr };
     asio::ip::udp::endpoint m_remote_endpoint;
+    std::shared_ptr<CompressorInterface> m_compressor;
 
     std::thread m_thread;
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;

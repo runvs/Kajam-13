@@ -9,6 +9,7 @@ class ServerUnit : public SimulationObjectInterface {
 public:
     void update(float elapsed) override;
     ObjectProperties saveState() const override;
+    void setUnitID(int unitID);
 
     void setPosition(jt::Vector2f const& pos);
     jt::Vector2f getPosition() const;
@@ -17,6 +18,7 @@ private:
     // TODO add playerID
     // TODO support different unit types
     jt::Vector2f m_pos;
+    int m_unitID { 0 };
     float m_age { 0.0f };
 };
 

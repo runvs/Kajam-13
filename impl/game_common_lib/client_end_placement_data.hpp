@@ -1,12 +1,14 @@
 #ifndef JAMTEMPLATE_CLIENT_END_PLACEMENT_DATA_HPP
 #define JAMTEMPLATE_CLIENT_END_PLACEMENT_DATA_HPP
 
+#include "object_properties.hpp"
 #include <nlohmann.hpp>
 #include <vector.hpp>
+#include <vector>
 
 struct ClientEndPlacementData {
     // TODO replace by vector of positions or whatever is needed
-    jt::Vector2f m_position;
+    std::vector<ObjectProperties> m_properties;
 };
 
 void to_json(nlohmann::json& j, const ClientEndPlacementData& data);

@@ -5,6 +5,11 @@
 #include <iostream>
 #include <memory>
 
+ServerConnector::ServerConnector(std::shared_ptr<CompressorInterface> compressor)
+    : m_compressor { compressor }
+{
+}
+
 void ServerConnector::doCreate() { }
 
 void ServerConnector::doUpdate(float const /*elapsed*/) { }
@@ -18,7 +23,7 @@ void ServerConnector::doDraw() const
     ImGui::InputText("IP", &m_ip);
     if (ImGui::Button("connect")) {
         m_connection = std::make_shared<ClientNetworkConnection>(
-            m_ip, m_serverPort, m_clientPort, getGame()->logger());
+            m_ip, m_serverPort, m_clientPort, getGame()->logger(), m_compressor);
         m_connection->establishConnection();
     }
     ImGui::End();

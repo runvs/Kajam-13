@@ -1,21 +1,24 @@
 #ifndef JAMTEMPLATE_CLIENT_NETWORK_CONNECTION_HPP
 #define JAMTEMPLATE_CLIENT_NETWORK_CONNECTION_HPP
 
-#include "asio/buffer.hpp"
-#include "asio/executor_work_guard.hpp"
-#include "log/logger_interface.hpp"
-#include "message.hpp"
 #include <asio.hpp>
+#include <asio/buffer.hpp>
+#include <asio/executor_work_guard.hpp>
+#include <compression/compressor_interface.hpp>
+#include <log/logger_interface.hpp>
+#include <message.hpp>
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <string>
 #include <thread>
 
 class ClientNetworkConnection {
 public:
     ClientNetworkConnection(std::string const& ip, std::uint16_t serverPort,
-        std::uint16_t clientPort, jt::LoggerInterface& logger);
+        std::uint16_t clientPort, jt::LoggerInterface& logger,
+        std::shared_ptr<CompressorInterface> compressor);
 
     virtual ~ClientNetworkConnection();
 
@@ -34,6 +37,8 @@ private:
     std::uint16_t m_serverPort;
     std::uint16_t m_clientPort;
     jt::LoggerInterface& m_logger;
+
+    std::shared_ptr<CompressorInterface> m_compressor;
 
     std::thread m_thread;
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;

@@ -2,25 +2,27 @@
 #include "asio/executor_work_guard.hpp"
 #include "asio/io_context.hpp"
 #include "asio/ip/udp.hpp"
-#include "asio/socket_base.hpp"
 #include "asio/write.hpp"
+#include "game_properties.hpp"
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
-#include <chrono>
 #include <functional>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <sstream>
 #include <string>
 #include <thread>
 
 ClientNetworkConnection::ClientNetworkConnection(std::string const& ip, std::uint16_t serverPort,
-    std::uint16_t clientPort, jt::LoggerInterface& logger)
+    std::uint16_t clientPort, jt::LoggerInterface& logger,
+    std::shared_ptr<CompressorInterface> compressor)
     : m_ip { ip }
     , m_serverPort { serverPort }
     , m_clientPort { clientPort }
     , m_logger { logger }
+    , m_compressor { compressor }
 {
 }
 
@@ -68,15 +70,15 @@ void ClientNetworkConnection::handleReceive(
     ss.write(m_receiveBuffer.data(), bytes_transferred);
     auto const str = ss.str();
     lock.unlock();
-
+    std::string uncompressed = m_compressor->decompress(str);
     std::stringstream ss_log;
     ss_log << "message received from '" << m_receivedFromEndpoint.address() << ":"
            << m_receivedFromEndpoint.port() << "'\nwith content\n"
-           << str;
-    m_logger.info(ss_log.str(), { "network", "network", "ClientNetworkConnection" });
+           << uncompressed;
+    m_logger.debug(ss_log.str(), { "network", "network", "ClientNetworkConnection" });
     // pass message up to be processed
     if (m_handleInComingMessageCallback) {
-        m_handleInComingMessageCallback(str, m_receivedFromEndpoint);
+        m_handleInComingMessageCallback(uncompressed, m_receivedFromEndpoint);
     }
     std::unique_lock<std::mutex> lock2 { m_bufferMutex };
     m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
@@ -123,7 +125,8 @@ void ClientNetworkConnection::sendMessage(const Message& m)
 void ClientNetworkConnection::sendString(const std::string& str)
 {
     asio::error_code error;
-    auto size = m_socket->send_to(asio::buffer(str), m_sendToEndpoint, 0, error);
+    std::string compressed = m_compressor->compress(str);
+    auto size = m_socket->send_to(asio::buffer(compressed), m_sendToEndpoint, 0, error);
 
     // TODO think about adding a mutex here
     std::unique_lock<std::mutex> lock { m_bufferMutex };

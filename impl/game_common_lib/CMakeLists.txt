@@ -2,7 +2,9 @@ file(GLOB_RECURSE GAMELIBFILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
 add_library(game_common_lib STATIC ${GAMELIBFILES})
 
-target_link_libraries(game_common_lib PUBLIC JamTemplateLib asio::asio)
+FetchContent_GetProperties(zlib)
+
+target_link_libraries(game_common_lib PUBLIC JamTemplateLib asio::asio zlib)
 
 target_include_directories(game_common_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if (MSVC)

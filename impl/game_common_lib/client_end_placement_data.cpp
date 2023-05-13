@@ -19,9 +19,9 @@ void from_json(const nlohmann::json& j, jt::Vector2f& vec)
 
 void to_json(nlohmann::json& j, const ClientEndPlacementData& data)
 {
-    j = nlohmann::json { { "pos", data.m_position } };
+    j = nlohmann::json { { "units", data.m_properties } };
 }
 void from_json(const nlohmann::json& j, ClientEndPlacementData& data)
 {
-    j.at("pos").get_to(data.m_position);
+    j.at("units").get_to(data.m_properties);
 }

@@ -4,6 +4,8 @@
 #include "color/color.hpp"
 #include "color/palette.hpp"
 #include "vector.hpp"
+#include <compression/compressor_interface.hpp>
+#include <memory>
 #include <string>
 
 class GP {
@@ -35,6 +37,7 @@ public:
     static int PhysicPositionIterations();
     static jt::Vector2f PlayerSize();
     static std::size_t NumberOfStepsPerRound();
+    static std::shared_ptr<CompressorInterface> GetCompressor();
 };
 
 #endif

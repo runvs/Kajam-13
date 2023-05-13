@@ -1,6 +1,7 @@
 ﻿#ifndef GAME_STATE_MENU_HPP
 #define GAME_STATE_MENU_HPP
 
+#include "compression/compressor_interface.hpp"
 #include "server_connector.hpp"
 #include <game_state.hpp>
 
@@ -30,7 +31,9 @@ private:
     std::shared_ptr<jt::Shape> m_overlay;
     std::shared_ptr<jt::Vignette> m_vignette;
 
+    std::shared_ptr<CompressorInterface> m_compressor;
     std::shared_ptr<ServerConnector> m_connector;
+
     int m_score { 0 };
 
     bool m_started { false };

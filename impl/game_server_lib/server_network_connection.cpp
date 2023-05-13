@@ -1,7 +1,9 @@
 #include "server_network_connection.hpp"
+#include "game_properties.hpp"
 #include "message.hpp"
 #include <network_properties.hpp>
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 namespace {
@@ -30,6 +32,8 @@ ServerNetworkConnection::ServerNetworkConnection()
             m_IOContext.run();
         }
     } };
+    // TODO pass in via DI
+    m_compressor = GP::GetCompressor();
 }
 
 ServerNetworkConnection::~ServerNetworkConnection()
@@ -54,7 +58,8 @@ void ServerNetworkConnection::handleReceive(const asio::error_code& /*error*/, s
     std::stringstream ss;
     ss.write(m_receiveBuffer.data(), length);
     auto const str = ss.str();
-    handleMessage(str, m_remote_endpoint);
+    std::string uncompressed = m_compressor->decompress(str);
+    handleMessage(uncompressed, m_remote_endpoint);
     awaitNextMessageInternal();
 }
 
@@ -92,7 +97,8 @@ void ServerNetworkConnection::sendStringTo(
     const std::string& str, asio::ip::udp::endpoint sendToEndpoint)
 {
     asio::error_code error;
-    auto size = m_socket->send_to(asio::buffer(str), sendToEndpoint, 0, error);
+    std::string compressed = m_compressor->compress(str);
+    auto size = m_socket->send_to(asio::buffer(compressed), sendToEndpoint, 0, error);
     std::cout << "ping sent '" << size << "'\n";
     std::cout << error.message() << std::endl;
 }

@@ -5,8 +5,11 @@
 ObjectProperties ServerUnit::saveState() const
 {
     ObjectProperties props;
+    props.ints["unitID"] = m_unitID;
+    
     props.floats["posX"] = m_pos.x;
     props.floats["posY"] = m_pos.y;
+
     return props;
 }
 
@@ -22,3 +25,4 @@ void ServerUnit::update(float elapsed)
 void ServerUnit::setPosition(jt::Vector2f const& pos) { m_pos = pos; }
 
 jt::Vector2f ServerUnit::getPosition() const { return m_pos; }
+void ServerUnit::setUnitID(int unitID) { m_unitID = unitID; }

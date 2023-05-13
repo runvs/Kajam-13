@@ -108,7 +108,7 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message const m = j;
     nlohmann::json j_data = nlohmann::json::parse(m.data);
-    ObjectProperties props;
+    std::vector<ObjectProperties> props;
     j_data.get_to(props);
     std::unique_lock<std::mutex> lock { m_dataMutex };
     m_properties.push_back(props);
@@ -122,7 +122,7 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
 }
 bool ServerConnection::isRoundDataReady() const { return m_dataReady; }
 
-std::vector<ObjectProperties> ServerConnection::getRoundData()
+std::vector<std::vector<ObjectProperties>> ServerConnection::getRoundData()
 {
     std::unique_lock<std::mutex> lock { m_dataMutex };
     m_dataReady = false;

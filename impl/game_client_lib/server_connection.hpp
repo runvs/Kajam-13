@@ -20,7 +20,7 @@ public:
     void readyRound(ClientEndPlacementData const& data);
 
     bool isRoundDataReady() const;
-    std::vector<ObjectProperties> getRoundData();
+    std::vector<std::vector<ObjectProperties>> getRoundData();
 
 private:
     jt::LoggerInterface& m_logger;
@@ -31,7 +31,7 @@ private:
 
     std::atomic_bool m_dataReady { false };
     std::mutex m_dataMutex;
-    std::vector<ObjectProperties> m_properties;
+    std::vector<std::vector<ObjectProperties>> m_properties;
 
     void doUpdate(float const elapsed) override;
 
