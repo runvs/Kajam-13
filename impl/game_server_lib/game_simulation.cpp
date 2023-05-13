@@ -41,13 +41,15 @@ void GameSimulation::performSimulation(ServerNetworkConnection& connection)
         m.type = MessageType::SimulationResult;
         nlohmann::json j = props;
         m.data = j.dump();
-        // TODO do not send one message per tick but only one per full round
+        // TODO Think about not sending one message per tick but combine multiple ticks in one
+        // message
         for (auto const& kvp : m_latestPlayerData) {
             connection.sendMessage(m, kvp.second.endpoint);
         }
 
-        // TODO sleep seems to be necessary otherwise client will get hickups (because of race
-        // condition?)
+        // TODO sleep seems to be necessary otherwise client will crash
+        //      - could be race condition with buffer on client side?
+        //      - could be server sending packets too fast?
         std::this_thread::sleep_for(std::chrono::milliseconds { 50 });
     }
 
