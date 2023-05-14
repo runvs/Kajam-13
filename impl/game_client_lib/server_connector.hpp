@@ -20,8 +20,8 @@ private:
     std::shared_ptr<CompressorInterface> m_compressor { nullptr };
 
     mutable std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
-    mutable std::string m_ip { "0:0:0:0:0:0:0:1" };
-    // TODO load default from config file
+    // TODO load default from config file?
+    mutable std::string m_ip { NetworkProperties::DefaultIPAddress() };
     mutable int m_serverPort { NetworkProperties::DefaultServerPort() };
     mutable int m_clientPort { NetworkProperties::DefaultClientPort() };
 };
