@@ -30,4 +30,5 @@ ObjectProperties Unit::saveState() const
     props.floats["posY"] = m_shape->getPosition().y;
     return props;
 }
+
 int Unit::getUnitID() const { return m_unitID; }

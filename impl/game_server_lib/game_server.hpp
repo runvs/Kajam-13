@@ -9,11 +9,14 @@
 #include <shared_mutex>
 class GameServer {
 public:
-    GameServer(jt::LoggerInterface& logger);
+    GameServer(jt::LoggerInterface& logger, CompressorInterface& compressor);
     void update(float elapsed);
 
 private:
+    jt::LoggerInterface& m_logger;
+    CompressorInterface& m_compressor;
     ServerNetworkConnection m_connection;
+
     // TODO split into player and spectators
     std::shared_mutex m_mutex;
     std::map<int, PlayerInfo> m_playerData;
@@ -24,8 +27,6 @@ private:
     std::atomic_bool m_allPlayersReady { false };
     std::atomic_bool m_simulationStarted { false };
     std::atomic_bool m_simulationReady { false };
-
-    jt::LoggerInterface& m_logger;
 
     // explicit copy of playerdata is desired
     void startRoundSimulation(std::map<int, PlayerInfo> const& playerData);

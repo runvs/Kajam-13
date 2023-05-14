@@ -108,10 +108,11 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message const m = j;
     nlohmann::json j_data = nlohmann::json::parse(m.data);
-    std::vector<ObjectProperties> props;
+    std::vector<std::vector<ObjectProperties>> props;
     j_data.get_to(props);
     std::unique_lock<std::mutex> lock { m_dataMutex };
-    m_properties.push_back(props);
+    //    m_properties.push_back(props);
+    m_properties.insert(m_properties.end(), props.begin(), props.end());
     m_logger.info(
         std::to_string(m_properties.size()) + " / " + std::to_string(GP::NumberOfStepsPerRound()));
     if (m_properties.size() == GP::NumberOfStepsPerRound()) {

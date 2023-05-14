@@ -10,7 +10,7 @@
 
 class ServerNetworkConnection {
 public:
-    ServerNetworkConnection();
+    explicit ServerNetworkConnection(CompressorInterface& compressor);
     ~ServerNetworkConnection();
 
     void setHandleIncomingMessageCallback(
@@ -21,10 +21,10 @@ public:
     void sendMessage(Message const& m, asio::ip::udp::endpoint sendToEndpoint);
 
 private:
+    CompressorInterface& m_compressor;
     asio::io_context m_IOContext;
     std::unique_ptr<asio::ip::udp::socket> m_socket { nullptr };
     asio::ip::udp::endpoint m_remote_endpoint;
-    std::shared_ptr<CompressorInterface> m_compressor;
 
     std::thread m_thread;
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;

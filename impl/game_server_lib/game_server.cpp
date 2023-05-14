@@ -1,5 +1,7 @@
 #include "game_server.hpp"
+#include "compression/compressor_interface.hpp"
 #include "game_simulation.hpp"
+#include "simulation_result_message_sender.hpp"
 #include <client_end_placement_data.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
@@ -11,9 +13,11 @@
 #include <sstream>
 #include <string>
 
-GameServer::GameServer(jt::LoggerInterface& logger)
+GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compressor)
     // TODO create threadsafe logger wrapper
     : m_logger { logger }
+    , m_compressor { compressor }
+    , m_connection { m_compressor }
 {
     m_connection.setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto endpoint) {
@@ -179,9 +183,9 @@ void GameServer::startRoundSimulation(std::map<int, PlayerInfo> const& playerDat
 {
     m_logger.info("start round simulation", { "network", "GameServer" });
     m_simulationStarted.store(true);
-
+    SimulationResultMessageSender sender { m_connection };
     GameSimulation gs { m_logger };
     gs.updateSimulationForNewRound(playerData);
-    gs.performSimulation(m_connection);
+    gs.performSimulation(sender);
     // TODO think about moving this into separate thread
 }

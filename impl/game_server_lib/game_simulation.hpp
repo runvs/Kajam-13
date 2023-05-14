@@ -2,6 +2,7 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
+#include "simulation_result_message_sender.hpp"
 #include <log/logger_interface.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
@@ -14,7 +15,7 @@ class GameSimulation {
 public:
     explicit GameSimulation(jt::LoggerInterface& logger);
     void updateSimulationForNewRound(std::map<int, PlayerInfo> const& playerData);
-    void performSimulation(ServerNetworkConnection& connection);
+    void performSimulation(SimulationResultMessageSender& sender);
 
 private:
     jt::LoggerInterface& m_logger;

@@ -1,19 +1,24 @@
+#include "compression/compressor_impl.hpp"
+#include "compression/logging_compressor.hpp"
 #include "log/default_logging.hpp"
 #include "log/logger.hpp"
 #include <game_server.hpp>
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
 
 int main()
 {
-
     jt::Logger logger;
     jt::createDefaultLogTargets(logger);
+
+    auto compressor = std::make_shared<CompressorImpl>();
+    LoggingCompressor loggingCompressor { logger, compressor };
     // TODO think about using jt::game with null window
     try {
-        GameServer server { logger };
+        GameServer server { logger, loggingCompressor };
 
         std::chrono::steady_clock::time_point m_timeLast {};
 

@@ -24,34 +24,26 @@ void GameSimulation::updateSimulationForNewRound(std::map<int, PlayerInfo> const
     }
 }
 
-void GameSimulation::performSimulation(ServerNetworkConnection& connection)
+void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
     auto const timePerUpdate = 0.005f;
-
+    std::vector<std::vector<ObjectProperties>> propertiesForAllUnitsForAllRounds;
     for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
-        std::vector<ObjectProperties> props;
+        std::vector<ObjectProperties> propertiesForAllUnitsForOneRound;
         for (auto& obj : m_simulationObjects) {
             obj->update(timePerUpdate);
 
             auto data = obj->saveState();
             data.ints["simulationTick"] = i;
-            props.push_back(data);
+            propertiesForAllUnitsForOneRound.push_back(data);
         }
-        Message m;
-        m.type = MessageType::SimulationResult;
-        nlohmann::json j = props;
-        m.data = j.dump();
-        // TODO Think about not sending one message per tick but combine multiple ticks in one
-        // message
-        for (auto const& kvp : m_latestPlayerData) {
-            connection.sendMessage(m, kvp.second.endpoint);
-        }
-
-        // TODO sleep seems to be necessary otherwise client will crash
-        //      - could be race condition with buffer on client side?
-        //      - could be server sending packets too fast?
-        std::this_thread::sleep_for(std::chrono::milliseconds { 50 });
+        propertiesForAllUnitsForAllRounds.push_back(propertiesForAllUnitsForOneRound);
     }
+    std::vector<asio::ip::udp::endpoint> endpoints;
+    for (auto const& kvp : m_latestPlayerData) {
+        endpoints.push_back(kvp.second.endpoint);
+    }
+    sender.sendSimulationResults(propertiesForAllUnitsForAllRounds, endpoints);
 
     m_logger.info("simulation finished");
 }
