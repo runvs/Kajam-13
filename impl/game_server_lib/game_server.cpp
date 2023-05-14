@@ -63,7 +63,7 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
     }
 }
 void GameServer::handleMessage(
-    const std::string& messageContent, const asio::ip::udp::endpoint& endpoint)
+    const std::string& messageContent, const asio::ip::tcp::endpoint& endpoint)
 {
     m_logger.debug(
         "handleMessage message content: '" + messageContent + "'", { "network", "GameServer" });
@@ -106,7 +106,7 @@ void GameServer::handleMessage(
 }
 
 void GameServer::handleMessageInitialPing(
-    std::string const& /*messageContent*/, asio::ip::udp::endpoint const& endpoint)
+    std::string const& /*messageContent*/, asio::ip::tcp::endpoint const& endpoint)
 {
     m_logger.debug("initial ping received", { "network", "GameServer" });
 
@@ -141,7 +141,7 @@ void GameServer::handleMessageInitialPing(
 }
 
 void GameServer::handleMessageStayAlivePing(
-    std::string const& messageContent, const asio::ip::udp::endpoint& endpoint)
+    std::string const& messageContent, const asio::ip::tcp::endpoint& endpoint)
 {
     Message const m = nlohmann::json::parse(messageContent);
     std::unique_lock<std::shared_mutex> const lock { m_mutex };
@@ -149,7 +149,7 @@ void GameServer::handleMessageStayAlivePing(
 }
 
 void GameServer::handleMessageRoundReady(
-    std::string const& messageContent, const asio::ip::udp::endpoint& endpoint)
+    std::string const& messageContent, const asio::ip::tcp::endpoint& endpoint)
 {
     Message const m = nlohmann::json::parse(messageContent);
 
@@ -174,7 +174,7 @@ void GameServer::handleMessageRoundReady(
 }
 
 void GameServer::discard(
-    std::string const& messageContent, asio::ip::udp::endpoint const& /*endpoint*/)
+    std::string const& messageContent, asio::ip::tcp::endpoint const& /*endpoint*/)
 {
     m_logger.warning("discard message '" + messageContent + "'", { "network", "GameServer" });
 }

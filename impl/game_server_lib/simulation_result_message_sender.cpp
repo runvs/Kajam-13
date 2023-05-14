@@ -9,7 +9,7 @@ SimulationResultMessageSender::SimulationResultMessageSender(ServerNetworkConnec
 
 void SimulationResultMessageSender::sendSimulationResults(
     std::vector<std::vector<ObjectProperties>> const& props,
-    std::vector<asio::ip::udp::endpoint> const& endpoints)
+    std::vector<asio::ip::tcp::endpoint> const& endpoints)
 {
 
     for (auto& p : props) {
@@ -21,7 +21,7 @@ void SimulationResultMessageSender::sendSimulationResults(
         m.data = j.dump();
         // TODO Think about not sending one message per tick but combine multiple ticks in one
         // message
-        // TODO this will need tcp instead of udp
+        // TODO this will need tcp instead of tcp
         for (auto const& e : endpoints) {
             m_connection.sendMessage(m, e);
         }

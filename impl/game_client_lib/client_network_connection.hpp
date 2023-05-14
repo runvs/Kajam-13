@@ -23,7 +23,7 @@ public:
     virtual ~ClientNetworkConnection();
 
     void setHandleIncomingMessageCallback(
-        std::function<void(std::string const&, asio::ip::udp::endpoint sendToEndpoint)> callback);
+        std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)> callback);
 
     void establishConnection();
 
@@ -43,13 +43,13 @@ private:
     std::thread m_thread;
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;
 
-    std::unique_ptr<asio::ip::udp::socket> m_socket { nullptr };
-    asio::ip::udp::endpoint m_sendToEndpoint;
+    std::unique_ptr<asio::ip::tcp::socket> m_socket { nullptr };
+    asio::ip::tcp::endpoint m_sendToEndpoint;
 
-    std::function<void(std::string const&, asio::ip::udp::endpoint sendToEndpoint)>
+    std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)>
         m_handleInComingMessageCallback;
 
-    asio::ip::udp::endpoint m_receivedFromEndpoint;
+    asio::ip::tcp::endpoint m_receivedFromEndpoint;
     std::mutex m_bufferMutex;
     std::array<char, 8192> m_receiveBuffer;
 

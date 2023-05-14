@@ -61,7 +61,7 @@ void ServerConnection::readyRound(ClientEndPlacementData const& data)
 }
 
 void ServerConnection::handleMessage(
-    std::string const& messageContent, asio::ip::udp::endpoint const& endpoint)
+    std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint)
 {
 
     m_logger.verbose("handleMessage", { "network", "ServerConnection" });

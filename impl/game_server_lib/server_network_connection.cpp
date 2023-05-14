@@ -1,4 +1,5 @@
 #include "server_network_connection.hpp"
+#include "asio/ip/tcp.hpp"
 #include "compression/compressor_interface.hpp"
 #include "game_properties.hpp"
 #include "message.hpp"
@@ -18,13 +19,15 @@ std::string make_daytime_string()
 
 ServerNetworkConnection::ServerNetworkConnection(CompressorInterface& compressor)
     : m_compressor { compressor }
-    , m_socket { std::make_unique<asio::ip::udp::socket>(m_IOContext,
-          asio::ip::udp::endpoint(
-              NetworkProperties::NetworkProtocolType(), NetworkProperties::DefaultServerPort())) }
+    , m_acceptor { m_IOContext,
+        asio::ip::tcp::endpoint {
+            NetworkProperties::NetworkProtocolType(), NetworkProperties::DefaultServerPort() } }
 {
     // TODO pass in logger and use logger instead of cout
     std::cout << "start thread to handle async tasks\n";
-
+    m_socket = std::make_unique<asio::ip::tcp::socket>(m_IOContext);
+    m_acceptor.accept(*m_socket);
+    std::cout << "message accepted\n";
     awaitNextMessageInternal();
 
     m_workGuard = std::make_unique<asio::executor_work_guard<asio::io_context::executor_type>>(
@@ -46,7 +49,7 @@ ServerNetworkConnection::~ServerNetworkConnection()
 }
 
 void ServerNetworkConnection::setHandleIncomingMessageCallback(
-    std::function<void(std::string const&, asio::ip::udp::endpoint sendToEndpoint)> callback)
+    std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)> callback)
 {
     m_handleInComingMessageCallback = callback;
 }
@@ -65,13 +68,14 @@ void ServerNetworkConnection::handleReceive(const asio::error_code& /*error*/, s
 
 void ServerNetworkConnection::awaitNextMessageInternal()
 {
-    m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_remote_endpoint,
+
+    m_socket->async_receive(asio::buffer(m_receiveBuffer),
         std::bind(&ServerNetworkConnection::handleReceive, this, std::placeholders::_1,
             std::placeholders::_2));
 }
 
 void ServerNetworkConnection::handleMessage(
-    std::string const& str, asio::ip::udp::endpoint endpoint)
+    std::string const& str, asio::ip::tcp::endpoint endpoint)
 {
     std::cout << "received message from endpoint: " << endpoint.address() << ":" << endpoint.port()
               << "'\n";
@@ -81,7 +85,7 @@ void ServerNetworkConnection::handleMessage(
     }
 }
 
-void ServerNetworkConnection::sendMessage(const Message& m, asio::ip::udp::endpoint sendToEndpoint)
+void ServerNetworkConnection::sendMessage(const Message& m, asio::ip::tcp::endpoint sendToEndpoint)
 {
     if (!m_socket) {
         std::cerr << "socket not open\n";
@@ -94,11 +98,11 @@ void ServerNetworkConnection::sendMessage(const Message& m, asio::ip::udp::endpo
 }
 
 void ServerNetworkConnection::sendStringTo(
-    const std::string& str, asio::ip::udp::endpoint sendToEndpoint)
+    const std::string& str, asio::ip::tcp::endpoint sendToEndpoint)
 {
     asio::error_code error;
     std::string compressed = m_compressor.compress(str);
-    auto size = m_socket->send_to(asio::buffer(compressed), sendToEndpoint, 0, error);
+    auto size = m_socket->send(asio::buffer(compressed), 0, error);
     std::cout << "ping sent '" << size << "'\n";
     std::cout << error.message() << std::endl;
 }

@@ -7,7 +7,7 @@
 
 class NetworkProperties {
 public:
-    static auto NetworkProtocolType() { return asio::ip::udp::v4(); }
+    static auto NetworkProtocolType() { return asio::ip::tcp::v4(); }
     static std::string DefaultIPAddress() { return "127.0.0.1"; }
 
     static std::uint16_t DefaultServerPort() { return 1500; }

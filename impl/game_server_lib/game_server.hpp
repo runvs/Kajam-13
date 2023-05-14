@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_GAME_SERVER_HPP
 #define JAMTEMPLATE_GAME_SERVER_HPP
 
-#include "asio/ip/udp.hpp"
+#include "asio/ip/tcp.hpp"
 #include "player_info.hpp"
 #include "server_network_connection.hpp"
 #include <log/logger_interface.hpp>
@@ -33,14 +33,14 @@ private:
 
     // all those functions will be called from the asio thread, synchronization is needed when
     // things should be handled from the main thread
-    void handleMessage(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+    void handleMessage(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageInitialPing(
-        std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+        std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageStayAlivePing(
-        std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+        std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageRoundReady(
-        std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
-    void discard(std::string const& messageContent, asio::ip::udp::endpoint const& endpoint);
+        std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
+    void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void removePlayersIfNoAlivePingReceived(float elapsed);
 };
 

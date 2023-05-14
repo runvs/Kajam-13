@@ -6,7 +6,7 @@
 
 struct PlayerInfo {
     float timeSinceLastPing { 0.0f };
-    asio::ip::udp::endpoint endpoint;
+    asio::ip::tcp::endpoint endpoint;
     bool roundReady { false };
     ClientEndPlacementData roundEndPlacementData;
 };

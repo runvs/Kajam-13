@@ -1,7 +1,7 @@
 #include "client_network_connection.hpp"
 #include "asio/executor_work_guard.hpp"
 #include "asio/io_context.hpp"
-#include "asio/ip/udp.hpp"
+#include "asio/ip/tcp.hpp"
 #include "asio/write.hpp"
 #include "game_properties.hpp"
 #include <message.hpp>
@@ -40,13 +40,12 @@ ClientNetworkConnection::~ClientNetworkConnection()
 
 void ClientNetworkConnection::establishConnection()
 {
-    asio::ip::udp::resolver resolver(m_IOContext);
-    m_socket = std::make_unique<asio::ip::udp::socket>(m_IOContext,
-        asio::ip::udp::endpoint { NetworkProperties::NetworkProtocolType(), m_clientPort });
-    m_sendToEndpoint = *resolver
-                            .resolve(NetworkProperties::NetworkProtocolType(), m_ip,
-                                std::to_string(m_serverPort))
-                            .begin();
+    asio::ip::tcp::resolver resolver(m_IOContext);
+    m_socket = std::make_unique<asio::ip::tcp::socket>(m_IOContext,
+        asio::ip::tcp::endpoint { NetworkProperties::NetworkProtocolType(), m_clientPort });
+    auto endpoints = resolver.resolve(
+        NetworkProperties::NetworkProtocolType(), m_ip, std::to_string(m_serverPort));
+    m_sendToEndpoint = asio::connect(*m_socket, endpoints);
 
     startReceive();
 }
@@ -80,10 +79,8 @@ void ClientNetworkConnection::handleReceive(
     if (m_handleInComingMessageCallback) {
         m_handleInComingMessageCallback(uncompressed, m_receivedFromEndpoint);
     }
-
-    m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
-        std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
-            std::placeholders::_2));
+    m_socket->async_receive(
+        asio::buffer(m_receiveBuffer), [this](auto ec, auto len) { handleReceive(ec, len); });
 }
 
 void ClientNetworkConnection::sendInitialPing()
@@ -125,25 +122,24 @@ void ClientNetworkConnection::sendString(const std::string& str)
 {
     asio::error_code error;
     std::string compressed = m_compressor->compress(str);
-    auto size = m_socket->send_to(asio::buffer(compressed), m_sendToEndpoint, 0, error);
+    asio::write(*m_socket, asio::buffer(compressed));
+    //    auto size
+    //        = m_socket->send(, m_sendToEndpoint, 0, error);
 
-    // TODO think about adding a mutex here
     std::unique_lock<std::mutex> lock { m_bufferMutex };
-    m_socket->async_receive_from(asio::buffer(m_receiveBuffer), m_receivedFromEndpoint,
-        std::bind(&ClientNetworkConnection::handleReceive, this, std::placeholders::_1,
-            std::placeholders::_2));
+    m_socket->async_receive(
+        asio::buffer(m_receiveBuffer), [this](auto ec, auto len) { handleReceive(ec, len); });
     lock.unlock();
 
     std::stringstream ss_log;
-    ss_log << "message sent with size:" << size;
-    ss_log << ", content: '" << str << "'";
+    ss_log << "message sent with content: '" << str << "'";
     ss_log << ", and result: " << error.message();
 
     m_logger.debug(ss_log.str(), { "network", "ClientNetworkConnection" });
 }
 
 void ClientNetworkConnection::setHandleIncomingMessageCallback(
-    std::function<void(std::string const&, asio::ip::udp::endpoint sendToEndpoint)> callback)
+    std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)> callback)
 {
     m_handleInComingMessageCallback = callback;
 }

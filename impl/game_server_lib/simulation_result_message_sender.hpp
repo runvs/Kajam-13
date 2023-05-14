@@ -9,7 +9,7 @@ public:
     explicit SimulationResultMessageSender(ServerNetworkConnection& connection);
 
     void sendSimulationResults(std::vector<std::vector<ObjectProperties>> const& props,
-        std::vector<asio::ip::udp::endpoint> const& endpoints);
+        std::vector<asio::ip::tcp::endpoint> const& endpoints);
 
 private:
     ServerNetworkConnection& m_connection;

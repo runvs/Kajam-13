@@ -39,7 +39,7 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
         }
         propertiesForAllUnitsForAllRounds.push_back(propertiesForAllUnitsForOneRound);
     }
-    std::vector<asio::ip::udp::endpoint> endpoints;
+    std::vector<asio::ip::tcp::endpoint> endpoints;
     for (auto const& kvp : m_latestPlayerData) {
         endpoints.push_back(kvp.second.endpoint);
     }
