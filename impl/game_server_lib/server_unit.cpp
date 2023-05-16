@@ -5,10 +5,10 @@
 ObjectProperties ServerUnit::saveState() const
 {
     ObjectProperties props;
-    props.ints["unitID"] = m_unitID;
-    
-    props.floats["posX"] = m_pos.x;
-    props.floats["posY"] = m_pos.y;
+    props.ints["i"] = m_unitID;
+
+    props.floats["x"] = m_pos.x;
+    props.floats["y"] = m_pos.y;
 
     return props;
 }

@@ -7,11 +7,11 @@
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
-#include <functional>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <thread>
 
@@ -47,10 +47,10 @@ void ClientNetworkConnection::establishConnection()
         NetworkProperties::NetworkProtocolType(), m_ip, std::to_string(m_serverPort));
     m_sendToEndpoint = asio::connect(*m_socket, endpoints);
 
-    startReceive();
+    startProcessing();
 }
 
-void ClientNetworkConnection::startReceive()
+void ClientNetworkConnection::startProcessing()
 {
     m_logger.debug("start thread to process async tasks", { "network", "ClientNetworkConnection" });
     m_workGuard = std::make_unique<asio::executor_work_guard<asio::io_context::executor_type>>(
@@ -59,17 +59,33 @@ void ClientNetworkConnection::startReceive()
 }
 
 void ClientNetworkConnection::handleReceive(
-    const asio::error_code& /*error*/, std::size_t bytes_transferred)
+    const asio::error_code& error, std::size_t bytes_transferred)
 {
+    if (error) {
+        std::stringstream ss;
+        ss << error << " : " << error.message() << " : " << bytes_transferred << std::endl;
+        m_logger.error(ss.str(), { "network", "error" });
+        m_socket->close();
+        return;
+    }
+
+    auto const bytesToRead = std::stoul(std::string(m_sizeBuffer.begin(), m_sizeBuffer.end()));
+    m_logger.info("handle receive with bytes: " + std::to_string(bytesToRead),
+        { "network", "ClientNetworkConnection" });
+    if (bytesToRead > m_receiveBuffer.size()) {
+        throw std::invalid_argument { "message too big." };
+    }
+    asio::read(*m_socket, asio::buffer(m_receiveBuffer.data(), bytesToRead));
+
     // Note that recv_buffer might be a long buffer, but we only use the first "bytes
     // transferred" bytes from it.
 
-    std::unique_lock<std::mutex> lock { m_bufferMutex };
     std::stringstream ss;
-    ss.write(m_receiveBuffer.data(), bytes_transferred);
+    ss.write(m_receiveBuffer.data(), bytesToRead);
     auto const str = ss.str();
 
-    std::string uncompressed = m_compressor->decompress(str);
+    std::string const uncompressed = m_compressor->decompress(str);
+
     std::stringstream ss_log;
     ss_log << "message received from '" << m_receivedFromEndpoint.address() << ":"
            << m_receivedFromEndpoint.port() << "'\nwith content\n"
@@ -79,8 +95,24 @@ void ClientNetworkConnection::handleReceive(
     if (m_handleInComingMessageCallback) {
         m_handleInComingMessageCallback(uncompressed, m_receivedFromEndpoint);
     }
-    m_socket->async_receive(
-        asio::buffer(m_receiveBuffer), [this](auto ec, auto len) { handleReceive(ec, len); });
+
+    awaitNextMessage();
+}
+
+void ClientNetworkConnection::awaitNextMessage()
+{
+    //    m_socket->async_receive(
+    //        asio::buffer(m_receiveBuffer.data(), m_receiveBuffer.size()), 0, [this](auto ec, auto
+    //        len) {
+    //            std::unique_lock<std::mutex> lock { m_bufferMutex };
+    //            handleReceive(ec, len);
+    //        });
+
+    asio::async_read(*m_socket, asio::buffer(m_sizeBuffer.data(), m_sizeBuffer.size()),
+        [this](auto ec, auto len) {
+            std::unique_lock<std::mutex> lock { m_bufferMutex };
+            handleReceive(ec, len);
+        });
 }
 
 void ClientNetworkConnection::sendInitialPing()
@@ -102,7 +134,9 @@ void ClientNetworkConnection::sendAlivePing(int playerId)
 
 void ClientNetworkConnection::stopThread()
 {
+    m_workGuard.reset();
     m_IOContext.stop();
+
     m_thread.join();
 }
 
@@ -122,14 +156,14 @@ void ClientNetworkConnection::sendString(const std::string& str)
 {
     asio::error_code error;
     std::string compressed = m_compressor->compress(str);
-    asio::write(*m_socket, asio::buffer(compressed));
-    //    auto size
-    //        = m_socket->send(, m_sendToEndpoint, 0, error);
-
     std::unique_lock<std::mutex> lock { m_bufferMutex };
-    m_socket->async_receive(
-        asio::buffer(m_receiveBuffer), [this](auto ec, auto len) { handleReceive(ec, len); });
+    // TODO write size in front of every message
+    asio::write(*m_socket, asio::buffer(compressed));
     lock.unlock();
+
+    if (!m_alreadyReceiving.exchange(true)) {
+        awaitNextMessage();
+    }
 
     std::stringstream ss_log;
     ss_log << "message sent with content: '" << str << "'";

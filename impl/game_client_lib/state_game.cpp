@@ -85,9 +85,9 @@ void StateGame::onUpdate(float const elapsed)
             auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
             for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
-                jt::Vector2f const pos = jt::Vector2f { propsForOneUnit.floats.at("posX"),
-                    propsForOneUnit.floats.at("posY") };
-                int const unitID = propsForOneUnit.ints.at("unitID");
+                jt::Vector2f const pos = jt::Vector2f { propsForOneUnit.floats.at("x"),
+                    propsForOneUnit.floats.at("y") };
+                int const unitID = propsForOneUnit.ints.at("i");
                 for (auto& u : *m_units) {
                     auto unit = u.lock();
                     if (unit->getUnitID() != unitID) {

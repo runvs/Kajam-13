@@ -30,7 +30,8 @@ private:
     std::thread m_thread;
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;
 
-    std::array<char, 8192> m_receiveBuffer;
+    std::mutex m_mutex;
+    std::array<char, 102400> m_receiveBuffer;
 
     std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)>
         m_handleInComingMessageCallback;

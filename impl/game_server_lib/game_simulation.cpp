@@ -16,8 +16,8 @@ void GameSimulation::updateSimulationForNewRound(std::map<int, PlayerInfo> const
     for (auto const& kvp : m_latestPlayerData) {
         for (auto const& props : kvp.second.roundEndPlacementData.m_properties) {
             auto obj = std::make_unique<ServerUnit>();
-            jt::Vector2f const pos { props.floats.at("posX"), props.floats.at("posY") };
-            obj->setUnitID(props.ints.at("unitID"));
+            jt::Vector2f const pos { props.floats.at("x"), props.floats.at("y") };
+            obj->setUnitID(props.ints.at("i"));
             obj->setPosition(pos);
             m_simulationObjects.emplace_back(std::move(obj));
         }
@@ -43,7 +43,7 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
     for (auto const& kvp : m_latestPlayerData) {
         endpoints.push_back(kvp.second.endpoint);
     }
-    sender.sendSimulationResults(propertiesForAllUnitsForAllRounds, endpoints);
-
     m_logger.info("simulation finished");
+    sender.sendSimulationResults(propertiesForAllUnitsForAllRounds, endpoints);
+    m_logger.info("sending of simulation results done");
 }

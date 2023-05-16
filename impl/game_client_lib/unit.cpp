@@ -17,7 +17,7 @@ void Unit::doDraw() const { m_shape->draw(renderTarget()); }
 
 void Unit::updateState(ObjectProperties const& props)
 {
-    m_shape->setPosition({ props.floats.at("posX"), props.floats.at("posY") });
+    m_shape->setPosition({ props.floats.at("x"), props.floats.at("y") });
 }
 
 void Unit::setPosition(jt::Vector2f const& pos) { m_shape->setPosition(pos); }
@@ -25,9 +25,9 @@ void Unit::setPosition(jt::Vector2f const& pos) { m_shape->setPosition(pos); }
 ObjectProperties Unit::saveState() const
 {
     ObjectProperties props;
-    props.ints["unitID"] = m_unitID;
-    props.floats["posX"] = m_shape->getPosition().x;
-    props.floats["posY"] = m_shape->getPosition().y;
+    props.ints["i"] = m_unitID;
+    props.floats["x"] = m_shape->getPosition().x;
+    props.floats["y"] = m_shape->getPosition().y;
     return props;
 }
 

@@ -33,6 +33,7 @@ public:
 
 private:
     asio::io_context m_IOContext;
+
     std::string m_ip;
     std::uint16_t m_serverPort;
     std::uint16_t m_clientPort;
@@ -51,12 +52,16 @@ private:
 
     asio::ip::tcp::endpoint m_receivedFromEndpoint;
     std::mutex m_bufferMutex;
-    std::array<char, 8192> m_receiveBuffer;
+    std::array<char, 32> m_sizeBuffer;
+    std::array<char, 102400> m_receiveBuffer;
+    std::atomic_bool m_alreadyReceiving { false };
 
-    void startReceive();
-    void handleReceive(const asio::error_code& error, std::size_t /*bytes_transferred*/);
+    void startProcessing();
+    void handleReceive(const asio::error_code& error, std::size_t bytes_transferred);
     void stopThread();
     void sendString(std::string const& str);
+
+    void awaitNextMessage();
 };
 
 #endif // JAMTEMPLATE_CLIENT_NETWORK_CONNECTION_HPP
