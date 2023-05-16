@@ -4,7 +4,7 @@ add_library(game_common_lib STATIC ${GAMELIBFILES})
 
 FetchContent_GetProperties(zlib)
 
-target_link_libraries(game_common_lib PUBLIC JamTemplateLib asio::asio zlib)
+target_link_libraries(game_common_lib PUBLIC JamTemplateLib asio::asio zlibstatic)
 
 target_include_directories(game_common_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if (MSVC)

@@ -28,8 +28,8 @@ FetchContent_Declare(zlib
         )
 FetchContent_MakeAvailableExcludeFromAll(zlib)
 
-add_library(ZLIB::ZLIB ALIAS zlib)
-target_include_directories(zlib INTERFACE ${zlib_BINARY_DIR} ${zlib_SOURCE_DIR})
+add_library(ZLIB::ZLIB ALIAS zlibstatic)
+target_include_directories(zlibstatic INTERFACE ${zlib_BINARY_DIR} ${zlib_SOURCE_DIR})
 
 # 1. Set the variables that are usually set by FindZLIB.cmake.
 # 2. Add the module that stubs out `find_package(ZLIB ...)` calls.
