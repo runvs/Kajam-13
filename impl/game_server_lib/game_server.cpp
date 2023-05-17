@@ -17,7 +17,7 @@ GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compres
     // TODO create threadsafe logger wrapper
     : m_logger { logger }
     , m_compressor { compressor }
-    , m_connection { m_compressor }
+    , m_connection { m_compressor, logger }
 {
     m_connection.setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto endpoint) {
