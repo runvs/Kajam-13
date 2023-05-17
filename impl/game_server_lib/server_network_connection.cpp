@@ -56,8 +56,8 @@ void ServerNetworkConnection::update() { }
 
 void ServerNetworkConnection::handleReceive(const asio::error_code& error, std::size_t length)
 {
-    NetworkHelpers::freeHandleReceive(error, length, *m_socket, m_sizeBuffer, m_receiveBuffer,
-        m_logger, [this](std::string const& str) {
+    NetworkHelpers::freeHandleReceive(
+        error, length, *m_socket, m_buffer, m_logger, [this](std::string const& str) {
             std::string const uncompressed = m_compressor.decompress(str);
             handleMessage(uncompressed, m_remote_endpoint);
             awaitNextMessageInternal();
@@ -66,10 +66,11 @@ void ServerNetworkConnection::handleReceive(const asio::error_code& error, std::
 
 void ServerNetworkConnection::awaitNextMessageInternal()
 {
-    m_socket->async_receive(asio::buffer(m_sizeBuffer, 32), [this](auto ec, auto len) {
-        std::unique_lock<std::mutex> lock { m_bufferMutex };
-        handleReceive(ec, len);
-    });
+    m_socket->async_receive(
+        asio::buffer(m_buffer.size.data(), m_buffer.size.size()), [this](auto ec, auto len) {
+            std::unique_lock<std::mutex> lock { m_bufferMutex };
+            handleReceive(ec, len);
+        });
 }
 
 void ServerNetworkConnection::handleMessage(

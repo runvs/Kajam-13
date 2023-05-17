@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_CLIENT_NETWORK_CONNECTION_HPP
 #define JAMTEMPLATE_CLIENT_NETWORK_CONNECTION_HPP
 
+#include "receive_buffer.hpp"
 #include <asio.hpp>
 #include <asio/buffer.hpp>
 #include <asio/executor_work_guard.hpp>
@@ -52,8 +53,7 @@ private:
 
     asio::ip::tcp::endpoint m_receivedFromEndpoint;
     std::mutex m_bufferMutex;
-    std::array<char, 32> m_sizeBuffer;
-    std::array<char, 102400> m_receiveBuffer;
+    ReceiveBuffer m_buffer;
     std::atomic_bool m_alreadyReceiving { false };
 
     void startProcessing();

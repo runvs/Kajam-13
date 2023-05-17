@@ -3,6 +3,7 @@
 #define JAMTEMPLATE_SERVER_NETWORK_CONNECTION_HPP
 
 #include "log/logger_interface.hpp"
+#include "receive_buffer.hpp"
 #include <asio.hpp>
 #include <compression/compressor_interface.hpp>
 #include <message.hpp>
@@ -35,8 +36,7 @@ private:
     std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;
 
     std::mutex m_bufferMutex;
-    std::array<char, 32> m_sizeBuffer;
-    std::array<char, 102400> m_receiveBuffer;
+    ReceiveBuffer m_buffer;
 
     std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)>
         m_handleInComingMessageCallback;

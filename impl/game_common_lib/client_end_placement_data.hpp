@@ -7,7 +7,6 @@
 #include <vector>
 
 struct ClientEndPlacementData {
-    // TODO replace by vector of positions or whatever is needed
     std::vector<ObjectProperties> m_properties;
 };
 

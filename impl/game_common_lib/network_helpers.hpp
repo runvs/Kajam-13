@@ -3,6 +3,7 @@
 
 #include <asio.hpp>
 #include <log/logger_interface.hpp>
+#include <receive_buffer.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -13,10 +14,8 @@ namespace NetworkHelpers {
 void freeSendString(
     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger);
 
-// TODO group sizeBuffer and DataBuffer in a class
 void freeHandleReceive(asio::error_code const& error, std::size_t bytes_transferred,
-    asio::ip::tcp::socket& socket, std::array<char, 32>& sizeBuffer,
-    std::array<char, 102400>& dataBuffer, jt::LoggerInterface& logger,
+    asio::ip::tcp::socket& socket, ReceiveBuffer& buffer, jt::LoggerInterface& logger,
     std::function<void(std::string const&)> handlerFunction);
 
 }; // namespace NetworkHelpers

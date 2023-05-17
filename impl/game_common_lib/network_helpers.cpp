@@ -23,8 +23,7 @@ void NetworkHelpers::freeSendString(
 }
 
 void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_t bytes_transferred,
-    asio::ip::tcp::socket& socket, std::array<char, 32>& sizeBuffer,
-    std::array<char, 102400>& dataBuffer, jt::LoggerInterface& logger,
+    asio::ip::tcp::socket& socket, ReceiveBuffer& buffer, jt::LoggerInterface& logger,
     std::function<void(const std::string&)> handlerFunction)
 {
     if (error) {
@@ -35,18 +34,18 @@ void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_
         return;
     }
 
-    auto const bytesToRead = std::stoul(std::string(sizeBuffer.cbegin(), sizeBuffer.cend()));
+    auto const bytesToRead = std::stoul(std::string(buffer.size.cbegin(), buffer.size.cend()));
     logger.debug("handle receive with bytes: " + std::to_string(bytesToRead),
         { "network", "ClientNetworkConnection" });
-    if (bytesToRead > dataBuffer.size()) {
+    if (bytesToRead > buffer.data.size()) {
         throw std::invalid_argument { "message too big." };
     }
-    asio::read(socket, asio::buffer(dataBuffer.data(), bytesToRead));
+    asio::read(socket, asio::buffer(buffer.data.data(), bytesToRead));
 
     // Note that recv_buffer might be a long buffer, but we only use the first "bytesToRead" bytes
     // from it.
     std::stringstream ss;
-    ss.write(dataBuffer.data(), bytesToRead);
+    ss.write(buffer.data.data(), bytesToRead);
     auto const str = ss.str();
     handlerFunction(str);
 }

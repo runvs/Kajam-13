@@ -71,8 +71,8 @@ namespace {
 void ClientNetworkConnection::handleReceive(
     asio::error_code const& error, std::size_t bytes_transferred)
 {
-    NetworkHelpers::freeHandleReceive(error, bytes_transferred, *m_socket, m_sizeBuffer,
-        m_receiveBuffer, m_logger, [this](std::string const& str) {
+    NetworkHelpers::freeHandleReceive(
+        error, bytes_transferred, *m_socket, m_buffer, m_logger, [this](std::string const& str) {
             std::string const uncompressed = m_compressor->decompress(str);
 
             std::stringstream ss_log;
@@ -93,7 +93,7 @@ void ClientNetworkConnection::handleReceive(
 
 void ClientNetworkConnection::awaitNextMessage()
 {
-    asio::async_read(*m_socket, asio::buffer(m_sizeBuffer.data(), m_sizeBuffer.size()),
+    asio::async_read(*m_socket, asio::buffer(m_buffer.size.data(), m_buffer.size.size()),
         [this](auto ec, auto len) {
             std::unique_lock<std::mutex> lock { m_bufferMutex };
             handleReceive(ec, len);
