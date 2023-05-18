@@ -46,8 +46,6 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
 {
     std::unique_lock<std::shared_mutex> const lock { m_mutex };
     for (auto it = m_playerData.begin(); it != m_playerData.end();) {
-        // think about adding a mutex here
-
         it->second.timeSinceLastPing += elapsed;
         if (it->second.timeSinceLastPing >= 5.0f) {
             std::stringstream ss_log;

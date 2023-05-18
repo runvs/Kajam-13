@@ -85,6 +85,7 @@ void StateGame::onUpdate(float const elapsed)
             auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
             for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
+                // TODO move this "parsing" functionality somewhere into unit
                 jt::Vector2f const pos = jt::Vector2f { propsForOneUnit.floats.at("x"),
                     propsForOneUnit.floats.at("y") };
                 int const unitID = propsForOneUnit.ints.at("i");
