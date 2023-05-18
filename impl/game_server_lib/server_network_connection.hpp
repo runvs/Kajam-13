@@ -33,7 +33,6 @@ private:
     asio::ip::tcp::acceptor m_acceptor;
 
     std::thread m_thread;
-    std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;
 
     ReceiveBuffer m_buffer;
 

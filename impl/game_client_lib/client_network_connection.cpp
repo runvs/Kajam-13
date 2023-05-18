@@ -55,9 +55,10 @@ void ClientNetworkConnection::establishConnection()
 void ClientNetworkConnection::startProcessing()
 {
     m_logger.debug("start thread to process async tasks", { "network", "ClientNetworkConnection" });
-    m_workGuard = std::make_unique<asio::executor_work_guard<asio::io_context::executor_type>>(
-        asio::make_work_guard(m_IOContext));
-    m_thread = std::thread { [this]() { m_IOContext.run(); } };
+    m_thread = std::thread { [this]() {
+        auto work_guard = asio::make_work_guard(m_IOContext);
+        m_IOContext.run();
+    } };
     // start listening for messages
     if (!m_alreadyReceiving.exchange(true)) {
         awaitNextMessage();
@@ -94,10 +95,7 @@ void ClientNetworkConnection::handleReceive(
 void ClientNetworkConnection::awaitNextMessage()
 {
     asio::async_read(*m_socket, asio::buffer(m_buffer.size.data(), m_buffer.size.size()),
-        [this](auto ec, auto len) {
-            std::unique_lock<std::mutex> lock { m_bufferMutex };
-            handleReceive(ec, len);
-        });
+        [this](auto ec, auto len) { handleReceive(ec, len); });
 }
 
 void ClientNetworkConnection::sendInitialPing()
@@ -119,7 +117,6 @@ void ClientNetworkConnection::sendAlivePing(int playerId)
 
 void ClientNetworkConnection::stopThread()
 {
-    m_workGuard.reset();
     m_IOContext.stop();
     m_thread.join();
 }

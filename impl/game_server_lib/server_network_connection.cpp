@@ -32,14 +32,15 @@ void ServerNetworkConnection::startProcessing()
 {
     m_logger.info("start thread to process async tasks", { "network", "ServerNetworkConnection" });
     // TODO check if work guard can be instantiated inside thread
-    m_workGuard = std::make_unique<asio::executor_work_guard<asio::io_context::executor_type>>(
-        asio::make_work_guard(m_IOContext));
-    m_thread = std::thread { [this]() { m_IOContext.run(); } };
+
+    m_thread = std::thread { [this]() {
+        auto work_guard = asio::make_work_guard(m_IOContext);
+        m_IOContext.run();
+    } };
 }
 
 ServerNetworkConnection::~ServerNetworkConnection()
 {
-    m_workGuard.reset();
     m_IOContext.stop();
     m_socket->close();
     m_thread.join();
@@ -67,10 +68,8 @@ void ServerNetworkConnection::handleReceive(const asio::error_code& error, std::
 
 void ServerNetworkConnection::awaitNextMessageInternal()
 {
-    m_socket->async_receive(
-        asio::buffer(m_buffer.size.data(), m_buffer.size.size()), [this](auto ec, auto len) {
-            handleReceive(ec, len);
-        });
+    m_socket->async_receive(asio::buffer(m_buffer.size.data(), m_buffer.size.size()),
+        [this](auto ec, auto len) { handleReceive(ec, len); });
 }
 
 void ServerNetworkConnection::handleMessage(

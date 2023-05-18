@@ -43,7 +43,6 @@ private:
     std::shared_ptr<CompressorInterface> m_compressor;
 
     std::thread m_thread;
-    std::unique_ptr<asio::executor_work_guard<asio::io_context::executor_type>> m_workGuard;
 
     std::unique_ptr<asio::ip::tcp::socket> m_socket { nullptr };
     asio::ip::tcp::endpoint m_sendToEndpoint;
@@ -52,7 +51,6 @@ private:
         m_handleInComingMessageCallback;
 
     asio::ip::tcp::endpoint m_receivedFromEndpoint;
-    std::mutex m_bufferMutex;
     ReceiveBuffer m_buffer;
     std::atomic_bool m_alreadyReceiving { false };
 
