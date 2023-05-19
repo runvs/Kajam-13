@@ -14,7 +14,7 @@
 #include <string>
 
 GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compressor)
-    // TODO create threadsafe logger wrapper
+    // TODO create thread safe logger wrapper
     : m_logger { logger }
     , m_compressor { compressor }
     , m_connection { m_compressor, logger }
@@ -28,7 +28,6 @@ GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compres
 void GameServer::update(float elapsed)
 {
     m_connection.update();
-    // Note: remove_if does not work for map
 
     removePlayersIfNoAlivePingReceived(elapsed);
 
@@ -44,7 +43,9 @@ void GameServer::update(float elapsed)
 
 void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
 {
+    // TODO not needed when using TCP
     std::unique_lock<std::shared_mutex> const lock { m_mutex };
+    // Note: remove_if does not work for map
     for (auto it = m_playerData.begin(); it != m_playerData.end();) {
         it->second.timeSinceLastPing += elapsed;
         if (it->second.timeSinceLastPing >= 5.0f) {
@@ -65,6 +66,7 @@ void GameServer::handleMessage(
 {
     m_logger.debug(
         "handleMessage message content: '" + messageContent + "'", { "network", "GameServer" });
+
     Message m = nlohmann::json::parse(messageContent);
     auto const playerId = m.playerId;
     std::unique_lock<std::shared_mutex> lock { m_mutex };
@@ -106,7 +108,9 @@ void GameServer::handleMessage(
 void GameServer::handleMessageInitialPing(
     std::string const& /*messageContent*/, asio::ip::tcp::endpoint const& endpoint)
 {
-    m_logger.debug("initial ping received", { "network", "GameServer" });
+    m_logger.info("initial ping received from " + endpoint.address().to_string() + ":"
+            + std::to_string(endpoint.port()),
+        { "network", "GameServer" });
 
     std::unique_lock<std::shared_mutex> lock { m_mutex };
     for (auto& kvp : m_playerData) {
@@ -135,12 +139,13 @@ void GameServer::handleMessageInitialPing(
     Message ret;
     ret.type = MessageType::PlayerIdResponse;
     ret.playerId = newPlayerId;
-    m_connection.sendMessage(ret, endpoint);
+    m_connection.sendMessageToOne(ret, endpoint);
 }
 
 void GameServer::handleMessageStayAlivePing(
-    std::string const& messageContent, const asio::ip::tcp::endpoint& endpoint)
+    std::string const& messageContent, const asio::ip::tcp::endpoint& /*endpoint*/)
 {
+    // TODO remove as for TCP this is not needed
     Message const m = nlohmann::json::parse(messageContent);
     std::unique_lock<std::shared_mutex> const lock { m_mutex };
     m_playerData[m.playerId].timeSinceLastPing = 0.0f;
@@ -149,11 +154,14 @@ void GameServer::handleMessageStayAlivePing(
 void GameServer::handleMessageRoundReady(
     std::string const& messageContent, const asio::ip::tcp::endpoint& endpoint)
 {
+    m_logger.info("Round Ready received from " + endpoint.address().to_string() + ":"
+            + std::to_string(endpoint.port()),
+        { "network", "GameServer" });
+
     Message const m = nlohmann::json::parse(messageContent);
 
-    std::unique_lock<std::shared_mutex> lock { m_mutex };
     auto const playerId = m.playerId;
-
+    std::unique_lock<std::shared_mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
 

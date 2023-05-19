@@ -1,6 +1,7 @@
 ﻿#include "state_game.hpp"
 #include "client_end_placement_data.hpp"
 #include "input/keyboard/keyboard_defines.hpp"
+#include "json_keys.hpp"
 #include "object_group.hpp"
 #include "server_connection.hpp"
 #include "vector.hpp"
@@ -66,6 +67,7 @@ void StateGame::onUpdate(float const elapsed)
             m_units->push_back(unit);
             add(unit);
             unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+            unit->setPlayerID(m_serverConnection->getPlayerId());
 
             // TODO extend by unit type and other required things
             m_clientEndPlacementData.m_properties.push_back(unit->saveState());
@@ -85,16 +87,13 @@ void StateGame::onUpdate(float const elapsed)
             auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
             for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
-                // TODO move this "parsing" functionality somewhere into unit
-                jt::Vector2f const pos = jt::Vector2f { propsForOneUnit.floats.at("x"),
-                    propsForOneUnit.floats.at("y") };
-                int const unitID = propsForOneUnit.ints.at("i");
+                int const unitID = propsForOneUnit.ints.at(jk::unitID);
                 for (auto& u : *m_units) {
                     auto unit = u.lock();
                     if (unit->getUnitID() != unitID) {
                         continue;
                     }
-                    unit->setPosition(pos);
+                    unit->updateState(propsForOneUnit);
                     break;
                 }
             }

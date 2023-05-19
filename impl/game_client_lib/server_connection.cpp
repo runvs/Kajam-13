@@ -128,3 +128,4 @@ std::vector<std::vector<ObjectProperties>> ServerConnection::getRoundData()
     m_dataReady = false;
     return m_properties;
 }
+int ServerConnection::getPlayerId() const { return m_playerId; }

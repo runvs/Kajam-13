@@ -20,16 +20,21 @@ public:
     void setHandleIncomingMessageCallback(
         std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)> callback);
 
-    void handleReceive(const asio::error_code& error, std::size_t /*bytes_transferred*/);
+    void handleReceive(asio::ip::tcp::socket& socket, const asio::error_code& error, std::size_t);
     void update();
-    void sendMessage(Message const& m, asio::ip::tcp::endpoint sendToEndpoint);
+
+    void sendMessageToAll(Message const& m);
+
+    void sendMessageToOne(Message const& m, asio::ip::tcp::endpoint const& endpoint);
 
 private:
     CompressorInterface& m_compressor;
     jt::LoggerInterface& m_logger;
     asio::io_context m_IOContext;
-    std::unique_ptr<asio::ip::tcp::socket> m_socket { nullptr };
-    asio::ip::tcp::endpoint m_remote_endpoint;
+
+    std::mutex m_socketsMutex;
+    std::vector<std::unique_ptr<asio::ip::tcp::socket>> m_sockets;
+
     asio::ip::tcp::acceptor m_acceptor;
 
     std::thread m_thread;
@@ -40,9 +45,12 @@ private:
         m_handleInComingMessageCallback;
 
     void handleMessage(std::string const& str, asio::ip::tcp::endpoint endpoint);
-    void sendStringTo(std::string const& str, asio::ip::tcp::endpoint sendToEndpoint);
+    void sendStringTo(std::string const& str, asio::ip::tcp::socket& socket);
 
-    void awaitNextMessageInternal();
+    void awaitNextMessageInternal(asio::ip::tcp::socket& socket);
+
+    void handleAccept(asio::error_code ec, asio::ip::tcp::socket&& socket);
+    void awaitNextAccept();
 };
 
 #endif // JAMTEMPLATE_SERVER_NETWORK_CONNECTION_HPP

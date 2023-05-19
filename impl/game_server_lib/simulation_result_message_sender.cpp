@@ -18,14 +18,7 @@ void SimulationResultMessageSender::sendSimulationResults(
         m.type = MessageType::SimulationResult;
         nlohmann::json j = thisProps;
         m.data = j.dump();
-        // TODO Think about not sending one message per tick but combine multiple ticks in one
-        // message
-        for (auto const& e : endpoints) {
-            m_connection.sendMessage(m, e);
-        }
-        // TODO sleep seems to be necessary otherwise client will crash
-        //      - could be race condition with buffer on client side?
-        //      - could be server sending packets too fast for client to process them?
-        //        std::this_thread::sleep_for(std::chrono::milliseconds { 5 });
+
+        m_connection.sendMessageToAll(m);
     }
 }

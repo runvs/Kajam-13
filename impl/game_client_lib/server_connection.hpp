@@ -22,6 +22,8 @@ public:
     bool isRoundDataReady() const;
     std::vector<std::vector<ObjectProperties>> getRoundData();
 
+    int getPlayerId() const;
+
 private:
     jt::LoggerInterface& m_logger;
     int m_playerId = -1;

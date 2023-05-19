@@ -12,18 +12,23 @@
 
 class Unit : public jt::GameObject, public jt::CountedObj<Unit> {
 public:
+    // needed for unit id counting
+    // TODO remove counting in constructor and create a UnitPlacementManager
+    // TODO unitIDs should/could be issued by the server.
+    // TODO Or this is a combination of playerid+unitid
     Unit();
     // TODO make this an interface & base class?
     void updateState(ObjectProperties const& props);
+    ObjectProperties saveState() const;
 
     void setPosition(jt::Vector2f const& pos);
-
-    ObjectProperties saveState() const;
     int getUnitID() const;
+    void setPlayerID(int pid);
 
 private:
     std::shared_ptr<jt::Shape> m_shape;
     int m_unitID;
+    int m_playerID { 0 };
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

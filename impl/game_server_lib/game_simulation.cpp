@@ -1,9 +1,11 @@
 #include "game_simulation.hpp"
-#include "object_properties.hpp"
-#include "vector.hpp"
 #include <game_properties.hpp>
+#include <json_keys.hpp>
+#include <object_properties.hpp>
 #include <server_unit.hpp>
+#include <vector.hpp>
 #include <memory>
+
 GameSimulation::GameSimulation(jt::LoggerInterface& logger)
     : m_logger { logger }
 {
@@ -14,11 +16,11 @@ void GameSimulation::updateSimulationForNewRound(std::map<int, PlayerInfo> const
     m_latestPlayerData = playerData;
     m_simulationObjects.clear();
     for (auto const& kvp : m_latestPlayerData) {
-        for (auto const& props : kvp.second.roundEndPlacementData.m_properties) {
+        for (auto& props : kvp.second.roundEndPlacementData.m_properties) {
             auto obj = std::make_unique<ServerUnit>();
-            jt::Vector2f const pos { props.floats.at("x"), props.floats.at("y") };
-            obj->setUnitID(props.ints.at("i"));
-            obj->setPosition(pos);
+            // TODO make server unit parse properties itself. Can be moved to common interface/class
+            // with "Unit" class from client
+            obj->updateState(props);
             m_simulationObjects.emplace_back(std::move(obj));
         }
     }
@@ -34,7 +36,7 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
             obj->update(timePerUpdate);
 
             auto data = obj->saveState();
-            data.ints["simulationTick"] = i;
+            data.ints[jk::simulationTick] = i;
             propertiesForAllUnitsForOneRound.push_back(data);
         }
         propertiesForAllUnitsForAllRounds.push_back(propertiesForAllUnitsForOneRound);

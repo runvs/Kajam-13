@@ -1,19 +1,20 @@
 
 #include "message.hpp"
+#include <json_keys.hpp>
 
 void to_json(nlohmann::json& j, const Message& message)
 {
-    j = nlohmann::json { { "t", message.type }, { "pid", message.playerId } };
+    j = nlohmann::json { { jk::messageType, message.type }, { jk::playerID, message.playerId } };
     if (!message.data.empty()) {
-        j["d"] = message.data;
+        j[jk::messageData] = message.data;
     }
 }
 
 void from_json(const nlohmann::json& j, Message& message)
 {
-    j.at("t").get_to(message.type);
-    if (j.count("d")) {
-        j.at("d").get_to(message.data);
+    j.at(jk::messageType).get_to(message.type);
+    if (j.count(jk::messageData)) {
+        j.at(jk::messageData).get_to(message.data);
     }
-    j.at("pid").get_to(message.playerId);
+    j.at(jk::playerID).get_to(message.playerId);
 }
