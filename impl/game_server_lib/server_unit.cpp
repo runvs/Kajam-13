@@ -17,8 +17,12 @@ ObjectProperties ServerUnit::saveState() const
 void ServerUnit::update(float elapsed)
 {
     float const speed = 16.0f;
-    m_pos.x += elapsed * speed;
-
+    // TODO use any smart logic here about walking to the closest target and so on.
+    if (m_playerID == 0) {
+        m_pos.x += elapsed * speed;
+    } else {
+        m_pos.x -= elapsed * speed;
+    }
     m_age += elapsed;
     m_pos.y += elapsed * 40 * cos(m_age * 2);
 }

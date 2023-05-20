@@ -4,6 +4,7 @@
 #include "color/color.hpp"
 #include "color/palette.hpp"
 #include "vector.hpp"
+#include <color/color_factory.hpp>
 #include <compression/compressor_interface.hpp>
 #include <memory>
 #include <string>
@@ -30,6 +31,9 @@ public:
     static jt::Color PalleteFrontHighlight() { return GP::getPalette().getColor(1); }
     static jt::Color PaletteFontShadow() { return GP::getPalette().getColor(6); }
     static jt::Color PaletteFontCredits() { return GP::getPalette().getColor(2); }
+
+    static jt::Color ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4"); }
+    static jt::Color ColorPlayer1() { return jt::ColorFactory::fromHexString("#f57979"); }
 
     static jt::Palette getPalette();
 

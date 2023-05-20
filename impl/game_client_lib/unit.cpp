@@ -1,5 +1,6 @@
 #include "unit.hpp"
 #include "drawable_helpers.hpp"
+#include "game_properties.hpp"
 #include "object_properties.hpp"
 #include "vector.hpp"
 #include <game_interface.hpp>
@@ -25,6 +26,11 @@ void Unit::updateState(ObjectProperties const& props)
         return;
     }
     m_shape->setPosition({ props.floats.at(jk::positionX), props.floats.at(jk::positionY) });
+    if (props.ints.at(jk::playerID) == 0) {
+        m_shape->setColor(GP::ColorPlayer0());
+    } else {
+        m_shape->setColor(GP::ColorPlayer1());
+    }
 }
 
 void Unit::setPosition(jt::Vector2f const& pos) { m_shape->setPosition(pos); }

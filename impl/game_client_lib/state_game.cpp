@@ -73,6 +73,18 @@ void StateGame::onUpdate(float const elapsed)
             m_clientEndPlacementData.m_properties.push_back(unit->saveState());
         }
 
+        // TODO remove this
+        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)) {
+            auto unit = std::make_shared<Unit>();
+            m_units->push_back(unit);
+            add(unit);
+            unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+            unit->setPlayerID(m_serverConnection->getPlayerId() + 1);
+
+            // TODO extend by unit type and other required things
+            m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+        }
+
         // Waiting state for data
         if (m_serverConnection->isRoundDataReady()) {
             m_properties = m_serverConnection->getRoundData();
