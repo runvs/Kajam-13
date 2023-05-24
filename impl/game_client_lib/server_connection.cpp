@@ -112,7 +112,7 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     j_data.get_to(props);
     std::unique_lock<std::mutex> lock { m_dataMutex };
     m_properties.insert(m_properties.end(), props.begin(), props.end());
-    m_logger.debug("received tick" + std::to_string(m_properties.size()) + " / "
+    m_logger.debug("received tick " + std::to_string(m_properties.size()) + " / "
         + std::to_string(GP::NumberOfStepsPerRound()));
     if (m_properties.size() == GP::NumberOfStepsPerRound()) {
         m_logger.info("received all simulation results");

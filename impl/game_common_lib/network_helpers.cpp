@@ -10,28 +10,19 @@ void NetworkHelpers::freeSendString(
     asio::error_code error;
 
     // write size information of string with fixed length
-    std::stringstream header_str;
-    header_str << std::setfill('0') << std::setw(32) << str.size();
-    std::string const header { header_str.str() };
-    asio::async_write(socket, asio::buffer(header, 32),
-        // Note: keep payload alive
-        [header = std::move(header), str = std::move(str), &logger, &socket](
-            auto const& error, auto /*unused*/) {
+    std::stringstream buffer;
+    buffer << std::setfill(' ') << std::setw(32) << str.size() << str;
+    logger.verbose("sending buffer: " + buffer.str());
+    // Note: keep payload alive
+    auto payload_ptr = std::make_shared<std::string>(buffer.str());
+    asio::async_write(socket, asio::buffer(*payload_ptr, payload_ptr->size()),
+        [payload_ptr, &logger, &socket](auto const& error, auto size) {
             if (error) {
                 logger.error(error.message(), { "network", "freeSendString" });
                 socket.close();
             } else {
-                // write actual string with dynamic length
-                asio::async_write(socket, asio::buffer(str),
-                    [str = std::move(str), &logger, &socket](auto const& error, auto size) {
-                        if (error) {
-                            logger.error(error.message(), { "network", "freeSendString" });
-                            socket.close();
-                        } else {
-                            logger.debug("message sent with size: " + std::to_string(size),
-                                { "network", "freeSendString" });
-                        }
-                    });
+                logger.debug("message sent with size: " + std::to_string(size),
+                    { "network", "freeSendString" });
             }
         });
 }
@@ -55,7 +46,18 @@ void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_
         throw std::invalid_argument { "message too big." };
     }
     // TODO could be async
-    asio::read(socket, asio::buffer(buffer.data.data(), bytesToRead));
+    asio::error_code ec;
+    auto const bytesRead = asio::read(socket, asio::buffer(buffer.data.data(), bytesToRead), ec);
+    if (bytesRead != bytesToRead) {
+        logger.fatal("bytes to read and bytes read do not match");
+        socket.close();
+        return;
+    }
+    if (ec) {
+        logger.error("read failed with message " + ec.message());
+        socket.close();
+        return;
+    }
 
     // Note that recv_buffer might be a long buffer, but we only use the first "bytesToRead" bytes
     // from it.
