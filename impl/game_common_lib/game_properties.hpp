@@ -41,7 +41,6 @@ public:
     static int PhysicPositionIterations();
     static jt::Vector2f PlayerSize();
     static std::size_t NumberOfStepsPerRound();
-    static std::shared_ptr<CompressorInterface> GetCompressor();
 };
 
 #endif

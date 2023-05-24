@@ -10,7 +10,6 @@
 
 namespace NetworkHelpers {
 
-// TODO pass logger instead of cout
 void freeSendString(
     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger);
 

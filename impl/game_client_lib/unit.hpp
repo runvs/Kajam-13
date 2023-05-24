@@ -2,12 +2,13 @@
 #ifndef JAMTEMPLATE_UNIT_HPP
 #define JAMTEMPLATE_UNIT_HPP
 
-#include "counted_object.hpp"
-#include "game_object.hpp"
-#include "shape.hpp"
-#include "vector.hpp"
+#include <bar.hpp>
+#include <counted_object.hpp>
+#include <game_object.hpp>
 #include <nlohmann.hpp>
 #include <object_properties.hpp>
+#include <shape.hpp>
+#include <vector.hpp>
 #include <memory>
 
 class Unit : public jt::GameObject, public jt::CountedObj<Unit> {
@@ -29,7 +30,9 @@ private:
     std::shared_ptr<jt::Shape> m_shape;
     int m_unitID;
     int m_playerID { 0 };
-    // TODO add HP and display it
+    float m_hpMax { 100.0f };
+    float m_hp { 100.0f };
+    std::shared_ptr<jt::Bar> m_hpBar;
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

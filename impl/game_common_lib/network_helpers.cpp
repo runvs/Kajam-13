@@ -1,8 +1,5 @@
-
 #include "network_helpers.hpp"
 #include <iomanip>
-
-constexpr auto BUF_LEN_SIZE = 32 + 1 /*terminator*/;
 
 void NetworkHelpers::freeSendString(
     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
@@ -45,7 +42,6 @@ void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_
     if (bytesToRead > buffer.data.size()) {
         throw std::invalid_argument { "message too big." };
     }
-    // TODO could be async
     asio::error_code ec;
     auto const bytesRead = asio::read(socket, asio::buffer(buffer.data.data(), bytesToRead), ec);
     if (bytesRead != bytesToRead) {

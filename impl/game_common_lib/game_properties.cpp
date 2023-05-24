@@ -38,8 +38,3 @@ int GP::PhysicVelocityIterations() { return 20; }
 int GP::PhysicPositionIterations() { return 20; }
 jt::Vector2f GP::PlayerSize() { return jt::Vector2f { 16.0f, 16.0f }; }
 std::size_t GP::NumberOfStepsPerRound() { return 6000; }
-std::shared_ptr<CompressorInterface> GP::GetCompressor()
-{
-    // TODO move to DI
-    return std::make_shared<CompressorImpl>();
-}

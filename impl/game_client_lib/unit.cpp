@@ -12,11 +12,27 @@ void Unit::doCreate()
 {
     m_shape = jt::dh::createShapeRect(
         jt::Vector2f { 16.0f, 16.0f }, jt::colors::Black, textureManager());
+
+    m_hpBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
+    m_hpBar->setMaxValue(m_hpMax);
+    m_hpBar->setBackColor(jt::colors::Gray);
+    m_hpBar->setFrontColor(jt::colors::Green);
 }
 
-void Unit::doUpdate(float const elapsed) { m_shape->update(elapsed); }
+void Unit::doUpdate(float const elapsed)
+{
+    m_shape->update(elapsed);
 
-void Unit::doDraw() const { m_shape->draw(renderTarget()); }
+    m_hpBar->setCurrentValue(m_hp / 2);
+    m_hpBar->setPosition(m_shape->getPosition() + jt::Vector2f { 0.0f, -6.0f });
+    m_hpBar->update(elapsed);
+}
+
+void Unit::doDraw() const
+{
+    m_shape->draw(renderTarget());
+    m_hpBar->draw(renderTarget());
+}
 
 void Unit::updateState(ObjectProperties const& props)
 {
