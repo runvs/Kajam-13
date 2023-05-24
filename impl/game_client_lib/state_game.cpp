@@ -60,6 +60,8 @@ void StateGame::onUpdate(float const elapsed)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
             endGame();
         }
+        // TODO wait for all players to connect before being able to place units
+        // TODO enable multiple rounds, including resetting units
         {
             // TODO only do this in "placement mode"
             if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
@@ -97,6 +99,7 @@ void StateGame::onUpdate(float const elapsed)
         if (m_properties.size() != 0) {
             if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
                 m_tickId++;
+                // TODO end round and reset to initial setup
             }
             auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 

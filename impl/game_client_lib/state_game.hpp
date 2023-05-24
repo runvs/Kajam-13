@@ -39,7 +39,6 @@ private:
     std::shared_ptr<Hud> m_hud { nullptr };
     std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
 
-    // TODO make vector of Units
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
 
     ClientEndPlacementData m_clientEndPlacementData;
