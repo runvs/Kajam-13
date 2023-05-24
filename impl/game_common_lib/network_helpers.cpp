@@ -5,7 +5,7 @@
 constexpr auto BUF_LEN_SIZE = 32 + 1 /*terminator*/;
 
 void NetworkHelpers::freeSendString(
-    std::string str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
+    std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
 {
     asio::error_code error;
 

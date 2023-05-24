@@ -136,7 +136,7 @@ void ClientNetworkConnection::sendMessage(const Message& m)
 void ClientNetworkConnection::sendString(const std::string& str)
 {
     std::string compressed = m_compressor->compress(str);
-    NetworkHelpers::freeSendString(std::move(compressed), *m_socket, m_logger);
+    NetworkHelpers::freeSendString(compressed, *m_socket, m_logger);
 }
 
 void ClientNetworkConnection::setHandleIncomingMessageCallback(
