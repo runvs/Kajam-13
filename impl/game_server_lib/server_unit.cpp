@@ -10,7 +10,7 @@ ObjectProperties ServerUnit::saveState() const
     props.ints[jk::playerID] = m_playerID;
     props.floats[jk::positionX] = m_pos.x;
     props.floats[jk::positionY] = m_pos.y;
-    // TODO add HP
+    props.floats[jk::hpCurrent] = m_hp;
 
     return props;
 }
@@ -32,6 +32,7 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
 
     m_age += elapsed;
     m_pos.y += elapsed * 40 * cos(m_age * 2);
+    m_hp -= elapsed * 2.0f;
 }
 
 void ServerUnit::setPosition(jt::Vector2f const& pos) { m_pos = pos; }

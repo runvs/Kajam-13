@@ -23,7 +23,7 @@ void Unit::doUpdate(float const elapsed)
 {
     m_shape->update(elapsed);
 
-    m_hpBar->setCurrentValue(m_hp / 2);
+    m_hpBar->setCurrentValue(m_hp);
     m_hpBar->setPosition(m_shape->getPosition() + jt::Vector2f { 0.0f, -6.0f });
     m_hpBar->update(elapsed);
 }
@@ -47,6 +47,7 @@ void Unit::updateState(ObjectProperties const& props)
     } else {
         m_shape->setColor(GP::ColorPlayer1());
     }
+    m_hp = props.floats.at(jk::hpCurrent);
 }
 
 void Unit::setPosition(jt::Vector2f const& pos) { m_shape->setPosition(pos); }
