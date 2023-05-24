@@ -154,5 +154,5 @@ void ServerNetworkConnection::sendMessageToOne(
 void ServerNetworkConnection::sendStringTo(std::string const& str, asio::ip::tcp::socket& socket)
 {
     std::string const compressed = m_compressor.compress(str);
-    NetworkHelpers::freeSendString(compressed, socket, m_logger);
+    NetworkHelpers::freeSendString(std::move(compressed), socket, m_logger);
 }

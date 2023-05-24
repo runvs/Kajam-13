@@ -1,27 +1,39 @@
 
 #include "network_helpers.hpp"
+#include <iomanip>
+
+constexpr auto BUF_LEN_SIZE = 32 + 1 /*terminator*/;
+
 void NetworkHelpers::freeSendString(
-     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
+    std::string str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
 {
     asio::error_code error;
 
     // write size information of string with fixed length
-    std::string header;
-    header.resize(32 + 1);
-    std::sprintf(header.data(), "%32lu", static_cast<unsigned long>(str.size()));
-    // TODO should be async
-    asio::write(socket, asio::buffer(header, 32), error);
-    // TODO check error value
-
-    // write actual string with dynamic length
-    auto const size = asio::write(socket, asio::buffer(str), error);
-    if (error) {
-        logger.error(error.message(), { "network", "freeSendString" });
-        socket.close();
-    } else {
-        logger.debug(
-            "message sent with size: " + std::to_string(size), { "network", "freeSendString" });
-    }
+    std::stringstream header_str;
+    header_str << std::setfill('0') << std::setw(32) << str.size();
+    std::string const header { header_str.str() };
+    asio::async_write(socket, asio::buffer(header, 32),
+        // Note: keep payload alive
+        [header = std::move(header), str = std::move(str), &logger, &socket](
+            auto const& error, auto /*unused*/) {
+            if (error) {
+                logger.error(error.message(), { "network", "freeSendString" });
+                socket.close();
+            } else {
+                // write actual string with dynamic length
+                asio::async_write(socket, asio::buffer(str),
+                    [str = std::move(str), &logger, &socket](auto const& error, auto size) {
+                        if (error) {
+                            logger.error(error.message(), { "network", "freeSendString" });
+                            socket.close();
+                        } else {
+                            logger.debug("message sent with size: " + std::to_string(size),
+                                { "network", "freeSendString" });
+                        }
+                    });
+            }
+        });
 }
 
 void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_t bytes_transferred,
