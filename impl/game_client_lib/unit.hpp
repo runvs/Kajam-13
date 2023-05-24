@@ -17,7 +17,7 @@ public:
     // TODO unitIDs should/could be issued by the server.
     // TODO Or this is a combination of playerid+unitid
     Unit();
-    // TODO make this an interface & base class?
+    // TODO make this an interface & base class? Or even better a UnitInfo class
     void updateState(ObjectProperties const& props);
     ObjectProperties saveState() const;
 
@@ -29,6 +29,7 @@ private:
     std::shared_ptr<jt::Shape> m_shape;
     int m_unitID;
     int m_playerID { 0 };
+    // TODO add HP and display it
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

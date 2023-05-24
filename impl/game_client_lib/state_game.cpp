@@ -60,29 +60,31 @@ void StateGame::onUpdate(float const elapsed)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
             endGame();
         }
+        {
+            // TODO only do this in "placement mode"
+            if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
+                auto unit = std::make_shared<Unit>();
+                m_units->push_back(unit);
+                add(unit);
+                // TODO only allow placement on player's side
+                unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+                unit->setPlayerID(m_serverConnection->getPlayerId());
 
-        // TODO only do this in "placement mode"
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
-            auto unit = std::make_shared<Unit>();
-            m_units->push_back(unit);
-            add(unit);
-            unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
-            unit->setPlayerID(m_serverConnection->getPlayerId());
+                // TODO extend by unit type and other required things
+                m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+            }
 
-            // TODO extend by unit type and other required things
-            m_clientEndPlacementData.m_properties.push_back(unit->saveState());
-        }
+            // TODO remove this
+            if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)) {
+                auto unit = std::make_shared<Unit>();
+                m_units->push_back(unit);
+                add(unit);
+                unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+                unit->setPlayerID(m_serverConnection->getPlayerId() + 1);
 
-        // TODO remove this
-        if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)) {
-            auto unit = std::make_shared<Unit>();
-            m_units->push_back(unit);
-            add(unit);
-            unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
-            unit->setPlayerID(m_serverConnection->getPlayerId() + 1);
-
-            // TODO extend by unit type and other required things
-            m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+                // TODO extend by unit type and other required things
+                m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+            }
         }
 
         // Waiting state for data
