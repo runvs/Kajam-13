@@ -63,12 +63,12 @@ void ServerConnection::readyRound(ClientEndPlacementData const& data)
 void ServerConnection::handleMessage(
     std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint)
 {
-
     m_logger.verbose("handleMessage", { "network", "ServerConnection" });
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message m = j;
-    // TODO discard messages not coming from server ip/port, could also be done in
+    // TODO discard messages not coming from expected server ip/port, could also be done in
     // client_network_connection
+    // TODO check if this is even needed for TCP messages
 
     if (m.type == MessageType::PlayerIdResponse) {
         handleMessagePlayerIdResponse(messageContent);

@@ -42,6 +42,12 @@ ClientNetworkConnection::~ClientNetworkConnection()
 
 void ClientNetworkConnection::establishConnection()
 {
+    if (m_socket) {
+        m_logger.error("connection was already established, discarding second connection attempt",
+            { "network", "ClientNetworkConnection" });
+        return;
+    }
+
     asio::ip::tcp::resolver resolver(m_IOContext);
     m_socket = std::make_unique<asio::ip::tcp::socket>(m_IOContext,
         asio::ip::tcp::endpoint { NetworkProperties::NetworkProtocolType(), m_clientPort });

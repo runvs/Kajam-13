@@ -43,14 +43,14 @@ private:
 
     ClientEndPlacementData m_clientEndPlacementData;
 
-    // TODO make this into a class
+    // TODO could be converted into a class?
     std::vector<std::vector<ObjectProperties>> m_properties;
 
     bool m_running { true };
     bool m_hasEnded { false };
 
     int m_round { 1 };
-    int m_tickId { 0 };
+    std::size_t m_tickId { 0 };
 
     void onCreate() override;
     void onEnter() override;
