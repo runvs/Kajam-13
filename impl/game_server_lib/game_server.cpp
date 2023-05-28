@@ -136,10 +136,18 @@ void GameServer::handleMessageInitialPing(
     m_playerData[newPlayerId].endpoint = endpoint;
     lock.unlock();
 
-    Message ret;
-    ret.type = MessageType::PlayerIdResponse;
-    ret.playerId = newPlayerId;
-    m_connection.sendMessageToOne(ret, endpoint);
+    {
+        Message ret;
+        ret.type = MessageType::PlayerIdResponse;
+        ret.playerId = newPlayerId;
+        m_connection.sendMessageToOne(ret, endpoint);
+    }
+    // inform all players that the requested number of Players is reached
+    if (m_playerData.size() == 2) {
+        Message ret;
+        ret.type = MessageType::AllPlayersConnected;
+        m_connection.sendMessageToAll(ret);
+    }
 }
 
 void GameServer::handleMessageStayAlivePing(

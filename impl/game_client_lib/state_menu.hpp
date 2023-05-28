@@ -72,10 +72,6 @@ private:
 
     void updateDrawables(const float& elapsed);
 
-    void checkForTransitionToStateGame();
-
-    void startTransitionToStateGame();
-
     void onDraw() const override;
 
     void createTextExplanation();

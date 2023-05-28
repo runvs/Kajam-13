@@ -20,10 +20,11 @@ private:
     std::shared_ptr<CompressorInterface> m_compressor { nullptr };
 
     mutable std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
-    // TODO load default from config file?
     mutable std::string m_ip { NetworkProperties::DefaultIPAddress() };
     mutable int m_serverPort { NetworkProperties::DefaultServerPort() };
     mutable int m_clientPort { NetworkProperties::DefaultClientPort() };
+    mutable bool m_addBotAsPlayerZero { false };
+    mutable bool m_addBotAsPlayerOne { false };
 };
 
 #endif // JAMTEMPLATE_SERVER_CONNECTOR_HPP

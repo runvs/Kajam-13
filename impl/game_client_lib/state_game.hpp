@@ -24,11 +24,19 @@ class Vignette;
 
 class Hud;
 
+enum class InternalState {
+    WaitForAllPlayers,
+    PlaceUnits,
+    WaitForSimulationResults,
+    Playback,
+};
+
 class StateGame : public jt::GameState {
 public:
     std::string getName() const override;
 
-    void setConnection(std::shared_ptr<ClientNetworkConnection> connection);
+    void setConnection(std::shared_ptr<ClientNetworkConnection> connection, bool botAsPlayerZero,
+        bool botAsPlayerOne);
 
 private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
@@ -43,8 +51,13 @@ private:
 
     ClientEndPlacementData m_clientEndPlacementData;
 
+    mutable InternalState m_internalState { InternalState::WaitForAllPlayers };
+
     // TODO could be converted into a class?
     std::vector<std::vector<ObjectProperties>> m_properties;
+
+    mutable bool m_addBotAsPlayerZero { false };
+    mutable bool m_addBotAsPlayerOne { false };
 
     bool m_running { true };
     bool m_hasEnded { false };
@@ -60,6 +73,7 @@ private:
     void endGame();
 
     void createPlayer();
+    void placeUnits();
 };
 
 #endif

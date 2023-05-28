@@ -66,12 +66,11 @@ void ServerConnection::handleMessage(
     m_logger.verbose("handleMessage", { "network", "ServerConnection" });
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message m = j;
-    // TODO discard messages not coming from expected server ip/port, could also be done in
-    // client_network_connection
-    // TODO check if this is even needed for TCP messages
 
     if (m.type == MessageType::PlayerIdResponse) {
         handleMessagePlayerIdResponse(messageContent);
+    } else if (m.type == MessageType::AllPlayersConnected) {
+        handleMessageAllPlayersConnected();
     } else if (m.type == MessageType::SimulationResult) {
         handleMessageSimulationResult(messageContent);
     } else {
@@ -97,6 +96,7 @@ void ServerConnection::handleMessagePlayerIdResponse(std::string const& messageC
     m_logger.info(
         "Received Player Id: " + std::to_string(m_playerId), { "network", "ServerConnection" });
 }
+void ServerConnection::handleMessageAllPlayersConnected() { m_allPlayersConnected.store(true); }
 
 void ServerConnection::discard(std::string const& messageContent)
 {
@@ -129,3 +129,4 @@ std::vector<std::vector<ObjectProperties>> ServerConnection::getRoundData()
     return m_properties;
 }
 int ServerConnection::getPlayerId() const { return m_playerId; }
+bool ServerConnection::areAllPlayersConnected() const { return m_allPlayersConnected; }

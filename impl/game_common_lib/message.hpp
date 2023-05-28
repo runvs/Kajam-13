@@ -7,8 +7,10 @@
 enum class MessageType : std::uint8_t {
     InitialPing,
     PlayerIdResponse,
+    AddBot,
     // stay alive ping not needed with TCP
     StayAlivePing,
+    AllPlayersConnected,
     RoundReady,
     SimulationResult
 };

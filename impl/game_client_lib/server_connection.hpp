@@ -11,7 +11,6 @@
 
 class ServerConnection : public jt::GameObject {
 public:
-    // TODO this class will need mutexes
     explicit ServerConnection(jt::LoggerInterface& logger);
     ~ServerConnection();
     void setConnection(std::shared_ptr<ClientNetworkConnection> connection);
@@ -19,6 +18,7 @@ public:
 
     void readyRound(ClientEndPlacementData const& data);
 
+    bool areAllPlayersConnected() const;
     bool isRoundDataReady() const;
     std::vector<std::vector<ObjectProperties>> getRoundData();
 
@@ -31,6 +31,8 @@ private:
 
     float m_alivePingTimer = 0.5f;
 
+    std::atomic_bool m_allPlayersConnected { false };
+
     std::atomic_bool m_dataReady { false };
     std::mutex m_dataMutex;
     std::vector<std::vector<ObjectProperties>> m_properties;
@@ -40,6 +42,7 @@ private:
     void handleMessage(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessagePlayerIdResponse(std::string const& messageContent);
     void handleMessageSimulationResult(std::string const& messageContent);
+    void handleMessageAllPlayersConnected();
     void discard(std::string const& messageContent);
 };
 

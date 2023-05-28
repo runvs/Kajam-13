@@ -195,11 +195,7 @@ void StateMenu::createTweenCreditsPosition()
     add(tweenVersion);
 }
 
-void StateMenu::onUpdate(float const elapsed)
-{
-    updateDrawables(elapsed);
-    checkForTransitionToStateGame();
-}
+void StateMenu::onUpdate(float const elapsed) { updateDrawables(elapsed); }
 
 void StateMenu::updateDrawables(const float& elapsed)
 {
@@ -211,27 +207,6 @@ void StateMenu::updateDrawables(const float& elapsed)
     m_textVersion->update(elapsed);
     m_overlay->update(elapsed);
     m_vignette->update(elapsed);
-}
-
-void StateMenu::checkForTransitionToStateGame()
-{
-    auto const keysToTriggerTransition = { jt::KeyCode::Space, jt::KeyCode::Enter };
-
-    if (std::any_of(keysToTriggerTransition.begin(), keysToTriggerTransition.end(),
-            [this](auto const k) { return getGame()->input().keyboard()->justPressed(k); })) {
-        startTransitionToStateGame();
-    }
-}
-
-void StateMenu::startTransitionToStateGame()
-{
-    if (!m_started) {
-        m_started = true;
-        getGame()->stateManager().storeCurrentState("menu");
-        auto const state = std::make_shared<StateGame>();
-        state->setConnection(m_connector->getConnection());
-        getGame()->stateManager().switchState(state);
-    }
 }
 
 void StateMenu::onDraw() const

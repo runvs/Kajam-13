@@ -2,6 +2,7 @@
 #include "client_end_placement_data.hpp"
 #include "input/keyboard/keyboard_defines.hpp"
 #include "json_keys.hpp"
+#include "message.hpp"
 #include "object_group.hpp"
 #include "server_connection.hpp"
 #include "vector.hpp"
@@ -13,7 +14,9 @@
 #include <shape.hpp>
 #include <state_menu.hpp>
 #include "imgui.h"
+#include "zlib.h"
 #include <memory>
+#include <stdexcept>
 
 void StateGame::onCreate()
 {
@@ -41,9 +44,22 @@ void StateGame::onCreate()
     // StateGame will call drawObjects itself.
     setAutoDraw(false);
 
+    if (m_addBotAsPlayerZero) {
+        Message m;
+        m.type = MessageType::AddBot;
+        m_connection->sendMessage(m);
+    }
     m_serverConnection = std::make_shared<ServerConnection>(getGame()->logger());
     m_serverConnection->setConnection(m_connection);
     add(m_serverConnection);
+    if (m_addBotAsPlayerOne) {
+        if (m_addBotAsPlayerZero) {
+            getGame()->logger().warning("Create game with two bots", { "StateGame", "Bots" });
+        }
+        Message m;
+        m.type = MessageType::AddBot;
+        m_connection->sendMessage(m);
+    }
 }
 
 void StateGame::onEnter() { }
@@ -60,65 +76,78 @@ void StateGame::onUpdate(float const elapsed)
             && getGame()->input().keyboard()->pressed(jt::KeyCode::Escape)) {
             endGame();
         }
-        // TODO wait for all players to connect before being able to place units
-        // TODO enable multiple rounds, including resetting units
-        {
-            // TODO only do this in "placement mode"
-            if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
-                auto unit = std::make_shared<Unit>();
-                m_units->push_back(unit);
-                add(unit);
-                // TODO only allow placement on player's side
-                unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
-                unit->setPlayerID(m_serverConnection->getPlayerId());
 
-                // TODO extend by unit type and other required things
-                m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+        if (m_internalState == InternalState::WaitForAllPlayers) {
+            if (m_serverConnection->areAllPlayersConnected()) {
+                m_internalState = InternalState::PlaceUnits;
+            }
+        } else if (m_internalState == InternalState::PlaceUnits) {
+            placeUnits();
+            // transition to "WaitForSimulationResults" is done in onDraw for button push;
+        } else if (m_internalState == InternalState::WaitForSimulationResults) {
+            if (m_serverConnection->isRoundDataReady()) {
+                m_properties = m_serverConnection->getRoundData();
+                m_tickId = 0;
+                m_internalState = InternalState::Playback;
             }
 
-            // TODO remove this
-            if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)) {
-                auto unit = std::make_shared<Unit>();
-                m_units->push_back(unit);
-                add(unit);
-                unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
-                unit->setPlayerID(m_serverConnection->getPlayerId() + 1);
+        } else if (m_internalState == InternalState::Playback) {
+            // TODO only do this in "running mode"
+            if (m_properties.size() != 0) {
+                if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
+                    m_tickId++;
+                    // TODO end round and reset to initial setup
+                }
+                auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
-                // TODO extend by unit type and other required things
-                m_clientEndPlacementData.m_properties.push_back(unit->saveState());
-            }
-        }
-
-        // Waiting state for data
-        if (m_serverConnection->isRoundDataReady()) {
-            m_properties = m_serverConnection->getRoundData();
-            m_tickId = 0;
-        }
-
-        // TODO only do this in "running mode"
-        if (m_properties.size() != 0) {
-            if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
-                m_tickId++;
-                // TODO end round and reset to initial setup
-            }
-            auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
-
-            for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
-                int const unitID = propsForOneUnit.ints.at(jk::unitID);
-                for (auto& u : *m_units) {
-                    auto unit = u.lock();
-                    if (unit->getUnitID() != unitID) {
-                        continue;
+                for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
+                    int const unitID = propsForOneUnit.ints.at(jk::unitID);
+                    for (auto& u : *m_units) {
+                        auto unit = u.lock();
+                        if (unit->getUnitID() != unitID) {
+                            continue;
+                        }
+                        unit->updateState(propsForOneUnit);
+                        break;
                     }
-                    unit->updateState(propsForOneUnit);
-                    break;
                 }
             }
+            // TODO transition to next internal state
         }
     }
 
     m_background->update(elapsed);
     m_vignette->update(elapsed);
+}
+void StateGame::placeUnits()
+{
+    if (m_internalState != InternalState::PlaceUnits) {
+        throw std::logic_error { "placeUnits called when not in placeUnits state" };
+    }
+
+    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
+        auto unit = std::make_shared<Unit>();
+        m_units->push_back(unit);
+        add(unit);
+        // TODO only allow placement on player's side
+        unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+        unit->setPlayerID(m_serverConnection->getPlayerId());
+
+        // TODO extend by unit type and other required things
+        m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+    }
+
+    // TODO remove this
+    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)) {
+        auto unit = std::make_shared<Unit>();
+        m_units->push_back(unit);
+        add(unit);
+        unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+        unit->setPlayerID(m_serverConnection->getPlayerId() + 1);
+
+        // TODO extend by unit type and other required things
+        m_clientEndPlacementData.m_properties.push_back(unit->saveState());
+    }
 }
 
 void StateGame::onDraw() const
@@ -133,6 +162,7 @@ void StateGame::onDraw() const
     ImGui::Separator();
     if (ImGui::Button("ready")) {
         m_serverConnection->readyRound(m_clientEndPlacementData);
+        m_internalState = InternalState::WaitForSimulationResults;
     }
     ImGui::End();
 }
@@ -151,7 +181,10 @@ void StateGame::endGame()
 
 std::string StateGame::getName() const { return "State Game"; }
 
-void StateGame::setConnection(std::shared_ptr<ClientNetworkConnection> connection)
+void StateGame::setConnection(
+    std::shared_ptr<ClientNetworkConnection> connection, bool botAsPlayerZero, bool botAsPlayerOne)
 {
     m_connection = connection;
+    m_addBotAsPlayerZero = botAsPlayerZero;
+    m_addBotAsPlayerOne = botAsPlayerOne;
 }
