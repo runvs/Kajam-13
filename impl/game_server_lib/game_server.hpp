@@ -20,13 +20,15 @@ private:
     // TODO split into player and spectators
     std::shared_mutex m_mutex;
     std::map<int, PlayerInfo> m_playerData;
+    std::map<int, PlayerInfo> m_botData;
 
     int m_round { 1 };
-    int m_connectedPlayers { 0 };
 
     std::atomic_bool m_allPlayersReady { false };
     std::atomic_bool m_simulationStarted { false };
     std::atomic_bool m_simulationReady { false };
+
+    int getNumberOfConnectedPlayers() const;
 
     // explicit copy of playerdata is desired
     void startRoundSimulation(std::map<int, PlayerInfo> const& playerData);
@@ -42,6 +44,7 @@ private:
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void removePlayersIfNoAlivePingReceived(float elapsed);
+    void handleMessageAddBot();
 };
 
 #endif // JAMTEMPLATE_GAME_SERVER_HPP

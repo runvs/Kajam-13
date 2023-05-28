@@ -90,13 +90,16 @@ void StateGame::onUpdate(float const elapsed)
                 m_tickId = 0;
                 m_internalState = InternalState::Playback;
             }
-
         } else if (m_internalState == InternalState::Playback) {
-            // TODO only do this in "running mode"
+
             if (m_properties.size() != 0) {
                 if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
                     m_tickId++;
-                    // TODO end round and reset to initial setup
+
+                } else {
+                    m_tickId = 0;
+                    // TODO reset to initial setup
+                    m_internalState = InternalState::PlaceUnits;
                 }
                 auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
@@ -112,7 +115,6 @@ void StateGame::onUpdate(float const elapsed)
                     }
                 }
             }
-            // TODO transition to next internal state
         }
     }
 

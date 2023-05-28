@@ -84,7 +84,7 @@ void GameServer::handleMessage(
         }
     }
 
-    if (m.type != MessageType::InitialPing) {
+    if (m.type != MessageType::InitialPing && m.type != MessageType::AddBot) {
         if (m_playerData.count(playerId) == 0) {
             m_logger.warning("message received for playerId " + std::to_string(playerId)
                     + " which is not in list of players '" + messageContent + "'",
@@ -96,6 +96,8 @@ void GameServer::handleMessage(
     lock.unlock();
     if (m.type == MessageType::InitialPing) {
         handleMessageInitialPing(messageContent, endpoint);
+    } else if (m.type == MessageType::AddBot) {
+        handleMessageAddBot();
     } else if (m.type == MessageType::StayAlivePing) {
         handleMessageStayAlivePing(messageContent, endpoint);
     } else if (m.type == MessageType::RoundReady) {
@@ -123,12 +125,11 @@ void GameServer::handleMessageInitialPing(
         }
     }
 
-    if (m_playerData.size() >= 2) {
+    if (getNumberOfConnectedPlayers() >= 2) {
         m_logger.warning("already two players connected", { "network", "GameServer" });
         return;
     }
-    int const newPlayerId = m_connectedPlayers;
-    m_connectedPlayers++;
+    int const newPlayerId = getNumberOfConnectedPlayers();
     m_logger.info(
         "assigned new player ID: " + std::to_string(newPlayerId), { "network", "GameServer" });
 
@@ -143,7 +144,31 @@ void GameServer::handleMessageInitialPing(
         m_connection.sendMessageToOne(ret, endpoint);
     }
     // inform all players that the requested number of Players is reached
-    if (m_playerData.size() == 2) {
+    if (getNumberOfConnectedPlayers() == 2) {
+        Message ret;
+        ret.type = MessageType::AllPlayersConnected;
+        m_connection.sendMessageToAll(ret);
+    }
+}
+
+void GameServer::handleMessageAddBot()
+{
+    m_logger.info("Add bot received", { "network", "GameServer" });
+    std::unique_lock<std::shared_mutex> lock { m_mutex };
+    if (getNumberOfConnectedPlayers() >= 2) {
+        m_logger.warning("already two players connected", { "network", "GameServer" });
+        return;
+    }
+    int const newPlayerId = getNumberOfConnectedPlayers();
+    m_logger.info(
+        "assign bot new player ID: " + std::to_string(newPlayerId), { "network", "GameServer" });
+
+    m_botData[newPlayerId].timeSinceLastPing = 0.0f;
+    m_botData[newPlayerId];
+    lock.unlock();
+
+    // inform all players that the requested number of Players is reached
+    if (getNumberOfConnectedPlayers() == 2) {
         Message ret;
         ret.type = MessageType::AllPlayersConnected;
         m_connection.sendMessageToAll(ret);
@@ -202,4 +227,8 @@ void GameServer::startRoundSimulation(std::map<int, PlayerInfo> const& playerDat
     gs.updateSimulationForNewRound(playerData);
     gs.performSimulation(sender);
     // TODO think about moving this into separate thread
+}
+int GameServer::getNumberOfConnectedPlayers() const
+{
+    return m_playerData.size() + m_botData.size();
 }
