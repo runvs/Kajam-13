@@ -70,15 +70,17 @@ void GameServer::handleMessage(
     Message m = nlohmann::json::parse(messageContent);
     auto const playerId = m.playerId;
     std::unique_lock<std::shared_mutex> lock { m_mutex };
+    // check if player id is known
     if (m_playerData.count(playerId) == 1) {
         auto const& expectedEndpoint = m_playerData[playerId].endpoint;
+        // check if endpoint matches known player ID
         if (expectedEndpoint.address() != endpoint.address()
             || expectedEndpoint.port() != endpoint.port()) {
             m_logger.warning(
                 "playerId " + std::to_string(playerId) + " does not match registered endpoint",
                 { "network", "GameServer" });
             // Discard message silently
-            if (m.type != MessageType::InitialPing) {
+            if (m.type != MessageType::InitialPing && m.type != MessageType::AddBot) {
                 return;
             }
         }

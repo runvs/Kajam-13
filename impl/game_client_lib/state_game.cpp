@@ -1,9 +1,11 @@
 ﻿#include "state_game.hpp"
 #include "client_end_placement_data.hpp"
+#include "drawable_helpers.hpp"
 #include "input/keyboard/keyboard_defines.hpp"
 #include "json_keys.hpp"
 #include "message.hpp"
 #include "object_group.hpp"
+#include "player_id_dispatcher.hpp"
 #include "server_connection.hpp"
 #include "vector.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
@@ -79,9 +81,10 @@ void StateGame::onUpdate(float const elapsed)
 
         if (m_internalState == InternalState::WaitForAllPlayers) {
             if (m_serverConnection->areAllPlayersConnected()) {
-                m_internalState = InternalState::PlaceUnits;
+                initialStartPlaceUnits();
             }
         } else if (m_internalState == InternalState::PlaceUnits) {
+            m_blockedUnitPlacementArea->update(elapsed);
             placeUnits();
             // transition to "WaitForSimulationResults" is done in onDraw for button push;
         } else if (m_internalState == InternalState::WaitForSimulationResults) {
@@ -121,6 +124,17 @@ void StateGame::onUpdate(float const elapsed)
     m_background->update(elapsed);
     m_vignette->update(elapsed);
 }
+void StateGame::initialStartPlaceUnits()
+{
+    m_playerIdDispatcher
+        = std::make_unique<PlayerIdDispatcher>(this->m_serverConnection->getPlayerId());
+    m_blockedUnitPlacementArea
+        = jt::dh::createShapeRect(m_playerIdDispatcher->getBlockedUnitPlacementArea(),
+            jt::Color { 20, 20, 20, 100 }, textureManager());
+
+    m_internalState = InternalState::PlaceUnits;
+}
+
 void StateGame::placeUnits()
 {
     if (m_internalState != InternalState::PlaceUnits) {
@@ -131,7 +145,8 @@ void StateGame::placeUnits()
         auto unit = std::make_shared<Unit>();
         m_units->push_back(unit);
         add(unit);
-        // TODO only allow placement on player's side
+        // TODO only allow placement on player's side, area can be obtained from
+        // m_playerIdDispatcher
         unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
         unit->setPlayerID(m_serverConnection->getPlayerId());
 
@@ -156,6 +171,12 @@ void StateGame::onDraw() const
 {
     m_background->draw(renderTarget());
     drawObjects();
+
+    if (m_internalState == InternalState::PlaceUnits) {
+        if (m_blockedUnitPlacementArea) {
+            m_blockedUnitPlacementArea->draw(renderTarget());
+        }
+    }
     m_vignette->draw();
 
     ImGui::Begin("Network");

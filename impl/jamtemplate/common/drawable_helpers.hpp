@@ -23,6 +23,18 @@ namespace dh {
 std::shared_ptr<jt::Shape> createShapeRect(
     jt::Vector2f const& size, jt::Color const& col, jt::TextureManagerInterface& textureManager);
 
+/// Create a rectangular shape
+/// \param rect the rect of the shape (position and size)
+/// \param col the color of the shape
+/// \return shared pointer to shape
+std::shared_ptr<jt::Shape> createShapeRect(
+    const jt::Rectf& rect, jt::Color const& col, jt::TextureManagerInterface& textureManager);
+
+///
+/// \param radius
+/// \param col
+/// \param textureManager
+/// \return
 std::shared_ptr<jt::Shape> createShapeCircle(
     float radius, jt::Color const& col, jt::TextureManagerInterface& textureManager);
 

@@ -4,6 +4,7 @@
 #include "client_network_connection.hpp"
 #include "object_group.hpp"
 #include "object_properties.hpp"
+#include "player_id_dispatcher.hpp"
 #include "server_connection.hpp"
 #include "vector.hpp"
 #include <box2dwrapper/box2d_world_interface.hpp>
@@ -56,6 +57,9 @@ private:
     // TODO could be converted into a class?
     std::vector<std::vector<ObjectProperties>> m_properties;
 
+    std::unique_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
+    std::shared_ptr<jt::Shape> m_blockedUnitPlacementArea;
+
     mutable bool m_addBotAsPlayerZero { false };
     mutable bool m_addBotAsPlayerOne { false };
 
@@ -74,6 +78,7 @@ private:
 
     void createPlayer();
     void placeUnits();
+    void initialStartPlaceUnits();
 };
 
 #endif

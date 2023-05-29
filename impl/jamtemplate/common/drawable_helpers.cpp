@@ -1,4 +1,5 @@
 ﻿#include "drawable_helpers.hpp"
+#include "vector.hpp"
 #include <shape.hpp>
 #include <sprite.hpp>
 #include <text.hpp>
@@ -8,6 +9,16 @@ std::shared_ptr<jt::Shape> jt::dh::createShapeRect(
 {
     auto ptr = std::make_shared<jt::Shape>();
     ptr->makeRect(size, textureManager);
+    ptr->setColor(col);
+    return ptr;
+}
+
+std::shared_ptr<jt::Shape> jt::dh::createShapeRect(
+    const jt::Rectf& rect, const jt::Color& col, jt::TextureManagerInterface& textureManager)
+{
+    auto ptr = std::make_shared<jt::Shape>();
+    ptr->makeRect(jt::Vector2f { rect.width, rect.height }, textureManager);
+    ptr->setPosition(jt::Vector2f { rect.left, rect.top });
     ptr->setColor(col);
     return ptr;
 }
