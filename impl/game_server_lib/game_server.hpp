@@ -1,12 +1,13 @@
 #ifndef JAMTEMPLATE_GAME_SERVER_HPP
 #define JAMTEMPLATE_GAME_SERVER_HPP
 
-#include "asio/ip/tcp.hpp"
-#include "player_info.hpp"
-#include "server_network_connection.hpp"
+#include <asio/ip/tcp.hpp>
 #include <log/logger_interface.hpp>
+#include <player_info.hpp>
+#include <server_network_connection.hpp>
 #include <atomic>
 #include <shared_mutex>
+
 class GameServer {
 public:
     GameServer(jt::LoggerInterface& logger, CompressorInterface& compressor);
@@ -18,7 +19,7 @@ private:
     ServerNetworkConnection m_connection;
 
     // TODO split into player and spectators
-    std::shared_mutex m_mutex;
+    std::mutex m_mutex;
     std::map<int, PlayerInfo> m_playerData;
     std::map<int, PlayerInfo> m_botData;
 

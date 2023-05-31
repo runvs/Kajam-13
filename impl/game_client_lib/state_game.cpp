@@ -3,6 +3,7 @@
 #include "drawable_helpers.hpp"
 #include "input/keyboard/keyboard_defines.hpp"
 #include "json_keys.hpp"
+#include "math_helper.hpp"
 #include "message.hpp"
 #include "object_group.hpp"
 #include "player_id_dispatcher.hpp"
@@ -103,6 +104,7 @@ void StateGame::onUpdate(float const elapsed)
                     m_tickId = 0;
                     // TODO reset to initial setup
                     m_internalState = InternalState::PlaceUnits;
+                    m_round++;
                 }
                 auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
@@ -142,27 +144,24 @@ void StateGame::placeUnits()
     }
 
     if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
+
+        jt::Vector2f const mousePos = getGame()->input().mouse()->getMousePositionWorld();
+
+        // TODO take unit size and offset into account
+        if (!jt::MathHelper::checkIsIn(m_playerIdDispatcher->getUnitPlacementArea(), mousePos)) {
+            // TODO Show some visual representation or play a sound that placing a unit here is not
+            // possible.
+            return;
+        }
+
+        // TODO extend by unit type and other required things
         auto unit = std::make_shared<Unit>();
         m_units->push_back(unit);
         add(unit);
-        // TODO only allow placement on player's side, area can be obtained from
-        // m_playerIdDispatcher
-        unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
+
+        unit->setPosition(mousePos);
         unit->setPlayerID(m_serverConnection->getPlayerId());
 
-        // TODO extend by unit type and other required things
-        m_clientEndPlacementData.m_properties.push_back(unit->saveState());
-    }
-
-    // TODO remove this
-    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::O)) {
-        auto unit = std::make_shared<Unit>();
-        m_units->push_back(unit);
-        add(unit);
-        unit->setPosition(getGame()->input().mouse()->getMousePositionWorld());
-        unit->setPlayerID(m_serverConnection->getPlayerId() + 1);
-
-        // TODO extend by unit type and other required things
         m_clientEndPlacementData.m_properties.push_back(unit->saveState());
     }
 }

@@ -1,15 +1,13 @@
 #include "game_server.hpp"
-#include "compression/compressor_interface.hpp"
-#include "game_simulation.hpp"
-#include "simulation_result_message_sender.hpp"
-#include <client_end_placement_data.hpp>
+#include <compression/compressor_interface.hpp>
+#include <game_simulation.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
 #include <player_info.hpp>
+#include <simulation_result_message_sender.hpp>
 #include <iostream>
 #include <mutex>
-#include <shared_mutex>
 #include <sstream>
 #include <string>
 
@@ -33,7 +31,8 @@ void GameServer::update(float elapsed)
 
     if (m_allPlayersReady) {
         if (!m_simulationStarted) {
-            std::unique_lock<std::shared_mutex> lock { m_mutex };
+            std::unique_lock<std::mutex> lock { m_mutex };
+            
             auto playerDataCopy = m_playerData;
             lock.unlock();
             startRoundSimulation(playerDataCopy);
@@ -44,7 +43,7 @@ void GameServer::update(float elapsed)
 void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
 {
     // TODO not needed when using TCP
-    std::unique_lock<std::shared_mutex> const lock { m_mutex };
+    std::unique_lock<std::mutex> const lock { m_mutex };
     // Note: remove_if does not work for map
     for (auto it = m_playerData.begin(); it != m_playerData.end();) {
         it->second.timeSinceLastPing += elapsed;
@@ -69,7 +68,7 @@ void GameServer::handleMessage(
 
     Message m = nlohmann::json::parse(messageContent);
     auto const playerId = m.playerId;
-    std::unique_lock<std::shared_mutex> lock { m_mutex };
+    std::unique_lock<std::mutex> lock { m_mutex };
     // check if player id is known
     if (m_playerData.count(playerId) == 1) {
         auto const& expectedEndpoint = m_playerData[playerId].endpoint;
@@ -116,7 +115,7 @@ void GameServer::handleMessageInitialPing(
             + std::to_string(endpoint.port()),
         { "network", "GameServer" });
 
-    std::unique_lock<std::shared_mutex> lock { m_mutex };
+    std::unique_lock<std::mutex> lock { m_mutex };
     for (auto& kvp : m_playerData) {
         if (kvp.second.endpoint.address() == endpoint.address()
             && kvp.second.endpoint.port() == endpoint.port()) {
@@ -156,7 +155,7 @@ void GameServer::handleMessageInitialPing(
 void GameServer::handleMessageAddBot()
 {
     m_logger.info("Add bot received", { "network", "GameServer" });
-    std::unique_lock<std::shared_mutex> lock { m_mutex };
+    std::unique_lock<std::mutex> lock { m_mutex };
     if (getNumberOfConnectedPlayers() >= 2) {
         m_logger.warning("already two players connected", { "network", "GameServer" });
         return;
@@ -182,7 +181,7 @@ void GameServer::handleMessageStayAlivePing(
 {
     // TODO remove as for TCP this is not needed
     Message const m = nlohmann::json::parse(messageContent);
-    std::unique_lock<std::shared_mutex> const lock { m_mutex };
+    std::unique_lock<std::mutex> const lock { m_mutex };
     m_playerData[m.playerId].timeSinceLastPing = 0.0f;
 }
 
@@ -196,7 +195,7 @@ void GameServer::handleMessageRoundReady(
     Message const m = nlohmann::json::parse(messageContent);
 
     auto const playerId = m.playerId;
-    std::unique_lock<std::shared_mutex> lock { m_mutex };
+    std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
 
