@@ -1,4 +1,5 @@
 #include "game_server.hpp"
+#include "json_keys.hpp"
 #include <compression/compressor_interface.hpp>
 #include <game_simulation.hpp>
 #include <message.hpp>
@@ -32,17 +33,33 @@ void GameServer::update(float elapsed)
     if (m_allPlayersReady) {
         if (!m_simulationStarted) {
             std::unique_lock<std::mutex> lock { m_mutex };
-            
-            auto playerDataCopy = m_playerData;
+
+            auto const playerDataCopy = m_playerData;
+            auto botDataCopy = m_botData;
             lock.unlock();
-            startRoundSimulation(playerDataCopy);
+
+            PerformAI(botDataCopy);
+
+            startRoundSimulation(playerDataCopy, botDataCopy);
         }
+    }
+}
+
+void GameServer::PerformAI(std::map<int, PlayerInfo>& botDataCopy) const
+{
+    if (!botDataCopy.empty()) {
+        ObjectProperties props;
+        props.ints[jk::unitID] = 0;
+        props.ints[jk::playerID] = botDataCopy.begin()->first;
+        props.floats[jk::positionX] = botDataCopy.begin()->first == 0 ? 50 : 200;
+        props.floats[jk::positionY] = 100.0f;
+
+        botDataCopy.begin()->second.roundEndPlacementData.m_properties.push_back(props);
     }
 }
 
 void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
 {
-    // TODO not needed when using TCP
     std::unique_lock<std::mutex> const lock { m_mutex };
     // Note: remove_if does not work for map
     for (auto it = m_playerData.begin(); it != m_playerData.end();) {
@@ -219,15 +236,21 @@ void GameServer::discard(
     m_logger.warning("discard message '" + messageContent + "'", { "network", "GameServer" });
 }
 
-void GameServer::startRoundSimulation(std::map<int, PlayerInfo> const& playerData)
+void GameServer::startRoundSimulation(
+    std::map<int, PlayerInfo> const& playerData, std::map<int, PlayerInfo> const& botData)
 {
+    std::map<int, PlayerInfo> combinedData;
+    // TODO check that ids are unique
+    combinedData.insert(playerData.cbegin(), playerData.cend());
+    combinedData.insert(botData.cbegin(), botData.cend());
+
     m_logger.info("start round simulation", { "network", "GameServer" });
+    // TODO think about moving this into separate thread
     m_simulationStarted.store(true);
     SimulationResultMessageSender sender { m_connection };
     GameSimulation gs { m_logger };
-    gs.updateSimulationForNewRound(playerData);
+    gs.updateSimulationForNewRound(combinedData);
     gs.performSimulation(sender);
-    // TODO think about moving this into separate thread
 }
 int GameServer::getNumberOfConnectedPlayers() const
 {

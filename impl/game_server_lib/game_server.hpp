@@ -11,6 +11,7 @@
 class GameServer {
 public:
     GameServer(jt::LoggerInterface& logger, CompressorInterface& compressor);
+
     void update(float elapsed);
 
 private:
@@ -32,7 +33,8 @@ private:
     int getNumberOfConnectedPlayers() const;
 
     // explicit copy of playerdata is desired
-    void startRoundSimulation(std::map<int, PlayerInfo> const& playerData);
+    void startRoundSimulation(
+        std::map<int, PlayerInfo> const& playerData, std::map<int, PlayerInfo> const& botData);
 
     // all those functions will be called from the asio thread, synchronization is needed when
     // things should be handled from the main thread
@@ -43,9 +45,12 @@ private:
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageRoundReady(
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
-    void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
-    void removePlayersIfNoAlivePingReceived(float elapsed);
     void handleMessageAddBot();
+
+    void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
+
+    void removePlayersIfNoAlivePingReceived(float elapsed);
+    void PerformAI(std::map<int, PlayerInfo>& botDataCopy) const;
 };
 
 #endif // JAMTEMPLATE_GAME_SERVER_HPP

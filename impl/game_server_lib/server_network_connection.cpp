@@ -79,7 +79,7 @@ void ServerNetworkConnection::setHandleIncomingMessageCallback(
     m_handleInComingMessageCallback = callback;
 }
 
-void ServerNetworkConnection::update() { }
+void ServerNetworkConnection::update() { std::lock_guard<std::mutex> lock { m_socketsMutex }; }
 
 void ServerNetworkConnection::handleReceive(
     asio::ip::tcp::socket& socket, const asio::error_code& error, std::size_t length)

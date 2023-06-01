@@ -95,37 +95,59 @@ void StateGame::onUpdate(float const elapsed)
                 m_internalState = InternalState::Playback;
             }
         } else if (m_internalState == InternalState::Playback) {
-
-            if (m_properties.size() != 0) {
-                if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
-                    m_tickId++;
-
-                } else {
-                    m_tickId = 0;
-                    // TODO reset to initial setup
-                    m_internalState = InternalState::PlaceUnits;
-                    m_round++;
-                }
-                auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
-
-                for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
-                    int const unitID = propsForOneUnit.ints.at(jk::unitID);
-                    for (auto& u : *m_units) {
-                        auto unit = u.lock();
-                        if (unit->getUnitID() != unitID) {
-                            continue;
-                        }
-                        unit->updateState(propsForOneUnit);
-                        break;
-                    }
-                }
-            }
+            playbackSimulation(elapsed);
         }
     }
 
     m_background->update(elapsed);
     m_vignette->update(elapsed);
 }
+
+void StateGame::playbackSimulation(float elapsed)
+{
+
+    if (m_properties.size() != 0) {
+        if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
+            m_tickId++;
+
+        } else {
+            m_tickId = 0;
+            // TODO reset to initial setup
+            m_internalState = InternalState::PlaceUnits;
+            m_round++;
+        }
+        auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
+
+        for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
+
+            int const unitID = propsForOneUnit.ints.at(jk::unitID);
+            int const playerID = propsForOneUnit.ints.at(jk::playerID);
+            // TODO make this code a bit nicer
+            bool unitFound = false;
+            for (auto& u : *m_units) {
+                auto unit = u.lock();
+                if (unit->getPlayerID() != playerID) {
+                    continue;
+                }
+                if (unit->getUnitID() != unitID) {
+                    continue;
+                }
+                unit->updateState(propsForOneUnit);
+                unitFound = true;
+                break;
+            }
+            // Spawn a new  unit
+            if (!unitFound) {
+                auto unit = std::make_shared<Unit>();
+                m_units->push_back(unit);
+                add(unit);
+                unit->setIDs(unitID, playerID);
+                unit->updateState(propsForOneUnit);
+            }
+        }
+    }
+}
+
 void StateGame::initialStartPlaceUnits()
 {
     m_playerIdDispatcher
@@ -155,12 +177,14 @@ void StateGame::placeUnits()
         }
 
         // TODO extend by unit type and other required things
+
         auto unit = std::make_shared<Unit>();
         m_units->push_back(unit);
         add(unit);
 
         unit->setPosition(mousePos);
-        unit->setPlayerID(m_serverConnection->getPlayerId());
+        const auto pid = m_serverConnection->getPlayerId();
+        unit->setIDs(m_unitIdManager.getIdForPlayer(pid), pid);
 
         m_clientEndPlacementData.m_properties.push_back(unit->saveState());
     }
@@ -179,8 +203,18 @@ void StateGame::onDraw() const
     m_vignette->draw();
 
     ImGui::Begin("Network");
-    ImGui::Text("round %i", m_round);
+    if (m_internalState == InternalState::WaitForAllPlayers) {
+        ImGui::Text("Waiting for players to join");
+    } else if (m_internalState == InternalState::PlaceUnits) {
+        ImGui::Text("Place units");
+    } else if (m_internalState == InternalState::WaitForSimulationResults) {
+        ImGui::Text("Waiting for other players to end unit placement");
+    } else if (m_internalState == InternalState::Playback) {
+        ImGui::Text("Watch the battle evolve");
+    }
     ImGui::Separator();
+    ImGui::Text("round %i", m_round);
+
     ImGui::Separator();
     if (ImGui::Button("ready")) {
         m_serverConnection->readyRound(m_clientEndPlacementData);

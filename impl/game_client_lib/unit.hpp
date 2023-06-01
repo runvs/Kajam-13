@@ -11,31 +11,34 @@
 #include <vector.hpp>
 #include <memory>
 
-class Unit : public jt::GameObject, public jt::CountedObj<Unit> {
+class Unit : public jt::GameObject {
 public:
-    // needed for unit id counting
-    // TODO remove counting in constructor and create a UnitPlacementManager
-    // TODO unitIDs should/could be issued by the server.
-    // TODO Or this is a combination of playerid+unitid
-    Unit();
+
     // TODO make this an interface & base class? Or even better a UnitInfo class
-    void updateState(ObjectProperties const& props);
+    void updateState(ObjectProperties const &props);
+
     ObjectProperties saveState() const;
 
-    void setPosition(jt::Vector2f const& pos);
+    void setPosition(jt::Vector2f const &pos);
+
     int getUnitID() const;
-    void setPlayerID(int pid);
+
+    void setIDs(int uid, int pid);
+
+    int getPlayerID() const;
 
 private:
     std::shared_ptr<jt::Shape> m_shape;
     int m_unitID;
-    int m_playerID { 0 };
-    float m_hpMax { 100.0f };
-    float m_hp { 100.0f };
+    int m_playerID{0};
+    float m_hpMax{100.0f};
+    float m_hp{100.0f};
     std::shared_ptr<jt::Bar> m_hpBar;
 
     void doCreate() override;
+
     void doUpdate(float const elapsed) override;
+
     void doDraw() const override;
 };
 
