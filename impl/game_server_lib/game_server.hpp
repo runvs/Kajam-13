@@ -23,6 +23,7 @@ private:
     std::mutex m_mutex;
     std::map<int, PlayerInfo> m_playerData;
     std::map<int, PlayerInfo> m_botData;
+    bool m_matchHasStarted { false };
 
     int m_round { 1 };
 
@@ -32,7 +33,7 @@ private:
 
     int getNumberOfConnectedPlayers() const;
 
-    // explicit copy of playerdata is desired
+    // explicit copy of player data is desired
     void startRoundSimulation(
         std::map<int, PlayerInfo> const& playerData, std::map<int, PlayerInfo> const& botData);
 

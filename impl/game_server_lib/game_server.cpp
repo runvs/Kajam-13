@@ -41,6 +41,12 @@ void GameServer::update(float elapsed)
             PerformAI(botDataCopy);
 
             startRoundSimulation(playerDataCopy, botDataCopy);
+
+            for (auto& p : m_playerData) {
+                m_logger.info(
+                    "Round Simulation done. Waiting for next round", { "network", "GameServer" });
+                p.second.roundReady = false;
+            }
         }
     }
 }
@@ -72,6 +78,19 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
 
             it = m_playerData.erase(it);
 
+        } else {
+            ++it;
+        }
+    }
+    // also clear player data if socket is closed or no longer in list of sockets
+    for (auto it = m_playerData.begin(); it != m_playerData.end();) {
+        if (!m_connection.isSocketOpenFor(it->second.endpoint)) {
+            std::stringstream ss_log;
+            ss_log << "erase endpoint '" << it->second.endpoint.address()
+                   << "' because of closed port for player " << it->first << "\n";
+            m_logger.info(ss_log.str(), { "network", "GameServer" });
+
+            it = m_playerData.erase(it);
         } else {
             ++it;
         }
@@ -162,10 +181,13 @@ void GameServer::handleMessageInitialPing(
         m_connection.sendMessageToOne(ret, endpoint);
     }
     // inform all players that the requested number of Players is reached
+    // TODO extract into helper function
     if (getNumberOfConnectedPlayers() == 2) {
         Message ret;
         ret.type = MessageType::AllPlayersConnected;
         m_connection.sendMessageToAll(ret);
+
+        m_matchHasStarted = true;
     }
 }
 
@@ -185,18 +207,19 @@ void GameServer::handleMessageAddBot()
     m_botData[newPlayerId];
     lock.unlock();
 
+    // TODO extract into helper function
     // inform all players that the requested number of Players is reached
     if (getNumberOfConnectedPlayers() == 2) {
         Message ret;
         ret.type = MessageType::AllPlayersConnected;
         m_connection.sendMessageToAll(ret);
+        m_matchHasStarted = true;
     }
 }
 
 void GameServer::handleMessageStayAlivePing(
     std::string const& messageContent, const asio::ip::tcp::endpoint& /*endpoint*/)
 {
-    // TODO remove as for TCP this is not needed
     Message const m = nlohmann::json::parse(messageContent);
     std::unique_lock<std::mutex> const lock { m_mutex };
     m_playerData[m.playerId].timeSinceLastPing = 0.0f;
@@ -208,6 +231,11 @@ void GameServer::handleMessageRoundReady(
     m_logger.info("Round Ready received from " + endpoint.address().to_string() + ":"
             + std::to_string(endpoint.port()),
         { "network", "GameServer" });
+
+    if (!m_matchHasStarted) {
+        m_logger.warning("round ready data received although game has not started",
+            { "network", "game_server" });
+    }
 
     Message const m = nlohmann::json::parse(messageContent);
 
@@ -251,6 +279,7 @@ void GameServer::startRoundSimulation(
     GameSimulation gs { m_logger };
     gs.updateSimulationForNewRound(combinedData);
     gs.performSimulation(sender);
+    m_round++;
 }
 int GameServer::getNumberOfConnectedPlayers() const
 {

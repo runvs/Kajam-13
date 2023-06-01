@@ -27,12 +27,14 @@ public:
 
     void sendMessageToOne(Message const& m, asio::ip::tcp::endpoint const& endpoint);
 
+    bool isSocketOpenFor(asio::ip::tcp::endpoint const& endpoint) const;
+
 private:
     CompressorInterface& m_compressor;
     jt::LoggerInterface& m_logger;
     asio::io_context m_IOContext;
 
-    std::mutex m_socketsMutex;
+    mutable std::mutex m_socketsMutex;
     std::vector<std::unique_ptr<asio::ip::tcp::socket>> m_sockets;
 
     asio::ip::tcp::acceptor m_acceptor;

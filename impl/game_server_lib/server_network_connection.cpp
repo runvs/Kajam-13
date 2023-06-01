@@ -79,7 +79,21 @@ void ServerNetworkConnection::setHandleIncomingMessageCallback(
     m_handleInComingMessageCallback = callback;
 }
 
-void ServerNetworkConnection::update() { std::lock_guard<std::mutex> lock { m_socketsMutex }; }
+void ServerNetworkConnection::update()
+{
+    std::lock_guard<std::mutex> lock { m_socketsMutex };
+
+    // clean up sockets
+    m_sockets.erase(
+        std::remove_if(m_sockets.begin(), m_sockets.end(),
+            [this](auto const& s) {
+                if (!s->is_open()) {
+                    m_logger.info("remove closed socket", { "network", "ServerNetworkConnection" });
+                }
+                return !s->is_open();
+            }),
+        m_sockets.end());
+}
 
 void ServerNetworkConnection::handleReceive(
     asio::ip::tcp::socket& socket, const asio::error_code& error, std::size_t length)
@@ -155,4 +169,17 @@ void ServerNetworkConnection::sendStringTo(std::string const& str, asio::ip::tcp
 {
     std::string const compressed = m_compressor.compress(str);
     NetworkHelpers::freeSendString(compressed, socket, m_logger);
+}
+bool ServerNetworkConnection::isSocketOpenFor(const asio::ip::tcp::endpoint& endpoint) const
+{
+    std::lock_guard<std::mutex> lock { m_socketsMutex };
+    for (auto const& s : m_sockets) {
+        if (s->remote_endpoint().port() == endpoint.port()
+            && s->remote_endpoint().address() == endpoint.address()) {
+            if (s->is_open()) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
