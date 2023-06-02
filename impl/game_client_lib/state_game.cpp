@@ -105,7 +105,6 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::playbackSimulation(float elapsed)
 {
-
     if (m_properties.size() != 0) {
         if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
             m_tickId++;
@@ -115,6 +114,8 @@ void StateGame::playbackSimulation(float elapsed)
             // TODO reset to initial setup
             m_internalState = InternalState::PlaceUnits;
             m_round++;
+            getGame()->logger().info("finished playing round simulation", { "StateGame" });
+            return;
         }
         auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 

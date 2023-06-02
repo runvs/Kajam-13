@@ -47,6 +47,8 @@ void GameServer::update(float elapsed)
                     "Round Simulation done. Waiting for next round", { "network", "GameServer" });
                 p.second.roundReady = false;
             }
+            m_simulationStarted = false;
+            m_allPlayersReady = false;
         }
     }
 }
@@ -243,7 +245,7 @@ void GameServer::handleMessageRoundReady(
     std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
-
+    m_logger.info("check all players ready");
     bool allReady = true;
     for (auto const& kvp : m_playerData) {
         if (!kvp.second.roundReady) {
@@ -254,6 +256,7 @@ void GameServer::handleMessageRoundReady(
     lock.unlock();
 
     if (allReady) {
+        m_logger.info("all ready");
         m_allPlayersReady.store(true);
     }
 }
@@ -272,7 +275,8 @@ void GameServer::startRoundSimulation(
     combinedData.insert(playerData.cbegin(), playerData.cend());
     combinedData.insert(botData.cbegin(), botData.cend());
 
-    m_logger.info("start round simulation", { "network", "GameServer" });
+    m_logger.info(
+        "start round simulation for round " + std::to_string(m_round), { "network", "GameServer" });
     // TODO think about moving this into separate thread
     m_simulationStarted.store(true);
     SimulationResultMessageSender sender { m_connection };

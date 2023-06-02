@@ -126,7 +126,9 @@ std::vector<std::vector<ObjectProperties>> ServerConnection::getRoundData()
 {
     std::unique_lock<std::mutex> lock { m_dataMutex };
     m_dataReady = false;
-    return m_properties;
+    auto const propertiesCopy = m_properties;
+    m_properties.clear();
+    return propertiesCopy;
 }
 int ServerConnection::getPlayerId() const { return m_playerId; }
 bool ServerConnection::areAllPlayersConnected() const { return m_allPlayersConnected; }
