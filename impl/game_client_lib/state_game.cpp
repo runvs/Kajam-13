@@ -8,6 +8,7 @@
 #include "object_group.hpp"
 #include "player_id_dispatcher.hpp"
 #include "server_connection.hpp"
+#include "unit_placement/placement_manager.hpp"
 #include "vector.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <color/color.hpp>
@@ -85,8 +86,7 @@ void StateGame::onUpdate(float const elapsed)
                 initialStartPlaceUnits();
             }
         } else if (m_internalState == InternalState::PlaceUnits) {
-            m_blockedUnitPlacementArea->update(elapsed);
-            placeUnits();
+            placeUnits(elapsed);
             // transition to "WaitForSimulationResults" is done in onDraw for button push;
         } else if (m_internalState == InternalState::WaitForSimulationResults) {
             if (m_serverConnection->isRoundDataReady()) {
@@ -110,11 +110,13 @@ void StateGame::playbackSimulation(float elapsed)
             m_tickId++;
 
         } else {
+            // TODO move into separate function
             m_tickId = 0;
             // TODO reset to initial setup
             m_internalState = InternalState::PlaceUnits;
             m_round++;
             getGame()->logger().info("finished playing round simulation", { "StateGame" });
+            m_placementManager->setActive(true);
             return;
         }
         auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
@@ -152,43 +154,21 @@ void StateGame::playbackSimulation(float elapsed)
 void StateGame::initialStartPlaceUnits()
 {
     m_playerIdDispatcher
-        = std::make_unique<PlayerIdDispatcher>(this->m_serverConnection->getPlayerId());
-    m_blockedUnitPlacementArea
-        = jt::dh::createShapeRect(m_playerIdDispatcher->getBlockedUnitPlacementArea(),
-            jt::Color { 20, 20, 20, 100 }, textureManager());
+        = std::make_shared<PlayerIdDispatcher>(this->m_serverConnection->getPlayerId());
 
+    m_placementManager = std::make_shared<PlacementManager>(
+        m_serverConnection->getPlayerId(), m_playerIdDispatcher);
+    add(m_placementManager);
     m_internalState = InternalState::PlaceUnits;
+    m_placementManager->setActive(true);
 }
 
-void StateGame::placeUnits()
+void StateGame::placeUnits(float elapsed)
 {
     if (m_internalState != InternalState::PlaceUnits) {
         throw std::logic_error { "placeUnits called when not in placeUnits state" };
     }
-
-    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
-
-        jt::Vector2f const mousePos = getGame()->input().mouse()->getMousePositionWorld();
-
-        // TODO take unit size and offset into account
-        if (!jt::MathHelper::checkIsIn(m_playerIdDispatcher->getUnitPlacementArea(), mousePos)) {
-            // TODO Show some visual representation or play a sound that placing a unit here is not
-            // possible.
-            return;
-        }
-
-        // TODO extend by unit type and other required things
-
-        auto unit = std::make_shared<Unit>();
-        m_units->push_back(unit);
-        add(unit);
-
-        unit->setPosition(mousePos);
-        const auto pid = m_serverConnection->getPlayerId();
-        unit->setIDs(m_unitIdManager.getIdForPlayer(pid), pid);
-
-        m_clientEndPlacementData.m_properties.push_back(unit->saveState());
-    }
+    m_placementManager->update(elapsed);
 }
 
 void StateGame::onDraw() const
@@ -196,11 +176,6 @@ void StateGame::onDraw() const
     m_background->draw(renderTarget());
     drawObjects();
 
-    if (m_internalState == InternalState::PlaceUnits) {
-        if (m_blockedUnitPlacementArea) {
-            m_blockedUnitPlacementArea->draw(renderTarget());
-        }
-    }
     m_vignette->draw();
 
     ImGui::Begin("Network");
@@ -218,8 +193,12 @@ void StateGame::onDraw() const
 
     ImGui::Separator();
     if (ImGui::Button("ready")) {
+        // TODO move into separate function
+        m_clientEndPlacementData.m_properties = m_placementManager->getPlacedUnits();
+        m_placementManager->clearPlacedUnits();
         m_serverConnection->readyRound(m_clientEndPlacementData);
         m_internalState = InternalState::WaitForSimulationResults;
+        m_placementManager->setActive(false);
     }
     ImGui::End();
 }
