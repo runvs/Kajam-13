@@ -97,6 +97,12 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
             ++it;
         }
     }
+    if (m_playerData.empty()) {
+        if (!m_botData.empty()) {
+            m_logger.info("no more player connected, remove all bots", { "GameServer" });
+            m_botData.clear();
+        }
+    }
 }
 void GameServer::handleMessage(
     const std::string& messageContent, const asio::ip::tcp::endpoint& endpoint)
@@ -239,13 +245,15 @@ void GameServer::handleMessageRoundReady(
             { "network", "game_server" });
     }
 
+    // TODO store player data consistently for future rounds, as clients only send newly placed
+    // units.
     Message const m = nlohmann::json::parse(messageContent);
 
     auto const playerId = m.playerId;
     std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
-    m_logger.info("check all players ready");
+
     bool allReady = true;
     for (auto const& kvp : m_playerData) {
         if (!kvp.second.roundReady) {
@@ -256,7 +264,7 @@ void GameServer::handleMessageRoundReady(
     lock.unlock();
 
     if (allReady) {
-        m_logger.info("all ready");
+        m_logger.info("all players ready");
         m_allPlayersReady.store(true);
     }
 }
