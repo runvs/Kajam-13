@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_GAME_SERVER_HPP
 
 #include <asio/ip/tcp.hpp>
+#include <game_simulation.hpp>
 #include <log/logger_interface.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
@@ -21,8 +22,8 @@ private:
 
     // TODO allow spectators?
     std::mutex m_mutex;
+    // TODO create a separate class to encapsulate common behavior
     std::map<int, PlayerInfo> m_playerData;
-    std::map<int, PlayerInfo> m_consistentPlayerData;
     std::map<int, PlayerInfo> m_botData;
     bool m_matchHasStarted { false };
 
@@ -31,6 +32,8 @@ private:
     std::atomic_bool m_allPlayersReady { false };
     std::atomic_bool m_simulationStarted { false };
     std::atomic_bool m_simulationReady { false };
+
+    std::unique_ptr<GameSimulation> m_gameSimulation { nullptr };
 
     int getNumberOfConnectedPlayers() const;
     void checkForAllPlayersConnected();
@@ -53,7 +56,7 @@ private:
     void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
 
     void removePlayersIfNoAlivePingReceived(float elapsed);
-    void PerformAI(std::map<int, PlayerInfo>& botDataCopy) const;
+    void performAI(std::map<int, PlayerInfo>& botDataCopy) const;
 
     void resetServer();
 };

@@ -40,3 +40,4 @@ void ServerUnit::setPosition(jt::Vector2f const& pos) { m_pos = pos; }
 jt::Vector2f ServerUnit::getPosition() const { return m_pos; }
 void ServerUnit::setUnitID(int unitID) { m_unitID = unitID; }
 int ServerUnit::getPlayerID() const { return m_playerID; }
+int ServerUnit::getUnitID() const { return m_unitID; }

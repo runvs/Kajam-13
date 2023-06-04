@@ -8,8 +8,7 @@ class SimulationResultMessageSender {
 public:
     explicit SimulationResultMessageSender(ServerNetworkConnection& connection);
 
-    void sendSimulationResults(std::vector<std::vector<ObjectProperties>> const& props,
-        std::vector<asio::ip::tcp::endpoint> const& endpoints);
+    void sendSimulationResults(std::vector<std::vector<ObjectProperties>> const& props);
 
 private:
     ServerNetworkConnection& m_connection;

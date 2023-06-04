@@ -10,9 +10,12 @@ public:
     virtual ~SimulationObjectInterface() = default;
 
     virtual void update(float elapsed, WorldInfoInterface& world) = 0;
+
     virtual ObjectProperties saveState() const = 0;
+    virtual void updateState(ObjectProperties const& props) = 0;
 
     virtual int getPlayerID() const = 0;
+    virtual int getUnitID() const = 0;
     virtual jt::Vector2f getPosition() const = 0;
 
     // TODO add a way to ask about world state

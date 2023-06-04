@@ -1,13 +1,14 @@
 #include "game_server.hpp"
+#include "game_simulation.hpp"
 #include "json_keys.hpp"
 #include <compression/compressor_interface.hpp>
-#include <game_simulation.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
 #include <player_info.hpp>
 #include <simulation_result_message_sender.hpp>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <sstream>
 #include <string>
@@ -17,6 +18,7 @@ GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compres
     : m_logger { logger }
     , m_compressor { compressor }
     , m_connection { m_compressor, logger }
+    , m_gameSimulation { std::make_unique<GameSimulation>(m_logger) }
 {
     m_connection.setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto endpoint) {
@@ -38,7 +40,7 @@ void GameServer::update(float elapsed)
             auto botDataCopy = m_botData;
             lock.unlock();
 
-            PerformAI(botDataCopy);
+            performAI(botDataCopy);
 
             startRoundSimulation(playerDataCopy, botDataCopy);
 
@@ -53,16 +55,16 @@ void GameServer::update(float elapsed)
     }
 }
 
-void GameServer::PerformAI(std::map<int, PlayerInfo>& botDataCopy) const
+void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
 {
     if (!botDataCopy.empty()) {
         ObjectProperties props;
         props.ints[jk::unitID] = 0;
         props.ints[jk::playerID] = botDataCopy.begin()->first;
         props.floats[jk::positionX] = botDataCopy.begin()->first == 0 ? 50 : 200;
-        props.floats[jk::positionY] = 100.0f;
+        props.floats[jk::positionY] = 100.0f + 32 * m_round;
 
-        botDataCopy.begin()->second.roundEndPlacementData.m_properties.push_back(props);
+        m_gameSimulation->addUnit(props);
     }
 }
 
@@ -236,7 +238,9 @@ void GameServer::handleMessageRoundReady(
     std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
-
+    for (auto const& props : m_playerData[playerId].roundEndPlacementData.m_properties) {
+        m_gameSimulation->addUnit(props);
+    }
     bool allReady = true;
     for (auto const& kvp : m_playerData) {
         if (!kvp.second.roundReady) {
@@ -269,12 +273,12 @@ void GameServer::startRoundSimulation(
 
     m_logger.info(
         "start round simulation for round " + std::to_string(m_round), { "network", "GameServer" });
-    // TODO think about moving this into separate thread
+
     m_simulationStarted.store(true);
     SimulationResultMessageSender sender { m_connection };
-    GameSimulation gs { m_logger };
-    gs.updateSimulationForNewRound(combinedData);
-    gs.performSimulation(sender);
+
+    m_gameSimulation->prepareSimulationForNewRound();
+    m_gameSimulation->performSimulation(sender);
     m_round++;
 }
 int GameServer::getNumberOfConnectedPlayers() const

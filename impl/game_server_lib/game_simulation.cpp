@@ -12,17 +12,19 @@ GameSimulation::GameSimulation(jt::LoggerInterface& logger)
 {
 }
 
-void GameSimulation::updateSimulationForNewRound(std::map<int, PlayerInfo> const& playerData)
+void GameSimulation::prepareSimulationForNewRound()
 {
-    m_latestPlayerData = playerData;
     m_simulationObjects.clear();
-    for (auto const& kvp : m_latestPlayerData) {
-        for (auto& props : kvp.second.roundEndPlacementData.m_properties) {
-            auto obj = std::make_unique<ServerUnit>();
-            obj->updateState(props);
-            m_simulationObjects.emplace_back(std::move(obj));
-        }
+    for (auto const& props : m_unitInformationForRoundStart) {
+        auto obj = std::make_unique<ServerUnit>();
+        obj->updateState(props);
+        m_simulationObjects.emplace_back(std::move(obj));
     }
+}
+
+void GameSimulation::addUnit(const ObjectProperties& props)
+{
+    m_unitInformationForRoundStart.push_back(props);
 }
 
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
@@ -42,12 +44,9 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
         }
         propertiesForAllUnitsForAllRounds.push_back(propertiesForAllUnitsForOneRound);
     }
-    std::vector<asio::ip::tcp::endpoint> endpoints;
-    for (auto const& kvp : m_latestPlayerData) {
-        endpoints.push_back(kvp.second.endpoint);
-    }
+
     m_logger.info("simulation finished");
-    sender.sendSimulationResults(propertiesForAllUnitsForAllRounds, endpoints);
+    sender.sendSimulationResults(propertiesForAllUnitsForAllRounds);
     m_logger.info("sending of simulation results done");
 }
 

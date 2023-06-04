@@ -9,12 +9,13 @@ class ServerUnit : public SimulationObjectInterface {
 public:
     void update(float elapsed, WorldInfoInterface& world) override;
     ObjectProperties saveState() const override;
-    void updateState(ObjectProperties const& props);
+    void updateState(ObjectProperties const& props) override;
     void setUnitID(int unitID);
 
     void setPosition(jt::Vector2f const& pos);
     jt::Vector2f getPosition() const override;
     int getPlayerID() const override;
+    int getUnitID() const override;
 
 private:
     // TODO add playerID

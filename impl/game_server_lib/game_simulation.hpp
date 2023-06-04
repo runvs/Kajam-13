@@ -2,6 +2,7 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
+#include "object_properties.hpp"
 #include "simulation_result_message_sender.hpp"
 #include <log/logger_interface.hpp>
 #include <player_info.hpp>
@@ -15,7 +16,8 @@
 class GameSimulation : public WorldInfoInterface {
 public:
     explicit GameSimulation(jt::LoggerInterface& logger);
-    void updateSimulationForNewRound(std::map<int, PlayerInfo> const& playerData);
+    void prepareSimulationForNewRound();
+    void addUnit(ObjectProperties const& props);
     void performSimulation(SimulationResultMessageSender& sender);
     // TODO think about using an optional here, as there might not be a valid target.
     // TODO otherwise, just return the passed in position?
@@ -23,8 +25,8 @@ public:
 
 private:
     jt::LoggerInterface& m_logger;
-    std::map<int, PlayerInfo> m_latestPlayerData;
 
+    std::vector<ObjectProperties> m_unitInformationForRoundStart;
     std::vector<std::unique_ptr<SimulationObjectInterface>> m_simulationObjects;
 };
 

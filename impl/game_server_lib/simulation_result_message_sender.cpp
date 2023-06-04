@@ -8,8 +8,7 @@ SimulationResultMessageSender::SimulationResultMessageSender(ServerNetworkConnec
 }
 
 void SimulationResultMessageSender::sendSimulationResults(
-    std::vector<std::vector<ObjectProperties>> const& props,
-    std::vector<asio::ip::tcp::endpoint> const& endpoints)
+    std::vector<std::vector<ObjectProperties>> const& props)
 {
     for (auto& p : props) {
         std::vector<std::vector<ObjectProperties>> thisProps;
