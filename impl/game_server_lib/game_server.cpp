@@ -98,10 +98,7 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
         }
     }
     if (m_playerData.empty()) {
-        if (!m_botData.empty()) {
-            m_logger.info("no more player connected, remove all bots", { "GameServer" });
-            m_botData.clear();
-        }
+        resetServer();
     }
 }
 void GameServer::handleMessage(
@@ -189,14 +186,7 @@ void GameServer::handleMessageInitialPing(
         m_connection.sendMessageToOne(ret, endpoint);
     }
     // inform all players that the requested number of Players is reached
-    // TODO extract into helper function
-    if (getNumberOfConnectedPlayers() == 2) {
-        Message ret;
-        ret.type = MessageType::AllPlayersConnected;
-        m_connection.sendMessageToAll(ret);
-
-        m_matchHasStarted = true;
-    }
+    checkForAllPlayersConnected();
 }
 
 void GameServer::handleMessageAddBot()
@@ -215,14 +205,7 @@ void GameServer::handleMessageAddBot()
     m_botData[newPlayerId];
     lock.unlock();
 
-    // TODO extract into helper function
-    // inform all players that the requested number of Players is reached
-    if (getNumberOfConnectedPlayers() == 2) {
-        Message ret;
-        ret.type = MessageType::AllPlayersConnected;
-        m_connection.sendMessageToAll(ret);
-        m_matchHasStarted = true;
-    }
+    checkForAllPlayersConnected();
 }
 
 void GameServer::handleMessageStayAlivePing(
@@ -278,6 +261,7 @@ void GameServer::discard(
 void GameServer::startRoundSimulation(
     std::map<int, PlayerInfo> const& playerData, std::map<int, PlayerInfo> const& botData)
 {
+    // merge player and bot data
     std::map<int, PlayerInfo> combinedData;
     // TODO check that ids are unique
     combinedData.insert(playerData.cbegin(), playerData.cend());
@@ -296,4 +280,27 @@ void GameServer::startRoundSimulation(
 int GameServer::getNumberOfConnectedPlayers() const
 {
     return m_playerData.size() + m_botData.size();
+}
+void GameServer::checkForAllPlayersConnected()
+{
+    // inform all players that the requested number of Players is reached
+    if (getNumberOfConnectedPlayers() == 2) {
+        Message ret;
+        ret.type = MessageType::AllPlayersConnected;
+        m_connection.sendMessageToAll(ret);
+        m_matchHasStarted = true;
+    }
+}
+
+void GameServer::resetServer()
+{
+    if (!m_matchHasStarted) {
+        return;
+    }
+    m_logger.info("no more players connected, resetting server", { "GameServer" });
+    m_matchHasStarted = false;
+    m_round = 1;
+    if (!m_botData.empty()) {
+        m_botData.clear();
+    }
 }

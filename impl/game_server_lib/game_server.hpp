@@ -19,9 +19,10 @@ private:
     CompressorInterface& m_compressor;
     ServerNetworkConnection m_connection;
 
-    // TODO split into player and spectators
+    // TODO allow spectators?
     std::mutex m_mutex;
     std::map<int, PlayerInfo> m_playerData;
+    std::map<int, PlayerInfo> m_consistentPlayerData;
     std::map<int, PlayerInfo> m_botData;
     bool m_matchHasStarted { false };
 
@@ -32,6 +33,7 @@ private:
     std::atomic_bool m_simulationReady { false };
 
     int getNumberOfConnectedPlayers() const;
+    void checkForAllPlayersConnected();
 
     // explicit copy of player data is desired
     void startRoundSimulation(
@@ -52,6 +54,8 @@ private:
 
     void removePlayersIfNoAlivePingReceived(float elapsed);
     void PerformAI(std::map<int, PlayerInfo>& botDataCopy) const;
+
+    void resetServer();
 };
 
 #endif // JAMTEMPLATE_GAME_SERVER_HPP
