@@ -24,6 +24,9 @@ void GameSimulation::prepareSimulationForNewRound()
 
 void GameSimulation::addUnit(const ObjectProperties& props)
 {
+    if (!checkIfUnitIsUnique(props)) {
+        return;
+    }
     m_unitInformationForRoundStart.push_back(props);
 }
 
@@ -70,4 +73,13 @@ jt::Vector2f GameSimulation::getClosestTargetTo(const jt::Vector2f& pos, int pla
         }
     }
     return targetPos;
+}
+bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
+{
+    for (auto const& props : m_unitInformationForRoundStart) {
+        if (props.ints.at(jk::unitID) == newUnitProps.ints.at(jk::unitID)
+            && props.ints.at(jk::playerID) == newUnitProps.ints.at(jk::playerID)) {
+            m_logger.warning("Adding a unit that is already present in the game simulation");
+        }
+    }
 }

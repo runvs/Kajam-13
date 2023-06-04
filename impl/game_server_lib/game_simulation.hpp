@@ -28,6 +28,8 @@ private:
 
     std::vector<ObjectProperties> m_unitInformationForRoundStart;
     std::vector<std::unique_ptr<SimulationObjectInterface>> m_simulationObjects;
+
+    bool checkIfUnitIsUnique(ObjectProperties const& newUnitProps);
 };
 
 #endif // JAMTEMPLATE_GAME_SIMULATION_HPP

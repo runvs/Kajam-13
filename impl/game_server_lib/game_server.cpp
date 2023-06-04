@@ -59,7 +59,7 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
 {
     if (!botDataCopy.empty()) {
         ObjectProperties props;
-        props.ints[jk::unitID] = 0;
+        props.ints[jk::unitID] = m_round;
         props.ints[jk::playerID] = botDataCopy.begin()->first;
         props.floats[jk::positionX] = botDataCopy.begin()->first == 0 ? 50 : 200;
         props.floats[jk::positionY] = 100.0f + 32 * m_round;
@@ -239,6 +239,7 @@ void GameServer::handleMessageRoundReady(
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
     for (auto const& props : m_playerData[playerId].roundEndPlacementData.m_properties) {
+        // add new unity to game simulation
         m_gameSimulation->addUnit(props);
     }
     bool allReady = true;
