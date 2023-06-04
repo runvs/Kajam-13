@@ -83,7 +83,11 @@ private:
 
     void playbackSimulation(float elapsed);
 
-    void initialStartPlaceUnits();
+    void transitionWaitForPlayersToStartPlaceUnits();
+    // const as it needs to be called from onDraw;
+    void transitionPlaceUnitsToWaitForSimulationResults() const;
+    void transitionWaitForSimulationResultsToPlayback();
+    void transitionPlaybackToPlaceUnits();
 };
 
 #endif

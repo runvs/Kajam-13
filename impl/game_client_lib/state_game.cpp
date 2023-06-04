@@ -83,16 +83,14 @@ void StateGame::onUpdate(float const elapsed)
 
         if (m_internalState == InternalState::WaitForAllPlayers) {
             if (m_serverConnection->areAllPlayersConnected()) {
-                initialStartPlaceUnits();
+                transitionWaitForPlayersToStartPlaceUnits();
             }
         } else if (m_internalState == InternalState::PlaceUnits) {
             placeUnits(elapsed);
             // transition to "WaitForSimulationResults" is done in onDraw for button push;
         } else if (m_internalState == InternalState::WaitForSimulationResults) {
             if (m_serverConnection->isRoundDataReady()) {
-                m_properties = m_serverConnection->getRoundData();
-                m_tickId = 0;
-                m_internalState = InternalState::Playback;
+                transitionWaitForSimulationResultsToPlayback();
             }
         } else if (m_internalState == InternalState::Playback) {
             playbackSimulation(elapsed);
@@ -110,14 +108,7 @@ void StateGame::playbackSimulation(float elapsed)
             m_tickId++;
 
         } else {
-            // TODO move into separate function
-            m_tickId = 0;
-            // TODO reset to initial setup
-            m_internalState = InternalState::PlaceUnits;
-            m_round++;
-            getGame()->logger().info("finished playing round simulation", { "StateGame" });
-            m_placementManager->setActive(true);
-            return;
+            transitionPlaybackToPlaceUnits();
         }
         auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
 
@@ -151,7 +142,7 @@ void StateGame::playbackSimulation(float elapsed)
     }
 }
 
-void StateGame::initialStartPlaceUnits()
+void StateGame::transitionWaitForPlayersToStartPlaceUnits()
 {
     m_playerIdDispatcher
         = std::make_shared<PlayerIdDispatcher>(this->m_serverConnection->getPlayerId());
@@ -159,6 +150,31 @@ void StateGame::initialStartPlaceUnits()
     m_placementManager = std::make_shared<PlacementManager>(
         m_serverConnection->getPlayerId(), m_playerIdDispatcher);
     add(m_placementManager);
+    m_internalState = InternalState::PlaceUnits;
+    m_placementManager->setActive(true);
+}
+
+void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
+{
+    m_clientEndPlacementData.m_properties = m_placementManager->getPlacedUnits();
+    m_placementManager->clearPlacedUnits();
+    m_serverConnection->readyRound(m_clientEndPlacementData);
+    m_internalState = InternalState::WaitForSimulationResults;
+    m_placementManager->setActive(false);
+}
+void StateGame::transitionWaitForSimulationResultsToPlayback()
+{
+    m_properties = m_serverConnection->getRoundData();
+    m_tickId = 0;
+    m_internalState = InternalState::Playback;
+}
+
+void StateGame::transitionPlaybackToPlaceUnits()
+{
+    m_tickId = 0;
+    // TODO reset to initial unit placement setup
+    m_round++;
+    getGame()->logger().info("finished playing round simulation", { "StateGame" });
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);
 }
@@ -193,12 +209,7 @@ void StateGame::onDraw() const
 
     ImGui::Separator();
     if (ImGui::Button("ready")) {
-        // TODO move into separate function
-        m_clientEndPlacementData.m_properties = m_placementManager->getPlacedUnits();
-        m_placementManager->clearPlacedUnits();
-        m_serverConnection->readyRound(m_clientEndPlacementData);
-        m_internalState = InternalState::WaitForSimulationResults;
-        m_placementManager->setActive(false);
+        transitionPlaceUnitsToWaitForSimulationResults();
     }
     ImGui::End();
 }
