@@ -1,10 +1,10 @@
 
 #include "server_connection.hpp"
-#include "game_properties.hpp"
-#include "message.hpp"
-#include "network_properties.hpp"
-#include "object_properties.hpp"
-#include <iostream>
+#include <game_properties.hpp>
+#include <message.hpp>
+#include <network_properties.hpp>
+#include <object_properties.hpp>
+#include <simulation_result_data.hpp>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -108,10 +108,10 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message const m = j;
     nlohmann::json j_data = nlohmann::json::parse(m.data);
-    std::vector<std::vector<ObjectProperties>> props;
-    j_data.get_to(props);
+    SimulationResultData data;
+    j_data.get_to(data);
     std::unique_lock<std::mutex> lock { m_dataMutex };
-    m_properties.insert(m_properties.end(), props.begin(), props.end());
+    m_properties.push_back(data.m_unitPropertiesForOneFrame);
     m_logger.debug("received tick " + std::to_string(m_properties.size()) + " / "
         + std::to_string(GP::NumberOfStepsPerRound()));
     if (m_properties.size() == GP::NumberOfStepsPerRound()) {

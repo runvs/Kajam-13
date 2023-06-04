@@ -80,6 +80,8 @@ bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
         if (props.ints.at(jk::unitID) == newUnitProps.ints.at(jk::unitID)
             && props.ints.at(jk::playerID) == newUnitProps.ints.at(jk::playerID)) {
             m_logger.warning("Adding a unit that is already present in the game simulation");
+            return false;
         }
     }
+    return true;
 }

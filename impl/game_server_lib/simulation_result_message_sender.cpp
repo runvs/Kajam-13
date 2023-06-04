@@ -1,5 +1,6 @@
 #include "simulation_result_message_sender.hpp"
 #include "object_properties.hpp"
+#include "simulation_result_data.hpp"
 #include <iostream>
 
 SimulationResultMessageSender::SimulationResultMessageSender(ServerNetworkConnection& connection)
@@ -11,11 +12,11 @@ void SimulationResultMessageSender::sendSimulationResults(
     std::vector<std::vector<ObjectProperties>> const& props)
 {
     for (auto& p : props) {
-        std::vector<std::vector<ObjectProperties>> thisProps;
-        thisProps.push_back(p);
+        SimulationResultData data;
+        data.m_unitPropertiesForOneFrame = p;
         Message m;
         m.type = MessageType::SimulationResult;
-        nlohmann::json j = thisProps;
+        nlohmann::json j = data;
         m.data = j.dump();
 
         m_connection.sendMessageToAll(m);
