@@ -8,8 +8,9 @@
 #include <vector.hpp>
 #include <memory>
 
-GameSimulation::GameSimulation(jt::LoggerInterface& logger)
+GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos)
     : m_logger { logger }
+    , m_unitInfos { unitInfos }
 {
 }
 
@@ -17,10 +18,8 @@ void GameSimulation::prepareSimulationForNewRound()
 {
     m_simulationObjects.clear();
     for (auto const& props : m_unitInformationForRoundStart) {
-        // TODO get unit info for specific type instead of generic unit info without info
-        UnitInfo unitInfo;
-        unitInfo.movementSpeed = 1.0f;
-        auto obj = std::make_unique<ServerUnit>(unitInfo);
+        auto obj = std::make_unique<ServerUnit>(
+            m_unitInfos.getInfoForType(props.strings.at(jk::unitType)));
         obj->updateState(props);
         m_simulationObjects.emplace_back(std::move(obj));
     }

@@ -9,6 +9,6 @@
   "colliderRadius": 8.0,
   "experience": 0,
   "hitpoints": 100.0,
-  "movementSpeed": 40.0,
+  "movementSpeed": 1.0,
   "type": "swordman"
 }

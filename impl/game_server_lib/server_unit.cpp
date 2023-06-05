@@ -13,6 +13,7 @@ ObjectProperties ServerUnit::saveState() const
     props.floats[jk::positionX] = m_pos.x;
     props.floats[jk::positionY] = m_pos.y;
     props.floats[jk::hpCurrent] = m_hp;
+    props.strings[jk::unitType] = m_info.type;
 
     return props;
 }
@@ -29,11 +30,10 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     // determine target
     auto const target = world.getClosestTargetTo(m_pos, m_playerID);
 
-    // TODO make this variable based on unit type
-    float const speed = 16.0f;
+    float const speed = 2 * m_info.movementSpeed;
 
     m_age += elapsed;
-    m_pos.y += m_info.movementSpeed * elapsed * 40 * cos(m_age * 2);
+    m_pos.y += elapsed * 40 * cos(m_age * speed);
     m_hp -= elapsed * 2.0f;
 }
 

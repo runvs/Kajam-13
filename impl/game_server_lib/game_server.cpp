@@ -19,8 +19,8 @@ GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compres
     : m_logger { logger }
     , m_compressor { compressor }
     , m_connection { m_compressor, logger }
-    , m_gameSimulation { std::make_unique<GameSimulation>(m_logger) }
     , m_unitInfos { m_logger }
+    , m_gameSimulation { std::make_unique<GameSimulation>(m_logger, m_unitInfos) }
 {
     m_connection.setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto endpoint) {
@@ -65,6 +65,7 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
         props.ints[jk::playerID] = botDataCopy.begin()->first;
         props.floats[jk::positionX] = botDataCopy.begin()->first == 0 ? 50 : 200;
         props.floats[jk::positionY] = 100.0f + 32 * m_round;
+        props.strings[jk::unitType] = "swordman";
 
         m_gameSimulation->addUnit(props);
     }
@@ -105,6 +106,7 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
         resetServer();
     }
 }
+
 void GameServer::handleMessage(
     const std::string& messageContent, const asio::ip::tcp::endpoint& endpoint)
 {

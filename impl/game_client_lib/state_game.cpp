@@ -111,8 +111,9 @@ void StateGame::playbackSimulation(float elapsed)
 
         for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
 
-            int const unitID = propsForOneUnit.ints.at(jk::unitID);
-            int const playerID = propsForOneUnit.ints.at(jk::playerID);
+            auto const unitID = propsForOneUnit.ints.at(jk::unitID);
+            auto const playerID = propsForOneUnit.ints.at(jk::playerID);
+            auto const unitType = propsForOneUnit.strings.at(jk::unitType);
             // TODO make this code a bit nicer
             bool unitFound = false;
             for (auto& u : *m_units) {
@@ -129,7 +130,7 @@ void StateGame::playbackSimulation(float elapsed)
             }
             // Spawn a new  unit
             if (!unitFound) {
-                auto unit = std::make_shared<Unit>();
+                auto unit = std::make_shared<Unit>(m_unitInfo->getInfoForType(unitType));
                 m_units->push_back(unit);
                 add(unit);
                 unit->setIDs(unitID, playerID);
@@ -182,7 +183,6 @@ void StateGame::placeUnits(float elapsed)
     if (m_internalState != InternalState::PlaceUnits) {
         throw std::logic_error { "placeUnits called when not in placeUnits state" };
     }
-    m_placementManager->update(elapsed);
 }
 
 void StateGame::onDraw() const

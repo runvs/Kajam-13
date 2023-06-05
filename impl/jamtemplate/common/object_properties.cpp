@@ -2,19 +2,8 @@
 
 void to_json(nlohmann::json& j, ObjectProperties const& data)
 {
-    j = nlohmann::json { { "floats", data.floats }, { "ints", data.ints } };
-    //    if (!data.bools.empty()) {
-    //        j["bools"] = data.bools;
-    //    }
-    //    if (!data.floats.empty()) {
-    //        j["floats"] = data.floats;
-    //    }
-    //    if (!data.floats.empty()) {
-    //        j["ints"] = data.ints;
-    //    }
-    //    if (!data.floats.empty()) {
-    //        j["strings"] = data.strings;
-    //    }
+    j = nlohmann::json { { "floats", data.floats }, { "ints", data.ints },
+        { "strings", data.strings }, { "bools", data.bools } };
 }
 
 void from_json(nlohmann::json const& j, ObjectProperties& data)

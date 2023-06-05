@@ -54,7 +54,7 @@ void PlacementManager::doDraw() const
         ImGui::Begin("unit placement");
         for (auto const& u : m_unitInfo->getUnits()) {
             if (ImGui::Button(u.type.c_str())) {
-                getGame()->logger().info("buy: " + u.type);
+                getGame()->logger().info("select: " + u.type);
                 m_activeUnitType = u.type;
             }
         }

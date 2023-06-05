@@ -8,31 +8,29 @@
 #include <nlohmann.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
+#include <unit_info.hpp>
 #include <vector.hpp>
 #include <memory>
 
 class Unit : public jt::GameObject {
 public:
-
+    explicit Unit(UnitInfo const& info);
     // TODO make this an interface & base class? Or even better a UnitInfo class
-    void updateState(ObjectProperties const &props);
+    void updateState(ObjectProperties const& props);
 
     ObjectProperties saveState() const;
-
-    void setPosition(jt::Vector2f const &pos);
-
+    void setPosition(jt::Vector2f const& pos);
     int getUnitID() const;
-
     void setIDs(int uid, int pid);
-
     int getPlayerID() const;
 
 private:
+    UnitInfo m_info;
     std::shared_ptr<jt::Shape> m_shape;
     int m_unitID;
-    int m_playerID{0};
-    float m_hpMax{100.0f};
-    float m_hp{100.0f};
+    int m_playerID { 0 };
+    float m_hpMax { 100.0f };
+    float m_hp { 100.0f };
     std::shared_ptr<jt::Bar> m_hpBar;
 
     void doCreate() override;
