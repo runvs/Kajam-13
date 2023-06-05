@@ -1,0 +1,14 @@
+{
+  "ais": [],
+  "animations": [
+    {
+      "jsonfilename": "archer.json"
+    }
+  ],
+  "closeCombatDamage": 10.0,
+  "colliderRadius": 4.0,
+  "experience": 0,
+  "hitpoints": 20.0,
+  "movementSpeed": 30.0,
+  "type": "archer"
+}

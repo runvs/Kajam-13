@@ -16,7 +16,9 @@ constexpr auto messageType = "type";
 constexpr auto messageData = "data";
 
 constexpr auto hpCurrent = "hpCurrent";
+constexpr auto files = "files";
 
+constexpr auto unitType = "unitType";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

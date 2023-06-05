@@ -11,6 +11,8 @@
 #include <player_id_dispatcher.hpp>
 #include <server_connection.hpp>
 #include <unit.hpp>
+#include <unit_info.hpp>
+#include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <vector.hpp>
 #include <memory>
@@ -54,6 +56,8 @@ private:
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
 
     mutable ClientEndPlacementData m_clientEndPlacementData;
+
+    std::shared_ptr<UnitInfoCollection> m_unitInfo;
 
     mutable InternalState m_internalState { InternalState::WaitForAllPlayers };
 

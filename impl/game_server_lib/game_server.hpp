@@ -6,6 +6,7 @@
 #include <log/logger_interface.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
+#include <unit_info_collection.hpp>
 #include <atomic>
 #include <shared_mutex>
 
@@ -34,6 +35,8 @@ private:
     std::atomic_bool m_simulationReady { false };
 
     std::unique_ptr<GameSimulation> m_gameSimulation { nullptr };
+
+    UnitInfoCollection m_unitInfos;
 
     int getNumberOfConnectedPlayers() const;
     void checkForAllPlayersConnected();

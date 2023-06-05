@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_PLACEMENT_MANAGER_HPP
 
 #include "player_id_dispatcher.hpp"
+#include "unit_info_collection.hpp"
 #include <game_object.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
@@ -12,19 +13,23 @@ class PlacedUnit;
 
 class PlacementManager : public jt::GameObject {
 public:
-    PlacementManager(int playerId, std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher);
+    PlacementManager(int playerId, std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
+        std::shared_ptr<UnitInfoCollection> unitInfo);
     std::vector<ObjectProperties> getPlacedUnits() const;
     void clearPlacedUnits();
 
     void setActive(bool active);
 
 private:
+    std::shared_ptr<UnitInfoCollection> m_unitInfo;
     bool m_isActive { true };
     std::vector<std::shared_ptr<PlacedUnit>> m_placedUnits;
     UnitIdManager m_unitIdManager;
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
     std::shared_ptr<jt::Shape> m_blockedUnitPlacementArea;
     int m_playerId;
+    // TODO rework
+    mutable std::string m_activeUnitType = "";
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

@@ -3,10 +3,13 @@
 #define JAMTEMPLATE_SERVER_UNIT_HPP
 
 #include <simulation_object_interface.hpp>
+#include <unit_info.hpp>
 #include <vector.hpp>
 
 class ServerUnit : public SimulationObjectInterface {
 public:
+    // TODO think about adding box2d
+    explicit ServerUnit(UnitInfo const& info);
     void update(float elapsed, WorldInfoInterface& world) override;
     ObjectProperties saveState() const override;
     void updateState(ObjectProperties const& props) override;
@@ -18,8 +21,8 @@ public:
     int getUnitID() const override;
 
 private:
-    // TODO add playerID
-    // TODO support different unit types
+    UnitInfo m_info;
+
     jt::Vector2f m_pos;
     int m_unitID { 0 };
     int m_playerID { 0 };

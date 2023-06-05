@@ -1,24 +1,21 @@
 ﻿#include "state_game.hpp"
-#include "client_end_placement_data.hpp"
-#include "drawable_helpers.hpp"
-#include "input/keyboard/keyboard_defines.hpp"
-#include "json_keys.hpp"
-#include "math_helper.hpp"
-#include "message.hpp"
-#include "object_group.hpp"
-#include "player_id_dispatcher.hpp"
-#include "server_connection.hpp"
-#include "unit_placement/placement_manager.hpp"
-#include "vector.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
-#include <color/color.hpp>
+#include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
+#include <input/keyboard/keyboard_defines.hpp>
+#include <json_keys.hpp>
+#include <message.hpp>
+#include <object_group.hpp>
+#include <player_id_dispatcher.hpp>
 #include <screeneffects/vignette.hpp>
+#include <server_connection.hpp>
 #include <shape.hpp>
 #include <state_menu.hpp>
-#include "imgui.h"
-#include "zlib.h"
+#include <unit_info_collection.hpp>
+#include <unit_placement/placement_manager.hpp>
+#include <vector.hpp>
+#include <imgui.h>
 #include <memory>
 #include <stdexcept>
 
@@ -144,11 +141,12 @@ void StateGame::playbackSimulation(float elapsed)
 
 void StateGame::transitionWaitForPlayersToStartPlaceUnits()
 {
-    m_playerIdDispatcher
-        = std::make_shared<PlayerIdDispatcher>(this->m_serverConnection->getPlayerId());
+    m_playerIdDispatcher = std::make_shared<PlayerIdDispatcher>(m_serverConnection->getPlayerId());
+    m_unitInfo = std::make_shared<UnitInfoCollection>(
+        getGame()->logger(), m_serverConnection->getUnitInfo());
 
     m_placementManager = std::make_shared<PlacementManager>(
-        m_serverConnection->getPlayerId(), m_playerIdDispatcher);
+        m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     add(m_placementManager);
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);

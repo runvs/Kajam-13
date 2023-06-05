@@ -3,6 +3,8 @@
 #include <object_properties.hpp>
 #include <cmath>
 
+ServerUnit::ServerUnit(const UnitInfo& info) { m_info = info; }
+
 ObjectProperties ServerUnit::saveState() const
 {
     ObjectProperties props;
@@ -31,7 +33,7 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     float const speed = 16.0f;
 
     m_age += elapsed;
-    m_pos.y += elapsed * 40 * cos(m_age * 2);
+    m_pos.y += m_info.movementSpeed * elapsed * 40 * cos(m_age * 2);
     m_hp -= elapsed * 2.0f;
 }
 

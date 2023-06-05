@@ -1,6 +1,7 @@
 #include "game_server.hpp"
 #include "game_simulation.hpp"
 #include "json_keys.hpp"
+#include "unit_info.hpp"
 #include <compression/compressor_interface.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
@@ -19,6 +20,7 @@ GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compres
     , m_compressor { compressor }
     , m_connection { m_compressor, logger }
     , m_gameSimulation { std::make_unique<GameSimulation>(m_logger) }
+    , m_unitInfos { m_logger }
 {
     m_connection.setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto endpoint) {
@@ -185,6 +187,8 @@ void GameServer::handleMessageInitialPing(
         Message ret;
         ret.type = MessageType::PlayerIdResponse;
         ret.playerId = newPlayerId;
+        nlohmann::json j = nlohmann::json { { jk::units, m_unitInfos.getUnits() } };
+        ret.data = j.dump();
         m_connection.sendMessageToOne(ret, endpoint);
     }
     // inform all players that the requested number of Players is reached

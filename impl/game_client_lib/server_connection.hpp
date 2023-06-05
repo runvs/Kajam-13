@@ -1,13 +1,14 @@
 #ifndef JAMTEMPLATE_SERVER_CONNECTION_HPP
 #define JAMTEMPLATE_SERVER_CONNECTION_HPP
 
-#include "asio/ip/tcp.hpp"
-#include "client_network_connection.hpp"
-#include "log/logger_interface.hpp"
-#include "object_properties.hpp"
 #include "vector.hpp"
+#include <asio/ip/tcp.hpp>
 #include <client_end_placement_data.hpp>
+#include <client_network_connection.hpp>
 #include <game_object.hpp>
+#include <log/logger_interface.hpp>
+#include <object_properties.hpp>
+#include <unit_info_collection.hpp>
 
 class ServerConnection : public jt::GameObject {
 public:
@@ -23,6 +24,7 @@ public:
     std::vector<std::vector<ObjectProperties>> getRoundData();
 
     int getPlayerId() const;
+    std::vector<UnitInfo> getUnitInfo() const;
 
 private:
     jt::LoggerInterface& m_logger;
@@ -36,6 +38,8 @@ private:
     std::atomic_bool m_dataReady { false };
     std::mutex m_dataMutex;
     std::vector<std::vector<ObjectProperties>> m_properties;
+
+    std::vector<UnitInfo> m_unitInfo;
 
     void doUpdate(float const elapsed) override;
 

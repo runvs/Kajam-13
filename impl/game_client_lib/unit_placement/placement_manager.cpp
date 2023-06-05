@@ -1,12 +1,16 @@
 #include "placement_manager.hpp"
-#include "object_properties.hpp"
-#include "placed_unit.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <math_helper.hpp>
+#include <object_properties.hpp>
+#include <unit_info_collection.hpp>
+#include <unit_placement/placed_unit.hpp>
+#include <imgui.h>
 
-PlacementManager::PlacementManager(
-    int playerId, std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher)
+PlacementManager::PlacementManager(int playerId,
+    std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
+    std::shared_ptr<UnitInfoCollection> unitInfo)
+    : m_unitInfo { unitInfo }
 {
     m_playerId = playerId;
     m_playerIdDispatcher = playerIdDispatcher;
@@ -32,8 +36,37 @@ void PlacementManager::doUpdate(const float elapsed)
     m_blockedUnitPlacementArea->update(elapsed);
 }
 
+void PlacementManager::doDraw() const
+{
+    if (!m_isActive) {
+        return;
+    }
+
+    for (auto const& u : m_placedUnits) {
+        u->draw();
+    }
+
+    if (m_blockedUnitPlacementArea) {
+        m_blockedUnitPlacementArea->draw(renderTarget());
+    }
+
+    if (m_unitInfo) {
+        ImGui::Begin("unit placement");
+        for (auto const& u : m_unitInfo->getUnits()) {
+            if (ImGui::Button(u.type.c_str())) {
+                getGame()->logger().info("buy: " + u.type);
+                m_activeUnitType = u.type;
+            }
+        }
+        ImGui::End();
+    }
+}
+
 void PlacementManager::placeUnit()
 {
+    if (m_activeUnitType == "") {
+        return;
+    }
     // TODO use ImGui to draw a nice UI
     if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
         auto playerIdDispatcher = m_playerIdDispatcher.lock();
@@ -50,9 +83,7 @@ void PlacementManager::placeUnit()
             return;
         }
 
-        // TODO extend by unit type and other required things
-
-        auto unit = std::make_shared<PlacedUnit>();
+        auto unit = std::make_shared<PlacedUnit>(m_unitInfo->getInfoForType(m_activeUnitType));
         m_placedUnits.push_back(unit);
         unit->setGameInstance(getGame());
         unit->create();
@@ -60,19 +91,6 @@ void PlacementManager::placeUnit()
         unit->setPosition(mousePos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);
-    }
-}
-
-void PlacementManager::doDraw() const
-{
-    if (m_isActive) {
-        for (auto const& u : m_placedUnits) {
-            u->draw();
-        }
-
-        if (m_blockedUnitPlacementArea) {
-            m_blockedUnitPlacementArea->draw(renderTarget());
-        }
     }
 }
 

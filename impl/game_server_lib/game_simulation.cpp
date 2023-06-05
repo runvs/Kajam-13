@@ -1,4 +1,5 @@
 #include "game_simulation.hpp"
+#include "unit_info.hpp"
 #include <game_properties.hpp>
 #include <json_keys.hpp>
 #include <math_helper.hpp>
@@ -16,7 +17,10 @@ void GameSimulation::prepareSimulationForNewRound()
 {
     m_simulationObjects.clear();
     for (auto const& props : m_unitInformationForRoundStart) {
-        auto obj = std::make_unique<ServerUnit>();
+        // TODO get unit info for specific type instead of generic unit info without info
+        UnitInfo unitInfo;
+        unitInfo.movementSpeed = 1.0f;
+        auto obj = std::make_unique<ServerUnit>(unitInfo);
         obj->updateState(props);
         m_simulationObjects.emplace_back(std::move(obj));
     }

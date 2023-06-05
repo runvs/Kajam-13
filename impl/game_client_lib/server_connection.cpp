@@ -1,10 +1,12 @@
 
 #include "server_connection.hpp"
 #include <game_properties.hpp>
+#include <json_keys.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <object_properties.hpp>
 #include <simulation_result_data.hpp>
+#include <unit_info.hpp>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -80,7 +82,6 @@ void ServerConnection::handleMessage(
 
 void ServerConnection::handleMessagePlayerIdResponse(std::string const& messageContent)
 {
-
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message const m = j;
 
@@ -93,9 +94,16 @@ void ServerConnection::handleMessagePlayerIdResponse(std::string const& messageC
     }
 
     m_playerId = m.playerId;
+
+    nlohmann::json jdata = nlohmann::json::parse(m.data);
+    jdata.at(jk::units).get_to(m_unitInfo);
     m_logger.info(
         "Received Player Id: " + std::to_string(m_playerId), { "network", "ServerConnection" });
+    m_logger.info(
+        "Received Unit info from server for " + std::to_string(m_unitInfo.size()) + " units",
+        { "network", "ServerConnection", "units" });
 }
+
 void ServerConnection::handleMessageAllPlayersConnected() { m_allPlayersConnected.store(true); }
 
 void ServerConnection::discard(std::string const& messageContent)
@@ -130,5 +138,9 @@ std::vector<std::vector<ObjectProperties>> ServerConnection::getRoundData()
     m_properties.clear();
     return propertiesCopy;
 }
+
 int ServerConnection::getPlayerId() const { return m_playerId; }
+
 bool ServerConnection::areAllPlayersConnected() const { return m_allPlayersConnected; }
+
+std::vector<UnitInfo> ServerConnection::getUnitInfo() const { return m_unitInfo; }
