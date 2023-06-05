@@ -1,11 +1,14 @@
 #ifndef JAMTEMPLATE_PLACED_UNIT_HPP
 #define JAMTEMPLATE_PLACED_UNIT_HPP
 
+#include "state_menu.hpp"
+#include <animation.hpp>
 #include <game_object.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
 #include <unit_info.hpp>
 #include <vector.hpp>
+#include <memory>
 
 class PlacedUnit : public jt::GameObject {
 public:
@@ -17,7 +20,8 @@ public:
 
 private:
     UnitInfo m_info;
-    std::shared_ptr<jt::Shape> m_shape;
+    //    std::shared_ptr<jt::Shape> m_shape;
+    std::shared_ptr<jt::Animation> m_anim;
     int m_unitID { 0 };
     int m_playerID { 0 };
 

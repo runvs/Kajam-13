@@ -34,6 +34,7 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
 
     m_age += elapsed;
     m_pos.y += elapsed * 40 * cos(m_age * speed);
+    
     m_hp -= elapsed * 2.0f;
 }
 

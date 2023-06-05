@@ -113,7 +113,8 @@ void jt::Animation::loadFromJson(
         auto const frameIndices = jt::MathHelper::numbersBetween(animationStart, animationEnd);
         std::vector<float> frameTimes;
 
-        auto const startFrameName = baseAnimName + " " + std::to_string(animationStart) + ".ase";
+        auto const startFrameName
+            = baseAnimName + " " + std::to_string(animationStart) + ".aseprite";
         if (!j["frames"].contains(startFrameName)) {
             throw std::invalid_argument { "'frames/" + startFrameName + "' does not exist" };
         }
@@ -121,7 +122,7 @@ void jt::Animation::loadFromJson(
         auto const height = j["frames"][startFrameName]["sourceSize"]["h"].get<unsigned int>();
 
         for (auto const id : frameIndices) {
-            auto const frameName = baseAnimName + " " + std::to_string(id) + ".ase";
+            auto const frameName = baseAnimName + " " + std::to_string(id) + ".aseprite";
             if (j["frames"].count(frameName) == 0) {
                 throw std::invalid_argument { "json file does not have 'frames." + frameName
                     + "' entry" };

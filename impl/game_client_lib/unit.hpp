@@ -2,6 +2,7 @@
 #ifndef JAMTEMPLATE_UNIT_HPP
 #define JAMTEMPLATE_UNIT_HPP
 
+#include <animation.hpp>
 #include <bar.hpp>
 #include <counted_object.hpp>
 #include <game_object.hpp>
@@ -15,7 +16,6 @@
 class Unit : public jt::GameObject {
 public:
     explicit Unit(UnitInfo const& info);
-    // TODO make this an interface & base class? Or even better a UnitInfo class
     void updateState(ObjectProperties const& props);
 
     ObjectProperties saveState() const;
@@ -26,7 +26,9 @@ public:
 
 private:
     UnitInfo m_info;
-    std::shared_ptr<jt::Shape> m_shape;
+
+    std::shared_ptr<jt::Animation> m_anim;
+
     int m_unitID;
     int m_playerID { 0 };
     float m_hpMax { 100.0f };
