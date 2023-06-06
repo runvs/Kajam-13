@@ -1,11 +1,13 @@
 #ifndef JAMTEMPLATE_PLACEMENT_MANAGER_HPP
 #define JAMTEMPLATE_PLACEMENT_MANAGER_HPP
 
-#include "player_id_dispatcher.hpp"
-#include "unit_info_collection.hpp"
 #include <game_object.hpp>
+#include <game_object_collection.hpp>
+#include <object_group.hpp>
 #include <object_properties.hpp>
+#include <player_id_dispatcher.hpp>
 #include <shape.hpp>
+#include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector>
 
@@ -23,7 +25,8 @@ public:
 private:
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
     bool m_isActive { true };
-    std::vector<std::shared_ptr<PlacedUnit>> m_placedUnits;
+    std::shared_ptr<jt::ObjectGroup<PlacedUnit>> m_placedUnits;
+    jt::GameObjectCollection m_placedUnitsGO;
     UnitIdManager m_unitIdManager;
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
     std::shared_ptr<jt::Shape> m_blockedUnitPlacementArea;

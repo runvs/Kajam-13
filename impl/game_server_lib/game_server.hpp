@@ -34,9 +34,8 @@ private:
     std::atomic_bool m_simulationStarted { false };
     std::atomic_bool m_simulationReady { false };
 
-    std::unique_ptr<GameSimulation> m_gameSimulation { nullptr };
-
     UnitInfoCollection m_unitInfos;
+    std::unique_ptr<GameSimulation> m_gameSimulation { nullptr };
 
     int getNumberOfConnectedPlayers() const;
     void checkForAllPlayersConnected();

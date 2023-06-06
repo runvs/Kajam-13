@@ -10,7 +10,6 @@ PlacedUnit::PlacedUnit(UnitInfo info)
 
 void PlacedUnit::doCreate()
 {
-    // TODO use the correct animation instead of a shape
     m_anim = std::make_shared<jt::Animation>();
     m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
     m_anim->play("idle");

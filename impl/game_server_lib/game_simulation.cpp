@@ -1,10 +1,11 @@
 #include "game_simulation.hpp"
-#include "unit_info.hpp"
 #include <game_properties.hpp>
 #include <json_keys.hpp>
 #include <math_helper.hpp>
 #include <object_properties.hpp>
 #include <server_unit.hpp>
+#include <simulation_object_interface.hpp>
+#include <unit_info.hpp>
 #include <vector.hpp>
 #include <memory>
 
@@ -18,7 +19,7 @@ void GameSimulation::prepareSimulationForNewRound()
 {
     m_simulationObjects.clear();
     for (auto const& props : m_unitInformationForRoundStart) {
-        auto obj = std::make_unique<ServerUnit>(
+        auto obj = std::make_shared<ServerUnit>(
             m_unitInfos.getInfoForType(props.strings.at(jk::unitType)));
         obj->updateState(props);
         m_simulationObjects.emplace_back(std::move(obj));
@@ -56,13 +57,17 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
     m_logger.info("sending of simulation results done");
 }
 
-jt::Vector2f GameSimulation::getClosestTargetTo(const jt::Vector2f& pos, int playerId)
+std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
+    const jt::Vector2f& pos, int playerId)
 {
     // TODO using a SpatialObjectGrid might be useful here?
 
     float minDistance = 999999999.9f;
-    jt::Vector2f targetPos { 0.0f, 0.0f };
+    std::shared_ptr<SimulationObjectInterface> target { nullptr };
     for (auto const& obj : m_simulationObjects) {
+        if (!obj->isAlive()) {
+            continue;
+        }
         if (obj->getPlayerID() == playerId) {
             continue;
         }
@@ -72,10 +77,10 @@ jt::Vector2f GameSimulation::getClosestTargetTo(const jt::Vector2f& pos, int pla
         auto l2 = jt::MathHelper::lengthSquared(dist);
         if (l2 < minDistance) {
             minDistance = l2;
-            targetPos = otherp;
+            target = obj;
         }
     }
-    return targetPos;
+    return target;
 }
 bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
 {

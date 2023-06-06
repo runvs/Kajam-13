@@ -19,6 +19,7 @@ constexpr auto hpCurrent = "hpCurrent";
 constexpr auto files = "files";
 
 constexpr auto unitType = "unitType";
+constexpr auto unitAnim = "unitNewAnim";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

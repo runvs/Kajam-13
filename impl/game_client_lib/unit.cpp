@@ -17,6 +17,7 @@ void Unit::doCreate()
     m_anim = std::make_shared<jt::Animation>();
     m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
     m_anim->play("idle");
+    m_anim->setLooping("death", false);
 
     m_hpBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
     m_hpBar->setMaxValue(m_hpMax);
@@ -53,6 +54,10 @@ void Unit::updateState(ObjectProperties const& props)
         m_anim->setColor(GP::ColorPlayer1());
     }
     m_hp = props.floats.at(jk::hpCurrent);
+
+    if (props.strings.count(jk::unitAnim) == 1) {
+        m_anim->play(props.strings.at(jk::unitAnim));
+    }
 }
 
 void Unit::setPosition(jt::Vector2f const& pos) { m_anim->setPosition(pos); }

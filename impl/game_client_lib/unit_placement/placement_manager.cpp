@@ -2,6 +2,7 @@
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <math_helper.hpp>
+#include <object_group.hpp>
 #include <object_properties.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placed_unit.hpp>
@@ -26,12 +27,12 @@ void PlacementManager::doCreate()
     m_blockedUnitPlacementArea
         = jt::dh::createShapeRect(playerIdDispatcher->getBlockedUnitPlacementArea(),
             jt::Color { 20, 20, 20, 100 }, textureManager());
+    m_placedUnits = std::make_shared<jt::ObjectGroup<PlacedUnit>>();
 }
 void PlacementManager::doUpdate(const float elapsed)
 {
-    for (auto& u : m_placedUnits) {
-        u->update(elapsed);
-    }
+    m_placedUnitsGO.update(elapsed);
+    m_placedUnits->update(elapsed);
     placeUnit();
     m_blockedUnitPlacementArea->update(elapsed);
 }
@@ -42,9 +43,7 @@ void PlacementManager::doDraw() const
         return;
     }
 
-    for (auto const& u : m_placedUnits) {
-        u->draw();
-    }
+    m_placedUnitsGO.draw();
 
     if (m_blockedUnitPlacementArea) {
         m_blockedUnitPlacementArea->draw(renderTarget());
@@ -84,7 +83,8 @@ void PlacementManager::placeUnit()
         }
 
         auto unit = std::make_shared<PlacedUnit>(m_unitInfo->getInfoForType(m_activeUnitType));
-        m_placedUnits.push_back(unit);
+        m_placedUnits->push_back(unit);
+        m_placedUnitsGO.add(unit);
         unit->setGameInstance(getGame());
         unit->create();
 
@@ -97,11 +97,11 @@ void PlacementManager::placeUnit()
 std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
 {
     std::vector<ObjectProperties> properties;
-    for (auto const& u : m_placedUnits) {
-        properties.push_back(u->saveState());
+    for (auto const& u : *m_placedUnits) {
+        properties.push_back(u.lock()->saveState());
     }
     return properties;
 }
 
-void PlacementManager::clearPlacedUnits() { m_placedUnits.clear(); }
+void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
 void PlacementManager::setActive(bool active) { m_isActive = active; }

@@ -19,6 +19,8 @@ public:
     jt::Vector2f getPosition() const override;
     int getPlayerID() const override;
     int getUnitID() const override;
+    void takeDamage(const DamageInfo& damage) override;
+    bool isAlive() const override;
 
 private:
     UnitInfo m_info;
@@ -28,6 +30,9 @@ private:
     int m_playerID { 0 };
     float m_age { 0.0f };
     float m_hp { 100.0f };
+    float m_attackTimer { 0.0f };
+
+    std::string m_newAnim { "" };
 };
 
 #endif // JAMTEMPLATE_SERVER_UNIT_HPP

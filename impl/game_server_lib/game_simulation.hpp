@@ -22,14 +22,15 @@ public:
     void performSimulation(SimulationResultMessageSender& sender);
     // TODO think about using an optional here, as there might not be a valid target.
     // TODO otherwise, just return the passed in position?
-    jt::Vector2f getClosestTargetTo(const jt::Vector2f& pos, int playerId) override;
+    std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
+        const jt::Vector2f& pos, int playerId) override;
 
 private:
     jt::LoggerInterface& m_logger;
     UnitInfoCollection& m_unitInfos;
 
     std::vector<ObjectProperties> m_unitInformationForRoundStart;
-    std::vector<std::unique_ptr<SimulationObjectInterface>> m_simulationObjects;
+    std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
 
     bool checkIfUnitIsUnique(ObjectProperties const& newUnitProps);
 };

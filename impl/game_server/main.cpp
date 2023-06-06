@@ -23,7 +23,6 @@ int main()
         std::chrono::steady_clock::time_point m_timeLast {};
 
         for (;;) {
-            // TODO proper timing
             auto const now = std::chrono::steady_clock::now();
             float const elapsedSeconds
                 = std::chrono::duration_cast<std::chrono::microseconds>(now - m_timeLast).count()

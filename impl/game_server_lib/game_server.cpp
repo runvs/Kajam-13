@@ -1,8 +1,8 @@
 #include "game_server.hpp"
-#include "game_simulation.hpp"
-#include "json_keys.hpp"
-#include "unit_info.hpp"
 #include <compression/compressor_interface.hpp>
+#include <game_properties.hpp>
+#include <game_simulation.hpp>
+#include <json_keys.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
@@ -63,7 +63,8 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
         ObjectProperties props;
         props.ints[jk::unitID] = m_round;
         props.ints[jk::playerID] = botDataCopy.begin()->first;
-        props.floats[jk::positionX] = botDataCopy.begin()->first == 0 ? 50 : 200;
+        props.floats[jk::positionX]
+            = botDataCopy.begin()->first == 0 ? 50 : GP::GetScreenSize().x - 50;
         props.floats[jk::positionY] = 100.0f + 32 * m_round;
         props.strings[jk::unitType] = "swordman";
 
@@ -235,9 +236,7 @@ void GameServer::handleMessageRoundReady(
         m_logger.warning("round ready data received although game has not started",
             { "network", "game_server" });
     }
-
-    // TODO store player data consistently for future rounds, as clients only send newly placed
-    // units.
+    
     Message const m = nlohmann::json::parse(messageContent);
 
     auto const playerId = m.playerId;

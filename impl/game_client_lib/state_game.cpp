@@ -171,7 +171,6 @@ void StateGame::transitionWaitForSimulationResultsToPlayback()
 void StateGame::transitionPlaybackToPlaceUnits()
 {
     m_tickId = 0;
-    // TODO reset to initial unit placement setup
     m_round++;
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
     m_internalState = InternalState::PlaceUnits;
