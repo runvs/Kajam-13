@@ -92,6 +92,9 @@ private:
     void transitionPlaceUnitsToWaitForSimulationResults() const;
     void transitionWaitForSimulationResultsToPlayback();
     void transitionPlaybackToPlaceUnits();
+    void placeUnitsForOneTick(
+        std::vector<ObjectProperties> const& propertiesForAllUnitsForThisTick);
+    void resetAllUnits();
 };
 
 #endif

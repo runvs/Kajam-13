@@ -108,34 +108,38 @@ void StateGame::playbackSimulation(float elapsed)
             transitionPlaybackToPlaceUnits();
         }
         auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
+        placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
+    }
+}
+void StateGame::placeUnitsForOneTick(
+    std::vector<ObjectProperties> const& propertiesForAllUnitsForThisTick)
+{
+    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
 
-        for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
-
-            auto const unitID = propsForOneUnit.ints.at(jk::unitID);
-            auto const playerID = propsForOneUnit.ints.at(jk::playerID);
-            auto const unitType = propsForOneUnit.strings.at(jk::unitType);
-            // TODO make this code a bit nicer
-            bool unitFound = false;
-            for (auto& u : *m_units) {
-                auto unit = u.lock();
-                if (unit->getPlayerID() != playerID) {
-                    continue;
-                }
-                if (unit->getUnitID() != unitID) {
-                    continue;
-                }
-                unit->updateState(propsForOneUnit);
-                unitFound = true;
-                break;
+        auto const unitID = propsForOneUnit.ints.at(jk::unitID);
+        auto const playerID = propsForOneUnit.ints.at(jk::playerID);
+        auto const unitType = propsForOneUnit.strings.at(jk::unitType);
+        // TODO make this code a bit nicer
+        bool unitFound = false;
+        for (auto& u : *m_units) {
+            auto unit = u.lock();
+            if (unit->getPlayerID() != playerID) {
+                continue;
             }
-            // Spawn a new  unit
-            if (!unitFound) {
-                auto unit = std::make_shared<Unit>(m_unitInfo->getInfoForType(unitType));
-                m_units->push_back(unit);
-                add(unit);
-                unit->setIDs(unitID, playerID);
-                unit->updateState(propsForOneUnit);
+            if (unit->getUnitID() != unitID) {
+                continue;
             }
+            unit->updateState(propsForOneUnit);
+            unitFound = true;
+            break;
+        }
+        // Spawn a new  unit
+        if (!unitFound) {
+            auto unit = std::make_shared<Unit>(m_unitInfo->getInfoForType(unitType));
+            m_units->push_back(unit);
+            add(unit);
+            unit->setIDs(unitID, playerID);
+            unit->updateState(propsForOneUnit);
         }
     }
 }
@@ -171,6 +175,8 @@ void StateGame::transitionWaitForSimulationResultsToPlayback()
 void StateGame::transitionPlaybackToPlaceUnits()
 {
     m_tickId = 0;
+
+    resetAllUnits();
     m_round++;
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
     m_internalState = InternalState::PlaceUnits;
@@ -231,4 +237,14 @@ void StateGame::setConnection(
     m_connection = connection;
     m_addBotAsPlayerZero = botAsPlayerZero;
     m_addBotAsPlayerOne = botAsPlayerOne;
+}
+void StateGame::resetAllUnits()
+{
+    auto propertiesForAllUnitsForThisTick = m_properties.at(0);
+    for (auto& props : propertiesForAllUnitsForThisTick) {
+        props.strings[jk::unitAnim] = "idle";
+        // TODO reset HP to hpmax instead of fixed value.
+        props.floats[jk::hpCurrent] = 100.0f;
+    }
+    placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
 }
