@@ -178,9 +178,33 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
     }
 }
 
+void drawTerrainGrid(sf::RenderTexture& texture)
+{
+    sf::Color const colorGrid { 22, 22, 22 };
+
+    sf::VertexArray linesHorizontal { sf::Lines, 2 * terrainHeightInChunks - 2 };
+    for (unsigned short h { 1 }; h < terrainHeightInChunks; ++h) {
+        linesHorizontal[(h - 1) * 2] = { { 0, h * terrainChunkSizeInPixel }, colorGrid };
+        linesHorizontal[(h - 1) * 2 + 1]
+            = { { terrainWidthInChunks * terrainChunkSizeInPixel, h * terrainChunkSizeInPixel },
+                  colorGrid };
+    }
+    texture.draw(linesHorizontal);
+
+    sf::VertexArray linesVertical { sf::Lines, 2 * terrainWidthInChunks - 2 };
+    for (unsigned short w { 1 }; w < terrainWidthInChunks; ++w) {
+        linesVertical[(w - 1) * 2] = { { w * terrainChunkSizeInPixel, 0 }, colorGrid };
+        linesVertical[(w - 1) * 2 + 1]
+            = { { w * terrainChunkSizeInPixel, terrainHeightInChunks * terrainChunkSizeInPixel },
+                  colorGrid };
+    }
+    texture.draw(linesVertical);
+}
+
 } // namespace
 
 struct TerrainRenderer::Private {
+    bool drawGrid {};
     sf::RenderTexture texture {};
     std::unique_ptr<jt::Sprite> sprite {};
 };
@@ -190,6 +214,8 @@ TerrainRenderer::TerrainRenderer(Terrain const& t)
     , m_terrain { t }
 {
 }
+
+void TerrainRenderer::setDrawGrid(bool v) { m->drawGrid = v; }
 
 void TerrainRenderer::doCreate()
 {
@@ -243,6 +269,9 @@ void TerrainRenderer::doCreate()
     m->texture.setSmooth(true);
     for (auto const& e : grid) {
         m->texture.draw(e);
+    }
+    if (m->drawGrid) {
+        drawTerrainGrid(m->texture);
     }
     m->texture.display();
 

@@ -13,6 +13,8 @@ class TerrainRenderer : public jt::GameObject {
 public:
     TerrainRenderer(Terrain const& t);
 
+    void setDrawGrid(bool v);
+
 private:
     void doCreate() override;
     void doUpdate(float const elapsed) override;

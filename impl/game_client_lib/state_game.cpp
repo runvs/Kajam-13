@@ -21,6 +21,7 @@ void StateGame::onCreate()
 {
     m_world = std::make_shared<Terrain>();
     m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
+    m_world_renderer->setDrawGrid(true);
     add(m_world_renderer);
 
     float const w = static_cast<float>(GP::GetWindowSize().x);
