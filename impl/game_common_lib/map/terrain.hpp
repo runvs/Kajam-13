@@ -35,6 +35,9 @@ public:
     Terrain();
 
     Grid const& getChunks() const { return m_chunks; }
+
+    Chunk const& getChunk(int x, int y) const { return m_chunks[y * terrainWidthInChunks + x]; }
+
     float getChunkHeight(jt::Vector2f const& pos) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
 };

@@ -1,7 +1,8 @@
-#pragma once
+#ifndef JAMTEMPLATE_TERRAIN_RENDERER_HPP
+#define JAMTEMPLATE_TERRAIN_RENDERER_HPP
 
-#include "terrain.hpp"
 #include <game_object.hpp>
+#include <map/terrain.hpp>
 #include <memory>
 
 class TerrainRenderer : public jt::GameObject {
@@ -14,8 +15,8 @@ public:
 
 private:
     void doCreate() override;
-
     void doUpdate(float const elapsed) override;
-
     void doDraw() const override;
 };
+
+#endif // JAMTEMPLATE_TERRAIN_RENDERER_HPP

@@ -1,4 +1,4 @@
-#include "terrain.hpp"
+#include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <iostream>
 
@@ -9,7 +9,7 @@ void updateRectangle(
     T& chunks, Fn const& fn, unsigned short x, unsigned short y, unsigned short w, unsigned short h)
 {
     for (unsigned short j { y }; j < (y + h); ++j) {
-        auto wOffset = j * terrainWidthInChunks;
+        auto const wOffset = j * terrainWidthInChunks;
         for (unsigned short i { x }; i < (x + w); ++i) {
             fn(chunks[wOffset + i]);
         }
@@ -28,6 +28,7 @@ void printSlopeAt(Terrain const& terrain, int x, int y, jt::Vector2f const& dir)
 
 Terrain::Terrain()
 {
+    // initialize chunk set
     for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
         auto wOffset = h * terrainWidthInChunks;
         for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
@@ -35,49 +36,49 @@ Terrain::Terrain()
         }
     }
 
+    // setup map
+    // TODO replace by map loading
+    // Tower 1 P1
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 1.0f; }, 8, 8, 1, 1);
+
+    // Tower 2 P1
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 1.0f; }, 8, 16, 1, 1);
+
+    // Tower 3 P2
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 1.0f; }, 24, 8, 1, 1);
+
+    // Tower 4 P2
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 1.0f; }, 24, 16, 1, 1);
+
+    // Some mountain
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 2.0f; }, 14, 10, 5, 5);
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 1.0f; }, 15, 11, 3, 3);
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 0.5f; }, 16, 12, 1, 1);
+
+    // testing mountain heights
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 1.0f; }, 1, 21, 3, 3);
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 2.0f; }, 6, 21, 3, 3);
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 3.0f; }, 11, 21, 3, 3);
+    updateRectangle(
+        m_chunks, [](auto& c) { c.height += 5.0f; }, 16, 21, 3, 3);
+
+    // test slopes
+    // TODO replace by unit tests
     printSlopeAt(*this, 1, 1, jt::Vector2f { 1.0f, 0.0f });
     printSlopeAt(*this, 1, 1, jt::Vector2f { -1.0f, 0.0f });
     printSlopeAt(*this, 1, 1, jt::Vector2f { 0.0f, 1.0f });
     printSlopeAt(*this, 1, 1, jt::Vector2f { 0.0f, -1.0f });
-
-    // Tower 1
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 14, 22, 1, 1);
-    printSlopeAt(*this, 13, 22, jt::Vector2f { 1.0f, 0.0f });
-
-    // // Tower 2
-    // updateRectangle(
-    //     m_chunks, [](auto& c) { c.height += 0.3f; }, 14, 49, 1, 1);
-
-    // // Tower 3
-    // updateRectangle(
-    //     m_chunks, [](auto& c) { c.height += 0.3f; }, 47, 22, 1, 1);
-
-    // // Tower 4
-    // updateRectangle(
-    //     m_chunks, [](auto& c) { c.height += 0.3f; }, 47, 49, 1, 1);
-
-    // Some mountain
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 2.0f; }, 2, 2, 5, 5);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 3, 3, 3, 3);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 0.5f; }, 4, 4, 1, 1);
-
-    // testing ranges
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 2, 10, 5, 5);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 2.0f; }, 10, 10, 5, 5);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 3.0f; }, 18, 10, 5, 5);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 5.0f; }, 26, 10, 5, 5);
-    // updateRectangle(
-    //     m_chunks, [](auto& c) { c.height += 1.0f; }, 9, 55, 3, 3);
-    // updateRectangle(
-    //     m_chunks, [](auto& c) { c.height += 0.1f; }, 11, 57, 1, 1);
+    printSlopeAt(*this, 7, 8, jt::Vector2f { 1.0f, 0.0f });
 }
 
 float Terrain::getChunkHeight(jt::Vector2f const& pos) const
