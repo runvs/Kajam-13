@@ -1,5 +1,5 @@
 #include "server_unit.hpp"
-#include <damage_info.hpp>
+#include "damage_info.hpp"
 #include <json_keys.hpp>
 #include <math_helper.hpp>
 #include <object_properties.hpp>
@@ -16,6 +16,7 @@ ObjectProperties ServerUnit::saveState() const
     props.floats[jk::positionX] = m_pos.x;
     props.floats[jk::positionY] = m_pos.y;
     props.floats[jk::hpCurrent] = m_hp;
+    props.floats[jk::hpMax] = m_info.hitpoints;
     props.strings[jk::unitType] = m_info.type;
     if (!m_newAnim.empty()) {
         props.strings[jk::unitAnim] = m_newAnim;
@@ -53,10 +54,9 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     if (dist < m_info.colliderRadius * 2.0f) {
         speed = 0;
         if (m_attackTimer <= 0) {
-            // TODO take damage and attackTimer value from json
-            m_attackTimer = 1.0f;
+            m_attackTimer = m_info.attackTimerMax;
             DamageInfo d;
-            d.damage = 20.0f;
+            d.damage = m_info.closeCombatDamage;
             target->takeDamage(d);
         }
     }

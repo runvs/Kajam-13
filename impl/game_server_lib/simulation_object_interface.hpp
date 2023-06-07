@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 #define JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 
-#include <damage_info.hpp>
+#include "damage_info.hpp"
 #include <object_properties.hpp>
 #include <vector.hpp>
 

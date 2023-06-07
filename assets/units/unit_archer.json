@@ -9,6 +9,7 @@
   "colliderRadius": 4.0,
   "experience": 0,
   "hitpoints": 20.0,
+  "attackTimerMax": 1.0,
   "movementSpeed": 2.0,
   "type": "archer"
 }

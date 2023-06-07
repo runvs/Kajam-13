@@ -7,7 +7,7 @@
 #include <vector>
 
 struct AnimationInfo {
-    
+
     std::string jsonfilename { "" };
 };
 
@@ -26,6 +26,7 @@ struct UnitInfo {
     float hitpoints { 1.0f };
     // TODO introduce damage struct
     float closeCombatDamage { 0.0f };
+    float attackTimerMax { 1.0f };
     float movementSpeed { 0.0f };
     float colliderRadius { 1.0f };
     std::vector<AnimationInfo> animations {};

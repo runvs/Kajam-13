@@ -1,5 +1,6 @@
 
 #include "unit_info.hpp"
+#include "json_keys.hpp"
 
 void to_json(nlohmann::json& j, AnimationInfo const& p)
 {
@@ -16,8 +17,8 @@ void to_json(nlohmann::json& j, UnitInfo const& p)
 {
     j = nlohmann::json { { "hitpoints", p.hitpoints }, { "experience", p.experience },
         { "movementSpeed", p.movementSpeed }, { "colliderRadius", p.colliderRadius },
-        { "closeCombatDamage", p.closeCombatDamage }, { "ais", p.ais },
-        { "animations", p.animations }, { "type", p.type } };
+        { "closeCombatDamage", p.closeCombatDamage }, { jk::attackTimerMax, p.attackTimerMax },
+        { "ais", p.ais }, { "animations", p.animations }, { "type", p.type } };
 }
 
 void from_json(nlohmann::json const& j, AnimationInfo& p)
@@ -40,6 +41,7 @@ void from_json(nlohmann::json const& j, UnitInfo& p)
     j.at("movementSpeed").get_to(p.movementSpeed);
     j.at("colliderRadius").get_to(p.colliderRadius);
     j.at("closeCombatDamage").get_to(p.closeCombatDamage);
+    j.at(jk::attackTimerMax).get_to(p.attackTimerMax);
     j.at("ais").get_to(p.ais);
     j.at("animations").get_to(p.animations);
     j.at("type").get_to(p.type);

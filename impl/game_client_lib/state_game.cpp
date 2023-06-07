@@ -238,13 +238,13 @@ void StateGame::setConnection(
     m_addBotAsPlayerZero = botAsPlayerZero;
     m_addBotAsPlayerOne = botAsPlayerOne;
 }
+
 void StateGame::resetAllUnits()
 {
     auto propertiesForAllUnitsForThisTick = m_properties.at(0);
     for (auto& props : propertiesForAllUnitsForThisTick) {
         props.strings[jk::unitAnim] = "idle";
-        // TODO reset HP to hpmax instead of fixed value.
-        props.floats[jk::hpCurrent] = 100.0f;
+        props.floats[jk::hpCurrent] = props.floats[jk::hpMax];
     }
     placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
 }

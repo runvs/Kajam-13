@@ -37,7 +37,9 @@ void Unit::doUpdate(float const elapsed)
 void Unit::doDraw() const
 {
     m_anim->draw(renderTarget());
-    m_hpBar->draw(renderTarget());
+    if (m_hp > 0) {
+        m_hpBar->draw(renderTarget());
+    }
 }
 
 void Unit::updateState(ObjectProperties const& props)
