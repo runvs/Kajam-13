@@ -17,8 +17,8 @@ constexpr std::size_t leftIndices[] { 0, 3, 5, 6 };
 constexpr std::size_t topIndices[] { 0, 1, 3, 11 };
 constexpr std::size_t rightIndices[] { 1, 8, 9, 11 };
 constexpr std::size_t botIndices[] { 5, 6, 8, 9 };
-constexpr std::size_t topLeftIndices[] { 1, 11 };
-constexpr std::size_t topRightIndices[] { 0, 3 };
+constexpr std::size_t topLeftIndices[] { 0, 3 };
+constexpr std::size_t topRightIndices[] { 1, 11 };
 constexpr std::size_t botLeftIndices[] { 5, 6 };
 constexpr std::size_t botRightIndices[] { 8, 9 };
 constexpr auto const chunkSize = terrainChunkSizeInPixel;
@@ -61,39 +61,6 @@ void updateVertices(T& vertices, I const& indices, float height, sf::Color const
 }
 
 template <typename G, typename T>
-void checkLeftTop(G& grid, T const& chunks, Chunk const& chunk)
-{
-    // nothing to the left top
-    if ((chunk.x == 0) || (chunk.y == 0)) {
-        return;
-    }
-
-    // auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
-    // auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y);
-    // auto& verticesLeft = grid[left.y * terrainWidthInChunks + left.x];
-    // auto& verticesLeftTop = grid[leftTop.y * terrainWidthInChunks + leftTop.x];
-
-    // // top one lower
-    // if (verticesLeft[topRightIndices[0]].position.y
-    //     > verticesLeftTop[botRightIndices[0]].position.y) {
-    //     auto const height = getTerrainHeight(chunk.y, chunk.height);
-    //     auto const heightHalf = (height + getTerrainHeight(left.y, left.height)) / 2;
-    //     auto const color = getTerrainColor(chunk.height);
-    //     auto const colorHalf = getTerrainColor(chunk.height - (chunk.height - left.height) / 2);
-    //     // corner
-    //     updateVertices(verticesLeftTop, botRightIndices,
-    //         verticesLeft[topRightIndices[0]].position.y, verticesLeft[topRightIndices[0]].color);
-    //     // mid
-    //     updateVertices(verticesLeftTop, botRightIndices,
-    //         verticesLeft[topRightIndices[0]].position.y, verticesLeft[topRightIndices[0]].color);
-    // }
-    // // top one higher
-    // else if (verticesLeft[topRightIndices[0]].position.y
-    //     < verticesLeftTop[botRightIndices[0]].position.y) {
-    // }
-}
-
-template <typename G, typename T>
 void checkLeft(G& grid, T const& chunks, Chunk const& chunk)
 {
     // nothing to the left
@@ -122,8 +89,20 @@ void checkLeft(G& grid, T const& chunks, Chunk const& chunk)
         auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
         updateVertices(vertices, leftIndices, height, color);
         updateVertices(vertices, midIndices, heightHalf, colorHalf);
-    } else {
-        return;
+
+        // corner case
+        if ((chunk.x > 0) && (chunk.y > 0)) {
+            auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
+            auto const& top = getChunk(chunks, chunk.x, chunk.y - 1);
+            if (leftTop.height == top.height) {
+                auto const heightHalf = (height + getTerrainHeight(top.y, top.height)) / 2;
+                auto& verticesTop = grid[top.y * terrainWidthInChunks + top.x];
+                updateVertices(
+                    verticesTop, midIndices, heightHalf - terrainChunkSizeInPixel / 2, colorHalf);
+                updateVertices(
+                    verticesTop, botLeftIndices, height - terrainChunkSizeInPixel, color);
+            }
+        }
     }
 }
 
@@ -146,6 +125,19 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
         auto& vertices = grid[top.y * terrainWidthInChunks + top.x];
         updateVertices(vertices, midIndices, heightHalf - terrainChunkSizeInPixel / 2, colorHalf);
         updateVertices(vertices, botIndices, height - terrainChunkSizeInPixel, color);
+
+        // corner case
+        if ((chunk.x > 0) && (chunk.y > 0)) {
+            auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
+            auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
+            if (left.height == leftTop.height) {
+                auto& verticesLeftTop = grid[leftTop.y * terrainWidthInChunks + leftTop.x];
+                updateVertices(verticesLeftTop, midIndices,
+                    heightHalf - terrainChunkSizeInPixel / 2, colorHalf);
+                updateVertices(
+                    verticesLeftTop, botRightIndices, height - terrainChunkSizeInPixel, color);
+            }
+        }
     }
     // top one higher
     else if (top.height > chunk.height) {
@@ -156,12 +148,34 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
         auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
         updateVertices(vertices, topIndices, height + terrainChunkSizeInPixel, color);
         updateVertices(vertices, midIndices, heightHalf + terrainChunkSizeInPixel / 2, colorHalf);
-    } else {
-        return;
-    }
 
-    // changes were made, so this potentially affects left / leftTop as well
-    checkLeftTop(grid, chunks, chunk);
+        // corner case
+        if ((chunk.x > 0) && (chunk.y > 0)) {
+            auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
+            auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
+            if (left.height == leftTop.height) {
+                auto& verticesLeft = grid[left.y * terrainWidthInChunks + left.x];
+                updateVertices(
+                    verticesLeft, topRightIndices, height + terrainChunkSizeInPixel, color);
+                updateVertices(
+                    verticesLeft, midIndices, heightHalf + terrainChunkSizeInPixel / 2, colorHalf);
+            }
+        }
+    } else if ((chunk.x > 0) && (chunk.y > 0)) {
+        auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
+        auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
+        if (left.height < leftTop.height) {
+            auto const height = getTerrainHeight(leftTop.y, leftTop.height);
+            auto const heightHalf = (height + getTerrainHeight(chunk.y, chunk.height)) / 2;
+            auto const color = getTerrainColor(leftTop.height);
+            auto const colorHalf
+                = getTerrainColor(leftTop.height - (leftTop.height - chunk.height) / 2);
+            auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
+            updateVertices(vertices, topLeftIndices, height + terrainChunkSizeInPixel, color);
+            updateVertices(
+                vertices, midIndices, heightHalf + terrainChunkSizeInPixel / 2, colorHalf);
+        }
+    }
 }
 
 } // namespace
