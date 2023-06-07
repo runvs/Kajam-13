@@ -26,6 +26,7 @@ public:
     // TODO otherwise, just return the passed in position?
     std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
         const jt::Vector2f& pos, int playerId) override;
+    float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
 
 private:
     jt::LoggerInterface& m_logger;

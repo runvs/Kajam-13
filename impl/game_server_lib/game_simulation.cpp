@@ -83,6 +83,18 @@ std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
     }
     return target;
 }
+
+float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir)
+{
+    auto const slope = m_world->getSlopeAt(pos, dir);
+    if (slope > 0.0f) {
+        return 0.997143f - 0.178571f * slope;
+    } else if (slope < 0.0f) {
+        return 1.0f / (0.997143f + 0.178571f * slope);
+    }
+    return 1.0f;
+}
+
 bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
 {
     for (auto const& props : m_unitInformationForRoundStart) {

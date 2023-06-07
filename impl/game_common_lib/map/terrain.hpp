@@ -1,5 +1,7 @@
-#pragma once
+#ifndef JAMTEMPLATE_TERRAIN_HPP
+#define JAMTEMPLATE_TERRAIN_HPP
 
+#include <vector.hpp>
 #include <array>
 #include <memory>
 
@@ -10,6 +12,8 @@ constexpr int terrainWidthInChunks { terrainWidthPerPlayerInChunks * 2 };
 constexpr int terrainHeightInChunks { terrainHeightInChunksPerPlayerInChunks
     + terrainFlankWidthInChunks * 2 };
 constexpr float terrainChunkSizeInPixel { 16.0f };
+constexpr float terrainHeightMax { 5.0f };
+constexpr float terrainHeightScalingFactor { terrainChunkSizeInPixel / 4.0f };
 
 struct Chunk {
     unsigned short x, y;
@@ -31,4 +35,8 @@ public:
     Terrain();
 
     Grid const& getChunks() const { return m_chunks; }
+    float getChunkHeight(jt::Vector2f const& pos) const;
+    float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
 };
+
+#endif // JAMTEMPLATE_TERRAIN_HPP

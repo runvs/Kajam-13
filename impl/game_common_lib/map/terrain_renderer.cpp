@@ -2,6 +2,7 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <line.hpp>
+#include <math_helper.hpp>
 #include <sprite.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <cmath>
@@ -9,7 +10,7 @@
 
 namespace {
 
-constexpr int terrainColorGradient[] = { 151, 96, 25 };
+constexpr int terrainColorGradient[] = { 0, 0, 0 };
 constexpr auto terrainColorGradientMax = 255 - terrainColorGradient[0];
 constexpr std::size_t midIndices[] { 2, 4, 7, 10 };
 constexpr std::size_t leftIndices[] { 0, 3, 5, 6 };
@@ -21,15 +22,18 @@ constexpr std::size_t topRightIndices[] { 0, 3 };
 constexpr std::size_t botLeftIndices[] { 5, 6 };
 constexpr std::size_t botRightIndices[] { 8, 9 };
 
-float getTerrainHeightOffset(float height) { return height * 10; }
+float getTerrainHeightOffset(float height) { return height * terrainHeightScalingFactor; }
 
 sf::Color getTerrainColor(float height)
 {
+    height = jt::MathHelper::clamp(height, 0.0f, terrainHeightMax);
     sf::Color terrainColor { terrainColorGradient[0], terrainColorGradient[1],
         terrainColorGradient[2] };
-    auto const interPolatedHeightColorOffset = (int)(terrainColorGradientMax * height / 3);
+    auto const interPolatedHeightColorOffset
+        = (int)(terrainColorGradientMax * height / terrainHeightMax);
     terrainColor.r = std::min(255, terrainColor.r + interPolatedHeightColorOffset);
     terrainColor.g = std::min(255, terrainColor.g + interPolatedHeightColorOffset);
+    terrainColor.b = std::min(255, terrainColor.b + interPolatedHeightColorOffset);
     return terrainColor;
 }
 
@@ -220,13 +224,15 @@ void TerrainRenderer::doCreate()
             vertices[1] = sf::Vertex {
                 sf::Vector2f { posX + terrainChunkSizeInPixel, posY + 0.0f - offsetHeight }, color
             };
-            vertices[2]
-                = sf::Vertex { sf::Vector2f { posX + 5.0f, posY + 5.0f - offsetHeight }, color };
+            vertices[2] = sf::Vertex { sf::Vector2f { posX + terrainChunkSizeInPixel / 2.0f,
+                                           posY + terrainChunkSizeInPixel / 2.0f - offsetHeight },
+                color };
             // left triangle
             vertices[3]
                 = sf::Vertex { sf::Vector2f { posX + 0.0f, posY + 0.0f - offsetHeight }, color };
-            vertices[4]
-                = sf::Vertex { sf::Vector2f { posX + 5.0f, posY + 5.0f - offsetHeight }, color };
+            vertices[4] = sf::Vertex { sf::Vector2f { posX + terrainChunkSizeInPixel / 2.0f,
+                                           posY + terrainChunkSizeInPixel / 2.0f - offsetHeight },
+                color };
             vertices[5] = sf::Vertex {
                 sf::Vector2f { posX + 0.0f, posY + terrainChunkSizeInPixel - offsetHeight }, color
             };
@@ -234,8 +240,9 @@ void TerrainRenderer::doCreate()
             vertices[6] = sf::Vertex {
                 sf::Vector2f { posX + 0.0f, posY + terrainChunkSizeInPixel - offsetHeight }, color
             };
-            vertices[7]
-                = sf::Vertex { sf::Vector2f { posX + 5.0f, posY + 5.0f - offsetHeight }, color };
+            vertices[7] = sf::Vertex { sf::Vector2f { posX + terrainChunkSizeInPixel / 2.0f,
+                                           posY + terrainChunkSizeInPixel / 2.0f - offsetHeight },
+                color };
             vertices[8] = sf::Vertex { sf::Vector2f { posX + terrainChunkSizeInPixel,
                                            posY + terrainChunkSizeInPixel - offsetHeight },
                 color };
@@ -243,8 +250,9 @@ void TerrainRenderer::doCreate()
             vertices[9] = sf::Vertex { sf::Vector2f { posX + terrainChunkSizeInPixel,
                                            posY + terrainChunkSizeInPixel - offsetHeight },
                 color };
-            vertices[10]
-                = sf::Vertex { sf::Vector2f { posX + 5.0f, posY + 5.0f - offsetHeight }, color };
+            vertices[10] = sf::Vertex { sf::Vector2f { posX + terrainChunkSizeInPixel / 2.0f,
+                                            posY + terrainChunkSizeInPixel / 2.0f - offsetHeight },
+                color };
             vertices[11] = sf::Vertex {
                 sf::Vector2f { posX + terrainChunkSizeInPixel, posY + 0.0f - offsetHeight }, color
             };
