@@ -32,7 +32,7 @@ private:
     float m_hp { 100.0f };
     float m_attackTimer { 0.0f };
 
-    std::string m_newAnim { "" };
+    mutable std::string m_newAnim { "" };
 };
 
 #endif // JAMTEMPLATE_SERVER_UNIT_HPP

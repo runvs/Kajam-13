@@ -64,7 +64,7 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
         props.ints[jk::unitID] = m_round;
         props.ints[jk::playerID] = botDataCopy.begin()->first;
         props.floats[jk::positionX]
-            = botDataCopy.begin()->first == 0 ? 50 : GP::GetScreenSize().x - 50;
+            = static_cast<float>(botDataCopy.begin()->first == 0 ? 50 : GP::GetScreenSize().x - 50);
         props.floats[jk::positionY] = 100.0f + 32 * m_round;
         props.strings[jk::unitType] = "swordman";
 
@@ -236,7 +236,7 @@ void GameServer::handleMessageRoundReady(
         m_logger.warning("round ready data received although game has not started",
             { "network", "game_server" });
     }
-    
+
     Message const m = nlohmann::json::parse(messageContent);
 
     auto const playerId = m.playerId;
@@ -289,7 +289,7 @@ void GameServer::startRoundSimulation(
 }
 int GameServer::getNumberOfConnectedPlayers() const
 {
-    return m_playerData.size() + m_botData.size();
+    return static_cast<int>(m_playerData.size() + m_botData.size());
 }
 void GameServer::checkForAllPlayersConnected()
 {

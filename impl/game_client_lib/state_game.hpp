@@ -2,10 +2,11 @@
 #define GAME_STATE_GAME_HPP
 
 #include "unit_placement/unit_id_manager.hpp"
-#include <box2dwrapper/box2d_world_interface.hpp>
 #include <client_end_placement_data.hpp>
 #include <client_network_connection.hpp>
 #include <game_state.hpp>
+#include <map/terrain.hpp>
+#include <map/terrain_renderer.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
@@ -47,10 +48,10 @@ private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
     std::shared_ptr<ServerConnection> m_serverConnection { nullptr };
 
-    std::shared_ptr<jt::Shape> m_background { nullptr };
     std::shared_ptr<jt::Vignette> m_vignette { nullptr };
     std::shared_ptr<Hud> m_hud { nullptr };
-    std::shared_ptr<jt::Box2DWorldInterface> m_world { nullptr };
+    std::shared_ptr<Terrain> m_world { nullptr };
+    std::shared_ptr<TerrainRenderer> m_world_renderer { nullptr };
 
     std::shared_ptr<PlacementManager> m_placementManager { nullptr };
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };

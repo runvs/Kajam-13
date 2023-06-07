@@ -1,5 +1,4 @@
 ﻿#include "state_game.hpp"
-#include <box2dwrapper/box2d_world_impl.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -10,7 +9,6 @@
 #include <player_id_dispatcher.hpp>
 #include <screeneffects/vignette.hpp>
 #include <server_connection.hpp>
-#include <shape.hpp>
 #include <state_menu.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
@@ -21,18 +19,12 @@
 
 void StateGame::onCreate()
 {
-    m_world = std::make_shared<jt::Box2DWorldImpl>(jt::Vector2f { 0.0f, 0.0f });
+    m_world = std::make_shared<Terrain>();
+    m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
+    add(m_world_renderer);
 
     float const w = static_cast<float>(GP::GetWindowSize().x);
     float const h = static_cast<float>(GP::GetWindowSize().y);
-
-    using jt::Shape;
-
-    m_background = std::make_shared<Shape>();
-    m_background->makeRect({ w, h }, textureManager());
-    m_background->setColor(GP::PaletteBackground());
-    m_background->setIgnoreCamMovement(true);
-    m_background->update(0.0f);
 
     createPlayer();
 
@@ -70,7 +62,6 @@ void StateGame::createPlayer() { }
 void StateGame::onUpdate(float const elapsed)
 {
     if (m_running) {
-        m_world->step(elapsed, GP::PhysicVelocityIterations(), GP::PhysicPositionIterations());
         // update game logic here
 
         if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)
@@ -94,7 +85,6 @@ void StateGame::onUpdate(float const elapsed)
         }
     }
 
-    m_background->update(elapsed);
     m_vignette->update(elapsed);
 }
 
@@ -192,7 +182,7 @@ void StateGame::placeUnits(float elapsed)
 
 void StateGame::onDraw() const
 {
-    m_background->draw(renderTarget());
+    m_world_renderer->draw();
     drawObjects();
 
     m_vignette->draw();

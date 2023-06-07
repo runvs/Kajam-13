@@ -20,7 +20,7 @@ ObjectProperties ServerUnit::saveState() const
     props.strings[jk::unitType] = m_info.type;
     if (!m_newAnim.empty()) {
         props.strings[jk::unitAnim] = m_newAnim;
-        m_newAnim == "";
+        m_newAnim = "";
     }
     return props;
 }

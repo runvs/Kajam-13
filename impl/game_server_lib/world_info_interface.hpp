@@ -13,6 +13,7 @@ public:
     virtual std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
         jt::Vector2f const& pos, int playerId)
         = 0;
+    // TODO add interface to get world speed or similar from Terrain
 };
 
 #endif // JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP

@@ -12,6 +12,7 @@
 GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos)
     : m_logger { logger }
     , m_unitInfos { unitInfos }
+    , m_world { std::make_shared<Terrain>() } // TODO: use terrain for calculations
 {
 }
 
