@@ -3,7 +3,7 @@
 
 #include <vector.hpp>
 #include <array>
-#include <memory>
+#include <string>
 
 constexpr int terrainWidthPerPlayerInChunks { 16 };
 constexpr int terrainHeightInChunksPerPlayerInChunks { 15 };
@@ -30,8 +30,7 @@ class Terrain {
     Grid m_chunks;
 
 public:
-    // TODO: add interface to load up different maps and share that information from server to
-    // clients
+    // TODO share map information from server to clients
     Terrain();
 
     Grid const& getChunks() const { return m_chunks; }
@@ -40,6 +39,7 @@ public:
 
     float getChunkHeight(jt::Vector2f const& pos) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
+    void parseMapFromFilename(std::string const& fileName);
 };
 
 #endif // JAMTEMPLATE_TERRAIN_HPP

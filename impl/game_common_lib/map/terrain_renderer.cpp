@@ -225,14 +225,13 @@ void TerrainRenderer::doCreate()
     for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
         auto const wOffset = h * terrainWidthInChunks;
         for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
-            grid[wOffset + w] = sf::VertexArray { sf::Triangles, 12 };
             auto const& chunk = chunks[wOffset + w];
             auto const posX = w * chunkSize;
             auto const posY = getTerrainHeight(h, chunk.height);
             auto const color = getTerrainColor(chunk.height);
 
             // draw chunk triangles
-            auto& vertices = grid[wOffset + w];
+            auto& vertices = grid[wOffset + w] = sf::VertexArray { sf::Triangles, 12 };
 
             // top triangle
             vertices[0] = { { posX, posY }, color };

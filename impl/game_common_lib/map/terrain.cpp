@@ -1,19 +1,42 @@
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
+#include <nlohmann.hpp>
+#include <fstream>
 #include <iostream>
 
 namespace {
 
-template <typename T, typename Fn>
-void updateRectangle(
-    T& chunks, Fn const& fn, unsigned short x, unsigned short y, unsigned short w, unsigned short h)
+struct TowerInfo {
+    int playerId {};
+    jt::Vector2f position {};
+};
+
+void to_json(nlohmann::json& j, TowerInfo const& v)
 {
-    for (unsigned short j { y }; j < (y + h); ++j) {
-        auto const wOffset = j * terrainWidthInChunks;
-        for (unsigned short i { x }; i < (x + w); ++i) {
-            fn(chunks[wOffset + i]);
-        }
-    }
+    j = nlohmann::json { { "player", v.playerId }, { "x", v.position.x }, { "y", v.position.y } };
+}
+
+void from_json(nlohmann::json const& j, TowerInfo& v)
+{
+    j.at("player").get_to(v.playerId);
+    j.at("x").get_to(v.position.x);
+    j.at("y").get_to(v.position.y);
+}
+
+struct Map {
+    float heights[terrainWidthInChunks * terrainHeightInChunks];
+    std::vector<TowerInfo> towers;
+};
+
+void to_json(nlohmann::json& j, Map const& v)
+{
+    j = nlohmann::json { { "heights", v.heights }, { "towers", v.towers } };
+}
+
+void from_json(nlohmann::json const& j, Map& v)
+{
+    j.at("heights").get_to(v.heights);
+    j.at("towers").get_to(v.towers);
 }
 
 void printSlopeAt(Terrain const& terrain, int x, int y, jt::Vector2f const& dir)
@@ -28,49 +51,8 @@ void printSlopeAt(Terrain const& terrain, int x, int y, jt::Vector2f const& dir)
 
 Terrain::Terrain()
 {
-    // initialize chunk set
-    for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
-        auto wOffset = h * terrainWidthInChunks;
-        for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
-            m_chunks[wOffset + w] = { w, h, 0.0f };
-        }
-    }
-
-    // setup map
-    // TODO replace by map loading
-    // Tower 1 P1
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 8, 8, 1, 1);
-
-    // Tower 2 P1
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 8, 16, 1, 1);
-
-    // Tower 3 P2
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 24, 8, 1, 1);
-
-    // Tower 4 P2
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 24, 16, 1, 1);
-
-    // Some mountain
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 2.0f; }, 14, 10, 5, 5);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 15, 11, 3, 3);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 0.5f; }, 16, 12, 1, 1);
-
-    // testing mountain heights
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 1.0f; }, 1, 21, 3, 3);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 2.0f; }, 6, 21, 3, 3);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 3.0f; }, 11, 21, 3, 3);
-    updateRectangle(
-        m_chunks, [](auto& c) { c.height += 5.0f; }, 16, 21, 3, 3);
+    // load map from file
+    parseMapFromFilename("assets/maps/map_de_dust_2.json");
 
     // test slopes
     // TODO replace by unit tests
@@ -115,4 +97,16 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     }
 
     return (dir.x * (heightPos - heightPosInX) + dir.y * (heightPos - heightPosInY)) / 2.0f;
+}
+
+void Terrain::parseMapFromFilename(std::string const& fileName)
+{
+    std::ifstream fileStream { fileName };
+    auto const map = nlohmann::json::parse(fileStream).get<Map>();
+    for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
+        auto const wOffset = h * terrainWidthInChunks;
+        for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
+            m_chunks[wOffset + w] = { w, h, map.heights[wOffset + w] };
+        }
+    }
 }
