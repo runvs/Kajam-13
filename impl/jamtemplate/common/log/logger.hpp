@@ -3,6 +3,7 @@
 
 #include <log/log_entry.hpp>
 #include <log/logger_interface.hpp>
+#include <mutex>
 #include <vector>
 
 namespace jt {
@@ -26,6 +27,7 @@ public:
     void setLogLevel(LogLevel level) override;
 
 private:
+    std::mutex m_mutex;
     std::vector<std::shared_ptr<jt::LogTargetInterface>> m_logTargets;
     std::weak_ptr<jt::LogHistoryInterface> m_history;
 

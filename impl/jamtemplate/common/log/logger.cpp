@@ -71,6 +71,7 @@ void jt::Logger::addLogEntry(jt::LogEntry entry)
     auto now = std::chrono::system_clock::now();
     ss << std::chrono::system_clock::to_time_t(now);
     entry.time = ss.str();
+    std::lock_guard guard { m_mutex };
     for (auto& t : m_logTargets) {
         t->log(entry);
     }
