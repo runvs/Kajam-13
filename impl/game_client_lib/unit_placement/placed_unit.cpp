@@ -1,5 +1,7 @@
 #include "placed_unit.hpp"
+#include "vector.hpp"
 #include <drawable_helpers.hpp>
+#include <game_properties.hpp>
 #include <json_keys.hpp>
 #include <memory>
 
@@ -13,6 +15,7 @@ void PlacedUnit::doCreate()
     m_anim = std::make_shared<jt::Animation>();
     m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
     m_anim->play("idle");
+    m_anim->setOffset(GP::UnitAnimationOffset());
 }
 void PlacedUnit::doUpdate(const float elapsed) { m_anim->update(elapsed); }
 

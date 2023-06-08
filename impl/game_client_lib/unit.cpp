@@ -18,6 +18,7 @@ void Unit::doCreate()
     m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
     m_anim->play("idle");
     m_anim->setLooping("death", false);
+    m_anim->setOffset(GP::UnitAnimationOffset());
 
     m_hpBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
     m_hpBar->setMaxValue(m_hpMax);

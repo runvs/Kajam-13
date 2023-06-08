@@ -37,10 +37,9 @@ public:
 
     static jt::Palette getPalette();
 
-    static int PhysicVelocityIterations();
-    static int PhysicPositionIterations();
-    static jt::Vector2f PlayerSize();
     static std::size_t NumberOfStepsPerRound();
+
+    static jt::Vector2f UnitAnimationOffset();
 };
 
 #endif
