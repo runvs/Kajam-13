@@ -1,0 +1,18 @@
+{
+  "ai": {
+    "type": 0,
+    "range": -1.0
+  },
+  "animations": [
+    {
+      "jsonfilename": "assets/units/shieldman.json"
+    }
+  ],
+  "damage": 5.0,
+  "colliderRadius": 8.0,
+  "experience": 0,
+  "hitpoints": 200.0,
+  "attackTimerMax": 1.0,
+  "movementSpeed": 20.0,
+  "type": "shieldman"
+}

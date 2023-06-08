@@ -1,5 +1,6 @@
 {
   "files": [
+    "assets/units/unit_peasant.json",
     "assets/units/unit_swordman.json",
     "assets/units/unit_shieldman.json",
     "assets/units/unit_archer.json"
