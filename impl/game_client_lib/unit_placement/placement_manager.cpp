@@ -25,7 +25,8 @@ void PlacementManager::doCreate()
 {
     auto playerIdDispatcher = m_playerIdDispatcher.lock();
     if (playerIdDispatcher == nullptr) {
-        // TODO log error
+        getGame()->logger().error("PlacementManager create called without valid PlayerIDDispatcher",
+            { "PlacementManager" });
         return;
     }
     getGame()->logger().info("PlacementManager with playerId: " + std::to_string(m_playerId));

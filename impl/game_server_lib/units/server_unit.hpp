@@ -34,8 +34,7 @@ private:
     int m_unitID { 0 };
     int m_playerID { 0 };
     float m_age { 0.0f };
-    float m_hp { 100.0f };
-    float m_attackTimer { 0.0f };
+    float m_hp { 1.0f };
 
     mutable std::string m_newAnim { "" };
 };

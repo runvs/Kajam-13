@@ -21,8 +21,6 @@ ServerNetworkConnection::ServerNetworkConnection(
             NetworkProperties::NetworkProtocolType(), NetworkProperties::DefaultServerPort() } }
 {
 
-    // TODO make the socket accept more than one connection in an async way
-    //    m_acceptor.accept(*m_socket);
     awaitNextAccept();
 
     startProcessing();
@@ -54,7 +52,6 @@ void ServerNetworkConnection::awaitNextAccept()
 void ServerNetworkConnection::startProcessing()
 {
     m_logger.info("start thread to process async tasks", { "network", "ServerNetworkConnection" });
-    // TODO check if work guard can be instantiated inside thread
 
     m_thread = std::thread { [this]() {
         auto work_guard = asio::make_work_guard(m_IOContext);
@@ -108,7 +105,6 @@ void ServerNetworkConnection::handleReceive(
 
 void ServerNetworkConnection::awaitNextMessageInternal(asio::ip::tcp::socket& socket)
 {
-    // TODO make async_read
     socket.async_receive(asio::buffer(m_buffer.size.data(), m_buffer.size.size()),
         [this, &socket](auto ec, auto len) { handleReceive(socket, ec, len); });
 }

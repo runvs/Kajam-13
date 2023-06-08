@@ -24,6 +24,8 @@ ServerUnit::ServerUnit(const UnitInfo& info)
         std::cerr << "Warning: create a unit with unknown ai type\n";
         m_ai = std::make_unique<AiSwordman>();
     }
+
+    m_hp = m_info.hitpoints;
 }
 
 ObjectProperties ServerUnit::saveState() const

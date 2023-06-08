@@ -9,6 +9,7 @@ void AiSwordman::update(float elapsed, ServerUnit& unit, WorldInfoInterface& wor
     m_attackTimer -= elapsed;
     auto t = world.getClosestTargetTo(unit.getPosition(), unit.getPlayerID());
     auto target = t.lock();
+    
     if (!target) {
         return;
     }

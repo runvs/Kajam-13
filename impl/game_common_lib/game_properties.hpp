@@ -5,7 +5,6 @@
 #include "color/palette.hpp"
 #include "vector.hpp"
 #include <color/color_factory.hpp>
-#include <compression/compressor_interface.hpp>
 #include <memory>
 #include <string>
 

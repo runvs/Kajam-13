@@ -15,7 +15,6 @@
 #include <state_menu.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
-#include <vector.hpp>
 #include <imgui.h>
 #include <memory>
 #include <stdexcept>
@@ -55,7 +54,7 @@ void StateGame::onCreate()
         m_connection->sendMessage(m);
     }
 
-    m_arrowShape = jt::dh::createShapeCircle(4, jt::colors::White, textureManager());
+    m_arrowShape = jt::dh::createShapeCircle(2, jt::colors::White, textureManager());
     m_arrowShape->setOffset(jt::OffsetMode::CENTER);
 }
 

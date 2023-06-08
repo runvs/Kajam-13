@@ -1,7 +1,5 @@
 ﻿#include "game_properties.hpp"
 #include "color/palette_builder.hpp"
-#include "compression/compressor_impl.hpp"
-#include "compression/compressor_none.hpp"
 
 namespace {
 
