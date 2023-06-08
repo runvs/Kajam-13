@@ -1,5 +1,6 @@
 
 #include "ai_swordman.hpp"
+#include "vector.hpp"
 #include <math_helper.hpp>
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
@@ -11,6 +12,7 @@ void AiSwordman::update(float elapsed, ServerUnit& unit, WorldInfoInterface& wor
     auto target = t.lock();
 
     if (!target) {
+        unit.getPhysicsObject()->setVelocity(jt::Vector2f { 0.0f, 0.0f });
         return;
     }
 
@@ -29,5 +31,6 @@ void AiSwordman::update(float elapsed, ServerUnit& unit, WorldInfoInterface& wor
         }
     }
 
-    unit.setPosition(unit.getPosition() + dir * elapsed * speed);
+    unit.getPhysicsObject()->setVelocity(dir * speed);
+    //    unit.setPosition(unit.getPosition() + dir * elapsed * speed);
 }

@@ -1,5 +1,6 @@
 #include "game_simulation.hpp"
 #include "arrow_info.hpp"
+#include "box2dwrapper/box2d_world_impl.hpp"
 #include "simulation_result_data.hpp"
 #include "units/server_unit.hpp"
 #include <game_properties.hpp>
@@ -21,9 +22,11 @@ GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& 
 void GameSimulation::prepareSimulationForNewRound()
 {
     m_simulationObjects.clear();
+    m_b2World = std::make_shared<jt::Box2DWorldImpl>(jt::Vector2f { 0.0f, 0.0f });
+
     for (auto const& props : m_unitInformationForRoundStart) {
         auto obj = std::make_shared<ServerUnit>(
-            m_unitInfos.getInfoForType(props.strings.at(jk::unitType)));
+            m_unitInfos.getInfoForType(props.strings.at(jk::unitType)), m_b2World);
         obj->updateState(props);
         m_simulationObjects.emplace_back(std::move(obj));
     }
@@ -42,10 +45,13 @@ float arrowParaboloa(float x, float maxHeight) { return -maxHeight * 4 * (x - x 
 
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
+
     auto const timePerUpdate = 0.005f;
     SimulationResultDataForAllFrames allFrames;
     for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
         SimulationResultDataForOneFrame currentFrame;
+
+        m_b2World->step(timePerUpdate, 10, 10);
 
         for (auto& arrow : m_arrows) {
             arrow.age += timePerUpdate;

@@ -3,6 +3,7 @@
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
 #include "arrow_info.hpp"
+#include "box2dwrapper/box2d_world_interface.hpp"
 #include "units/server_unit.hpp"
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
@@ -34,7 +35,7 @@ public:
 private:
     jt::LoggerInterface& m_logger;
     UnitInfoCollection& m_unitInfos;
-
+    std::shared_ptr<jt::Box2DWorldInterface> m_b2World { nullptr };
     std::shared_ptr<Terrain> m_world;
     std::vector<ObjectProperties> m_unitInformationForRoundStart;
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;

@@ -1,4 +1,5 @@
 #include "ai_archer.hpp"
+#include "vector.hpp"
 #include <arrow_info.hpp>
 #include <damage_info.hpp>
 #include <game_properties.hpp>
@@ -23,9 +24,9 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
     auto const attackRange = unit.getInfo().ai.range * terrainChunkSizeInPixel;
     if (dist > attackRange) {
         float speed = unit.getInfo().movementSpeed;
-
-        unit.setPosition(unit.getPosition() + dir * elapsed * speed);
+        unit.getPhysicsObject()->setVelocity(dir * speed);
     } else {
+        unit.getPhysicsObject()->setVelocity(jt::Vector2f { 0.0f, 0.0f });
         if (m_attackTimer <= 0) {
             m_attackTimer = unit.getInfo().attackTimerMax;
             ArrowInfo arrowInfo;
