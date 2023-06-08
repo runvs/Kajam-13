@@ -21,7 +21,7 @@ constexpr std::size_t topLeftIndices[] { 0, 3 };
 constexpr std::size_t topRightIndices[] { 1, 11 };
 constexpr std::size_t botLeftIndices[] { 5, 6 };
 constexpr std::size_t botRightIndices[] { 8, 9 };
-constexpr auto const chunkSize = terrainChunkSizeInPixel;
+constexpr float const chunkSize { terrainChunkSizeInPixel };
 constexpr auto const chunkSizeHalf = chunkSize / 2.0f;
 constexpr float vertexHeightOffsetMap[] { 0, 0, chunkSizeHalf, 0, chunkSizeHalf, chunkSize,
     chunkSize, chunkSizeHalf, chunkSize, chunkSize, chunkSizeHalf, 0 };
@@ -29,7 +29,7 @@ constexpr float vertexHeightOffsetMap[] { 0, 0, chunkSizeHalf, 0, chunkSizeHalf,
 float getTerrainHeight(int y, float height)
 {
     height = jt::MathHelper::clamp(height, 0.0f, terrainHeightMax);
-    return y * terrainChunkSizeInPixel - height * terrainHeightScalingFactor;
+    return y * chunkSize - height * terrainHeightScalingFactor;
 }
 
 sf::Color getTerrainColor(float height)
@@ -97,10 +97,8 @@ void checkLeft(G& grid, T const& chunks, Chunk const& chunk)
             if (leftTop.height == top.height) {
                 auto const heightHalf = (height + getTerrainHeight(top.y, top.height)) / 2;
                 auto& verticesTop = grid[top.y * terrainWidthInChunks + top.x];
-                updateVertices(
-                    verticesTop, midIndices, heightHalf - terrainChunkSizeInPixel / 2, colorHalf);
-                updateVertices(
-                    verticesTop, botLeftIndices, height - terrainChunkSizeInPixel, color);
+                updateVertices(verticesTop, midIndices, heightHalf - chunkSize / 2, colorHalf);
+                updateVertices(verticesTop, botLeftIndices, height - chunkSize, color);
             }
         }
     }
@@ -123,8 +121,8 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
         auto const color = getTerrainColor(chunk.height);
         auto const colorHalf = getTerrainColor(chunk.height - (chunk.height - top.height) / 2);
         auto& vertices = grid[top.y * terrainWidthInChunks + top.x];
-        updateVertices(vertices, midIndices, heightHalf - terrainChunkSizeInPixel / 2, colorHalf);
-        updateVertices(vertices, botIndices, height - terrainChunkSizeInPixel, color);
+        updateVertices(vertices, midIndices, heightHalf - chunkSize / 2, colorHalf);
+        updateVertices(vertices, botIndices, height - chunkSize, color);
 
         // corner case
         if ((chunk.x > 0) && (chunk.y > 0)) {
@@ -132,10 +130,8 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
             auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
             if (left.height == leftTop.height) {
                 auto& verticesLeftTop = grid[leftTop.y * terrainWidthInChunks + leftTop.x];
-                updateVertices(verticesLeftTop, midIndices,
-                    heightHalf - terrainChunkSizeInPixel / 2, colorHalf);
-                updateVertices(
-                    verticesLeftTop, botRightIndices, height - terrainChunkSizeInPixel, color);
+                updateVertices(verticesLeftTop, midIndices, heightHalf - chunkSize / 2, colorHalf);
+                updateVertices(verticesLeftTop, botRightIndices, height - chunkSize, color);
             }
         }
     }
@@ -146,8 +142,8 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
         auto const color = getTerrainColor(top.height);
         auto const colorHalf = getTerrainColor(top.height - (top.height - chunk.height) / 2);
         auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
-        updateVertices(vertices, topIndices, height + terrainChunkSizeInPixel, color);
-        updateVertices(vertices, midIndices, heightHalf + terrainChunkSizeInPixel / 2, colorHalf);
+        updateVertices(vertices, topIndices, height + chunkSize, color);
+        updateVertices(vertices, midIndices, heightHalf + chunkSize / 2, colorHalf);
 
         // corner case
         if ((chunk.x > 0) && (chunk.y > 0)) {
@@ -155,10 +151,8 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
             auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
             if (left.height == leftTop.height) {
                 auto& verticesLeft = grid[left.y * terrainWidthInChunks + left.x];
-                updateVertices(
-                    verticesLeft, topRightIndices, height + terrainChunkSizeInPixel, color);
-                updateVertices(
-                    verticesLeft, midIndices, heightHalf + terrainChunkSizeInPixel / 2, colorHalf);
+                updateVertices(verticesLeft, topRightIndices, height + chunkSize, color);
+                updateVertices(verticesLeft, midIndices, heightHalf + chunkSize / 2, colorHalf);
             }
         }
     } else if ((chunk.x > 0) && (chunk.y > 0)) {
@@ -171,9 +165,8 @@ void checkTop(G& grid, T const& chunks, Chunk const& chunk)
             auto const colorHalf
                 = getTerrainColor(leftTop.height - (leftTop.height - chunk.height) / 2);
             auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
-            updateVertices(vertices, topLeftIndices, height + terrainChunkSizeInPixel, color);
-            updateVertices(
-                vertices, midIndices, heightHalf + terrainChunkSizeInPixel / 2, colorHalf);
+            updateVertices(vertices, topLeftIndices, height + chunkSize, color);
+            updateVertices(vertices, midIndices, heightHalf + chunkSize / 2, colorHalf);
         }
     }
 }
@@ -184,19 +177,17 @@ void drawTerrainGrid(sf::RenderTexture& texture)
 
     sf::VertexArray linesHorizontal { sf::Lines, 2 * terrainHeightInChunks - 2 };
     for (unsigned short h { 1 }; h < terrainHeightInChunks; ++h) {
-        linesHorizontal[(h - 1) * 2] = { { 0, h * terrainChunkSizeInPixel }, colorGrid };
+        linesHorizontal[(h - 1) * 2] = { { 0, h * chunkSize }, colorGrid };
         linesHorizontal[(h - 1) * 2 + 1]
-            = { { terrainWidthInChunks * terrainChunkSizeInPixel, h * terrainChunkSizeInPixel },
-                  colorGrid };
+            = { { terrainWidthInChunks * chunkSize, h * chunkSize }, colorGrid };
     }
     texture.draw(linesHorizontal);
 
     sf::VertexArray linesVertical { sf::Lines, 2 * terrainWidthInChunks - 2 };
     for (unsigned short w { 1 }; w < terrainWidthInChunks; ++w) {
-        linesVertical[(w - 1) * 2] = { { w * terrainChunkSizeInPixel, 0 }, colorGrid };
+        linesVertical[(w - 1) * 2] = { { w * chunkSize, 0 }, colorGrid };
         linesVertical[(w - 1) * 2 + 1]
-            = { { w * terrainChunkSizeInPixel, terrainHeightInChunks * terrainChunkSizeInPixel },
-                  colorGrid };
+            = { { w * chunkSize, terrainHeightInChunks * chunkSize }, colorGrid };
     }
     texture.draw(linesVertical);
 }

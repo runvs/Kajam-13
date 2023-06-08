@@ -31,6 +31,8 @@ ObjectProperties PlacedUnit::saveState() const
 
 void PlacedUnit::setPosition(const jt::Vector2f& pos) { m_anim->setPosition(pos); }
 
+jt::Vector2f PlacedUnit::getPosition() const { return m_anim->getPosition(); }
+
 void PlacedUnit::setIDs(int uid, int pid)
 {
     m_unitID = uid;

@@ -29,6 +29,7 @@ void GameSimulation::prepareSimulationForNewRound()
 
 void GameSimulation::addUnit(const ObjectProperties& props)
 {
+    // TODO check validity of placement
     if (!checkIfUnitIsUnique(props)) {
         return;
     }
@@ -93,6 +94,11 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
         return 1.0f / (0.997143f + 0.178571f * slope);
     }
     return 1.0f;
+}
+
+jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos)
+{
+    return m_world->getMappedFieldPosition(pos);
 }
 
 bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)

@@ -7,11 +7,13 @@
 
 constexpr int terrainWidthPerPlayerInChunks { 16 };
 constexpr int terrainHeightInChunksPerPlayerInChunks { 15 };
-constexpr int terrainFlankWidthInChunks { 5 };
+constexpr int terrainFlankHeightInChunks { 5 };
 constexpr int terrainWidthInChunks { terrainWidthPerPlayerInChunks * 2 };
 constexpr int terrainHeightInChunks { terrainHeightInChunksPerPlayerInChunks
-    + terrainFlankWidthInChunks * 2 };
-constexpr float terrainChunkSizeInPixel { 16.0f };
+    + terrainFlankHeightInChunks * 2 };
+constexpr int terrainChunkSizeInPixel { 16 };
+constexpr int const terrainFlankHeightInPixel { terrainFlankHeightInChunks
+    * terrainChunkSizeInPixel };
 constexpr float terrainHeightMax { 5.0f };
 constexpr float terrainHeightScalingFactor { terrainChunkSizeInPixel / 4.0f };
 
@@ -39,6 +41,7 @@ public:
 
     float getChunkHeight(jt::Vector2f const& pos) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
+    jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos) const;
     void parseMapFromFilename(std::string const& fileName);
 };
 

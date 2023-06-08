@@ -17,6 +17,7 @@ public:
 
     void setIDs(int uid, int pid);
     void setPosition(jt::Vector2f const& pos);
+    jt::Vector2f getPosition() const;
 
 private:
     UnitInfo m_info;

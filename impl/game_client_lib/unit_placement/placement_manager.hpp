@@ -3,6 +3,7 @@
 
 #include <game_object.hpp>
 #include <game_object_collection.hpp>
+#include <map/terrain.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
@@ -15,7 +16,8 @@ class PlacedUnit;
 
 class PlacementManager : public jt::GameObject {
 public:
-    PlacementManager(int playerId, std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
+    PlacementManager(std::shared_ptr<Terrain> world, int playerId,
+        std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
     std::vector<ObjectProperties> getPlacedUnits() const;
     void clearPlacedUnits();
@@ -23,6 +25,7 @@ public:
     void setActive(bool active);
 
 private:
+    std::shared_ptr<Terrain> m_world;
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
     bool m_isActive { true };
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> m_placedUnits;
@@ -39,6 +42,7 @@ private:
     void doDraw() const override;
 
     void placeUnit();
+    bool fieldInUse(jt::Vector2f const& pos) const;
 };
 
 #endif // JAMTEMPLATE_PLACEMENT_MANAGER_HPP

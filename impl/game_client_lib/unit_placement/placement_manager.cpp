@@ -7,15 +7,18 @@
 #include <unit_info_collection.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <imgui.h>
+#include <iostream>
 
-PlacementManager::PlacementManager(int playerId,
+PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
     std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
     std::shared_ptr<UnitInfoCollection> unitInfo)
-    : m_unitInfo { unitInfo }
+    : m_world { world }
+    , m_unitInfo { unitInfo }
 {
     m_playerId = playerId;
     m_playerIdDispatcher = playerIdDispatcher;
 }
+
 void PlacementManager::doCreate()
 {
     auto playerIdDispatcher = m_playerIdDispatcher.lock();
@@ -29,6 +32,7 @@ void PlacementManager::doCreate()
             jt::Color { 20, 20, 20, 100 }, textureManager());
     m_placedUnits = std::make_shared<jt::ObjectGroup<PlacedUnit>>();
 }
+
 void PlacementManager::doUpdate(const float elapsed)
 {
     m_placedUnitsGO.update(elapsed);
@@ -73,10 +77,14 @@ void PlacementManager::placeUnit()
             // TODO log error
             return;
         }
-        jt::Vector2f const mousePos = getGame()->input().mouse()->getMousePositionWorld();
+
+        jt::Vector2f const fieldPos { m_world->getMappedFieldPosition(
+            getGame()->input().mouse()->getMousePositionWorld()) };
 
         // TODO take unit size and offset into account
-        if (!jt::MathHelper::checkIsIn(playerIdDispatcher->getUnitPlacementArea(), mousePos)) {
+        if (!jt::MathHelper::checkIsIn(playerIdDispatcher->getUnitPlacementArea(), fieldPos)
+            // only one unit per field
+            || fieldInUse(fieldPos)) {
             // TODO Show some visual representation or play a sound that placing a unit here is not
             // possible.
             return;
@@ -88,10 +96,22 @@ void PlacementManager::placeUnit()
         unit->setGameInstance(getGame());
         unit->create();
 
-        unit->setPosition(mousePos);
+        unit->setPosition(fieldPos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);
     }
+}
+
+bool PlacementManager::fieldInUse(jt::Vector2f const& pos) const
+{
+    for (auto const& unit : *m_placedUnits) {
+        auto const lockedUnit = unit.lock();
+        if (lockedUnit->getPosition() == pos) {
+            std::cerr << "Field already in use: " << pos.x << "," << pos.y << std::endl;
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
@@ -104,4 +124,5 @@ std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
 }
 
 void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
+
 void PlacementManager::setActive(bool active) { m_isActive = active; }

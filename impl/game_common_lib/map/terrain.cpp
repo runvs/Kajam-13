@@ -42,7 +42,8 @@ void from_json(nlohmann::json const& j, Map& v)
 void printSlopeAt(Terrain const& terrain, int x, int y, jt::Vector2f const& dir)
 {
     auto const slope = terrain.getSlopeAt(
-        jt::Vector2f { x * terrainChunkSizeInPixel, y * terrainChunkSizeInPixel }, dir);
+        jt::Vector2f { x * terrainChunkSizeInPixel * 1.0f, y * terrainChunkSizeInPixel * 1.0f },
+        dir);
     std::cerr << "Slope at [" << x << "," << y << "] dir[" << dir.x << "," << dir.y
               << "]: " << slope << std::endl;
 }
@@ -97,6 +98,13 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     }
 
     return (dir.x * (heightPos - heightPosInX) + dir.y * (heightPos - heightPosInY)) / 2.0f;
+}
+
+jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos) const
+{
+    return { pos.x - static_cast<int>(pos.x) % terrainChunkSizeInPixel
+            + terrainChunkSizeInPixel / 2,
+        pos.y - static_cast<int>(pos.y) % terrainChunkSizeInPixel + terrainChunkSizeInPixel / 2 };
 }
 
 void Terrain::parseMapFromFilename(std::string const& fileName)

@@ -142,7 +142,7 @@ void StateGame::transitionWaitForPlayersToStartPlaceUnits()
         getGame()->logger(), m_serverConnection->getUnitInfo());
 
     m_placementManager = std::make_shared<PlacementManager>(
-        m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
+        m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     add(m_placementManager);
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);

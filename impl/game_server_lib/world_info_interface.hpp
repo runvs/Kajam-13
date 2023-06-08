@@ -14,6 +14,7 @@ public:
         jt::Vector2f const& pos, int playerId)
         = 0;
     virtual float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& direction) = 0;
+    virtual jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos) = 0;
 };
 
 #endif // JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP

@@ -12,7 +12,7 @@ public:
 
 private:
     jt::Rectf m_unitPlacementRect;
-    jt::Rectf m_blokedUnitPlacementArea;
+    jt::Rectf m_blockedUnitPlacementArea;
 };
 
 #endif // JAMTEMPLATE_PLAYER_ID_DISPATCHER_HPP
