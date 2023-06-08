@@ -9,7 +9,7 @@ void AiSwordman::update(float elapsed, ServerUnit& unit, WorldInfoInterface& wor
     m_attackTimer -= elapsed;
     auto t = world.getClosestTargetTo(unit.getPosition(), unit.getPlayerID());
     auto target = t.lock();
-    
+
     if (!target) {
         return;
     }
@@ -17,7 +17,8 @@ void AiSwordman::update(float elapsed, ServerUnit& unit, WorldInfoInterface& wor
     auto dir = target->getPosition() - unit.getPosition();
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
-    float speed = unit.getInfo().movementSpeed;
+    float speed
+        = unit.getInfo().movementSpeed * world.getLocalSpeedFactorAt(unit.getPosition(), dir);
     if (dist < unit.getInfo().colliderRadius * 2.0f) {
         speed = 0;
         if (m_attackTimer <= 0) {
