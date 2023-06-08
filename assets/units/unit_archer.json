@@ -5,7 +5,7 @@
       "jsonfilename": "assets/units/archer.json"
     }
   ],
-  "closeCombatDamage": 10.0,
+  "damage": 10.0,
   "colliderRadius": 4.0,
   "experience": 0,
   "hitpoints": 20.0,

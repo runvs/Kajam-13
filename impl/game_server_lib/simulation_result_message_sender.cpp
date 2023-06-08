@@ -9,14 +9,12 @@ SimulationResultMessageSender::SimulationResultMessageSender(ServerNetworkConnec
 }
 
 void SimulationResultMessageSender::sendSimulationResults(
-    std::vector<std::vector<ObjectProperties>> const& props)
+    SimulationResultDataForAllFrames const& data)
 {
-    for (auto& p : props) {
-        SimulationResultData data;
-        data.m_unitPropertiesForOneFrame = p;
+    for (auto const& currentFrameData : data.allFrames) {
         Message m;
         m.type = MessageType::SimulationResult;
-        nlohmann::json j = data;
+        nlohmann::json j = currentFrameData;
         m.data = j.dump();
 
         m_connection.sendMessageToAll(m);

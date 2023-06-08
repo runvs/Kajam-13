@@ -11,7 +11,6 @@ struct ClientEndPlacementData {
 };
 
 void to_json(nlohmann::json& j, const ClientEndPlacementData& data);
-
 void from_json(const nlohmann::json& j, ClientEndPlacementData& data);
 
 #endif // JAMTEMPLATE_CLIENT_END_PLACEMENT_DATA_HPP

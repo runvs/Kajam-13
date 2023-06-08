@@ -25,6 +25,7 @@ constexpr auto unitType = "unitType";
 constexpr auto unitAnim = "unitNewAnim";
 
 constexpr auto damage = "damage";
+constexpr auto arrows = "arrows";
 
 } // namespace jk
 

@@ -1,12 +1,30 @@
 #include "server_unit.hpp"
+#include "ai/ai_archer.hpp"
+#include "ai/ai_swordman.hpp"
 #include "damage_info.hpp"
-#include <json_keys.hpp>
-#include <math_helper.hpp>
-#include <object_properties.hpp>
-#include <world_info_interface.hpp>
+#include "json_keys.hpp"
+#include "math_helper.hpp"
+#include "object_properties.hpp"
+#include "world_info_interface.hpp"
 #include <cmath>
+#include <memory>
 
-ServerUnit::ServerUnit(const UnitInfo& info) { m_info = info; }
+#include <iostream>
+
+ServerUnit::ServerUnit(const UnitInfo& info)
+{
+    m_info = info;
+    // TODO use stored AI information instead of type
+    if (m_info.type == "swordman") {
+        m_ai = std::make_unique<AiSwordman>();
+    } else if (m_info.type == "archer") {
+        m_ai = std::make_unique<AiArcher>();
+    } else {
+        // TODO pass in and use logger
+        std::cerr << "Warning: create a unit with unknown ai type\n";
+        m_ai = std::make_unique<AiSwordman>();
+    }
+}
 
 ObjectProperties ServerUnit::saveState() const
 {
@@ -38,30 +56,7 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     if (!isAlive()) {
         return;
     }
-
-    // TODO move to AI
-    // determine target
-    m_attackTimer -= elapsed;
-    auto t = world.getClosestTargetTo(m_pos, m_playerID);
-    auto target = t.lock();
-    if (!target) {
-        return;
-    }
-    auto dir = target->getPosition() - getPosition();
-    auto const dist = jt::MathHelper::length(dir);
-    jt::MathHelper::normalizeMe(dir);
-    float speed = 20.0f * m_info.movementSpeed;
-    if (dist < m_info.colliderRadius * 2.0f) {
-        speed = 0;
-        if (m_attackTimer <= 0) {
-            m_attackTimer = m_info.attackTimerMax;
-            DamageInfo d;
-            d.damage = m_info.closeCombatDamage;
-            target->takeDamage(d);
-        }
-    }
-
-    m_pos += dir * elapsed * speed;
+    m_ai->update(elapsed, *this, world);
 }
 
 void ServerUnit::setPosition(jt::Vector2f const& pos) { m_pos = pos; }
@@ -81,3 +76,4 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
     }
 }
 bool ServerUnit::isAlive() const { return m_hp > 0; }
+UnitInfo const& ServerUnit::getInfo() const { return m_info; }

@@ -3,12 +3,13 @@
 
 #include "object_properties.hpp"
 #include "server_network_connection.hpp"
+#include "simulation_result_data.hpp"
 
 class SimulationResultMessageSender {
 public:
     explicit SimulationResultMessageSender(ServerNetworkConnection& connection);
 
-    void sendSimulationResults(std::vector<std::vector<ObjectProperties>> const& props);
+    void sendSimulationResults(SimulationResultDataForAllFrames const& data);
 
 private:
     ServerNetworkConnection& m_connection;

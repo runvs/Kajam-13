@@ -1,6 +1,7 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
+#include "simulation_result_data.hpp"
 #include "unit_placement/unit_id_manager.hpp"
 #include <client_end_placement_data.hpp>
 #include <client_network_connection.hpp>
@@ -62,10 +63,10 @@ private:
 
     mutable InternalState m_internalState { InternalState::WaitForAllPlayers };
 
-    // TODO could be converted into a class?
-    std::vector<std::vector<ObjectProperties>> m_properties;
+    SimulationResultDataForAllFrames m_simulationResultsForAllFrames;
 
     std::shared_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
+    mutable std::shared_ptr<jt::Shape> m_arrowShape;
 
     mutable bool m_addBotAsPlayerZero { false };
     mutable bool m_addBotAsPlayerOne { false };
@@ -94,7 +95,7 @@ private:
     void transitionWaitForSimulationResultsToPlayback();
     void transitionPlaybackToPlaceUnits();
     void placeUnitsForOneTick(
-        std::vector<ObjectProperties> const& propertiesForAllUnitsForThisTick);
+        SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick);
     void resetAllUnits();
 };
 

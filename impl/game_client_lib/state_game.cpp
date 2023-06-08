@@ -1,4 +1,6 @@
 ﻿#include "state_game.hpp"
+#include "color/color.hpp"
+#include "simulation_result_data.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -23,9 +25,6 @@ void StateGame::onCreate()
     m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
     m_world_renderer->setDrawGrid(true);
     add(m_world_renderer);
-
-    float const w = static_cast<float>(GP::GetWindowSize().x);
-    float const h = static_cast<float>(GP::GetWindowSize().y);
 
     createPlayer();
 
@@ -54,6 +53,8 @@ void StateGame::onCreate()
         m.type = MessageType::AddBot;
         m_connection->sendMessage(m);
     }
+
+    m_arrowShape = jt::dh::createShapeCircle(4, jt::colors::White, textureManager());
 }
 
 void StateGame::onEnter() { }
@@ -91,21 +92,22 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::playbackSimulation(float elapsed)
 {
-    if (m_properties.size() != 0) {
+    if (m_simulationResultsForAllFrames.allFrames.size() != 0) {
         if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
             m_tickId++;
 
         } else {
             transitionPlaybackToPlaceUnits();
         }
-        auto const& propertiesForAllUnitsForThisTick = m_properties.at(m_tickId);
+        auto const& propertiesForAllUnitsForThisTick
+            = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
         placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
     }
 }
 void StateGame::placeUnitsForOneTick(
-    std::vector<ObjectProperties> const& propertiesForAllUnitsForThisTick)
+    SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick)
 {
-    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick) {
+    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
 
         auto const unitID = propsForOneUnit.ints.at(jk::unitID);
         auto const playerID = propsForOneUnit.ints.at(jk::playerID);
@@ -158,7 +160,7 @@ void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
 }
 void StateGame::transitionWaitForSimulationResultsToPlayback()
 {
-    m_properties = m_serverConnection->getRoundData();
+    m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
     m_internalState = InternalState::Playback;
 }
@@ -185,6 +187,14 @@ void StateGame::onDraw() const
 {
     m_world_renderer->draw();
     drawObjects();
+
+    if (m_internalState == InternalState::Playback) {
+        for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
+            m_arrowShape->setPosition(a.currentPos);
+            m_arrowShape->update(0.0f);
+            m_arrowShape->draw(renderTarget());
+        }
+    }
 
     m_vignette->draw();
 
@@ -232,8 +242,8 @@ void StateGame::setConnection(
 
 void StateGame::resetAllUnits()
 {
-    auto propertiesForAllUnitsForThisTick = m_properties.at(0);
-    for (auto& props : propertiesForAllUnitsForThisTick) {
+    auto propertiesForAllUnitsForThisTick = m_simulationResultsForAllFrames.allFrames.at(0);
+    for (auto& props : propertiesForAllUnitsForThisTick.m_units) {
         props.strings[jk::unitAnim] = "idle";
         props.floats[jk::hpCurrent] = props.floats[jk::hpMax];
     }

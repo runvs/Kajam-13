@@ -116,13 +116,13 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message const m = j;
     nlohmann::json j_data = nlohmann::json::parse(m.data);
-    SimulationResultData data;
+    SimulationResultDataForOneFrame data;
     j_data.get_to(data);
     std::unique_lock<std::mutex> lock { m_dataMutex };
-    m_properties.push_back(data.m_unitPropertiesForOneFrame);
-    m_logger.debug("received tick " + std::to_string(m_properties.size()) + " / "
+    m_simulationResults.allFrames.push_back(data);
+    m_logger.debug("received tick " + std::to_string(m_simulationResults.allFrames.size()) + " / "
         + std::to_string(GP::NumberOfStepsPerRound()));
-    if (m_properties.size() == GP::NumberOfStepsPerRound()) {
+    if (m_simulationResults.allFrames.size() == GP::NumberOfStepsPerRound()) {
         m_logger.info("received all simulation results");
         m_dataReady = true;
     }
@@ -130,12 +130,12 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
 }
 bool ServerConnection::isRoundDataReady() const { return m_dataReady; }
 
-std::vector<std::vector<ObjectProperties>> ServerConnection::getRoundData()
+SimulationResultDataForAllFrames ServerConnection::getRoundData()
 {
     std::unique_lock<std::mutex> lock { m_dataMutex };
     m_dataReady = false;
-    auto const propertiesCopy = m_properties;
-    m_properties.clear();
+    auto const propertiesCopy = m_simulationResults;
+    m_simulationResults.allFrames.clear();
     return propertiesCopy;
 }
 

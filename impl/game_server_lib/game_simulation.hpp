@@ -2,12 +2,13 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
+#include "arrow_info.hpp"
+#include "units/server_unit.hpp"
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
 #include <object_properties.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
-#include <server_unit.hpp>
 #include <simulation_object_interface.hpp>
 #include <simulation_result_message_sender.hpp>
 #include <unit_info_collection.hpp>
@@ -28,6 +29,7 @@ public:
         const jt::Vector2f& pos, int playerId) override;
     float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
     jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos) override;
+    void spawnArrow(const ArrowInfo& arrowInfo) override;
 
 private:
     jt::LoggerInterface& m_logger;
@@ -36,6 +38,7 @@ private:
     std::shared_ptr<Terrain> m_world;
     std::vector<ObjectProperties> m_unitInformationForRoundStart;
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
+    std::vector<ArrowInfo> m_arrows;
 
     bool checkIfUnitIsUnique(ObjectProperties const& newUnitProps);
 };

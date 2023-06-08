@@ -1,9 +1,11 @@
 #include "game_simulation.hpp"
+#include "arrow_info.hpp"
+#include "simulation_result_data.hpp"
+#include "units/server_unit.hpp"
 #include <game_properties.hpp>
 #include <json_keys.hpp>
 #include <math_helper.hpp>
 #include <object_properties.hpp>
-#include <server_unit.hpp>
 #include <simulation_object_interface.hpp>
 #include <unit_info.hpp>
 #include <vector.hpp>
@@ -39,23 +41,38 @@ void GameSimulation::addUnit(const ObjectProperties& props)
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
     auto const timePerUpdate = 0.005f;
-    std::vector<std::vector<ObjectProperties>> propertiesForAllUnitsForAllRounds;
+    SimulationResultDataForAllFrames allFrames;
     for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
-        std::vector<ObjectProperties> propertiesForAllUnitsForOneRound;
-
+        //        std::vector<ObjectProperties> propertiesForAllUnitsForOneRound;
+        SimulationResultDataForOneFrame currentFrame;
         for (auto& obj : m_simulationObjects) {
             obj->update(timePerUpdate, *this);
 
             auto data = obj->saveState();
             data.ints[jk::simulationTick] = i;
 
-            propertiesForAllUnitsForOneRound.push_back(data);
+            currentFrame.m_units.push_back(data);
         }
-        propertiesForAllUnitsForAllRounds.push_back(propertiesForAllUnitsForOneRound);
+
+        for (auto& arrow : m_arrows) {
+            arrow.age += timePerUpdate;
+            float timePercent = arrow.age / arrow.totalTime;
+            if (timePercent >= 1) {
+                // TODO delete arrow
+                timePercent = 1;
+            }
+            auto const dif = arrow.endPos - arrow.startPos;
+            arrow.currentPos = arrow.startPos + dif * timePercent;
+
+            // TODO make arrow follow a parabola
+        }
+        currentFrame.m_arrows = m_arrows;
+
+        allFrames.allFrames.push_back(currentFrame);
     }
 
     m_logger.info("simulation finished");
-    sender.sendSimulationResults(propertiesForAllUnitsForAllRounds);
+    sender.sendSimulationResults(allFrames);
     m_logger.info("sending of simulation results done");
 }
 
@@ -112,3 +129,5 @@ bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
     }
     return true;
 }
+
+void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo) { m_arrows.push_back(arrowInfo); }

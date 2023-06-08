@@ -5,7 +5,7 @@
       "jsonfilename": "assets/units/swordman.json"
     }
   ],
-  "closeCombatDamage": 10.0,
+  "damage": 10.0,
   "colliderRadius": 8.0,
   "experience": 0,
   "hitpoints": 100.0,

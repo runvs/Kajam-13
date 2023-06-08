@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_SERVER_CONNECTION_HPP
 #define JAMTEMPLATE_SERVER_CONNECTION_HPP
 
+#include "simulation_result_data.hpp"
 #include "vector.hpp"
 #include <asio/ip/tcp.hpp>
 #include <client_end_placement_data.hpp>
@@ -21,7 +22,7 @@ public:
 
     bool areAllPlayersConnected() const;
     bool isRoundDataReady() const;
-    std::vector<std::vector<ObjectProperties>> getRoundData();
+    SimulationResultDataForAllFrames getRoundData();
 
     int getPlayerId() const;
     std::vector<UnitInfo> getUnitInfo() const;
@@ -37,7 +38,7 @@ private:
 
     std::atomic_bool m_dataReady { false };
     std::mutex m_dataMutex;
-    std::vector<std::vector<ObjectProperties>> m_properties;
+    SimulationResultDataForAllFrames m_simulationResults;
 
     std::vector<UnitInfo> m_unitInfo;
 

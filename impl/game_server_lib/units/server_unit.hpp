@@ -2,9 +2,11 @@
 #ifndef JAMTEMPLATE_SERVER_UNIT_HPP
 #define JAMTEMPLATE_SERVER_UNIT_HPP
 
-#include <simulation_object_interface.hpp>
-#include <unit_info.hpp>
-#include <vector.hpp>
+#include "simulation_object_interface.hpp"
+#include "unit_info.hpp"
+#include "units/ai/ai_interface.hpp"
+#include "vector.hpp"
+#include <memory>
 
 class ServerUnit : public SimulationObjectInterface {
 public:
@@ -22,8 +24,11 @@ public:
     void takeDamage(const DamageInfo& damage) override;
     bool isAlive() const override;
 
+    UnitInfo const& getInfo() const;
+
 private:
     UnitInfo m_info;
+    std::unique_ptr<AiInterface> m_ai { nullptr };
 
     jt::Vector2f m_pos;
     int m_unitID { 0 };

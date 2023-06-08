@@ -24,8 +24,8 @@ struct UnitInfo {
     std::string type = "";
     int experience { 0 };
     float hitpoints { 1.0f };
-    // TODO introduce damage struct
-    float closeCombatDamage { 0.0f };
+    // TODO use DamageInfo struct
+    float damage { 0.0f };
     float attackTimerMax { 1.0f };
     float movementSpeed { 0.0f };
     float colliderRadius { 1.0f };
