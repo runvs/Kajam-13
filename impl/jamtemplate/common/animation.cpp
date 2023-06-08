@@ -4,6 +4,7 @@
 #include <sprite.hpp>
 #include <strutils.hpp>
 #include <texture_manager_interface.hpp>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -310,14 +311,25 @@ float jt::Animation::getCurrentAnimationSingleFrameTime() const
 {
     return m_time.at(m_currentAnimName).at(m_currentIdx);
 }
+
 float jt::Animation::getCurrentAnimTotalTime() const
 {
     return getCurrentAnimationSingleFrameTime() * getNumberOfFramesInCurrentAnimation();
 }
+
+float jt::Animation::getAnimTotalTime(const std::string& animName) const
+{
+    if (m_time.count(animName) == 0) {
+        return 0.0f;
+    }
+    return std::accumulate(m_time.at(animName).cbegin(), m_time.at(animName).cend(), 0.0f);
+}
+
 std::size_t jt::Animation::getNumberOfFramesInCurrentAnimation() const
 {
     return m_frames.at(m_currentAnimName).size();
 }
+
 std::string jt::Animation::getCurrentAnimationName() const { return m_currentAnimName; }
 
 bool jt::Animation::getIsLooping() const

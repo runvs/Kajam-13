@@ -28,6 +28,7 @@ private:
     UnitInfo m_info;
 
     std::shared_ptr<jt::Animation> m_anim;
+    float m_animTimeUntilBackToIdle = -1.0f;
 
     int m_unitID;
     int m_playerID { 0 };

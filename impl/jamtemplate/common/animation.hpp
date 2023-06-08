@@ -99,14 +99,19 @@ public:
 
     /// Get the frame time for one single frame in the current animation
     ///
-    /// \return the time set in add for the currently playing animation
+    /// \return time set in add for the currently playing animation
     /// will raise an exception if no valid animation is playing
     float getCurrentAnimationSingleFrameTime() const;
 
     /// Get the total time of the current animation
     ///
-    /// \return the time for the complete animation to play
+    /// \return time for the complete animation to play in seconds
     float getCurrentAnimTotalTime() const;
+
+    /// Get the total time of the animation with animName
+    /// \param animName the name of the animation
+    /// \return time for the complete animation to play in seconds
+    float getAnimTotalTime(std::string const& animName) const;
 
     /// Get the number of frames in this animation
     ///

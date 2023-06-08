@@ -20,7 +20,6 @@ void Unit::doCreate()
     m_anim->play("idle");
     m_anim->setLooping("death", false);
     m_anim->setOffset(GP::UnitAnimationOffset());
-
     m_hpBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
     m_hpBar->setMaxValue(m_hpMax);
     m_hpBar->setBackColor(jt::colors::Gray);
@@ -30,6 +29,16 @@ void Unit::doCreate()
 void Unit::doUpdate(float const elapsed)
 {
     m_anim->update(elapsed);
+
+    if (m_hp > 0) {
+        if (m_animTimeUntilBackToIdle != -1.0f) {
+            m_animTimeUntilBackToIdle -= elapsed;
+            if (m_animTimeUntilBackToIdle <= 0) {
+                m_animTimeUntilBackToIdle = -1.0f;
+                m_anim->play("idle");
+            }
+        }
+    }
 
     m_hpBar->setCurrentValue(m_hp);
     m_hpBar->setPosition(m_anim->getPosition() + jt::Vector2f { 0.0f, -6.0f });
@@ -60,7 +69,11 @@ void Unit::updateState(ObjectProperties const& props)
     m_hp = props.floats.at(jk::hpCurrent);
 
     if (props.strings.count(jk::unitAnim) == 1) {
+        auto const animName = props.strings.at(jk::unitAnim);
         m_anim->play(props.strings.at(jk::unitAnim));
+        if (animName == "damage") {
+            m_animTimeUntilBackToIdle = m_anim->getCurrentAnimTotalTime();
+        }
     }
 }
 
