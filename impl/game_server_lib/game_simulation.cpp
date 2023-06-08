@@ -38,12 +38,13 @@ void GameSimulation::addUnit(const ObjectProperties& props)
     m_unitInformationForRoundStart.push_back(props);
 }
 
+float arrowParaboloa(float x, float maxHeight) { return -maxHeight * 4 * (x - x * x); }
+
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
     auto const timePerUpdate = 0.005f;
     SimulationResultDataForAllFrames allFrames;
     for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
-        //        std::vector<ObjectProperties> propertiesForAllUnitsForOneRound;
         SimulationResultDataForOneFrame currentFrame;
 
         for (auto& arrow : m_arrows) {
@@ -53,15 +54,18 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
                 timePercent = 1;
             }
             auto const dif = arrow.endPos - arrow.startPos;
-            arrow.currentPos = arrow.startPos + dif * timePercent;
+            arrow.currentPos = arrow.startPos + dif * timePercent
+                + jt::Vector2f { 0.0f, arrowParaboloa(timePercent, arrow.maxHeight) };
 
             // check for collision arrow - targets
-
             for (auto& target : m_simulationObjects) {
+                if (!target->isAlive()) {
+                    continue;
+                }
                 if (target->getPlayerID() == arrow.targetPlayerId) {
                     auto const difTargetArrow = target->getPosition() - arrow.currentPos;
                     auto const dist = jt::MathHelper::length(difTargetArrow);
-                    if (dist <= 20) {
+                    if (dist <= 16) {
                         target->takeDamage(arrow.damage);
                         arrow.age = 999999;
                         break;

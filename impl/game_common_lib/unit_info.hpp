@@ -13,11 +13,9 @@ struct AnimationInfo {
 
 struct AiInfo {
     // TODO define meaningful types.
-    enum AiType { WAIT, FOLLOW, SHOOT, BOSS, BOSS_INJURED, BOSS_CRITICAL };
-    std::string name { "" };
-    std::string nextState { "" };
+    enum AiType { SWORDMAN, ARCHER };
     AiType type;
-    float range;
+    float range { -1.0f };
 };
 
 struct UnitInfo {
@@ -30,7 +28,7 @@ struct UnitInfo {
     float movementSpeed { 0.0f };
     float colliderRadius { 1.0f };
     std::vector<AnimationInfo> animations {};
-    std::vector<AiInfo> ais {};
+    AiInfo ai;
 };
 
 void to_json(nlohmann::json& j, const AnimationInfo& p);

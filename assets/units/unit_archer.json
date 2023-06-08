@@ -1,5 +1,9 @@
 {
-  "ais": [],
+  "ai": {
+    "type": 1,
+    "range": 10.0
+  }
+  ,
   "animations": [
     {
       "jsonfilename": "assets/units/archer.json"
@@ -10,6 +14,6 @@
   "experience": 0,
   "hitpoints": 20.0,
   "attackTimerMax": 1.0,
-  "movementSpeed": 2.0,
+  "movementSpeed": 20.0,
   "type": "archer"
 }

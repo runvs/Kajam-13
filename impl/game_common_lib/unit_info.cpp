@@ -9,15 +9,14 @@ void to_json(nlohmann::json& j, AnimationInfo const& p)
 
 void to_json(nlohmann::json& j, AiInfo const& p)
 {
-    j = nlohmann::json { { "type", p.type }, { "range", p.range }, { "nextState", p.nextState },
-        { "name", p.name } };
+    j = nlohmann::json { { "type", p.type }, { "range", p.range } };
 }
 
 void to_json(nlohmann::json& j, UnitInfo const& p)
 {
     j = nlohmann::json { { "hitpoints", p.hitpoints }, { "experience", p.experience },
         { "movementSpeed", p.movementSpeed }, { "colliderRadius", p.colliderRadius },
-        { "damage", p.damage }, { jk::attackTimerMax, p.attackTimerMax }, { "ais", p.ais },
+        { "damage", p.damage }, { jk::attackTimerMax, p.attackTimerMax }, { "ai", p.ai },
         { "animations", p.animations }, { "type", p.type } };
 }
 
@@ -30,8 +29,6 @@ void from_json(nlohmann::json const& j, AiInfo& p)
 {
     j.at("type").get_to(p.type);
     j.at("range").get_to(p.range);
-    j.at("nextState").get_to(p.nextState);
-    j.at("name").get_to(p.name);
 }
 
 void from_json(nlohmann::json const& j, UnitInfo& p)
@@ -42,7 +39,7 @@ void from_json(nlohmann::json const& j, UnitInfo& p)
     j.at("colliderRadius").get_to(p.colliderRadius);
     j.at("damage").get_to(p.damage);
     j.at(jk::attackTimerMax).get_to(p.attackTimerMax);
-    j.at("ais").get_to(p.ais);
+    j.at("ai").get_to(p.ai);
     j.at("animations").get_to(p.animations);
     j.at("type").get_to(p.type);
 }

@@ -1,7 +1,8 @@
 #include "ai_archer.hpp"
-#include "arrow_info.hpp"
-#include "damage_info.hpp"
-#include "map/terrain.hpp"
+#include <arrow_info.hpp>
+#include <damage_info.hpp>
+#include <game_properties.hpp>
+#include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
@@ -19,10 +20,9 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
 
-    // TODO move attackrange to unitInfo and json
-    auto const attackRange = terrainChunkSizeInPixel * 10;
+    auto const attackRange = unit.getInfo().ai.range * terrainChunkSizeInPixel;
     if (dist > attackRange) {
-        float speed = 20.0f * unit.getInfo().movementSpeed;
+        float speed = unit.getInfo().movementSpeed;
 
         unit.setPosition(unit.getPosition() + dir * elapsed * speed);
     } else {
@@ -35,9 +35,9 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
 
             arrowInfo.damage = DamageInfo { unit.getInfo().damage };
             arrowInfo.currentPos = unit.getPosition();
-            // TODO move to GP
-            float const arrowSpeed = 80.0f;
-            arrowInfo.totalTime = dist / arrowSpeed;
+            arrowInfo.totalTime = dist / GP::ArrowSpeed();
+            arrowInfo.maxHeight = dist / 4;
+
             world.spawnArrow(arrowInfo);
         }
     }

@@ -35,3 +35,4 @@ jt::Palette GP::getPalette()
 
 std::size_t GP::NumberOfStepsPerRound() { return 3000; }
 jt::Vector2f GP::UnitAnimationOffset() { return jt::Vector2f { -9.0f, -16.0f }; }
+float GP::ArrowSpeed() { return 150.0f; }
