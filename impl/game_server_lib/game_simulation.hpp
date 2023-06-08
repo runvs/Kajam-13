@@ -30,6 +30,7 @@ public:
         const jt::Vector2f& pos, int playerId) override;
     float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
     jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos) override;
+    float getTerrainMappedFieldHeight(jt::Vector2f const& pos) override;
     void spawnArrow(const ArrowInfo& arrowInfo) override;
 
 private:

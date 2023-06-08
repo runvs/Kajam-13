@@ -12,23 +12,11 @@ namespace {
 
 constexpr int terrainColorGradient[] = { 0, 0, 0 };
 constexpr auto terrainColorGradientMax = 255 - terrainColorGradient[0];
-constexpr std::size_t midIndices[] { 2, 4, 7, 10 };
-constexpr std::size_t leftIndices[] { 0, 3, 5, 6 };
-constexpr std::size_t topIndices[] { 0, 1, 3, 11 };
-constexpr std::size_t rightIndices[] { 1, 8, 9, 11 };
-constexpr std::size_t botIndices[] { 5, 6, 8, 9 };
-constexpr std::size_t topLeftIndices[] { 0, 3 };
-constexpr std::size_t topRightIndices[] { 1, 11 };
-constexpr std::size_t botLeftIndices[] { 5, 6 };
-constexpr std::size_t botRightIndices[] { 8, 9 };
 constexpr float const chunkSize { terrainChunkSizeInPixel };
 constexpr auto const chunkSizeHalf = chunkSize / 2.0f;
-constexpr float vertexHeightOffsetMap[] { 0, 0, chunkSizeHalf, 0, chunkSizeHalf, chunkSize,
-    chunkSize, chunkSizeHalf, chunkSize, chunkSize, chunkSizeHalf, 0 };
 
 float getTerrainHeight(int y, float height)
 {
-    height = jt::MathHelper::clamp(height, 0.0f, terrainHeightMax);
     return y * chunkSize - height * terrainHeightScalingFactor;
 }
 
@@ -43,132 +31,6 @@ sf::Color getTerrainColor(float height)
     terrainColor.g = std::min(255, terrainColor.g + interPolatedHeightColorOffset);
     terrainColor.b = std::min(255, terrainColor.b + interPolatedHeightColorOffset);
     return terrainColor;
-}
-
-template <typename T>
-Chunk const& getChunk(T const& chunks, int x, int y)
-{
-    return chunks[y * terrainWidthInChunks + x];
-}
-
-template <typename T, typename I>
-void updateVertices(T& vertices, I const& indices, float height, sf::Color const& color)
-{
-    for (auto const idx : indices) {
-        vertices[idx].position.y = height + vertexHeightOffsetMap[idx];
-        vertices[idx].color = color;
-    }
-}
-
-template <typename G, typename T>
-void checkLeft(G& grid, T const& chunks, Chunk const& chunk)
-{
-    // nothing to the left
-    if (chunk.x == 0) {
-        return;
-    }
-
-    auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
-
-    // left one lower
-    if (left.height < chunk.height) {
-        auto const height = getTerrainHeight(chunk.y, chunk.height);
-        auto const heightHalf = (height + getTerrainHeight(left.y, left.height)) / 2;
-        auto const color = getTerrainColor(chunk.height);
-        auto const colorHalf = getTerrainColor(chunk.height - (chunk.height - left.height) / 2);
-        auto& vertices = grid[left.y * terrainWidthInChunks + left.x];
-        updateVertices(vertices, midIndices, heightHalf, colorHalf);
-        updateVertices(vertices, rightIndices, height, color);
-    }
-    // left one higher
-    else if (left.height > chunk.height) {
-        auto const height = getTerrainHeight(left.y, left.height);
-        auto const heightHalf = (height + getTerrainHeight(chunk.y, chunk.height)) / 2;
-        auto const color = getTerrainColor(left.height);
-        auto const colorHalf = getTerrainColor(left.height - (left.height - chunk.height) / 2);
-        auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
-        updateVertices(vertices, leftIndices, height, color);
-        updateVertices(vertices, midIndices, heightHalf, colorHalf);
-
-        // corner case
-        if ((chunk.x > 0) && (chunk.y > 0)) {
-            auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
-            auto const& top = getChunk(chunks, chunk.x, chunk.y - 1);
-            if (leftTop.height == top.height) {
-                auto const heightHalf = (height + getTerrainHeight(top.y, top.height)) / 2;
-                auto& verticesTop = grid[top.y * terrainWidthInChunks + top.x];
-                updateVertices(verticesTop, midIndices, heightHalf - chunkSize / 2, colorHalf);
-                updateVertices(verticesTop, botLeftIndices, height - chunkSize, color);
-            }
-        }
-    }
-}
-
-template <typename G, typename T>
-void checkTop(G& grid, T const& chunks, Chunk const& chunk)
-{
-    // nothing up top
-    if (chunk.y == 0) {
-        return;
-    }
-
-    auto const& top = getChunk(chunks, chunk.x, chunk.y - 1);
-
-    // top one lower
-    if (top.height < chunk.height) {
-        auto const height = getTerrainHeight(chunk.y, chunk.height);
-        auto const heightHalf = (height + getTerrainHeight(top.y, top.height)) / 2;
-        auto const color = getTerrainColor(chunk.height);
-        auto const colorHalf = getTerrainColor(chunk.height - (chunk.height - top.height) / 2);
-        auto& vertices = grid[top.y * terrainWidthInChunks + top.x];
-        updateVertices(vertices, midIndices, heightHalf - chunkSize / 2, colorHalf);
-        updateVertices(vertices, botIndices, height - chunkSize, color);
-
-        // corner case
-        if ((chunk.x > 0) && (chunk.y > 0)) {
-            auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
-            auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
-            if (left.height == leftTop.height) {
-                auto& verticesLeftTop = grid[leftTop.y * terrainWidthInChunks + leftTop.x];
-                updateVertices(verticesLeftTop, midIndices, heightHalf - chunkSize / 2, colorHalf);
-                updateVertices(verticesLeftTop, botRightIndices, height - chunkSize, color);
-            }
-        }
-    }
-    // top one higher
-    else if (top.height > chunk.height) {
-        auto const height = getTerrainHeight(top.y, top.height);
-        auto const heightHalf = (height + getTerrainHeight(chunk.y, chunk.height)) / 2;
-        auto const color = getTerrainColor(top.height);
-        auto const colorHalf = getTerrainColor(top.height - (top.height - chunk.height) / 2);
-        auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
-        updateVertices(vertices, topIndices, height + chunkSize, color);
-        updateVertices(vertices, midIndices, heightHalf + chunkSize / 2, colorHalf);
-
-        // corner case
-        if ((chunk.x > 0) && (chunk.y > 0)) {
-            auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
-            auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
-            if (left.height == leftTop.height) {
-                auto& verticesLeft = grid[left.y * terrainWidthInChunks + left.x];
-                updateVertices(verticesLeft, topRightIndices, height + chunkSize, color);
-                updateVertices(verticesLeft, midIndices, heightHalf + chunkSize / 2, colorHalf);
-            }
-        }
-    } else if ((chunk.x > 0) && (chunk.y > 0)) {
-        auto const& left = getChunk(chunks, chunk.x - 1, chunk.y);
-        auto const& leftTop = getChunk(chunks, chunk.x - 1, chunk.y - 1);
-        if (left.height < leftTop.height) {
-            auto const height = getTerrainHeight(leftTop.y, leftTop.height);
-            auto const heightHalf = (height + getTerrainHeight(chunk.y, chunk.height)) / 2;
-            auto const color = getTerrainColor(leftTop.height);
-            auto const colorHalf
-                = getTerrainColor(leftTop.height - (leftTop.height - chunk.height) / 2);
-            auto& vertices = grid[chunk.y * terrainWidthInChunks + chunk.x];
-            updateVertices(vertices, topLeftIndices, height + chunkSize, color);
-            updateVertices(vertices, midIndices, heightHalf + chunkSize / 2, colorHalf);
-        }
-    }
 }
 
 void drawTerrainGrid(sf::RenderTexture& texture)
@@ -218,35 +80,39 @@ void TerrainRenderer::doCreate()
         for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
             auto const& chunk = chunks[wOffset + w];
             auto const posX = w * chunkSize;
-            auto const posY = getTerrainHeight(h, chunk.height);
-            auto const color = getTerrainColor(chunk.height);
+            auto const posYc = getTerrainHeight(h, chunk.heightCenter);
+            auto const posYtl = getTerrainHeight(h, chunk.heightCorners[0]);
+            auto const posYtr = getTerrainHeight(h, chunk.heightCorners[1]);
+            auto const posYbl = getTerrainHeight(h, chunk.heightCorners[2]);
+            auto const posYbr = getTerrainHeight(h, chunk.heightCorners[3]);
+            auto const colorC = getTerrainColor(chunk.heightCenter);
+            auto const colorTl = getTerrainColor(chunk.heightCorners[0]);
+            auto const colorTr = getTerrainColor(chunk.heightCorners[1]);
+            auto const colorBl = getTerrainColor(chunk.heightCorners[2]);
+            auto const colorBr = getTerrainColor(chunk.heightCorners[3]);
 
             // draw chunk triangles
             auto& vertices = grid[wOffset + w] = sf::VertexArray { sf::Triangles, 12 };
 
             // top triangle
-            vertices[0] = { { posX, posY }, color };
-            vertices[1] = { { posX + chunkSize, posY }, color };
-            vertices[2] = { { posX + chunkSizeHalf, posY + chunkSizeHalf }, color };
+            vertices[0] = { { posX, posYtl }, colorTl };
+            vertices[1] = { { posX + chunkSize, posYtr }, colorTr };
+            vertices[2] = { { posX + chunkSizeHalf, posYc + chunkSizeHalf }, colorC };
 
             // left triangle
-            vertices[3] = { { posX, posY }, color };
-            vertices[4] = { { posX + chunkSizeHalf, posY + chunkSizeHalf }, color };
-            vertices[5] = { { posX, posY + chunkSize }, color };
+            vertices[3] = { { posX, posYtl }, colorTl };
+            vertices[4] = { { posX + chunkSizeHalf, posYc + chunkSizeHalf }, colorC };
+            vertices[5] = { { posX, posYbl + chunkSize }, colorBl };
 
             // bot triangle
-            vertices[6] = { { posX, posY + chunkSize }, color };
-            vertices[7] = { { posX + chunkSizeHalf, posY + chunkSizeHalf }, color };
-            vertices[8] = { { posX + chunkSize, posY + chunkSize }, color };
+            vertices[6] = { { posX, posYbl + chunkSize }, colorBl };
+            vertices[7] = { { posX + chunkSizeHalf, posYc + chunkSizeHalf }, colorC };
+            vertices[8] = { { posX + chunkSize, posYbr + chunkSize }, colorBr };
 
             // right triangle
-            vertices[9] = { { posX + chunkSize, posY + chunkSize }, color };
-            vertices[10] = { { posX + chunkSizeHalf, posY + chunkSizeHalf }, color };
-            vertices[11] = { { posX + chunkSize, posY }, color };
-
-            // update neighbouring chunks
-            checkLeft(grid, chunks, chunk);
-            checkTop(grid, chunks, chunk);
+            vertices[9] = { { posX + chunkSize, posYbr + chunkSize }, colorBr };
+            vertices[10] = { { posX + chunkSizeHalf, posYc + chunkSizeHalf }, colorC };
+            vertices[11] = { { posX + chunkSize, posYtr }, colorTr };
         }
     }
 

@@ -74,7 +74,8 @@ void PlacementManager::placeUnit()
         return;
     }
     // TODO use ImGui to draw a nice UI
-    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)) {
+    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)
+        || getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         auto playerIdDispatcher = m_playerIdDispatcher.lock();
         if (playerIdDispatcher == nullptr) {
             getGame()->logger().warning(
@@ -105,8 +106,9 @@ void PlacementManager::placeUnit()
         unit->setGameInstance(getGame());
         unit->create();
 
-        unit->setOffset(jt::Vector2f {
-            0, -1.0f * m_world->getFieldHeight(fieldPos) * terrainHeightScalingFactor });
+        unit->setOffset({ 0,
+            m_world->getFieldHeight(fieldPos + (terrainChunkSizeInPixel / 2.0f))
+                * -terrainHeightScalingFactor });
         unit->setPosition(fieldPos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);

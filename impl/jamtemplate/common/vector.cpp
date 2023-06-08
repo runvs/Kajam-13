@@ -22,6 +22,16 @@ jt::Vector2f jt::operator-(jt::Vector2f const& a, jt::Vector2f const& b)
     return jt::Vector2f { a.x - b.x, a.y - b.y };
 }
 
+jt::Vector2f jt::operator+(jt::Vector2f const& a, float const b)
+{
+    return jt::Vector2f { a.x + b, a.y + b };
+}
+
+jt::Vector2f jt::operator-(jt::Vector2f const& a, float const b)
+{
+    return jt::Vector2f { a.x - b, a.y - b };
+}
+
 jt::Vector2f& jt::operator+=(jt::Vector2f& lhs, jt::Vector2f const& rhs)
 {
     lhs.x += rhs.x;

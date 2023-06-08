@@ -26,8 +26,10 @@ ObjectProperties PlacedUnit::saveState() const
     ObjectProperties props;
     props.ints[jk::unitID] = m_unitID;
     props.ints[jk::playerID] = m_playerID;
-    props.floats[jk::positionX] = m_anim->getPosition().x;
-    props.floats[jk::positionY] = m_anim->getPosition().y;
+    props.floats[jk::positionX] = m_position.x;
+    props.floats[jk::positionY] = m_position.y;
+    props.floats[jk::offsetX] = m_offset.x;
+    props.floats[jk::offsetY] = m_offset.y;
     props.strings[jk::unitType] = m_info.type;
     return props;
 }

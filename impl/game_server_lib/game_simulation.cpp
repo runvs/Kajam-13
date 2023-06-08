@@ -133,9 +133,11 @@ std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
 float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir)
 {
     auto const slope = m_world->getSlopeAt(pos, dir);
+    // TODO slope is now in degrees [-90;90]
     if (slope > 0.0f) {
         return 0.997143f - 0.178571f * slope * 0.7f;
-    } else if (slope < 0.0f) {
+    }
+    if (slope < 0.0f) {
         return 1.0f / (0.997143f + 0.178571f * slope * 0.7f);
     }
     return 1.0f;
@@ -144,6 +146,11 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
 jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos)
 {
     return m_world->getMappedFieldPosition(pos);
+}
+
+float GameSimulation::getTerrainMappedFieldHeight(jt::Vector2f const& pos)
+{
+    return m_world->getFieldHeight(pos);
 }
 
 bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)

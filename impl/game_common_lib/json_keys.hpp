@@ -6,6 +6,9 @@ namespace jk {
 constexpr auto positionX = "posx";
 constexpr auto positionY = "posy";
 
+constexpr auto offsetX = "offsetx";
+constexpr auto offsetY = "offsety";
+
 constexpr auto unitID = "uid";
 constexpr auto playerID = "pid";
 

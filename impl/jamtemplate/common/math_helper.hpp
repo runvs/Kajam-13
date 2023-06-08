@@ -35,6 +35,7 @@ float lengthSquared(jt::Vector2f const& v);
 
 float length(jt::Vector2f const& v);
 
+jt::Vector2f normalized(jt::Vector2f const& v);
 void normalizeMe(jt::Vector2f& v, float lowerbound = 0);
 
 float rad2deg(float a);

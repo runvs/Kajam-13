@@ -5,15 +5,18 @@
 #include <nlohmann.hpp>
 
 namespace jt {
-void to_json(nlohmann::json& j, const jt::Vector2f& vec)
+void to_json(nlohmann::json& j, const jt::Vector2f& pos, jt::Vector2f& offset)
 {
-    j = nlohmann::json { { jk::positionX, vec.x }, { jk::positionY, vec.y } };
+    j = nlohmann::json { { jk::positionX, pos.x }, { jk::positionY, pos.y },
+        { jk::offsetX, offset.x }, { jk::offsetY, offset.y } };
 }
 
-void from_json(const nlohmann::json& j, jt::Vector2f& vec)
+void from_json(const nlohmann::json& j, jt::Vector2f& pos, jt::Vector2f& offset)
 {
-    j.at(jk::positionX).get_to(vec.x);
-    j.at(jk::positionY).get_to(vec.y);
+    j.at(jk::positionX).get_to(pos.x);
+    j.at(jk::positionY).get_to(pos.y);
+    j.at(jk::offsetX).get_to(offset.x);
+    j.at(jk::offsetY).get_to(offset.y);
 }
 
 } // namespace jt

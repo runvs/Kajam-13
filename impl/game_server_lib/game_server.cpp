@@ -71,6 +71,8 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
         auto const unitType
             = *jt::SystemHelper::select_randomly(possibleUnits.cbegin(), possibleUnits.cend());
         ;
+        props.floats[jk::offsetX] = 0.0f;
+        props.floats[jk::offsetY] = 0.0f;
         props.strings[jk::unitType] = unitType;
 
         m_gameSimulation->addUnit(props);

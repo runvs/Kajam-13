@@ -17,7 +17,8 @@ macro(FetchContent_MakeAvailableExcludeFromAll)
     endforeach ()
 endmacro()
 
-set(CMAKE_POLICY_DEFAULT_CMP0048 NEW)
+cmake_policy(SET CMP0048 NEW)
+cmake_policy(SET CMP0135 OLD)
 include(FetchContent)
 
 FetchContent_Declare(zlib

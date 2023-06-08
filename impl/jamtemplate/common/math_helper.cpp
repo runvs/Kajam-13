@@ -12,6 +12,12 @@ float jt::MathHelper::length(jt::Vector2f const& v)
     return std::sqrt(jt::MathHelper::lengthSquared(v));
 }
 
+jt::Vector2f jt::MathHelper::normalized(jt::Vector2f const& v)
+{
+    float l = jt::MathHelper::length(v);
+    return { v.x / l, v.y / l };
+}
+
 void jt::MathHelper::normalizeMe(jt::Vector2f& v, float lowerbound)
 {
     float l = jt::MathHelper::length(v);

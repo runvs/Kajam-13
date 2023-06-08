@@ -8,6 +8,7 @@
 #include "object_properties.hpp"
 #include "unit_info.hpp"
 #include "world_info_interface.hpp"
+#include <map/terrain.hpp>
 #include <Box2D/Dynamics/b2Body.h>
 #include <cmath>
 #include <memory>
@@ -52,6 +53,8 @@ ObjectProperties ServerUnit::saveState() const
     props.ints[jk::playerID] = m_playerID;
     props.floats[jk::positionX] = m_pos.x;
     props.floats[jk::positionY] = m_pos.y;
+    props.floats[jk::offsetX] = m_offset.x;
+    props.floats[jk::offsetY] = m_offset.y;
     props.floats[jk::hpCurrent] = m_hp;
     props.floats[jk::hpMax] = m_info.hitpoints;
     props.strings[jk::unitType] = m_info.type;
@@ -68,6 +71,7 @@ void ServerUnit::updateState(ObjectProperties const& props)
     m_playerID = props.ints.at(jk::playerID);
     m_pos = jt::Vector2f { props.floats.at(jk::positionX), props.floats.at(jk::positionY) };
     m_physicsObject->setPosition(m_pos);
+    m_offset = jt::Vector2f { props.floats.at(jk::offsetX), props.floats.at(jk::offsetY) };
 }
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
@@ -87,9 +91,17 @@ void ServerUnit::setPosition(jt::Vector2f const& pos)
 }
 
 jt::Vector2f ServerUnit::getPosition() const { return m_pos; }
+
+void ServerUnit::setOffset(jt::Vector2f const& offset) { m_offset = offset; }
+
+jt::Vector2f ServerUnit::getOffset() const { return m_offset; }
+
 void ServerUnit::setUnitID(int unitID) { m_unitID = unitID; }
+
 int ServerUnit::getPlayerID() const { return m_playerID; }
+
 int ServerUnit::getUnitID() const { return m_unitID; }
+
 void ServerUnit::takeDamage(const DamageInfo& damage)
 {
     // TODO take armor into account
@@ -100,6 +112,8 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
         m_newAnim = "death";
     }
 }
+
 bool ServerUnit::isAlive() const { return m_hp > 0; }
+
 UnitInfo const& ServerUnit::getInfo() const { return m_info; }
 std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physicsObject; }

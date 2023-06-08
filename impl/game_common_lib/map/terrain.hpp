@@ -20,6 +20,8 @@ constexpr float terrainHeightScalingFactor { terrainChunkSizeInPixel / 4.0f };
 struct Chunk {
     unsigned short x, y;
     float height;
+    float heightCenter;
+    float heightCorners[4];
 };
 
 // This class describes the terrain of the play field devided into chunks.
@@ -32,16 +34,16 @@ class Terrain {
     Grid m_chunks;
 
 public:
+    static jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos);
+
     // TODO share map information from server to clients
     Terrain(std::string const& mapFilename = "assets/maps/map_de_dust_2.json");
 
     Grid const& getChunks() const { return m_chunks; }
 
-    Chunk const& getChunk(int x, int y) const { return m_chunks[y * terrainWidthInChunks + x]; }
-
+    Chunk const& getChunk(int x, int y) const;
     float getChunkHeight(int x, int y) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
-    jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos) const;
     float getFieldHeight(jt::Vector2f const& pos) const;
     void parseMapFromFilename(std::string const& fileName);
 };

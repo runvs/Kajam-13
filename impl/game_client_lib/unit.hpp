@@ -20,12 +20,18 @@ public:
 
     ObjectProperties saveState() const;
     void setPosition(jt::Vector2f const& pos);
+    jt::Vector2f getPosition() const;
+    void setOffset(jt::Vector2f const& offset);
+    jt::Vector2f getOffset() const;
     int getUnitID() const;
     void setIDs(int uid, int pid);
     int getPlayerID() const;
 
 private:
     UnitInfo m_info;
+
+    jt::Vector2f m_position;
+    jt::Vector2f m_offset;
 
     std::shared_ptr<jt::Animation> m_anim;
     float m_animTimeUntilBackToIdle = -1.0f;

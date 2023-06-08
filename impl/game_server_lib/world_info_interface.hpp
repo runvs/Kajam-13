@@ -16,7 +16,7 @@ public:
         = 0;
     virtual float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& direction) = 0;
     virtual jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos) = 0;
-
+    virtual float getTerrainMappedFieldHeight(jt::Vector2f const& pos) = 0;
     virtual void spawnArrow(const ArrowInfo& arrowInfo) = 0;
 };
 

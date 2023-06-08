@@ -60,7 +60,8 @@ void Unit::updateState(ObjectProperties const& props)
             "updateState called with invalid unit id", { "Unit", "updateState" });
         return;
     }
-    m_anim->setPosition({ props.floats.at(jk::positionX), props.floats.at(jk::positionY) });
+    setOffset({ props.floats.at(jk::offsetX), props.floats.at(jk::offsetY) });
+    setPosition({ props.floats.at(jk::positionX), props.floats.at(jk::positionY) });
     if (props.ints.at(jk::playerID) == 0) {
         m_anim->setColor(GP::ColorPlayer0());
     } else {
@@ -77,15 +78,27 @@ void Unit::updateState(ObjectProperties const& props)
     }
 }
 
-void Unit::setPosition(jt::Vector2f const& pos) { m_anim->setPosition(pos); }
+void Unit::setPosition(jt::Vector2f const& pos)
+{
+    m_position = pos;
+    m_anim->setPosition(m_position + m_offset);
+}
+
+jt::Vector2f Unit::getPosition() const { return m_position; }
+
+void Unit::setOffset(jt::Vector2f const& offset) { m_offset = offset; }
+
+jt::Vector2f Unit::getOffset() const { return m_offset; }
 
 ObjectProperties Unit::saveState() const
 {
     ObjectProperties props;
     props.ints[jk::unitID] = m_unitID;
     props.ints[jk::playerID] = m_playerID;
-    props.floats[jk::positionX] = m_anim->getPosition().x;
-    props.floats[jk::positionY] = m_anim->getPosition().y;
+    props.floats[jk::positionX] = m_position.x;
+    props.floats[jk::positionY] = m_position.y;
+    props.floats[jk::offsetX] = m_offset.x;
+    props.floats[jk::offsetY] = m_offset.y;
     return props;
 }
 

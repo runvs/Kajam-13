@@ -19,6 +19,8 @@ public:
 
     void setPosition(jt::Vector2f const& pos);
     jt::Vector2f getPosition() const override;
+    void setOffset(jt::Vector2f const& offset);
+    jt::Vector2f getOffset() const override;
     int getPlayerID() const override;
     int getUnitID() const override;
     void takeDamage(const DamageInfo& damage) override;
@@ -34,6 +36,7 @@ private:
     std::unique_ptr<AiInterface> m_ai { nullptr };
 
     jt::Vector2f m_pos;
+    jt::Vector2f m_offset;
     int m_unitID { 0 };
     int m_playerID { 0 };
     float m_age { 0.0f };

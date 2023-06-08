@@ -19,6 +19,7 @@ public:
     virtual int getPlayerID() const = 0;
     virtual int getUnitID() const = 0;
     virtual jt::Vector2f getPosition() const = 0;
+    virtual jt::Vector2f getOffset() const = 0;
 
     virtual bool isAlive() const = 0;
 
