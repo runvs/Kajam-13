@@ -32,9 +32,17 @@ ObjectProperties PlacedUnit::saveState() const
     return props;
 }
 
-void PlacedUnit::setPosition(const jt::Vector2f& pos) { m_anim->setPosition(pos); }
+void PlacedUnit::setPosition(const jt::Vector2f& pos)
+{
+    m_position = pos;
+    m_anim->setPosition(m_position + m_offset);
+}
 
-jt::Vector2f PlacedUnit::getPosition() const { return m_anim->getPosition(); }
+jt::Vector2f PlacedUnit::getPosition() const { return m_position; }
+
+void PlacedUnit::setOffset(const jt::Vector2f& offset) { m_offset = offset; }
+
+jt::Vector2f PlacedUnit::getOffset() const { return m_offset; }
 
 void PlacedUnit::setIDs(int uid, int pid)
 {

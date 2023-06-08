@@ -18,6 +18,8 @@ public:
     void setIDs(int uid, int pid);
     void setPosition(jt::Vector2f const& pos);
     jt::Vector2f getPosition() const;
+    void setOffset(jt::Vector2f const& offset);
+    jt::Vector2f getOffset() const;
 
 private:
     UnitInfo m_info;
@@ -25,6 +27,8 @@ private:
     std::shared_ptr<jt::Animation> m_anim;
     int m_unitID { 0 };
     int m_playerID { 0 };
+    jt::Vector2f m_position;
+    jt::Vector2f m_offset;
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

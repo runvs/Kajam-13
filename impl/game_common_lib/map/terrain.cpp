@@ -15,7 +15,7 @@ struct TowerInfo {
 
 void to_json(nlohmann::json& j, TowerInfo const& v)
 {
-    j = nlohmann::json { { "player", v.playerId }, { "x", v.position.x }, { "y", v.position.y } };
+    j = { { "player", v.playerId }, { "x", v.position.x }, { "y", v.position.y } };
 }
 
 void from_json(nlohmann::json const& j, TowerInfo& v)
@@ -32,7 +32,7 @@ struct Map {
 
 void to_json(nlohmann::json& j, Map const& v)
 {
-    j = nlohmann::json { { "heights", v.heights }, { "towers", v.towers } };
+    j = { { "heights", v.heights }, { "towers", v.towers } };
 }
 
 void from_json(nlohmann::json const& j, Map& v)
@@ -56,8 +56,7 @@ float Terrain::getChunkHeight(int x, int y) const
     if ((x < 0) || (x >= terrainWidthInChunks) || (y < 0) || (y >= terrainHeightInChunks)) {
         return 0.0f;
     }
-    auto const& chunk = m_chunks[y * terrainWidthInChunks + x];
-    return chunk.height;
+    return m_chunks[y * terrainWidthInChunks + x].height;
 }
 
 float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const
@@ -72,8 +71,8 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     }
     auto const centerHeight = getChunkHeight(x, y);
 
-    const auto ox = x + roundedDir.x;
-    const auto oy = y + roundedDir.y;
+    const auto ox = static_cast<int>(x + roundedDir.x);
+    const auto oy = static_cast<int>(y + roundedDir.y);
     auto heightInDirection = getChunkHeight(ox, oy);
     auto diff = (heightInDirection - centerHeight);
     if (heightInDirection < centerHeight) {
@@ -81,8 +80,8 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     }
     // check backwards dir
     if (heightInDirection == centerHeight) {
-        const auto ox2 = x - roundedDir.x;
-        const auto oy2 = y - roundedDir.y;
+        const auto ox2 = static_cast<int>(x - roundedDir.x);
+        const auto oy2 = static_cast<int>(y - roundedDir.y);
         heightInDirection = getChunkHeight(ox2, oy2);
         diff = -(heightInDirection - centerHeight);
         if (heightInDirection < centerHeight) {
@@ -98,6 +97,13 @@ jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos) const
     return { pos.x - static_cast<int>(pos.x) % terrainChunkSizeInPixel
             + terrainChunkSizeInPixel / 2,
         pos.y - static_cast<int>(pos.y) % terrainChunkSizeInPixel + terrainChunkSizeInPixel / 2 };
+}
+
+float Terrain::getFieldHeight(jt::Vector2f const& pos) const
+{
+    const auto x = static_cast<int>(pos.x / terrainChunkSizeInPixel);
+    const auto y = static_cast<int>(pos.y / terrainChunkSizeInPixel);
+    return getChunkHeight(x, y);
 }
 
 void Terrain::parseMapFromFilename(std::string const& fileName)

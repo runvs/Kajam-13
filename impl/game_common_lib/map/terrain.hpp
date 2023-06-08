@@ -42,6 +42,7 @@ public:
     float getChunkHeight(int x, int y) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
     jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos) const;
+    float getFieldHeight(jt::Vector2f const& pos) const;
     void parseMapFromFilename(std::string const& fileName);
 };
 

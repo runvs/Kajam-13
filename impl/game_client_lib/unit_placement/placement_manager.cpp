@@ -104,6 +104,8 @@ void PlacementManager::placeUnit()
         unit->setGameInstance(getGame());
         unit->create();
 
+        unit->setOffset(jt::Vector2f {
+            0, -1.0f * m_world->getFieldHeight(fieldPos) * terrainHeightScalingFactor });
         unit->setPosition(fieldPos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);
