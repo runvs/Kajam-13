@@ -33,13 +33,13 @@ class Terrain {
 
 public:
     // TODO share map information from server to clients
-    Terrain();
+    Terrain(std::string const& mapFilename = "assets/maps/map_de_dust_2.json");
 
     Grid const& getChunks() const { return m_chunks; }
 
     Chunk const& getChunk(int x, int y) const { return m_chunks[y * terrainWidthInChunks + x]; }
 
-    float getChunkHeight(jt::Vector2f const& pos) const;
+    float getChunkHeight(int x, int y) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
     jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos) const;
     void parseMapFromFilename(std::string const& fileName);

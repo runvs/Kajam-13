@@ -1,6 +1,8 @@
+#include "vector.hpp"
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <nlohmann.hpp>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 
@@ -39,36 +41,19 @@ void from_json(nlohmann::json const& j, Map& v)
     j.at("towers").get_to(v.towers);
 }
 
-void printSlopeAt(Terrain const& terrain, int x, int y, jt::Vector2f const& dir)
-{
-    auto const slope = terrain.getSlopeAt(
-        jt::Vector2f { x * terrainChunkSizeInPixel * 1.0f, y * terrainChunkSizeInPixel * 1.0f },
-        dir);
-    std::cerr << "Slope at [" << x << "," << y << "] dir[" << dir.x << "," << dir.y
-              << "]: " << slope << std::endl;
-}
+std::size_t posToIndex(int x, int y) { return x + y * terrainWidthInChunks; }
 
 } // namespace
 
-Terrain::Terrain()
+Terrain::Terrain(std::string const& mapFilename)
 {
     // load map from file
-    parseMapFromFilename("assets/maps/map_de_dust_2.json");
-
-    // test slopes
-    // TODO replace by unit tests
-    printSlopeAt(*this, 1, 1, jt::Vector2f { 1.0f, 0.0f });
-    printSlopeAt(*this, 1, 1, jt::Vector2f { -1.0f, 0.0f });
-    printSlopeAt(*this, 1, 1, jt::Vector2f { 0.0f, 1.0f });
-    printSlopeAt(*this, 1, 1, jt::Vector2f { 0.0f, -1.0f });
-    printSlopeAt(*this, 7, 8, jt::Vector2f { 1.0f, 0.0f });
+    parseMapFromFilename(mapFilename);
 }
 
-float Terrain::getChunkHeight(jt::Vector2f const& pos) const
+float Terrain::getChunkHeight(int x, int y) const
 {
-    int x = static_cast<int>(pos.x / terrainChunkSizeInPixel);
-    int y = static_cast<int>(pos.y / terrainChunkSizeInPixel);
-    if ((x < 0) || (x > terrainWidthInChunks) || (y < 0) || (y > terrainHeightInChunks)) {
+    if ((x < 0) || (x >= terrainWidthInChunks) || (y < 0) || (y >= terrainHeightInChunks)) {
         return 0.0f;
     }
     auto const& chunk = m_chunks[y * terrainWidthInChunks + x];
@@ -77,27 +62,35 @@ float Terrain::getChunkHeight(jt::Vector2f const& pos) const
 
 float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const
 {
-    auto const heightPos = getChunkHeight(pos);
+    // TODO limit dir to +/-1 values
+    auto roundedDir = jt::Vector2f { std::round(dir.x), std::round(dir.y) };
 
-    // determine neighbouring chunk heights
-    float heightPosInX { 0.0f };
-    float heightPosInY { 0.0f };
-    if (dir.x > 0) {
-        // right chunk
-        heightPosInX = getChunkHeight(pos + jt::Vector2f { terrainChunkSizeInPixel, 0.0f });
-    } else if (dir.x < 0) {
-        // left chunk
-        heightPosInX = getChunkHeight(pos + jt::Vector2f { -terrainChunkSizeInPixel, 0.0f });
+    const auto x = static_cast<int>(pos.x / terrainChunkSizeInPixel);
+    const auto y = static_cast<int>(pos.y / terrainChunkSizeInPixel);
+    if ((x < 0) || (x >= terrainWidthInChunks) || (y < 0) || (y > terrainHeightInChunks)) {
+        return 0.0f;
     }
-    if (dir.y > 0) {
-        // bot chunk
-        heightPosInY = getChunkHeight(pos + jt::Vector2f { 0.0f, terrainChunkSizeInPixel });
-    } else if (dir.y < 0) {
-        // top chunk
-        heightPosInY = getChunkHeight(pos + jt::Vector2f { 0.0f, -terrainChunkSizeInPixel });
+    auto const centerHeight = getChunkHeight(x, y);
+
+    const auto ox = x + roundedDir.x;
+    const auto oy = y + roundedDir.y;
+    auto heightInDirection = getChunkHeight(ox, oy);
+    auto diff = (heightInDirection - centerHeight);
+    if (heightInDirection < centerHeight) {
+        return 0;
+    }
+    // check backwards dir
+    if (heightInDirection == centerHeight) {
+        const auto ox2 = x - roundedDir.x;
+        const auto oy2 = y - roundedDir.y;
+        heightInDirection = getChunkHeight(ox2, oy2);
+        diff = -(heightInDirection - centerHeight);
+        if (heightInDirection < centerHeight) {
+            return 0;
+        }
     }
 
-    return (dir.x * (heightPos - heightPosInX) + dir.y * (heightPos - heightPosInY)) / 2.0f;
+    return diff;
 }
 
 jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos) const
@@ -111,10 +104,9 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
 {
     std::ifstream fileStream { fileName };
     auto const map = nlohmann::json::parse(fileStream).get<Map>();
-    for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
-        auto const wOffset = h * terrainWidthInChunks;
-        for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
-            m_chunks[wOffset + w] = { w, h, map.heights[wOffset + w] };
+    for (unsigned short y { 0 }; y < terrainHeightInChunks; ++y) {
+        for (unsigned short x { 0 }; x < terrainWidthInChunks; ++x) {
+            m_chunks[posToIndex(x, y)] = { x, y, map.heights[posToIndex(x, y)] };
         }
     }
 }
