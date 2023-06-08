@@ -1,7 +1,9 @@
 {
   "ai": {
     "type": 1,
-    "range": 10.0
+    "range": 10.0,
+    "arrowHeight": 32.0,
+    "arrowSpeed": 80.0
   }
   ,
   "animations": [

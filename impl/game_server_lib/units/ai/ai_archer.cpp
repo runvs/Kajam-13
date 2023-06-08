@@ -14,6 +14,7 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
     auto t = world.getClosestTargetTo(unit.getPosition(), unit.getPlayerID());
     auto target = t.lock();
     if (!target) {
+        unit.getPhysicsObject()->setVelocity(jt::Vector2f { 0.0f, 0.0f });
         return;
     }
 
@@ -36,8 +37,8 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
 
             arrowInfo.damage = DamageInfo { unit.getInfo().damage };
             arrowInfo.currentPos = unit.getPosition();
-            arrowInfo.totalTime = dist / GP::ArrowSpeed();
-            arrowInfo.maxHeight = dist / 4;
+            arrowInfo.totalTime = dist / unit.getInfo().ai.arrowSpeed;
+            arrowInfo.maxHeight = unit.getInfo().ai.arrowHeight;
 
             world.spawnArrow(arrowInfo);
         }

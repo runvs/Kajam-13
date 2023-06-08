@@ -9,7 +9,8 @@ void to_json(nlohmann::json& j, AnimationInfo const& p)
 
 void to_json(nlohmann::json& j, AiInfo const& p)
 {
-    j = nlohmann::json { { "type", p.type }, { "range", p.range } };
+    j = nlohmann::json { { "type", p.type }, { "range", p.range }, { "arrowHeight", p.arrowHeight },
+        { "arrowSpeed", p.arrowSpeed } };
 }
 
 void to_json(nlohmann::json& j, UnitInfo const& p)
@@ -29,6 +30,12 @@ void from_json(nlohmann::json const& j, AiInfo& p)
 {
     j.at("type").get_to(p.type);
     j.at("range").get_to(p.range);
+    if (j.count("arrowHeight") == 1) {
+        j.at("arrowHeight").get_to(p.arrowHeight);
+    }
+    if (j.count("arrowSpeed") == 1) {
+        j.at("arrowSpeed").get_to(p.arrowSpeed);
+    }
 }
 
 void from_json(nlohmann::json const& j, UnitInfo& p)

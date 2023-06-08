@@ -1,0 +1,20 @@
+{
+  "ai": {
+    "type": 1,
+    "range": 13.0,
+    "arrowHeight": 0,
+    "arrowSpeed": 200.0
+  },
+  "animations": [
+    {
+      "jsonfilename": "assets/units/crossbowman.json"
+    }
+  ],
+  "damage": 90.0,
+  "colliderRadius": 4.0,
+  "experience": 0,
+  "hitpoints": 15.0,
+  "attackTimerMax": 3.0,
+  "movementSpeed": 15.0,
+  "type": "crossbow"
+}

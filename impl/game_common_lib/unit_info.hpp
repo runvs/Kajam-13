@@ -16,6 +16,8 @@ struct AiInfo {
     enum AiType { SWORDMAN, ARCHER };
     AiType type;
     float range { -1.0f };
+    float arrowHeight { 0.0f };
+    float arrowSpeed { 0.0f };
 };
 
 struct UnitInfo {
