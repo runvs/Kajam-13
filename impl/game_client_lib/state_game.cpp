@@ -1,5 +1,6 @@
 ﻿#include "state_game.hpp"
 #include "color/color.hpp"
+#include "graphics/drawable_interface.hpp"
 #include "simulation_result_data.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
@@ -55,6 +56,7 @@ void StateGame::onCreate()
     }
 
     m_arrowShape = jt::dh::createShapeCircle(4, jt::colors::White, textureManager());
+    m_arrowShape->setOffset(jt::OffsetMode::CENTER);
 }
 
 void StateGame::onEnter() { }

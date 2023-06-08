@@ -32,11 +32,11 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
             arrowInfo.targetPlayerId = target->getPlayerID();
             arrowInfo.endPos = target->getPosition();
             arrowInfo.startPos = unit.getPosition();
-            // TODO rename to damage and use damage info struct
+
             arrowInfo.damage = DamageInfo { unit.getInfo().damage };
             arrowInfo.currentPos = unit.getPosition();
             // TODO move to GP
-            float const arrowSpeed = 40.0f;
+            float const arrowSpeed = 80.0f;
             arrowInfo.totalTime = dist / arrowSpeed;
             world.spawnArrow(arrowInfo);
         }

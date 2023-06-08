@@ -45,6 +45,38 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
     for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
         //        std::vector<ObjectProperties> propertiesForAllUnitsForOneRound;
         SimulationResultDataForOneFrame currentFrame;
+
+        for (auto& arrow : m_arrows) {
+            arrow.age += timePerUpdate;
+            float timePercent = arrow.age / arrow.totalTime;
+            if (timePercent >= 1) {
+                timePercent = 1;
+            }
+            auto const dif = arrow.endPos - arrow.startPos;
+            arrow.currentPos = arrow.startPos + dif * timePercent;
+
+            // check for collision arrow - targets
+
+            for (auto& target : m_simulationObjects) {
+                if (target->getPlayerID() == arrow.targetPlayerId) {
+                    auto const difTargetArrow = target->getPosition() - arrow.currentPos;
+                    auto const dist = jt::MathHelper::length(difTargetArrow);
+                    if (dist <= 20) {
+                        target->takeDamage(arrow.damage);
+                        arrow.age = 999999;
+                        break;
+                    }
+                }
+            }
+            // TODO make arrow follow a parabola
+        }
+
+        m_arrows.erase(std::remove_if(m_arrows.begin(), m_arrows.end(),
+                           [](auto& arrow) { return arrow.age > arrow.totalTime; }),
+            m_arrows.end());
+
+        currentFrame.m_arrows = m_arrows;
+
         for (auto& obj : m_simulationObjects) {
             obj->update(timePerUpdate, *this);
 
@@ -53,20 +85,6 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 
             currentFrame.m_units.push_back(data);
         }
-
-        for (auto& arrow : m_arrows) {
-            arrow.age += timePerUpdate;
-            float timePercent = arrow.age / arrow.totalTime;
-            if (timePercent >= 1) {
-                // TODO delete arrow
-                timePercent = 1;
-            }
-            auto const dif = arrow.endPos - arrow.startPos;
-            arrow.currentPos = arrow.startPos + dif * timePercent;
-
-            // TODO make arrow follow a parabola
-        }
-        currentFrame.m_arrows = m_arrows;
 
         allFrames.allFrames.push_back(currentFrame);
     }
