@@ -128,9 +128,9 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
 {
     auto const slope = m_world->getSlopeAt(pos, dir);
     if (slope > 0.0f) {
-        return 0.997143f - 0.178571f * slope;
+        return 0.997143f - 0.178571f * slope * 0.7f;
     } else if (slope < 0.0f) {
-        return 1.0f / (0.997143f + 0.178571f * slope);
+        return 1.0f / (0.997143f + 0.178571f * slope * 0.7f);
     }
     return 1.0f;
 }
