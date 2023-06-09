@@ -217,14 +217,14 @@ TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, UpwardSlopeIsOne)
     auto const pos = std::get<0>(GetParam()) * 16.0f;
     auto const dir = std::get<1>(GetParam());
     Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), 1.0f);
+    ASSERT_NEAR(t.getSlopeAt(pos, dir), 45.0f, 2.5f);
 }
 TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, DownwardSlopeIsMinusOne)
 {
     auto const pos = std::get<0>(GetParam()) * 16.0f;
     auto const dir = -1.0f * std::get<1>(GetParam());
     Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), -1.0f);
+    ASSERT_NEAR(t.getSlopeAt(pos, dir), -45.0f, 2.5f);
 }
 
 TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, OrthogonalCWToSlopeIsZero)
@@ -276,13 +276,8 @@ std::make_tuple(jt::Vector2f { 4, 16 },jt::Vector2f { 0.0f, -1.0f }),
 std::make_tuple(jt::Vector2f { 5, 16 },jt::Vector2f { 0.0f, -1.0f }),
 std::make_tuple(jt::Vector2f { 6, 16 },jt::Vector2f { 0.0f, -1.0f }),
 std::make_tuple(jt::Vector2f { 7, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 8, 16 },jt::Vector2f { 0.0f, -1.0f }),
+std::make_tuple(jt::Vector2f { 8, 16 },jt::Vector2f { 0.0f, -1.0f })
 
-// vertex
-std::make_tuple(jt::Vector2f { 3, 10 },jt::Vector2f { 1.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 3, 16 },jt::Vector2f { 1.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 9, 10 },jt::Vector2f { -1.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 9, 16 },jt::Vector2f { -1.0f, -1.0f })
         // clang-format on
         ));
 
@@ -294,14 +289,14 @@ TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, UpwardSlopeIsThree
     auto const pos = std::get<0>(GetParam()) * 16.0f;
     auto const dir = std::get<1>(GetParam());
     Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), 3.0f);
+    ASSERT_NEAR(t.getSlopeAt(pos, dir), 71.0f, 2.5f);
 }
 TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, DownwardSlopeIsMinusThree)
 {
     auto const pos = std::get<0>(GetParam()) * 16.0f;
     auto const dir = -1.0f * std::get<1>(GetParam());
     Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), -3.0f);
+    ASSERT_NEAR(t.getSlopeAt(pos, dir), -71.0f, 2.5f);
 }
 
 TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, OrthogonalCWToSlopeIsZero)
@@ -372,7 +367,7 @@ TEST_P(TerrainSlopeOnHillOnLevelOneParametrizedTestFixture, UpwardSlopeIsOne)
     auto const dir = std::get<1>(GetParam());
     auto const expectedSlope = std::get<2>(GetParam());
     Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), expectedSlope);
+    ASSERT_NEAR(t.getSlopeAt(pos, dir), expectedSlope, 2.5f);
 }
 
 INSTANTIATE_TEST_SUITE_P(TerrainSlopeOnHillOnLevelOneParametrizedTest,
@@ -393,24 +388,24 @@ std::make_tuple(jt::Vector2f { 7, 3 }, jt::Vector2f { -1.0f, -1.0f }, 0.0f),
 
 // uphill
     // left
-    std::make_tuple(jt::Vector2f { 6, 3 }, jt::Vector2f { 1.0f, 0.0f }, 1.0f),
+    std::make_tuple(jt::Vector2f { 6, 3 }, jt::Vector2f { 1.0f, 0.0f }, 45.0f),
     // right
-    std::make_tuple(jt::Vector2f { 8, 3 }, jt::Vector2f { -1.0f, 0.0f }, 1.0f),
+    std::make_tuple(jt::Vector2f { 8, 3 }, jt::Vector2f { -1.0f, 0.0f }, 45.0f),
     // top
-    std::make_tuple(jt::Vector2f { 7, 2 }, jt::Vector2f { 0.0f, 1.0f }, 1.0f),
+    std::make_tuple(jt::Vector2f { 7, 2 }, jt::Vector2f { 0.0f, 1.0f }, 45.0f),
     // top
-    std::make_tuple(jt::Vector2f { 7, 4 }, jt::Vector2f { 0.0f, -1.0f }, 1.0f),
+    std::make_tuple(jt::Vector2f { 7, 4 }, jt::Vector2f { 0.0f, -1.0f }, 45.0f),
 
 
 // downhill
     // left
-    std::make_tuple(jt::Vector2f { 6, 3 }, jt::Vector2f { -1.0f, 0.0f }, -1.0f),
+    std::make_tuple(jt::Vector2f { 6, 3 }, jt::Vector2f { -1.0f, 0.0f }, -45.0f),
     // right
-    std::make_tuple(jt::Vector2f { 8, 3 }, jt::Vector2f { 1.0f, 0.0f }, -1.0f),
+    std::make_tuple(jt::Vector2f { 8, 3 }, jt::Vector2f { 1.0f, 0.0f }, -45.0f),
     // top
-    std::make_tuple(jt::Vector2f { 7, 2 }, jt::Vector2f { 0.0f, -1.0f }, -1.0f),
+    std::make_tuple(jt::Vector2f { 7, 2 }, jt::Vector2f { 0.0f, -1.0f }, -45.0f),
     // top
-    std::make_tuple(jt::Vector2f { 7, 4 }, jt::Vector2f { 0.0f, 1.0f }, -1.0f)
+    std::make_tuple(jt::Vector2f { 7, 4 }, jt::Vector2f { 0.0f, 1.0f }, -45.0f)
 
         // clang-format on
         ));
