@@ -7,11 +7,13 @@
 #include "units/ai/ai_interface.hpp"
 #include "vector.hpp"
 #include <box2dwrapper/box2d_object.hpp>
+#include <log/logger_interface.hpp>
 #include <memory>
 
 class ServerUnit : public SimulationObjectInterface {
 public:
-    explicit ServerUnit(UnitInfo const& info, std::shared_ptr<jt::Box2DWorldInterface> world);
+    explicit ServerUnit(jt::LoggerInterface& logger, const UnitInfo& info,
+        std::shared_ptr<jt::Box2DWorldInterface> world);
     void update(float elapsed, WorldInfoInterface& world) override;
     ObjectProperties saveState() const override;
     void updateState(ObjectProperties const& props) override;
@@ -31,6 +33,7 @@ public:
     std::shared_ptr<jt::Box2DObject> getPhysicsObject();
 
 private:
+    jt::LoggerInterface& m_logger;
     std::shared_ptr<jt::Box2DObject> m_physicsObject { nullptr };
     UnitInfo m_info;
     std::unique_ptr<AiInterface> m_ai { nullptr };

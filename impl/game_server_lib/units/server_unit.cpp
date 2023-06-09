@@ -1,6 +1,6 @@
 #include "server_unit.hpp"
-#include "ai/ai_archer.hpp"
-#include "ai/ai_swordman.hpp"
+#include "ai/ai_close_combat.hpp"
+#include "ai/ai_ranged_combat.hpp"
 #include "damage_info.hpp"
 #include "json_keys.hpp"
 #include "map/terrain.hpp"
@@ -12,21 +12,21 @@
 #include <Box2D/Dynamics/b2Body.h>
 #include <cmath>
 #include <memory>
+#include <string>
 
-#include <iostream>
-
-ServerUnit::ServerUnit(const UnitInfo& info, std::shared_ptr<jt::Box2DWorldInterface> world)
+ServerUnit::ServerUnit(jt::LoggerInterface& logger, const UnitInfo& info,
+    std::shared_ptr<jt::Box2DWorldInterface> world)
+    : m_logger { logger }
 {
     m_info = info;
-    // TODO use stored AI information instead of type
-    if (m_info.ai.type == AiInfo::SWORDMAN) {
-        m_ai = std::make_unique<AiSwordman>();
-    } else if (m_info.ai.type == AiInfo::ARCHER) {
-        m_ai = std::make_unique<AiArcher>();
+    if (m_info.ai.type == AiInfo::CLOSE_COMBAT) {
+        m_ai = std::make_unique<AiCloseCombat>();
+    } else if (m_info.ai.type == AiInfo::RANGED_COMBAT) {
+        m_ai = std::make_unique<AiRangedCombat>();
     } else {
-        // TODO pass in and use logger
-        std::cerr << "Warning: create a unit with unknown ai type\n";
-        m_ai = std::make_unique<AiSwordman>();
+        m_logger.error("Create a unit with unknown ai type: " + std::to_string(m_info.ai.type),
+            { "ServerUnit", "Ai" });
+        m_ai = std::make_unique<AiCloseCombat>();
     }
 
     m_hp = m_info.hitpoints;
@@ -40,14 +40,13 @@ ServerUnit::ServerUnit(const UnitInfo& info, std::shared_ptr<jt::Box2DWorldInter
     fixtureDef.density = 1.0f;
     b2CircleShape circleCollider {};
     circleCollider.m_radius = terrainChunkSizeInPixel / 2.0f - 2.0f;
-    // Not sure if we need to take offset into account
-    //    circleCollider.m_p.Set(5.0f, 5.0f);
     fixtureDef.shape = &circleCollider;
     m_physicsObject->getB2Body()->CreateFixture(&fixtureDef);
 }
 
 ObjectProperties ServerUnit::saveState() const
 {
+    m_logger.verbose("save State", { "ServerUnit" });
     ObjectProperties props;
     props.ints[jk::unitID] = m_unitID;
     props.ints[jk::playerID] = m_playerID;
@@ -67,6 +66,7 @@ ObjectProperties ServerUnit::saveState() const
 
 void ServerUnit::updateState(ObjectProperties const& props)
 {
+    m_logger.debug("update State", { "ServerUnit" });
     m_unitID = props.ints.at(jk::unitID);
     m_playerID = props.ints.at(jk::playerID);
     m_pos = jt::Vector2f { props.floats.at(jk::positionX), props.floats.at(jk::positionY) };
@@ -76,6 +76,7 @@ void ServerUnit::updateState(ObjectProperties const& props)
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
 {
+    m_logger.verbose("update " + std::to_string(elapsed), { "ServerUnit", "GameSimulation" });
     m_age += elapsed;
     if (!isAlive()) {
         return;

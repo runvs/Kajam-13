@@ -26,7 +26,7 @@ void GameSimulation::prepareSimulationForNewRound()
 
     for (auto const& props : m_unitInformationForRoundStart) {
         auto obj = std::make_shared<ServerUnit>(
-            m_unitInfos.getInfoForType(props.strings.at(jk::unitType)), m_b2World);
+            m_logger, m_unitInfos.getInfoForType(props.strings.at(jk::unitType)), m_b2World);
         obj->updateState(props);
         m_simulationObjects.emplace_back(std::move(obj));
     }
@@ -132,6 +132,7 @@ std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
 
 float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir)
 {
+    return 1.0f;
     auto const slope = m_world->getSlopeAt(pos, dir);
     // TODO slope is now in degrees [-90;90]
     if (slope > 0.0f) {

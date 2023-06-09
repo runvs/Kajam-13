@@ -73,9 +73,8 @@ void PlacementManager::placeUnit()
     if (m_activeUnitType == "") {
         return;
     }
-    // TODO use ImGui to draw a nice UI
-    if (getGame()->input().keyboard()->justPressed(jt::KeyCode::P)
-        || getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
+
+    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         auto playerIdDispatcher = m_playerIdDispatcher.lock();
         if (playerIdDispatcher == nullptr) {
             getGame()->logger().warning(
@@ -89,7 +88,6 @@ void PlacementManager::placeUnit()
                                       * static_cast<int>(fieldPos.x / terrainChunkSizeInPixel)),
             static_cast<float>(
                 terrainChunkSizeInPixel * static_cast<int>(fieldPos.y / terrainChunkSizeInPixel)) };
-        // TODO take unit size into account
         if (!jt::MathHelper::checkIsIn(playerIdDispatcher->getUnitPlacementArea(), fieldPos)
             // only one unit per field
             || fieldInUse(fieldPos)) {

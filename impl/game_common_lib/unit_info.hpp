@@ -12,8 +12,7 @@ struct AnimationInfo {
 };
 
 struct AiInfo {
-    // TODO define meaningful types.
-    enum AiType { SWORDMAN, ARCHER };
+    enum AiType { CLOSE_COMBAT, RANGED_COMBAT };
     AiType type;
     float range { -1.0f };
     float arrowHeight { 0.0f };
@@ -24,7 +23,6 @@ struct UnitInfo {
     std::string type = "";
     int experience { 0 };
     float hitpoints { 1.0f };
-    // TODO use DamageInfo struct
     float damage { 0.0f };
     float attackTimerMax { 1.0f };
     float movementSpeed { 0.0f };

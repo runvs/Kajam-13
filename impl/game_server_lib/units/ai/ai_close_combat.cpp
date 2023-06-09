@@ -1,11 +1,11 @@
 
-#include "ai_swordman.hpp"
+#include "ai_close_combat.hpp"
 #include "vector.hpp"
 #include <math_helper.hpp>
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
 
-void AiSwordman::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world)
+void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world)
 {
     m_attackTimer -= elapsed;
     auto t = world.getClosestTargetTo(unit.getPosition(), unit.getPlayerID());

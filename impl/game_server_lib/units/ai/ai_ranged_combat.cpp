@@ -1,4 +1,4 @@
-#include "ai_archer.hpp"
+#include "ai_ranged_combat.hpp"
 #include "vector.hpp"
 #include <arrow_info.hpp>
 #include <damage_info.hpp>
@@ -8,7 +8,7 @@
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
 
-void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world)
+void AiRangedCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world)
 {
     m_attackTimer -= elapsed;
     auto t = world.getClosestTargetTo(unit.getPosition(), unit.getPlayerID());
@@ -24,7 +24,8 @@ void AiArcher::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world
 
     auto const attackRange = unit.getInfo().ai.range * terrainChunkSizeInPixel;
     if (dist > attackRange) {
-        float speed = unit.getInfo().movementSpeed;
+        float const speed
+            = unit.getInfo().movementSpeed * world.getLocalSpeedFactorAt(unit.getPosition(), dir);
         unit.getPhysicsObject()->setVelocity(dir * speed);
     } else {
         unit.getPhysicsObject()->setVelocity(jt::Vector2f { 0.0f, 0.0f });
