@@ -24,6 +24,8 @@ public:
 
     void setActive(bool active);
 
+    void addFunds(int funds);
+
 private:
     std::shared_ptr<Terrain> m_world;
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
@@ -36,6 +38,8 @@ private:
     int m_playerId;
     // TODO rework
     mutable std::string m_activeUnitType = "";
+
+    int m_availableFunds { 0 };
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

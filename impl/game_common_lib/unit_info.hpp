@@ -27,6 +27,7 @@ struct UnitInfo {
     float attackTimerMax { 1.0f };
     float movementSpeed { 0.0f };
     float colliderRadius { 1.0f };
+    int cost { 100 };
     std::vector<AnimationInfo> animations {};
     AiInfo ai;
 };

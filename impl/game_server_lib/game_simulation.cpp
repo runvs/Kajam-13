@@ -15,7 +15,7 @@
 GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos)
     : m_logger { logger }
     , m_unitInfos { unitInfos }
-    , m_world { std::make_shared<Terrain>() } // TODO: use terrain for calculations
+    , m_world { std::make_shared<Terrain>() }
 {
 }
 
@@ -78,7 +78,6 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
                     }
                 }
             }
-            // TODO make arrow follow a parabola
         }
 
         m_arrows.erase(std::remove_if(m_arrows.begin(), m_arrows.end(),

@@ -17,5 +17,6 @@
   "hitpoints": 20.0,
   "attackTimerMax": 1.0,
   "movementSpeed": 20.0,
-  "type": "archer"
+  "type": "archer",
+  "cost": 100
 }

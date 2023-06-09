@@ -16,5 +16,6 @@
   "hitpoints": 15.0,
   "attackTimerMax": 3.0,
   "movementSpeed": 15.0,
-  "type": "crossbow"
+  "type": "crossbow",
+  "cost": 200
 }

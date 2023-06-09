@@ -91,7 +91,7 @@ void StateGame::onUpdate(float const elapsed)
     m_vignette->update(elapsed);
 }
 
-void StateGame::playbackSimulation(float elapsed)
+void StateGame::playbackSimulation(float /*elapsed*/)
 {
     if (m_simulationResultsForAllFrames.allFrames.size() != 0) {
         if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
@@ -146,6 +146,7 @@ void StateGame::transitionWaitForPlayersToStartPlaceUnits()
 
     m_placementManager = std::make_shared<PlacementManager>(
         m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
+    m_placementManager->addFunds(200);
     add(m_placementManager);
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);
@@ -175,9 +176,10 @@ void StateGame::transitionPlaybackToPlaceUnits()
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);
+    m_placementManager->addFunds(150 + 50 * m_round);
 }
 
-void StateGame::placeUnits(float elapsed)
+void StateGame::placeUnits(float /*elapsed*/)
 {
     if (m_internalState != InternalState::PlaceUnits) {
         throw std::logic_error { "placeUnits called when not in placeUnits state" };

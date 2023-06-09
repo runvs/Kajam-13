@@ -10,6 +10,7 @@
 #include <vector.hpp>
 #include <imgui.h>
 #include <iostream>
+#include <string>
 
 PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
     std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
@@ -58,11 +59,24 @@ void PlacementManager::doDraw() const
 
     if (m_unitInfo) {
         ImGui::Begin("unit placement");
+
+        ImGui::Text("Gold: %i", m_availableFunds);
+
+        ImGui::Separator();
+
         for (auto const& u : m_unitInfo->getUnits()) {
-            if (ImGui::Button(u.type.c_str())) {
+
+            int unitCost = u.cost;
+            std::string buttonString = u.type + " (" + std::to_string(unitCost) + ")";
+            bool const canBuy = (m_availableFunds >= unitCost);
+            ImGui::BeginDisabled(!canBuy);
+
+            if (ImGui::Button(buttonString.c_str())) {
                 getGame()->logger().info("select: " + u.type);
                 m_activeUnitType = u.type;
             }
+
+            ImGui::EndDisabled();
         }
         ImGui::End();
     }
@@ -98,7 +112,8 @@ void PlacementManager::placeUnit()
             return;
         }
 
-        auto unit = std::make_shared<PlacedUnit>(m_unitInfo->getInfoForType(m_activeUnitType));
+        auto const info = m_unitInfo->getInfoForType(m_activeUnitType);
+        auto unit = std::make_shared<PlacedUnit>(info);
         m_placedUnits->push_back(unit);
         m_placedUnitsGO.add(unit);
         unit->setGameInstance(getGame());
@@ -110,6 +125,8 @@ void PlacementManager::placeUnit()
         unit->setPosition(fieldPos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);
+
+        m_availableFunds -= info.cost;
     }
 }
 
@@ -140,3 +157,5 @@ std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
 void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
 
 void PlacementManager::setActive(bool active) { m_isActive = active; }
+
+void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }

@@ -16,7 +16,6 @@
 #include <string>
 
 GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compressor)
-    // TODO create thread safe logger wrapper
     : m_logger { logger }
     , m_compressor { compressor }
     , m_connection { m_compressor, logger }
