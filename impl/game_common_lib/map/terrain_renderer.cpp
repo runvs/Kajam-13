@@ -1,12 +1,9 @@
-#include <game_interface.hpp>
 #include <game_properties.hpp>
-#include <line.hpp>
 #include <map/terrain_renderer.hpp>
 #include <math_helper.hpp>
 #include <sprite.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <cmath>
-#include <sstream>
 
 namespace {
 

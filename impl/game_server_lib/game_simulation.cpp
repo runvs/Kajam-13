@@ -131,16 +131,28 @@ std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
 
 float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir)
 {
-    return 1.0f;
     auto const slope = m_world->getSlopeAt(pos, dir);
-    // TODO slope is now in degrees [-90;90]
-    if (slope > 0.0f) {
-        return 0.997143f - 0.178571f * slope * 0.7f;
+    if (slope >= 0.0f && slope < 61.0f) {
+        // found acceptable curve with following input:
+        //  0 -> 1
+        // 10 -> 0.95
+        // 20 -> 0.85
+        // 30 -> 0.7
+        // 45 -> 0.5
+        // 60 -> 0.2
+        return -0.000166516f * slope * slope - 0.00397695f * slope + 0.998285f;
     }
-    if (slope < 0.0f) {
-        return 1.0f / (0.997143f + 0.178571f * slope * 0.7f);
+    if (slope > -61.0f && slope < 0.0f) {
+        // found acceptable curve with following input:
+        //   0 -> 1
+        // -10 -> 1.1
+        // -20 -> 1.5
+        // -30 -> 3
+        // -45 -> 5
+        // -60 -> 8
+        return 0.00190862f * slope * slope - 0.00435245f * slope + 0.912302f;
     }
-    return 1.0f;
+    return 0.0f;
 }
 
 jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos)

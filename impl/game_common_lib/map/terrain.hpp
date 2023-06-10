@@ -12,6 +12,7 @@ constexpr int terrainWidthInChunks { terrainWidthPerPlayerInChunks * 2 };
 constexpr int terrainHeightInChunks { terrainHeightInChunksPerPlayerInChunks
     + terrainFlankHeightInChunks * 2 };
 constexpr int terrainChunkSizeInPixel { 16 };
+constexpr int terrainChunkSizeInPixelHalf { terrainChunkSizeInPixel / 2 };
 constexpr int const terrainFlankHeightInPixel { terrainFlankHeightInChunks
     * terrainChunkSizeInPixel };
 constexpr float terrainHeightMax { 5.0f };

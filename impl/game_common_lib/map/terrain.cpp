@@ -82,7 +82,8 @@ struct Vector3f {
     Vector3f operator-(Vector3f const& v) const { return { x - v.x, y - v.y, z - v.z }; }
     Vector3f operator*(float const v) const { return { x * v, y * v, z * v }; }
 
-    float length() const { return std::sqrt(x * x + y * y + z * z); }
+    float determinant() const { return x * x + y * y + z * z; }
+    float length() const { return std::sqrt(determinant()); }
 
     Vector3f normalized() const
     {
@@ -100,11 +101,27 @@ struct Vector3f {
         return { y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x };
     }
 
+    float angleRad(Vector3f const& v) const
+    {
+        return acosf(dot(v) / std::sqrt(determinant() * v.determinant()));
+    }
+
+    float angleDeg(Vector3f const& v) const
+    {
+        return static_cast<float>(angleRad(v) * 180.0f / M_PI);
+    }
+
     bool isZero() const { return x == 0 && y == 0 && z == 0; }
 };
 
+std::ostream& operator<<(std::ostream& s, Vector3f const& v)
+{
+    return s << "(" << v.x << "," << v.y << "," << v.z << ")";
+}
+
 template <typename T>
-Vector3f getNormalOfTriangleFor(T const& chunks, jt::Vector2f const& pos)
+Vector3f getNormalOfTriangleForPosition(
+    T const& chunks, jt::Vector2f const& pos, bool const convertHeight)
 {
     int posX, posY;
     if (!posToCoord(pos, posX, posY)) {
@@ -112,54 +129,47 @@ Vector3f getNormalOfTriangleFor(T const& chunks, jt::Vector2f const& pos)
     }
     auto const& chunk = chunks[coordToIndex(posX, posY)];
     auto const posHeight = chunk.heightCenter;
-    auto const posCenter = Terrain::getMappedFieldPosition(pos);
 
-    if (posCenter == pos) {
-        return {};
-    }
-
-    // get closest triangle
-    auto const getCornerPos = [](int x, int y, int i) {
-        jt::Vector2f p { 1.0f * x * terrainChunkSizeInPixel, 1.0f * y * terrainChunkSizeInPixel };
-        if (i % 2) {
-            p.x += terrainChunkSizeInPixel;
+    // the height of the map is ranged [0;terrainHeightMax] and thus needs to translated into a
+    // value that can be used for an actual slope calculation when doing vector arithmetics
+    auto const convertHeightToZ = [&](auto const v) {
+        if (convertHeight) {
+            // conversion formula to map values of [0;terrainHeightMax] to degrees as follows:
+            // 0: 0 | 0.5: 14.0362 | 1: 26.565 | 1.5: 36.8699 | 2: 45 | 3: 56.3099 | 4: 63.4349 |
+            // 5: 68.19
+            return static_cast<float>(
+                v * 0.25 * terrainChunkSizeInPixel * 2 /*shift to center factor*/);
         }
-        if (i > 1) {
-            p.y += terrainChunkSizeInPixel;
-        }
-        return p;
+        return v;
     };
 
+    // use field center as origin for vector calculations, e.g. top left corner is [-8;-8]
+    Vector3f const c { 0, 0, convertHeightToZ(posHeight) };
+    auto const minXY = -terrainChunkSizeInPixelHalf;
+    auto const maxXY = terrainChunkSizeInPixelHalf - 1; // TODO check whether pixel 16 is an issue
+    Vector3f const tl { minXY, minXY, convertHeightToZ(chunk.heightCorners[0]) };
+    Vector3f const tr { maxXY, minXY, convertHeightToZ(chunk.heightCorners[1]) };
+    Vector3f const bl { minXY, maxXY, convertHeightToZ(chunk.heightCorners[2]) };
+    Vector3f const br { maxXY, maxXY, convertHeightToZ(chunk.heightCorners[3]) };
+
+    // determine which triangle the position is in and calculate normal vector for it
     int offX = static_cast<int>(pos.x) % terrainChunkSizeInPixel;
     int offY = static_cast<int>(pos.y) % terrainChunkSizeInPixel;
+    // left triangle
     if ((offY >= offX) && (offY < (terrainChunkSizeInPixel - offX))) {
-        // left triangle
-        auto const cTl = getCornerPos(posX, posY, 0);
-        auto const cBl = getCornerPos(posX, posY, 2);
-        auto const r = Vector3f { cBl - cTl, chunk.heightCorners[2] - chunk.heightCorners[0] };
-        auto const s = Vector3f { posCenter - cTl, posHeight - chunk.heightCorners[0] };
-        return s.crossProduct(r).normalized();
-    } else if ((offY >= (terrainChunkSizeInPixel - offX)) && (offY < offX)) {
-        // right triangle
-        auto const cTr = getCornerPos(posX, posY, 1);
-        auto const cBr = getCornerPos(posX, posY, 3);
-        auto const r = Vector3f { cBr - cTr, chunk.heightCorners[3] - chunk.heightCorners[1] };
-        auto const s = Vector3f { posCenter - cTr, posHeight - chunk.heightCorners[1] };
-        return s.crossProduct(r).normalized();
-    } else if ((offY < offX) && (offY < (terrainChunkSizeInPixel - offX))) {
-        // top triangle
-        auto const cTl = getCornerPos(posX, posY, 0);
-        auto const cTr = getCornerPos(posX, posY, 1);
-        auto const r = Vector3f { cTr - cTl, chunk.heightCorners[1] - chunk.heightCorners[0] };
-        auto const s = Vector3f { posCenter - cTl, posHeight - chunk.heightCorners[0] };
-        return s.crossProduct(r).normalized();
-    } else if ((offY >= offX) && (offY >= (terrainChunkSizeInPixel - offX))) {
-        // bot triangle
-        auto const cBr = getCornerPos(posX, posY, 3);
-        auto const cBl = getCornerPos(posX, posY, 2);
-        auto const r = Vector3f { cBl - cBr, chunk.heightCorners[2] - chunk.heightCorners[3] };
-        auto const s = Vector3f { posCenter - cBr, posHeight - chunk.heightCorners[3] };
-        return s.crossProduct(r).normalized();
+        return (c - bl).crossProduct(c - tl).normalized();
+    }
+    // right triangle
+    if ((offY < offX) && (offY >= (terrainChunkSizeInPixel - offX))) {
+        return (c - tr).crossProduct(c - br).normalized();
+    }
+    // top triangle
+    if ((offY < offX) && (offY < (terrainChunkSizeInPixel - offX))) {
+        return (c - tl).crossProduct(c - tr).normalized();
+    }
+    // bot triangle
+    if ((offY >= offX) && (offY >= (terrainChunkSizeInPixel - offX))) {
+        return (c - br).crossProduct(c - bl).normalized();
     }
 
     // may not happen
@@ -182,14 +192,15 @@ float Terrain::getChunkHeight(int x, int y) const { return getChunk(x, y).height
 
 float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const
 {
-    Vector3f const posDir { pos + dir };
-    Vector3f const normal { getNormalOfTriangleFor(m_chunks, pos) };
+    Vector3f const normal { getNormalOfTriangleForPosition(m_chunks, pos, true) };
     if (normal.isZero() || (normal.x == 0 && normal.y == 0)) {
         return 0.0f;
     }
-    auto const projectionOffset = normal * (normal.dot(posDir) / normal.dot(normal));
-    auto const posDirProjected = posDir - projectionOffset;
-    return static_cast<float>(acosf(posDirProjected.z / posDirProjected.length()) * 90.0f / M_PI);
+    auto const v = Vector3f { dir };
+    auto const np = normal * v.dot(normal);
+    auto const vp = v - np;
+    auto const slope = vp.angleDeg(v) * (v.x < 0 || v.y < 0 ? -1 : 1);
+    return slope;
 }
 
 jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos)
@@ -213,18 +224,20 @@ float Terrain::getFieldHeight(jt::Vector2f const& pos) const
         return posHeight;
     }
 
-    Vector3f const p { pos, posHeight };
-    Vector3f const pv { posCenter - pos, posHeight };
-    auto const normal = getNormalOfTriangleFor(m_chunks, pos);
+    auto const normal = getNormalOfTriangleForPosition(m_chunks, pos, false);
     if (normal.isZero()) {
         return posHeight;
     }
-    auto const ray = Vector3f { 0.0f, 0.0f, 1.0f }.normalized() - p;
-    return pv.dot(normal) / normal.dot(ray);
+
+    // plane defined by posCenter3d and normal
+    // (poscenter - pos) * normal / (0,0,1) * normal
+    Vector3f const posCenter3d { posCenter, posHeight };
+    return (posCenter3d - pos).dot(normal) / Vector3f { 0, 0, 1 }.dot(normal);
 }
 
 void Terrain::parseMapFromFilename(std::string const& fileName)
 {
+    // std::cerr << "loading: " << fileName << ::std::endl;
     std::ifstream fileStream { fileName };
     auto const map = nlohmann::json::parse(fileStream).get<Map>();
     for (unsigned short y { 0 }; y < terrainHeightInChunks; ++y) {

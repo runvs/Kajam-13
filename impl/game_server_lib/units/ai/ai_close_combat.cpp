@@ -16,11 +16,16 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
         return;
     }
 
+    unit.setOffset(jt::Vector2f { 0.0f, world.getTerrainMappedFieldHeight(unit.getPosition()) });
+
     auto dir = target->getPosition() - unit.getPosition();
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
-    float speed
-        = unit.getInfo().movementSpeed * world.getLocalSpeedFactorAt(unit.getPosition(), dir);
+    auto speedFactor = world.getLocalSpeedFactorAt(unit.getPosition(), dir);
+    if (speedFactor == 0.0f) {
+        // TODO walk around obstacle / choose another direction / path-finding?
+    }
+    float speed = unit.getInfo().movementSpeed * speedFactor;
     if (dist < unit.getInfo().colliderRadius * 2.0f) {
         speed = 0;
         if (m_attackTimer <= 0) {
