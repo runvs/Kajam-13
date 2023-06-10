@@ -23,7 +23,6 @@ void StateGame::onCreate()
 {
     m_world = std::make_shared<Terrain>();
     m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
-    m_world_renderer->setDrawGrid(true);
     add(m_world_renderer);
 
     createPlayer();
@@ -77,6 +76,7 @@ void StateGame::onUpdate(float const elapsed)
                 transitionWaitForPlayersToStartPlaceUnits();
             }
         } else if (m_internalState == InternalState::PlaceUnits) {
+            m_world_renderer->setDrawGrid(true);
             placeUnits(elapsed);
             // transition to "WaitForSimulationResults" is done in onDraw for button push;
         } else if (m_internalState == InternalState::WaitForSimulationResults) {
@@ -159,6 +159,7 @@ void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
     m_serverConnection->readyRound(m_clientEndPlacementData);
     m_internalState = InternalState::WaitForSimulationResults;
     m_placementManager->setActive(false);
+    m_world_renderer->setDrawGrid(false);
 }
 void StateGame::transitionWaitForSimulationResultsToPlayback()
 {

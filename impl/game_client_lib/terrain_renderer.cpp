@@ -54,7 +54,7 @@ sf::Color getTerrainColor(float height)
 
 void drawTerrainGrid(sf::RenderTexture& texture)
 {
-    sf::Color const colorGrid { 22, 22, 22 };
+    sf::Color const colorGrid { 20, 20, 20, 30 };
 
     sf::VertexArray linesHorizontal { sf::Lines, 2 * terrainHeightInChunks - 2 };
     for (unsigned short h { 1 }; h < terrainHeightInChunks; ++h) {
@@ -79,6 +79,8 @@ struct TerrainRenderer::Private {
     bool drawGrid {};
     sf::RenderTexture texture {};
     std::unique_ptr<jt::Sprite> sprite {};
+    sf::RenderTexture textureGrid {};
+    std::unique_ptr<jt::Sprite> spriteGrid {};
 };
 
 TerrainRenderer::TerrainRenderer(Terrain const& t)
@@ -146,9 +148,6 @@ void TerrainRenderer::doCreate()
     for (auto const& e : grid) {
         m->texture.draw(e);
     }
-    if (m->drawGrid) {
-        drawTerrainGrid(m->texture);
-    }
     m->texture.display();
 
     // sprite with rendered terrain texture to display
@@ -157,8 +156,30 @@ void TerrainRenderer::doCreate()
     m->sprite->setPosition(jt::Vector2f(0.0f, 0.0f));
     m->sprite->fromTexture(m->texture.getTexture());
     m->sprite->update(0.0f);
+
+    // draw terrain grid texture
+    result = m->textureGrid.create(static_cast<unsigned int>(GP::GetScreenSize().x),
+        static_cast<unsigned int>(GP::GetScreenSize().y));
+    // TODO check error
+    (void)result;
+    m->textureGrid.clear(sf::Color::Transparent);
+    drawTerrainGrid(m->textureGrid);
+    m->textureGrid.display();
+
+    // sprite for grid texture
+    m->spriteGrid = std::make_unique<jt::Sprite>();
+    m->spriteGrid->setIgnoreCamMovement(true);
+    m->spriteGrid->setPosition(jt::Vector2f(0.0f, 0.0f));
+    m->spriteGrid->fromTexture(m->textureGrid.getTexture());
+    m->spriteGrid->update(0.0f);
 }
 
 void TerrainRenderer::doUpdate(float const elapsed) { m->sprite->update(elapsed); }
 
-void TerrainRenderer::doDraw() const { m->sprite->draw(renderTarget()); }
+void TerrainRenderer::doDraw() const
+{
+    m->sprite->draw(renderTarget());
+    if (m->drawGrid) {
+        m->spriteGrid->draw(renderTarget());
+    }
+}
