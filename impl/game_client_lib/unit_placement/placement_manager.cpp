@@ -32,10 +32,11 @@ void PlacementManager::doCreate()
         return;
     }
     getGame()->logger().info("PlacementManager with playerId: " + std::to_string(m_playerId));
-    m_blockedUnitPlacementArea = jt::dh::createShapeRect(
-        jt::Rectf { GP::GetScreenSize().x / 2, terrainFlankHeightInPixel, GP::GetScreenSize().x / 2,
-            GP::GetScreenSize().y - terrainFlankHeightInPixel * 2 },
-        jt::Color { 20, 20, 20, 100 }, textureManager());
+    m_blockedUnitPlacementArea
+        = jt::dh::createShapeRect(jt::Rectf { GP::GetScreenSize().x / 2, 0,
+                                      GP::GetScreenSize().x / 2, GP::GetScreenSize().y },
+            jt::Color { 20, 20, 20, 100 }, textureManager());
+    // TODO add support for flank areas
     m_placedUnits = std::make_shared<jt::ObjectGroup<PlacedUnit>>();
 }
 

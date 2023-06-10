@@ -253,7 +253,7 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
             if (y > 0) {
                 auto& top = m_chunks[coordToIndex(x, y - 1)];
                 if (top.height < chunk.height) {
-                    if (top.heightCenter > top.height) {
+                    if (top.heightCenter > top.height && y > 1) {
                         // bridge needed, since higher ground top of top
                         auto& topOfTop = m_chunks[coordToIndex(x, y - 2)];
                         if (topOfTop.height < chunk.height) {
@@ -273,12 +273,13 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
                     chunk.heightCorners[1] = top.heightCorners[3];
                 } else if (top.heightCenter > chunk.height) {
                     chunk.heightCorners[0] = top.heightCorners[2];
+                    chunk.heightCorners[1] = top.heightCorners[3];
                 }
             }
             if (x > 0) {
                 auto& left = m_chunks[coordToIndex(x - 1, y)];
                 if (left.height < chunk.height) {
-                    if (left.heightCenter > left.height) {
+                    if (left.heightCenter > left.height && x > 1) {
                         // bridge needed, since higher ground left of left
                         auto& leftOfLeft = m_chunks[coordToIndex(x - 2, y)];
                         if (leftOfLeft.height < chunk.height) {
@@ -299,14 +300,17 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
                     chunk.heightCorners[2] = left.heightCorners[3];
                 } else if (left.heightCenter < chunk.heightCenter) {
                     left.heightCorners[1] = chunk.heightCorners[0];
+                    left.heightCorners[3] = chunk.heightCorners[2];
                 }
             }
             if (y > 0) {
                 auto& top = m_chunks[coordToIndex(x, y - 1)];
                 top.heightCorners[2] = chunk.heightCorners[0];
+                top.heightCorners[3] = chunk.heightCorners[1];
                 if (x > 0) {
                     auto& topLeft = m_chunks[coordToIndex(x - 1, y - 1)];
-                    topLeft.heightCorners[3] = chunk.heightCorners[0];
+                    topLeft.heightCorners[1] = top.heightCorners[0];
+                    topLeft.heightCorners[3] = top.heightCorners[2];
                 }
             }
         }

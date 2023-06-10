@@ -7,10 +7,21 @@
 
 namespace {
 
-constexpr int terrainColorGradient[] = { 0, 0, 0 };
-constexpr auto terrainColorGradientMax = 255 - terrainColorGradient[0];
 constexpr float const chunkSize { terrainChunkSizeInPixel };
 constexpr auto const chunkSizeHalf = chunkSize / 2.0f;
+
+// clang-format off
+sf::Color colorMap[] {
+    // dirt layer
+    { 90, 45, 25 },
+    // grassy layer
+    { 15, 100, 10 }, { 13, 80, 10 },
+    // mountain layer
+    { 60, 60, 60 }, { 120, 120, 120 }, { 160, 160, 160 },
+    // mountain top
+    { 200, 200, 200 }
+};
+// clang-format on
 
 float getTerrainHeight(int y, float height)
 {
@@ -20,14 +31,25 @@ float getTerrainHeight(int y, float height)
 sf::Color getTerrainColor(float height)
 {
     height = jt::MathHelper::clamp(height, 0.0f, terrainHeightMax);
-    sf::Color terrainColor { terrainColorGradient[0], terrainColorGradient[1],
-        terrainColorGradient[2] };
-    auto const interPolatedHeightColorOffset
-        = static_cast<int>(terrainColorGradientMax * height / terrainHeightMax);
-    terrainColor.r = std::min(255, terrainColor.r + interPolatedHeightColorOffset);
-    terrainColor.g = std::min(255, terrainColor.g + interPolatedHeightColorOffset);
-    terrainColor.b = std::min(255, terrainColor.b + interPolatedHeightColorOffset);
-    return terrainColor;
+    if (height < 0.4) {
+        return colorMap[0];
+    }
+    if (height < 1.4) {
+        return colorMap[1];
+    }
+    if (height < 2.4) {
+        return colorMap[2];
+    }
+    if (height < 3.7) {
+        return colorMap[3];
+    }
+    if (height < 4.2) {
+        return colorMap[4];
+    }
+    if (height < 4.6) {
+        return colorMap[5];
+    }
+    return colorMap[6];
 }
 
 void drawTerrainGrid(sf::RenderTexture& texture)
@@ -73,6 +95,7 @@ void TerrainRenderer::doCreate()
     std::array<sf::VertexArray, terrainWidthInChunks * terrainHeightInChunks> grid;
     auto const& chunks = m_terrain.getChunks();
     for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
+        bool const lastLine { h == terrainHeightInChunks - 1 };
         auto const wOffset = h * terrainWidthInChunks;
         for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
             auto const& chunk = chunks[wOffset + w];
@@ -80,8 +103,8 @@ void TerrainRenderer::doCreate()
             auto const posYc = getTerrainHeight(h, chunk.heightCenter);
             auto const posYtl = getTerrainHeight(h, chunk.heightCorners[0]);
             auto const posYtr = getTerrainHeight(h, chunk.heightCorners[1]);
-            auto const posYbl = getTerrainHeight(h, chunk.heightCorners[2]);
-            auto const posYbr = getTerrainHeight(h, chunk.heightCorners[3]);
+            auto const posYbl = getTerrainHeight(h, lastLine ? 0 : chunk.heightCorners[2]);
+            auto const posYbr = getTerrainHeight(h, lastLine ? 0 : chunk.heightCorners[3]);
             auto const colorC = getTerrainColor(chunk.heightCenter);
             auto const colorTl = getTerrainColor(chunk.heightCorners[0]);
             auto const colorTr = getTerrainColor(chunk.heightCorners[1]);
@@ -118,7 +141,7 @@ void TerrainRenderer::doCreate()
         static_cast<unsigned int>(GP::GetScreenSize().y)) };
     // TODO check error
     (void)result;
-    m->texture.clear(getTerrainColor(0.0f));
+    m->texture.clear(sf::Color::Black);
     m->texture.setSmooth(true);
     for (auto const& e : grid) {
         m->texture.draw(e);
