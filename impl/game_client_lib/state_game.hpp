@@ -7,11 +7,11 @@
 #include <client_network_connection.hpp>
 #include <game_state.hpp>
 #include <map/terrain.hpp>
-#include <map/terrain_renderer.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
 #include <server_connection.hpp>
+#include <terrain_renderer.hpp>
 #include <unit.hpp>
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>

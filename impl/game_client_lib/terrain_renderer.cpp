@@ -1,7 +1,7 @@
 #include <game_properties.hpp>
-#include <map/terrain_renderer.hpp>
 #include <math_helper.hpp>
 #include <sprite.hpp>
+#include <terrain_renderer.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <cmath>
 
@@ -142,7 +142,7 @@ void TerrainRenderer::doCreate()
     // TODO check error
     (void)result;
     m->texture.clear(sf::Color::Black);
-    m->texture.setSmooth(true);
+    // m->texture.setSmooth(true);
     for (auto const& e : grid) {
         m->texture.draw(e);
     }
