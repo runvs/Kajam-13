@@ -205,9 +205,12 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
 
 jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos)
 {
-    return { pos.x - static_cast<int>(pos.x) % terrainChunkSizeInPixel
-            + terrainChunkSizeInPixel / 2,
-        pos.y - static_cast<int>(pos.y) % terrainChunkSizeInPixel + terrainChunkSizeInPixel / 2 };
+    // cut off decimals
+    auto const posX = static_cast<int>(pos.x);
+    auto const posY = static_cast<int>(pos.y);
+    return { static_cast<float>(
+                 posX - (posX % terrainChunkSizeInPixel) + terrainChunkSizeInPixelHalf),
+        static_cast<float>(posY - (posY % terrainChunkSizeInPixel) + terrainChunkSizeInPixelHalf) };
 }
 
 float Terrain::getFieldHeight(jt::Vector2f const& pos) const

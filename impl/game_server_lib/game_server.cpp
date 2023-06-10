@@ -64,8 +64,8 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
         props.ints[jk::unitID] = m_round;
         props.ints[jk::playerID] = botDataCopy.begin()->first;
         props.floats[jk::positionX]
-            = static_cast<float>(botDataCopy.begin()->first == 0 ? 50 : GP::GetScreenSize().x - 50);
-        props.floats[jk::positionY] = 100.0f + 32 * m_round;
+            = static_cast<float>(botDataCopy.begin()->first == 0 ? 48 : GP::GetScreenSize().x - 47);
+        props.floats[jk::positionY] = terrainChunkSizeInPixel * 10 + 32 * m_round;
         std::vector<std::string> const possibleUnits = m_unitInfos.getTypes();
         auto const unitType
             = *jt::SystemHelper::select_randomly(possibleUnits.cbegin(), possibleUnits.cend());

@@ -24,8 +24,9 @@ void AiRangedCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface&
 
     auto const attackRange = unit.getInfo().ai.range * terrainChunkSizeInPixel;
     if (dist > attackRange) {
-        unit.setOffset(
-            jt::Vector2f { 0.0f, world.getTerrainMappedFieldHeight(unit.getPosition()) });
+        unit.setOffset(jt::Vector2f { 0.0f,
+            -world.getTerrainMappedFieldHeight(unit.getPosition() + terrainChunkSizeInPixelHalf)
+                * terrainHeightScalingFactor });
         auto speedFactor = world.getLocalSpeedFactorAt(unit.getPosition(), dir);
         if (speedFactor == 0.0f) {
             // TODO walk around obstacle / choose another direction / path-finding?

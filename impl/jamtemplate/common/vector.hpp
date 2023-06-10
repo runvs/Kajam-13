@@ -28,6 +28,9 @@ jt::Vector2f operator-(jt::Vector2f const& a, float const b);
 jt::Vector2f& operator+=(jt::Vector2f& lhs, jt::Vector2f const& rhs);
 jt::Vector2f& operator-=(jt::Vector2f& lhs, jt::Vector2f const& rhs);
 
+jt::Vector2f& operator+=(jt::Vector2f& lhs, float const rhs);
+jt::Vector2f& operator-=(jt::Vector2f& lhs, float const rhs);
+
 bool operator==(jt::Vector2f const& a, jt::Vector2f const& b);
 bool operator!=(jt::Vector2f const& a, jt::Vector2f const& b);
 

@@ -132,9 +132,11 @@ std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
 float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir)
 {
     auto const slope = m_world->getSlopeAt(pos, dir);
-    if (slope >= 0.0f && slope < 61.0f) {
+    if (slope == 0.0f) {
+        return 1.0f;
+    }
+    if (slope > 0.0f && slope < 61.0f) {
         // found acceptable curve with following input:
-        //  0 -> 1
         // 10 -> 0.95
         // 20 -> 0.85
         // 30 -> 0.7
@@ -144,13 +146,12 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
     }
     if (slope > -61.0f && slope < 0.0f) {
         // found acceptable curve with following input:
-        //   0 -> 1
-        // -10 -> 1.1
-        // -20 -> 1.5
-        // -30 -> 3
-        // -45 -> 5
-        // -60 -> 8
-        return 0.00190862f * slope * slope - 0.00435245f * slope + 0.912302f;
+        // -10 -> 1.09
+        // -20 -> 1.2
+        // -30 -> 1.4
+        // -45 -> 1.7
+        // -60 -> 2
+        return 0.0000983332f * slope * slope - 0.0122135f * slope + 0.957329f;
     }
     return 0.0f;
 }

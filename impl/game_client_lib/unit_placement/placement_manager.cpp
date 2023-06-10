@@ -1,6 +1,7 @@
 #include "placement_manager.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
+#include <game_properties.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <object_group.hpp>
@@ -31,9 +32,10 @@ void PlacementManager::doCreate()
         return;
     }
     getGame()->logger().info("PlacementManager with playerId: " + std::to_string(m_playerId));
-    m_blockedUnitPlacementArea
-        = jt::dh::createShapeRect(playerIdDispatcher->getBlockedUnitPlacementArea(),
-            jt::Color { 20, 20, 20, 100 }, textureManager());
+    m_blockedUnitPlacementArea = jt::dh::createShapeRect(
+        jt::Rectf { GP::GetScreenSize().x / 2, terrainFlankHeightInPixel, GP::GetScreenSize().x / 2,
+            GP::GetScreenSize().y - terrainFlankHeightInPixel * 2 },
+        jt::Color { 20, 20, 20, 100 }, textureManager());
     m_placedUnits = std::make_shared<jt::ObjectGroup<PlacedUnit>>();
 }
 
@@ -103,11 +105,8 @@ void PlacementManager::placeUnit()
 
         jt::Vector2f fieldPos { m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld()) };
-        fieldPos = jt::Vector2f { static_cast<float>(terrainChunkSizeInPixel
-                                      * static_cast<int>(fieldPos.x / terrainChunkSizeInPixel)),
-            static_cast<float>(
-                terrainChunkSizeInPixel * static_cast<int>(fieldPos.y / terrainChunkSizeInPixel)) };
-        if (!jt::MathHelper::checkIsIn(playerIdDispatcher->getUnitPlacementArea(), fieldPos)
+        if (!jt::MathHelper::checkIsIn(
+                playerIdDispatcher->getUnitPlacementArea(PlayerIdDispatcher::AREA_MAIN), fieldPos)
             // only one unit per field
             || fieldInUse(fieldPos)) {
             // TODO Show some visual representation or play a sound that placing a unit here is not
@@ -127,6 +126,7 @@ void PlacementManager::placeUnit()
         unit->setOffset({ 0,
             m_world->getFieldHeight(fieldPos + (terrainChunkSizeInPixel / 2.0f))
                 * -terrainHeightScalingFactor });
+        fieldPos -= terrainChunkSizeInPixelHalf; // offset position to to topleft corner of field
         unit->setPosition(fieldPos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);

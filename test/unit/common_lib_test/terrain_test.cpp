@@ -2,6 +2,52 @@
 #include <map/terrain.hpp>
 #include <gtest/gtest.h>
 
+// TODO make a game simulation test case or move interface to Terrain
+TEST(SpeedFactorTest, CheckSpeedFactor)
+{
+    auto const getSpeedFactor = [](auto const slope) {
+        if (slope == 0.0f) {
+            return 1.0f;
+        }
+        if (slope > 0.0f && slope < 61.0f) {
+            // found acceptable curve with following input:
+            // 10 -> 0.95
+            // 20 -> 0.85
+            // 30 -> 0.7
+            // 45 -> 0.5
+            // 60 -> 0.2
+            return -0.000166516f * slope * slope - 0.00397695f * slope + 0.998285f;
+        }
+        if (slope > -61.0f && slope < 0.0f) {
+            // found acceptable curve with following input:
+            // -10 -> 1.09
+            // -20 -> 1.2
+            // -30 -> 1.4
+            // -45 -> 1.7
+            // -60 -> 2
+            return 0.0000983332f * slope * slope - 0.0122135f * slope + 0.957329f;
+        }
+        return 0.0f;
+    };
+    struct SlopeToExpected {
+        float slope;
+        float expectedSpeedFactor;
+    };
+    // clang-format off
+    SlopeToExpected const testValues[] {
+        // corner cases
+        { 0.0f, 1.0f }, { 62.0f, 0.0f }, { -62.0f, 0.0f },
+        // uphill
+        {10.0f, 0.95f }, {20.0f, 0.85f }, {30.0f, 0.70f }, {45.0f, 0.50f }, {60.0f, 0.2f },
+        // downhill
+        {-10.0f, 1.09f }, {-20.0f, 1.2f }, {-30.0f, 1.4f }, {-45.0f, 1.7f }, {-60.0f, 2.0f },
+    };
+    // clang-format on
+    for (auto const v : testValues) {
+        ASSERT_NEAR(getSpeedFactor(v.slope), v.expectedSpeedFactor, 0.1f);
+    }
+}
+
 TEST(TerrainSlopeOutsideBoundsTest, SlopeIsZero)
 {
     Terrain t("assets/maps/map_test.json");

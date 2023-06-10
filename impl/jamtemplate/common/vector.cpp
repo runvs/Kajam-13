@@ -46,6 +46,20 @@ jt::Vector2f& jt::operator-=(jt::Vector2f& lhs, jt::Vector2f const& rhs)
     return lhs;
 }
 
+jt::Vector2f& jt::operator+=(jt::Vector2f& lhs, float const v)
+{
+    lhs.x += v;
+    lhs.y += v;
+    return lhs;
+}
+
+jt::Vector2f& jt::operator-=(jt::Vector2f& lhs, float const v)
+{
+    lhs.x -= v;
+    lhs.y -= v;
+    return lhs;
+}
+
 bool jt::operator==(jt::Vector2f const& a, jt::Vector2f const& b)
 {
     return a.x == b.x && a.y == b.y;

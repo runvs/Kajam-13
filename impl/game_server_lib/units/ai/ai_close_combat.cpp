@@ -1,6 +1,7 @@
 
 #include "ai_close_combat.hpp"
 #include "vector.hpp"
+#include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
@@ -16,7 +17,9 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
         return;
     }
 
-    unit.setOffset(jt::Vector2f { 0.0f, world.getTerrainMappedFieldHeight(unit.getPosition()) });
+    unit.setOffset(jt::Vector2f { 0.0f,
+        -world.getTerrainMappedFieldHeight(unit.getPosition() + terrainChunkSizeInPixelHalf)
+            * terrainHeightScalingFactor });
 
     auto dir = target->getPosition() - unit.getPosition();
     auto const dist = jt::MathHelper::length(dir);
