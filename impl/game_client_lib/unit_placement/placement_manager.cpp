@@ -88,6 +88,11 @@ void PlacementManager::placeUnit()
         return;
     }
 
+    if (m_availableFunds < m_unitInfo->getInfoForType(m_activeUnitType).cost) {
+        m_activeUnitType = "";
+        return;
+    }
+
     if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         auto playerIdDispatcher = m_playerIdDispatcher.lock();
         if (playerIdDispatcher == nullptr) {
