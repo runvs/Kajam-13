@@ -34,7 +34,7 @@ private:
     jt::GameObjectCollection m_placedUnitsGO;
     UnitIdManager m_unitIdManager;
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
-    std::shared_ptr<jt::Shape> m_blockedUnitPlacementArea;
+    std::shared_ptr<jt::Shape> m_blockedUnitPlacementAreas[3];
     int m_playerId;
     // TODO rework
     mutable std::string m_activeUnitType = "";

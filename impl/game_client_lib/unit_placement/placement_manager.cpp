@@ -2,6 +2,7 @@
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
+#include <map/placement_area.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <object_group.hpp>
@@ -32,11 +33,15 @@ void PlacementManager::doCreate()
         return;
     }
     getGame()->logger().info("PlacementManager with playerId: " + std::to_string(m_playerId));
-    m_blockedUnitPlacementArea
-        = jt::dh::createShapeRect(jt::Rectf { GP::GetScreenSize().x / 2, 0,
-                                      GP::GetScreenSize().x / 2, GP::GetScreenSize().y },
-            jt::Color { 20, 20, 20, 100 }, textureManager());
-    // TODO add support for flank areas
+    m_blockedUnitPlacementAreas[AreaType::AREA_MAIN] = jt::dh::createShapeRect(
+        getUnitPlacementArea(m_playerId == 1 ? 0 : 1, AreaType::AREA_MAIN),
+        jt::Color { 20, 20, 20, 100 }, textureManager());
+    m_blockedUnitPlacementAreas[AreaType::AREA_FLANK_TOP] = jt::dh::createShapeRect(
+        getUnitPlacementArea(m_playerId == 1 ? 0 : 1, AreaType::AREA_FLANK_TOP),
+        jt::Color { 20, 20, 20, 100 }, textureManager());
+    m_blockedUnitPlacementAreas[AreaType::AREA_FLANK_BOT] = jt::dh::createShapeRect(
+        getUnitPlacementArea(m_playerId == 1 ? 0 : 1, AreaType::AREA_FLANK_BOT),
+        jt::Color { 20, 20, 20, 100 }, textureManager());
     m_placedUnits = std::make_shared<jt::ObjectGroup<PlacedUnit>>();
 }
 
@@ -45,7 +50,9 @@ void PlacementManager::doUpdate(const float elapsed)
     m_placedUnitsGO.update(elapsed);
     m_placedUnits->update(elapsed);
     placeUnit();
-    m_blockedUnitPlacementArea->update(elapsed);
+    for (auto& area : m_blockedUnitPlacementAreas) {
+        area->update(elapsed);
+    }
 }
 
 void PlacementManager::doDraw() const
@@ -56,8 +63,8 @@ void PlacementManager::doDraw() const
 
     m_placedUnitsGO.draw();
 
-    if (m_blockedUnitPlacementArea) {
-        m_blockedUnitPlacementArea->draw(renderTarget());
+    for (auto& area : m_blockedUnitPlacementAreas) {
+        area->draw(renderTarget());
     }
 
     if (m_unitInfo) {
@@ -107,7 +114,11 @@ void PlacementManager::placeUnit()
         jt::Vector2f fieldPos { m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld()) };
         if (!jt::MathHelper::checkIsIn(
-                playerIdDispatcher->getUnitPlacementArea(PlayerIdDispatcher::AREA_MAIN), fieldPos)
+                getUnitPlacementArea(m_playerId, AreaType::AREA_MAIN), fieldPos)
+                && !jt::MathHelper::checkIsIn(
+                    getUnitPlacementArea(m_playerId, AreaType::AREA_FLANK_TOP), fieldPos)
+                && !jt::MathHelper::checkIsIn(
+                    getUnitPlacementArea(m_playerId, AreaType::AREA_FLANK_BOT), fieldPos)
             // only one unit per field
             || fieldInUse(fieldPos)) {
             // TODO Show some visual representation or play a sound that placing a unit here is not
