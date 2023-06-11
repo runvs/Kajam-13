@@ -15,6 +15,7 @@
 #include <state_menu.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
+#include "zlib.h"
 #include <imgui.h>
 #include <memory>
 #include <stdexcept>
@@ -112,10 +113,13 @@ void StateGame::placeUnitsForOneTick(
     if (!propertiesForAllUnitsForThisTick.m_playerHP.empty()) {
         getGame()->logger().info("new player hp received");
         m_playerHP = propertiesForAllUnitsForThisTick.m_playerHP;
-        if (m_playerHP.at(m_serverConnection->getPlayerId()) <= 0) {
+        auto const thisPlayerId = m_serverConnection->getPlayerId();
+        auto const otherPlayerId = ((thisPlayerId == 0) ? 1 : 0);
+        if (m_playerHP.at(thisPlayerId) <= 0) {
             m_internalState = InternalState::EndLose;
+        } else if (m_playerHP.at(otherPlayerId) <= 0) {
+            m_internalState = InternalState::EndWin;
         }
-        // TODO win condition
     }
     for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
 
@@ -234,6 +238,20 @@ void StateGame::onDraw() const
     }
     ImGui::EndDisabled();
 
+    if (m_internalState == InternalState::EndWin || m_internalState == InternalState::EndLose) {
+        ImGui::Separator();
+        ImGui::Text("Game over");
+
+        if (m_internalState == InternalState::EndWin) {
+            ImGui::Text("Win");
+        } else {
+            ImGui::Text("Lose");
+        }
+
+        if (ImGui::Button("Back to menu")) {
+            getGame()->stateManager().switchState(std::make_shared<StateMenu>());
+        }
+    }
     ImGui::End();
 }
 
