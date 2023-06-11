@@ -1,4 +1,5 @@
 #include "ai_ranged_combat.hpp"
+#include "random/random.hpp"
 #include <arrow_info.hpp>
 #include <damage_info.hpp>
 #include <map/terrain.hpp>
@@ -35,7 +36,7 @@ void AiRangedCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface&
     } else {
         unit.getPhysicsObject()->setVelocity(jt::Vector2f { 0.0f, 0.0f });
         if (m_attackTimer <= 0) {
-            m_attackTimer = unit.getInfo().attackTimerMax;
+            m_attackTimer = unit.getInfo().attackTimerMax + jt::Random::getFloat(0.0f, 0.1f);
             ArrowInfo arrowInfo;
             arrowInfo.targetPlayerId = target->getPlayerID();
             arrowInfo.endPos = target->getPosition();
@@ -44,7 +45,8 @@ void AiRangedCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface&
             arrowInfo.damage = DamageInfo { unit.getInfo().damage };
             arrowInfo.currentPos = unit.getPosition();
             arrowInfo.totalTime = dist / unit.getInfo().ai.arrowSpeed;
-            arrowInfo.maxHeight = unit.getInfo().ai.arrowHeight;
+            auto const heightScaling = jt::MathHelper::clamp(dist / attackRange, 0.05f, 1.0f);
+            arrowInfo.maxHeight = heightScaling * unit.getInfo().ai.arrowHeight;
 
             world.spawnArrow(arrowInfo);
         }
