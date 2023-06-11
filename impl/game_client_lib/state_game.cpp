@@ -21,6 +21,7 @@
 
 void StateGame::onCreate()
 {
+    getGame()->gfx().createZLayer(GP::ZLayerUI());
     m_world = std::make_shared<Terrain>();
     m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
     add(m_world_renderer);
@@ -216,9 +217,12 @@ void StateGame::onDraw() const
     ImGui::Text("round %i", m_round);
 
     ImGui::Separator();
+    ImGui::BeginDisabled(m_internalState != InternalState::PlaceUnits);
     if (ImGui::Button("ready")) {
         transitionPlaceUnitsToWaitForSimulationResults();
     }
+    ImGui::EndDisabled();
+
     ImGui::End();
 }
 
@@ -231,7 +235,7 @@ void StateGame::endGame()
     m_hasEnded = true;
     m_running = false;
 
-    getGame()->stateManager().switchToStoredState("menu");
+    getGame()->stateManager().switchState(std::make_shared<StateMenu>());
 }
 
 std::string StateGame::getName() const { return "State Game"; }

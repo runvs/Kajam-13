@@ -5,6 +5,7 @@
 #include "unit_placement/unit_id_manager.hpp"
 #include <client_end_placement_data.hpp>
 #include <client_network_connection.hpp>
+#include <game_properties.hpp>
 #include <game_state.hpp>
 #include <map/terrain.hpp>
 #include <object_group.hpp>
@@ -76,6 +77,7 @@ private:
 
     int m_round { 1 };
     std::size_t m_tickId { 0 };
+    int m_playerHP { GP::InitialPlayerHP() };
 
     void onCreate() override;
     void onEnter() override;

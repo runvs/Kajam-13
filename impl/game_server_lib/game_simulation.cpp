@@ -179,3 +179,9 @@ bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
 }
 
 void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo) { m_arrows.push_back(arrowInfo); }
+void GameSimulation::clear()
+{
+    m_arrows.clear();
+    m_unitInformationForRoundStart.clear();
+    m_simulationObjects.clear();
+}

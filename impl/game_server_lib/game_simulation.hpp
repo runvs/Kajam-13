@@ -33,6 +33,9 @@ public:
     float getTerrainMappedFieldHeight(jt::Vector2f const& pos) override;
     void spawnArrow(const ArrowInfo& arrowInfo) override;
 
+    // clear all units, e.g. when resetting the server
+    void clear();
+
 private:
     jt::LoggerInterface& m_logger;
     UnitInfoCollection& m_unitInfos;

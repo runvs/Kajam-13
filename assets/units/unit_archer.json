@@ -18,5 +18,5 @@
   "attackTimerMax": 1.0,
   "movementSpeed": 20.0,
   "type": "archer",
-  "cost": 100
+  "cost": 50
 }

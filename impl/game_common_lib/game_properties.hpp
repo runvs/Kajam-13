@@ -39,7 +39,9 @@ public:
     static std::size_t NumberOfStepsPerRound();
 
     static jt::Vector2f UnitAnimationOffset();
-    static float ArrowSpeed();
+    static int InitialPlayerHP();
+
+    static int ZLayerUI();
 };
 
 #endif

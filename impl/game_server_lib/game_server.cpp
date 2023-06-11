@@ -315,6 +315,7 @@ void GameServer::resetServer()
     }
     m_logger.info("no more players connected, resetting server", { "GameServer" });
     m_matchHasStarted = false;
+    m_gameSimulation->clear();
     m_round = 1;
     if (!m_botData.empty()) {
         m_botData.clear();

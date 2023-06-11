@@ -24,6 +24,7 @@ void Unit::doCreate()
     m_hpBar->setMaxValue(m_hpMax);
     m_hpBar->setBackColor(jt::colors::Gray);
     m_hpBar->setFrontColor(jt::colors::Green);
+    m_hpBar->setZ(GP::ZLayerUI());
 }
 
 void Unit::doUpdate(float const elapsed)
