@@ -26,6 +26,7 @@ constexpr auto files = "files";
 
 constexpr auto unitType = "unitType";
 constexpr auto unitAnim = "unitNewAnim";
+constexpr auto unitWalkingRight = "walkRight";
 
 constexpr auto damage = "damage";
 constexpr auto arrows = "arrows";

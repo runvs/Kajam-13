@@ -49,7 +49,7 @@ void Unit::doUpdate(float const elapsed)
 void Unit::doDraw() const
 {
     m_anim->draw(renderTarget());
-    if (m_hp > 0) {
+    if (m_hp > 0 && m_hp < m_hpMax) {
         m_hpBar->draw(renderTarget());
     }
 }
@@ -76,6 +76,14 @@ void Unit::updateState(ObjectProperties const& props)
         if (animName == "damage") {
             m_animTimeUntilBackToIdle = m_anim->getCurrentAnimTotalTime();
         }
+    }
+
+    if (props.bools.at(jk::unitWalkingRight)) {
+        m_anim->setOffset(GP::UnitAnimationOffset());
+        m_anim->setScale(jt::Vector2f { 1.0f, 1.0f });
+    } else {
+        m_anim->setScale(jt::Vector2f { -1.0f, 1.0f });
+        m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
     }
 }
 
