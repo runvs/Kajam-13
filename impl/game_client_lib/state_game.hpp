@@ -1,8 +1,6 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
-#include "simulation_result_data.hpp"
-#include "unit_placement/unit_id_manager.hpp"
 #include <client_end_placement_data.hpp>
 #include <client_network_connection.hpp>
 #include <game_properties.hpp>
@@ -12,12 +10,15 @@
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
 #include <server_connection.hpp>
+#include <simulation_result_data.hpp>
 #include <terrain_renderer.hpp>
 #include <unit.hpp>
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
+#include <unit_placement/unit_id_manager.hpp>
 #include <vector.hpp>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -37,6 +38,8 @@ enum class InternalState {
     PlaceUnits,
     WaitForSimulationResults,
     Playback,
+    EndWin,
+    EndLose
 };
 
 class StateGame : public jt::GameState {
@@ -77,7 +80,7 @@ private:
 
     int m_round { 1 };
     std::size_t m_tickId { 0 };
-    int m_playerHP { GP::InitialPlayerHP() };
+    std::map<int, int> m_playerHP { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
     void onCreate() override;
     void onEnter() override;

@@ -84,7 +84,7 @@ void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
     // Note: remove_if does not work for map
     for (auto it = m_playerData.begin(); it != m_playerData.end();) {
         it->second.timeSinceLastPing += elapsed;
-        if (it->second.timeSinceLastPing >= 5.0f) {
+        if (it->second.timeSinceLastPing >= 35.0f) {
             std::stringstream ss_log;
             ss_log << "erase endpoint '" << it->second.endpoint.address()
                    << "' because of missing ping for player " << it->first << "\n";

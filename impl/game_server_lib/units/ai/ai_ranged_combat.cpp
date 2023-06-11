@@ -1,11 +1,10 @@
 #include "ai_ranged_combat.hpp"
-#include "vector.hpp"
 #include <arrow_info.hpp>
 #include <damage_info.hpp>
-#include <game_properties.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <units/server_unit.hpp>
+#include <vector.hpp>
 #include <world_info_interface.hpp>
 
 void AiRangedCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world)

@@ -2,9 +2,9 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
-#include "arrow_info.hpp"
-#include "box2dwrapper/box2d_world_interface.hpp"
-#include "units/server_unit.hpp"
+#include <arrow_info.hpp>
+#include <box2dwrapper/box2d_world_interface.hpp>
+#include <game_properties.hpp>
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
 #include <object_properties.hpp>
@@ -13,6 +13,7 @@
 #include <simulation_object_interface.hpp>
 #include <simulation_result_message_sender.hpp>
 #include <unit_info_collection.hpp>
+#include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
 #include <map>
 #include <memory>
@@ -44,6 +45,7 @@ private:
     std::vector<ObjectProperties> m_unitInformationForRoundStart;
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
     std::vector<ArrowInfo> m_arrows;
+    std::map<int, int> m_playerHp { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
     bool checkIfUnitIsUnique(ObjectProperties const& newUnitProps);
 };

@@ -8,6 +8,7 @@
 #include "object_properties.hpp"
 #include "unit_info.hpp"
 #include "world_info_interface.hpp"
+#include <game_properties.hpp>
 #include <map/terrain.hpp>
 #include <Box2D/Dynamics/b2Body.h>
 #include <cmath>
@@ -39,6 +40,7 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, const UnitInfo& info,
     fixtureDef.friction = 0.0f;
     fixtureDef.density = 1.0f;
     b2CircleShape circleCollider {};
+    // TODO move to GP
     circleCollider.m_radius = terrainChunkSizeInPixel / 2.0f - 2.0f;
     fixtureDef.shape = &circleCollider;
     m_physicsObject->getB2Body()->CreateFixture(&fixtureDef);
@@ -82,7 +84,19 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
         return;
     }
     m_ai->update(elapsed, *this, world);
+
     m_pos = m_physicsObject->getPosition();
+    if (m_pos.x <= 0) {
+        m_pos.x = 0;
+    } else if (m_pos.x >= GP::GetScreenSize().x - terrainChunkSizeInPixel - 4.0f) {
+        m_pos.x = GP::GetScreenSize().x - terrainChunkSizeInPixel - 4.0f;
+    }
+    if (m_pos.y <= 0) {
+        m_pos.y = 0;
+    } else if (m_pos.y >= GP::GetScreenSize().y - terrainChunkSizeInPixel - 4.0f) {
+        m_pos.y = GP::GetScreenSize().y - terrainChunkSizeInPixel - 4.0f;
+    }
+    m_physicsObject->setPosition(m_pos);
 }
 
 void ServerUnit::setPosition(jt::Vector2f const& pos)
@@ -118,3 +132,4 @@ bool ServerUnit::isAlive() const { return m_hp > 0; }
 
 UnitInfo const& ServerUnit::getInfo() const { return m_info; }
 std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physicsObject; }
+int ServerUnit::getCost() { return m_info.cost; }

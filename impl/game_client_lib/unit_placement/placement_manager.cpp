@@ -82,7 +82,7 @@ void PlacementManager::doDraw() const
             ImGui::BeginDisabled(!canBuy);
 
             if (ImGui::Button(buttonString.c_str())) {
-                getGame()->logger().info("select: " + u.type);
+                getGame()->logger().debug("select: " + u.type);
                 m_activeUnitType = u.type;
             }
 
@@ -113,14 +113,16 @@ void PlacementManager::placeUnit()
 
         jt::Vector2f fieldPos { m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld()) };
-        if (!jt::MathHelper::checkIsIn(
-                getUnitPlacementArea(m_playerId, AreaType::AREA_MAIN), fieldPos)
-                && !jt::MathHelper::checkIsIn(
-                    getUnitPlacementArea(m_playerId, AreaType::AREA_FLANK_TOP), fieldPos)
-                && !jt::MathHelper::checkIsIn(
-                    getUnitPlacementArea(m_playerId, AreaType::AREA_FLANK_BOT), fieldPos)
-            // only one unit per field
-            || fieldInUse(fieldPos)) {
+        static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
+            AreaType::AREA_FLANK_BOT };
+        bool inValidArea { false };
+        for (auto& area : areas) {
+            if (jt::MathHelper::checkIsIn(getUnitPlacementArea(m_playerId, area), fieldPos)) {
+                inValidArea = true;
+                break;
+            }
+        }
+        if (!inValidArea || fieldInUse(fieldPos)) {
             // TODO Show some visual representation or play a sound that placing a unit here is not
             getGame()->logger().info(
                 "tried to place unit in invalid position", { "PlacementManager" });
@@ -138,7 +140,7 @@ void PlacementManager::placeUnit()
         unit->setOffset({ 0,
             m_world->getFieldHeight(fieldPos + (terrainChunkSizeInPixel / 2.0f))
                 * -terrainHeightScalingFactor });
-        fieldPos -= terrainChunkSizeInPixelHalf; // offset position to to topleft corner of field
+        fieldPos -= terrainChunkSizeInPixelHalf; // offset position to top left corner of field
         unit->setPosition(fieldPos);
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);

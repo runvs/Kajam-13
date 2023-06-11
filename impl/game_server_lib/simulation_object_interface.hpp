@@ -24,8 +24,7 @@ public:
     virtual bool isAlive() const = 0;
 
     virtual void takeDamage(DamageInfo const& damage) = 0;
-
-    // TODO add a way to ask about world state
+    virtual int getCost() = 0;
 };
 
 #endif // JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP

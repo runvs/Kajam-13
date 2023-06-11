@@ -8,9 +8,9 @@
 #include <math_helper.hpp>
 #include <object_properties.hpp>
 #include <simulation_object_interface.hpp>
-#include <unit_info.hpp>
 #include <vector.hpp>
 #include <memory>
+#include <string>
 
 GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos)
     : m_logger { logger }
@@ -45,7 +45,6 @@ float arrowParaboloa(float x, float maxHeight) { return -maxHeight * 4 * (x - x 
 
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
-
     auto const timePerUpdate = 0.005f;
     SimulationResultDataForAllFrames allFrames;
     for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
@@ -90,11 +89,24 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
             obj->update(timePerUpdate, *this);
 
             auto data = obj->saveState();
-            data.ints[jk::simulationTick] = i;
 
             currentFrame.m_units.push_back(data);
         }
+        currentFrame.m_frameId = i;
+        // TODO allow to end simulation earlier
+        bool const isLastFrame = (i == GP::NumberOfStepsPerRound() - 1);
+        if (isLastFrame) {
 
+            for (auto& obj : m_simulationObjects) {
+                if (!obj->isAlive()) {
+                    continue;
+                }
+                auto const objPid = obj->getPlayerID();
+                auto const playerPid = ((objPid == 0) ? 1 : 0);
+                m_playerHp[playerPid] -= obj->getCost();
+            }
+            currentFrame.m_playerHP = m_playerHp;
+        }
         allFrames.allFrames.push_back(currentFrame);
     }
 
@@ -184,4 +196,5 @@ void GameSimulation::clear()
     m_arrows.clear();
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
+    m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 }

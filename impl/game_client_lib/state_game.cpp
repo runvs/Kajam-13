@@ -109,6 +109,14 @@ void StateGame::playbackSimulation(float /*elapsed*/)
 void StateGame::placeUnitsForOneTick(
     SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick)
 {
+    if (!propertiesForAllUnitsForThisTick.m_playerHP.empty()) {
+        getGame()->logger().info("new player hp received");
+        m_playerHP = propertiesForAllUnitsForThisTick.m_playerHP;
+        if (m_playerHP.at(m_serverConnection->getPlayerId()) <= 0) {
+            m_internalState = InternalState::EndLose;
+        }
+        // TODO win condition
+    }
     for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
 
         auto const unitID = propsForOneUnit.ints.at(jk::unitID);
@@ -215,7 +223,10 @@ void StateGame::onDraw() const
     }
     ImGui::Separator();
     ImGui::Text("round %i", m_round);
-
+    if (m_internalState != InternalState::WaitForAllPlayers) {
+        ImGui::Text("HP Player 0: %i", m_playerHP.at(0));
+        ImGui::Text("HP Player 1: %i", m_playerHP.at(1));
+    }
     ImGui::Separator();
     ImGui::BeginDisabled(m_internalState != InternalState::PlaceUnits);
     if (ImGui::Button("ready")) {

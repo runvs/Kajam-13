@@ -205,7 +205,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "sourceSize": { "w": 32, "h": 32 },
-    "duration": 500
+    "duration": 10
    },
    "peasant 26.aseprite": {
     "frame": { "x": 832, "y": 0, "w": 32, "h": 32 },

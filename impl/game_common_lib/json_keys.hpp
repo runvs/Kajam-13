@@ -13,7 +13,7 @@ constexpr auto unitID = "uid";
 constexpr auto playerID = "pid";
 
 constexpr auto units = "units";
-constexpr auto simulationTick = "tick";
+constexpr auto frameID = "fid";
 
 constexpr auto messageType = "type";
 constexpr auto messageData = "data";
@@ -30,6 +30,7 @@ constexpr auto unitAnim = "unitNewAnim";
 constexpr auto damage = "damage";
 constexpr auto arrows = "arrows";
 
+constexpr auto playerHp = "playerHp";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

@@ -12,6 +12,7 @@
 
 class ServerUnit : public SimulationObjectInterface {
 public:
+    int getCost() override;
     explicit ServerUnit(jt::LoggerInterface& logger, const UnitInfo& info,
         std::shared_ptr<jt::Box2DWorldInterface> world);
     void update(float elapsed, WorldInfoInterface& world) override;
