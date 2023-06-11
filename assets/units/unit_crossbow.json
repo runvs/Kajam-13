@@ -17,5 +17,6 @@
   "attackTimerMax": 3.0,
   "movementSpeed": 15.0,
   "type": "crossbow",
-  "cost": 200
+  "cost": 200,
+  "unlockCost": 100
 }

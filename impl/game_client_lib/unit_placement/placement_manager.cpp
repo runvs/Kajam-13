@@ -11,8 +11,8 @@
 #include <unit_placement/placed_unit.hpp>
 #include <vector.hpp>
 #include <imgui.h>
-#include <iostream>
 #include <string>
+#include <vector>
 
 PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
     std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
@@ -73,12 +73,33 @@ void PlacementManager::doDraw() const
         ImGui::Text("Gold: %i", m_availableFunds);
 
         ImGui::Separator();
+        ImGui::Text("Unlock");
+        auto unlockedTypes = m_unitInfo->getUnlockedTypes();
+        auto allTypes = m_unitInfo->getTypes();
+        std::sort(unlockedTypes.begin(), unlockedTypes.end());
+        std::sort(allTypes.begin(), allTypes.end());
+        std::vector<std::string> purchaseTypes;
+        std::set_difference(allTypes.begin(), allTypes.end(), unlockedTypes.begin(),
+            unlockedTypes.end(), std::back_inserter(purchaseTypes));
 
-        for (auto const& u : m_unitInfo->getUnits()) {
+        for (auto const& t : purchaseTypes) {
+            auto const& u = m_unitInfo->getInfoForType(t);
+            bool const canUnlock = (m_availableFunds >= u.unlockCost);
+            ImGui::BeginDisabled(!canUnlock);
+            std::string const buttonString = u.type + " (" + std::to_string(u.unlockCost) + ")";
+            if (ImGui::Button(buttonString.c_str())) {
+                m_unitInfo->unlockType(t);
+                m_availableFunds -= u.unlockCost;
+            }
+            ImGui::EndDisabled();
+        }
 
-            int unitCost = u.cost;
-            std::string buttonString = u.type + " (" + std::to_string(unitCost) + ")";
-            bool const canBuy = (m_availableFunds >= unitCost);
+        ImGui::Separator();
+        ImGui::Text("Hire");
+        for (auto const& t : unlockedTypes) {
+            auto const& u = m_unitInfo->getInfoForType(t);
+            std::string const buttonString = u.type + " (" + std::to_string(u.cost) + ")";
+            bool const canBuy = (m_availableFunds >= u.cost);
             ImGui::BeginDisabled(!canBuy);
 
             if (ImGui::Button(buttonString.c_str())) {

@@ -15,5 +15,6 @@
   "attackTimerMax": 0.75,
   "movementSpeed": 50.0,
   "type": "peasant",
-  "cost": 40
+  "cost": 40,
+  "unlockCost": 0
 }

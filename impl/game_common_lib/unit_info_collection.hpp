@@ -14,6 +14,9 @@ public:
     UnitInfo const& getInfoForType(std::string const& type) const;
     std::vector<std::string> getTypes() const;
 
+    std::vector<std::string> getUnlockedTypes() const;
+    void unlockType(std::string const& type);
+
     std::vector<UnitInfo>& getUnits();
     std::vector<UnitInfo> const& getUnits() const;
 
@@ -22,6 +25,8 @@ private:
     std::vector<UnitInfo> m_infos;
     // cached vector of types
     std::vector<std::string> m_types;
+
+    std::vector<std::string> m_unlockedTypes;
 
     void parseUnitInfosFromFilename(std::string const& fileName);
     void createTypesVector();

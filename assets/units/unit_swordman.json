@@ -15,5 +15,6 @@
   "attackTimerMax": 1.0,
   "movementSpeed": 30.0,
   "type": "swordman",
-  "cost": 75
+  "cost": 75,
+  "unlockCost": 50
 }

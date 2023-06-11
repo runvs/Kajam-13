@@ -32,6 +32,9 @@ constexpr auto damage = "damage";
 constexpr auto arrows = "arrows";
 
 constexpr auto playerHp = "playerHp";
+
+constexpr auto cost = "cost";
+constexpr auto unlockCost = "unlockCost";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

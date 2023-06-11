@@ -39,7 +39,7 @@ private:
     // TODO rework
     mutable std::string m_activeUnitType = "";
 
-    int m_availableFunds { 0 };
+    mutable int m_availableFunds { 0 };
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;
