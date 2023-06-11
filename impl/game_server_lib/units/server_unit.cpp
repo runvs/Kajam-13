@@ -59,6 +59,7 @@ ObjectProperties ServerUnit::saveState() const
     props.floats[jk::hpCurrent] = m_hp;
     props.floats[jk::hpMax] = m_info.hitpoints;
     props.strings[jk::unitType] = m_info.type;
+    props.bools[jk::unitWalkingRight] = m_walkingRight;
     if (!m_newAnim.empty()) {
         props.strings[jk::unitAnim] = m_newAnim;
         m_newAnim = "";
@@ -85,6 +86,11 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     }
     m_ai->update(elapsed, *this, world);
 
+    if (m_walkingRight && m_physicsObject->getVelocity().x < 0) {
+        m_walkingRight = false;
+    } else if (!m_walkingRight && m_physicsObject->getVelocity().x > 0) {
+        m_walkingRight = true;
+    }
     m_pos = m_physicsObject->getPosition();
     if (m_pos.x <= 0) {
         m_pos.x = 0;

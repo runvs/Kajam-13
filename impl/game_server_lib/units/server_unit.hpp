@@ -41,6 +41,7 @@ private:
 
     jt::Vector2f m_pos;
     jt::Vector2f m_offset;
+    bool m_walkingRight { true };
     int m_unitID { 0 };
     int m_playerID { 0 };
     float m_age { 0.0f };

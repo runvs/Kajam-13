@@ -77,6 +77,14 @@ void Unit::updateState(ObjectProperties const& props)
             m_animTimeUntilBackToIdle = m_anim->getCurrentAnimTotalTime();
         }
     }
+
+    if (props.bools.at(jk::unitWalkingRight)) {
+        m_anim->setOffset(GP::UnitAnimationOffset());
+        m_anim->setScale(jt::Vector2f { 1.0f, 1.0f });
+    } else {
+        m_anim->setScale(jt::Vector2f { -1.0f, 1.0f });
+        m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
+    }
 }
 
 void Unit::setPosition(jt::Vector2f const& pos)
