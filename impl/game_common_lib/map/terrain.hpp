@@ -6,8 +6,8 @@
 #include <string>
 
 constexpr int terrainWidthPerPlayerInChunks { 16 };
-constexpr int terrainHeightInChunksPerPlayerInChunks { 15 };
-constexpr int terrainFlankHeightInChunks { 5 };
+constexpr int terrainHeightInChunksPerPlayerInChunks { 19 };
+constexpr int terrainFlankHeightInChunks { 3 };
 constexpr int terrainWidthInChunks { terrainWidthPerPlayerInChunks * 2 };
 constexpr int terrainHeightInChunks { terrainHeightInChunksPerPlayerInChunks
     + terrainFlankHeightInChunks * 2 };
