@@ -20,8 +20,7 @@
 #include <memory>
 #include <stdexcept>
 
-void StateGame::onCreate()
-{
+void StateGame::onCreate() {
     getGame()->gfx().createZLayer(GP::ZLayerUI());
     m_world = std::make_shared<Terrain>();
     m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
@@ -48,7 +47,7 @@ void StateGame::onCreate()
     add(m_serverConnection);
     if (m_addBotAsPlayerOne) {
         if (m_addBotAsPlayerZero) {
-            getGame()->logger().warning("Create game with two bots", { "StateGame", "Bots" });
+            getGame()->logger().warning("Create game with two bots", {"StateGame", "Bots"});
         }
         Message m;
         m.type = MessageType::AddBot;
@@ -59,12 +58,11 @@ void StateGame::onCreate()
     m_arrowShape->setOffset(jt::OffsetMode::CENTER);
 }
 
-void StateGame::onEnter() { }
+void StateGame::onEnter() {}
 
-void StateGame::createPlayer() { }
+void StateGame::createPlayer() {}
 
-void StateGame::onUpdate(float const elapsed)
-{
+void StateGame::onUpdate(float const elapsed) {
     if (m_running) {
         // update game logic here
 
@@ -93,8 +91,7 @@ void StateGame::onUpdate(float const elapsed)
     m_vignette->update(elapsed);
 }
 
-void StateGame::playbackSimulation(float /*elapsed*/)
-{
+void StateGame::playbackSimulation(float /*elapsed*/) {
     if (m_simulationResultsForAllFrames.allFrames.size() != 0) {
         if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
             m_tickId++;
@@ -102,14 +99,14 @@ void StateGame::playbackSimulation(float /*elapsed*/)
         } else {
             transitionPlaybackToPlaceUnits();
         }
-        auto const& propertiesForAllUnitsForThisTick
-            = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
+        auto const &propertiesForAllUnitsForThisTick
+                = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
         placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
     }
 }
+
 void StateGame::placeUnitsForOneTick(
-    SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick)
-{
+        SimulationResultDataForOneFrame const &propertiesForAllUnitsForThisTick) {
     if (!propertiesForAllUnitsForThisTick.m_playerHP.empty()) {
         getGame()->logger().info("new player hp received");
         m_playerHP = propertiesForAllUnitsForThisTick.m_playerHP;
@@ -121,14 +118,14 @@ void StateGame::placeUnitsForOneTick(
             m_internalState = InternalState::EndWin;
         }
     }
-    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
+    for (auto const &propsForOneUnit: propertiesForAllUnitsForThisTick.m_units) {
 
         auto const unitID = propsForOneUnit.ints.at(jk::unitID);
         auto const playerID = propsForOneUnit.ints.at(jk::playerID);
         auto const unitType = propsForOneUnit.strings.at(jk::unitType);
         // TODO make this code a bit nicer
         bool unitFound = false;
-        for (auto& u : *m_units) {
+        for (auto &u: *m_units) {
             auto unit = u.lock();
             if (unit->getPlayerID() != playerID) {
                 continue;
@@ -151,22 +148,20 @@ void StateGame::placeUnitsForOneTick(
     }
 }
 
-void StateGame::transitionWaitForPlayersToStartPlaceUnits()
-{
+void StateGame::transitionWaitForPlayersToStartPlaceUnits() {
     m_playerIdDispatcher = std::make_shared<PlayerIdDispatcher>(m_serverConnection->getPlayerId());
     m_unitInfo = std::make_shared<UnitInfoCollection>(
-        getGame()->logger(), m_serverConnection->getUnitInfo());
+            getGame()->logger(), m_serverConnection->getUnitInfo());
 
     m_placementManager = std::make_shared<PlacementManager>(
-        m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
+            m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     m_placementManager->addFunds(200);
     add(m_placementManager);
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);
 }
 
-void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
-{
+void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const {
     m_clientEndPlacementData.m_properties = m_placementManager->getPlacedUnits();
     m_placementManager->clearPlacedUnits();
     m_serverConnection->readyRound(m_clientEndPlacementData);
@@ -174,39 +169,54 @@ void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
     m_placementManager->setActive(false);
     m_world_renderer->setDrawGrid(false);
 }
-void StateGame::transitionWaitForSimulationResultsToPlayback()
-{
+
+void StateGame::transitionWaitForSimulationResultsToPlayback() {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
     m_internalState = InternalState::Playback;
 }
 
-void StateGame::transitionPlaybackToPlaceUnits()
-{
+void StateGame::transitionPlaybackToPlaceUnits() {
     m_tickId = 0;
 
     resetAllUnits();
     m_round++;
-    getGame()->logger().info("finished playing round simulation", { "StateGame" });
+    getGame()->logger().info("finished playing round simulation", {"StateGame"});
     m_internalState = InternalState::PlaceUnits;
     m_placementManager->setActive(true);
     m_placementManager->addFunds(150 + 50 * m_round);
 }
 
-void StateGame::placeUnits(float /*elapsed*/)
-{
+void StateGame::placeUnits(float /*elapsed*/) {
     if (m_internalState != InternalState::PlaceUnits) {
-        throw std::logic_error { "placeUnits called when not in placeUnits state" };
+        throw std::logic_error{"placeUnits called when not in placeUnits state"};
     }
 }
 
-void StateGame::onDraw() const
-{
+void StateGame::onDraw() const {
     m_world_renderer->draw();
-    drawObjects();
 
+    // first draw all dead units
+    for (auto const &u: *m_units) {
+        auto const lockedUnit = u.lock();
+        if (!lockedUnit->isUnitAlive()) {
+            lockedUnit->draw();
+        }
+    }
+
+    // then draw all alive units
+    for (auto const &u: *m_units) {
+        auto const lockedUnit = u.lock();
+        if (lockedUnit->isUnitAlive()) {
+            lockedUnit->draw();
+        }
+    }
+
+    if (m_placementManager) {
+        m_placementManager->draw();
+    }
     if (m_internalState == InternalState::Playback) {
-        for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
+        for (auto const &a: m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
             m_arrowShape->setPosition(a.currentPos);
             m_arrowShape->update(0.0f);
             m_arrowShape->draw(renderTarget());
@@ -255,8 +265,7 @@ void StateGame::onDraw() const
     ImGui::End();
 }
 
-void StateGame::endGame()
-{
+void StateGame::endGame() {
     if (m_hasEnded) {
         // trigger this function only once
         return;
@@ -270,17 +279,15 @@ void StateGame::endGame()
 std::string StateGame::getName() const { return "State Game"; }
 
 void StateGame::setConnection(
-    std::shared_ptr<ClientNetworkConnection> connection, bool botAsPlayerZero, bool botAsPlayerOne)
-{
+        std::shared_ptr<ClientNetworkConnection> connection, bool botAsPlayerZero, bool botAsPlayerOne) {
     m_connection = connection;
     m_addBotAsPlayerZero = botAsPlayerZero;
     m_addBotAsPlayerOne = botAsPlayerOne;
 }
 
-void StateGame::resetAllUnits()
-{
+void StateGame::resetAllUnits() {
     auto propertiesForAllUnitsForThisTick = m_simulationResultsForAllFrames.allFrames.at(0);
-    for (auto& props : propertiesForAllUnitsForThisTick.m_units) {
+    for (auto &props: propertiesForAllUnitsForThisTick.m_units) {
         props.strings[jk::unitAnim] = "idle";
         props.floats[jk::hpCurrent] = props.floats[jk::hpMax];
     }
