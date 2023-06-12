@@ -16,5 +16,5 @@
   "movementSpeed": 50.0,
   "type": "peasant",
   "cost": 40,
-  "unlockCost": 0
+  "unlockCost": 25
 }
