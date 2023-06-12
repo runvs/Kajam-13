@@ -13,9 +13,9 @@ constexpr auto const chunkSizeHalf = chunkSize / 2.0f;
 // clang-format off
 sf::Color colorMap[] {
     // dirt layer
-    { 90, 45, 25 },
+    { 89, 60, 47 },
     // grassy layer
-    { 15, 100, 10 }, { 13, 80, 10 },
+    { 53, 99, 50 }, { 41, 79, 39 },
     // mountain layer
     { 60, 60, 60 }, { 120, 120, 120 }, { 160, 160, 160 },
     // mountain top
