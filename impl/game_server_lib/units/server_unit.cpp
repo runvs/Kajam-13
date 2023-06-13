@@ -42,8 +42,7 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
     fixtureDef.friction = 0.0f;
     fixtureDef.density = 1.0f;
     b2CircleShape circleCollider {};
-    // TODO move to GP
-    circleCollider.m_radius = terrainChunkSizeInPixel / 2.0f - 2.0f;
+    circleCollider.m_radius = m_infoBase.colliderRadius;
     fixtureDef.shape = &circleCollider;
     m_physicsObject->getB2Body()->CreateFixture(&fixtureDef);
 }
