@@ -54,14 +54,22 @@ ObjectProperties ServerUnit::saveState() const
     ObjectProperties props;
     props.ints[jk::unitID] = m_unitID;
     props.ints[jk::playerID] = m_playerID;
+    props.strings[jk::unitType] = m_infoBase.type;
+
+    props.ints[jk::experience] = m_infoBase.experience;
+    props.ints[jk::experienceForLevelUp] = m_infoBase.experienceForLevelUp;
+    props.ints[jk::level] = m_level;
+
     props.floats[jk::positionX] = m_pos.x;
     props.floats[jk::positionY] = m_pos.y;
+
     props.floats[jk::offsetX] = m_offset.x;
     props.floats[jk::offsetY] = m_offset.y;
     props.floats[jk::hpCurrent] = m_hp;
     props.floats[jk::hpMax] = m_infoLevel.hitpoints;
-    props.strings[jk::unitType] = m_infoBase.type;
+
     props.bools[jk::unitWalkingRight] = m_walkingRight;
+
     if (!m_newAnim.empty()) {
         props.strings[jk::unitAnim] = m_newAnim;
         m_newAnim = "";
@@ -69,31 +77,38 @@ ObjectProperties ServerUnit::saveState() const
     return props;
 }
 
-void ServerUnit::updateState(ObjectProperties const& props)
+void ServerUnit::updateState(ObjectProperties* props)
 {
+    m_roundStartObjectProperties = props;
+
     m_logger.debug("update State", { "ServerUnit" });
-    m_unitID = props.ints.at(jk::unitID);
-    m_playerID = props.ints.at(jk::playerID);
-    m_pos = jt::Vector2f { props.floats.at(jk::positionX), props.floats.at(jk::positionY) };
+    m_unitID = props->ints.at(jk::unitID);
+    m_playerID = props->ints.at(jk::playerID);
+    if (props->ints.count(jk::level) == 1) {
+        m_level = props->ints.at(jk::level);
+    } else {
+        m_level = 1;
+    }
+    m_pos = jt::Vector2f { props->floats.at(jk::positionX), props->floats.at(jk::positionY) };
     m_physicsObject->setPosition(m_pos);
-    m_offset = jt::Vector2f { props.floats.at(jk::offsetX), props.floats.at(jk::offsetY) };
+    m_offset = jt::Vector2f { props->floats.at(jk::offsetX), props->floats.at(jk::offsetY) };
 }
 
-void ServerUnit::upgradeUnit(const ObjectProperties& props)
+void ServerUnit::levelUnitUp()
 {
-    m_logger.info("upgrade unit", { "ServerUnit" });
-    if (props.ints.at(jk::unitID) != m_unitID) {
-        m_logger.warning("upgrade unit with invalid unitID", { "ServerUnit" });
+    m_logger.debug("Level up", { "ServerUnit" });
+    if (m_infoBase.experience > 0) {
+        m_logger.warning("Not enough experience to upgrade unit", { "ServerUnit" });
+        return;
     }
-    if (props.ints.at(jk::playerID) != m_playerID) {
-        m_logger.warning("upgrade unit with invalid playerID", { "ServerUnit" });
-    }
+    m_logger.info("upgrade unit to level: " + std::to_string(m_level), { "ServerUnit" });
 
-    if (props.floats.count("level") == 1) {
-        m_level++;
-        m_infoLevel.hitpoints = m_infoBase.hitpoints * m_level;
-        m_infoLevel.damage = m_infoBase.damage * m_level;
-    }
+    m_level++;
+    m_roundStartObjectProperties->ints[jk::level] = m_level;
+    m_infoLevel.hitpoints = m_infoBase.hitpoints * m_level;
+    m_infoLevel.damage = m_infoBase.damage * m_level;
+    // TODO store this in class variables and not in UnitInfo
+    m_infoBase.experience = m_infoBase.experienceForLevelUp * m_level;
 }
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
@@ -156,6 +171,7 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
 bool ServerUnit::isAlive() const { return m_hp > 0; }
 
 UnitInfo const& ServerUnit::getUnitInfoBase() const { return m_infoBase; }
+
 UnitInfo ServerUnit::getUnitInfoFull() const
 {
     UnitInfo info;
@@ -175,4 +191,14 @@ UnitInfo ServerUnit::getUnitInfoFull() const
 }
 
 std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physicsObject; }
+
 int ServerUnit::getCost() { return m_infoBase.cost; }
+void ServerUnit::gainExperience(int exp)
+{
+    m_infoBase.experience -= exp;
+    if (m_infoBase.experience <= 0) {
+        // TODO only level up if player pays for it
+        levelUnitUp();
+    }
+}
+int ServerUnit::getLevel() const { return m_level; }

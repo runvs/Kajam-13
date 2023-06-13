@@ -7,12 +7,14 @@
 #include <object_properties.hpp>
 #include <vector.hpp>
 
-Unit::Unit(const UnitInfo &info)
-        : m_info{info} {
+Unit::Unit(const UnitInfo& info)
+    : m_info { info }
+{
     m_hpMax = m_info.hitpoints;
 }
 
-void Unit::doCreate() {
+void Unit::doCreate()
+{
     m_anim = std::make_shared<jt::Animation>();
     m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
     m_anim->play("idle");
@@ -23,10 +25,16 @@ void Unit::doCreate() {
     m_hpBar->setBackColor(jt::colors::Gray);
     m_hpBar->setFrontColor(jt::colors::Green);
     m_hpBar->setZ(GP::ZLayerUI());
+
+    m_levelText = jt::dh::createText(renderTarget(), "", 12);
+    m_levelText->setZ(GP::ZLayerUI());
 }
 
-void Unit::doUpdate(float const elapsed) {
+void Unit::doUpdate(float const elapsed)
+{
     m_anim->update(elapsed);
+    m_levelText->setPosition(m_anim->getPosition() + jt::Vector2f { -4.0f, -6.0f });
+    m_levelText->update(elapsed);
 
     if (m_hp > 0) {
         if (m_animTimeUntilBackToIdle != -1.0f) {
@@ -39,25 +47,28 @@ void Unit::doUpdate(float const elapsed) {
     }
 
     m_hpBar->setCurrentValue(m_hp);
-    m_hpBar->setPosition(m_anim->getPosition() + jt::Vector2f{0.0f, -6.0f});
+    m_hpBar->setPosition(m_anim->getPosition() + jt::Vector2f { 0.0f, -6.0f });
     m_hpBar->update(elapsed);
 }
 
-void Unit::doDraw() const {
+void Unit::doDraw() const
+{
     m_anim->draw(renderTarget());
     if (m_hp > 0 && m_hp < m_hpMax) {
         m_hpBar->draw(renderTarget());
     }
+    m_levelText->draw(renderTarget());
 }
 
-void Unit::updateState(ObjectProperties const &props) {
+void Unit::updateState(ObjectProperties const& props)
+{
     if (props.ints.at(jk::unitID) != m_unitID) {
         getGame()->logger().error(
-                "updateState called with invalid unit id", {"Unit", "updateState"});
+            "updateState called with invalid unit id", { "Unit", "updateState" });
         return;
     }
-    setOffset({props.floats.at(jk::offsetX), props.floats.at(jk::offsetY)});
-    setPosition({props.floats.at(jk::positionX), props.floats.at(jk::positionY)});
+    setOffset({ props.floats.at(jk::offsetX), props.floats.at(jk::offsetY) });
+    setPosition({ props.floats.at(jk::positionX), props.floats.at(jk::positionY) });
     if (props.ints.at(jk::playerID) == 0) {
         m_anim->setColor(GP::ColorPlayer0());
     } else {
@@ -71,29 +82,38 @@ void Unit::updateState(ObjectProperties const &props) {
         if (animName == "damage") {
             m_animTimeUntilBackToIdle = m_anim->getCurrentAnimTotalTime();
         }
+        m_anim->update(0.0f);
     }
 
     if (props.bools.at(jk::unitWalkingRight)) {
         m_anim->setOffset(GP::UnitAnimationOffset());
-        m_anim->setScale(jt::Vector2f{1.0f, 1.0f});
+        m_anim->setScale(jt::Vector2f { 1.0f, 1.0f });
     } else {
-        m_anim->setScale(jt::Vector2f{-1.0f, 1.0f});
-        m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f{32.0f, 0.0f});
+        m_anim->setScale(jt::Vector2f { -1.0f, 1.0f });
+        m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
+    }
+    if (props.ints.count(jk::level) == 1) {
+        m_level = props.ints.at(jk::level);
+        if (m_level != 1) {
+            m_levelText->setText(std::to_string(m_level));
+        }
     }
 }
 
-void Unit::setPosition(jt::Vector2f const &pos) {
+void Unit::setPosition(jt::Vector2f const& pos)
+{
     m_position = pos;
     m_anim->setPosition(m_position + m_offset);
 }
 
 jt::Vector2f Unit::getPosition() const { return m_position; }
 
-void Unit::setOffset(jt::Vector2f const &offset) { m_offset = offset; }
+void Unit::setOffset(jt::Vector2f const& offset) { m_offset = offset; }
 
 jt::Vector2f Unit::getOffset() const { return m_offset; }
 
-ObjectProperties Unit::saveState() const {
+ObjectProperties Unit::saveState() const
+{
     ObjectProperties props;
     props.ints[jk::unitID] = m_unitID;
     props.ints[jk::playerID] = m_playerID;
@@ -106,13 +126,12 @@ ObjectProperties Unit::saveState() const {
 
 int Unit::getUnitID() const { return m_unitID; }
 
-void Unit::setIDs(int uid, int pid) {
+void Unit::setIDs(int uid, int pid)
+{
     m_unitID = uid;
     m_playerID = pid;
 }
 
 int Unit::getPlayerID() const { return m_playerID; }
 
-bool Unit::isUnitAlive() const {
-    return m_hp > 0;
-}
+bool Unit::isUnitAlive() const { return m_hp > 0; }

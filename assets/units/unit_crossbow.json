@@ -1,4 +1,13 @@
 {
+  "type": "crossbow",
+  "expMax": 100,
+  "hitpoints": 15.0,
+  "damage": 90.0,
+  "attackTimerMax": 4.0,
+  "movementSpeed": 12.0,
+  "colliderRadius": 4.0,
+  "cost": 200,
+  "unlockCost": 100,
   "ai": {
     "type": 1,
     "range": 13.0,
@@ -9,14 +18,5 @@
     {
       "jsonfilename": "assets/units/crossbowman.json"
     }
-  ],
-  "damage": 90.0,
-  "colliderRadius": 4.0,
-  "experience": 0,
-  "hitpoints": 15.0,
-  "attackTimerMax": 3.0,
-  "movementSpeed": 15.0,
-  "type": "crossbow",
-  "cost": 200,
-  "unlockCost": 100
+  ]
 }

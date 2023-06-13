@@ -1,4 +1,13 @@
 {
+  "type": "peasant",
+  "expMax": 100,
+  "hitpoints": 20.0,
+  "damage": 3.0,
+  "attackTimerMax": 0.75,
+  "movementSpeed": 40.0,
+  "colliderRadius": 8.0,
+  "cost": 45,
+  "unlockCost": 25,
   "ai": {
     "type": 0,
     "range": -1.0
@@ -7,14 +16,5 @@
     {
       "jsonfilename": "assets/units/peasant.json"
     }
-  ],
-  "damage": 3.0,
-  "colliderRadius": 8.0,
-  "experience": 0,
-  "hitpoints": 20.0,
-  "attackTimerMax": 0.75,
-  "movementSpeed": 45.0,
-  "type": "peasant",
-  "cost": 45,
-  "unlockCost": 25
+  ]
 }

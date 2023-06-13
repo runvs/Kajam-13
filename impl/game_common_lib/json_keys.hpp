@@ -36,6 +36,10 @@ constexpr auto playerHp = "playerHp";
 constexpr auto cost = "cost";
 constexpr auto unlockCost = "unlockCost";
 constexpr auto unitUpgrades = "unitUpgrades";
+
+constexpr auto experience = "exp";
+constexpr auto experienceForLevelUp = "expMax";
+constexpr auto level = "level";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

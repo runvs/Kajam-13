@@ -13,38 +13,59 @@
 
 class ServerUnit : public SimulationObjectInterface {
 public:
-    int getCost() override;
     explicit ServerUnit(jt::LoggerInterface& logger, const UnitInfo& info,
         std::shared_ptr<jt::Box2DWorldInterface> world);
+
     void update(float elapsed, WorldInfoInterface& world) override;
+
     ObjectProperties saveState() const override;
-    void updateState(ObjectProperties const& props) override;
-    void upgradeUnit(ObjectProperties const& props) override;
+
+    void updateState(ObjectProperties* props) override;
+
+    void levelUnitUp() override;
+
     void setUnitID(int unitID);
 
     void setPosition(jt::Vector2f const& pos);
+
     jt::Vector2f getPosition() const override;
+
     void setOffset(jt::Vector2f const& offset);
+
     jt::Vector2f getOffset() const override;
+
     int getPlayerID() const override;
+
     int getUnitID() const override;
+
     void takeDamage(const DamageInfo& damage) override;
+
     bool isAlive() const override;
 
     // base values
     UnitInfo const& getUnitInfoBase() const;
+
     // with upgrades
     UnitInfo getUnitInfoFull() const;
 
     std::shared_ptr<jt::Box2DObject> getPhysicsObject();
 
+    int getCost() override;
+
+    void gainExperience(int exp) override;
+    int getLevel() const override;
+
 private:
     jt::LoggerInterface& m_logger;
     std::shared_ptr<jt::Box2DObject> m_physicsObject { nullptr };
+
+    ObjectProperties* m_roundStartObjectProperties { nullptr };
+
     // basic values
     UnitInfo m_infoBase;
     // leveled Values
     UnitInfo m_infoLevel;
+
     // from upgrades
     UnitInfo m_infoUpgrades;
     std::unique_ptr<AiInterface> m_ai { nullptr };

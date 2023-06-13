@@ -1,4 +1,13 @@
 {
+  "type": "shieldman",
+  "expMax": 100,
+  "hitpoints": 250.0,
+  "damage": 12.0,
+  "attackTimerMax": 1.0,
+  "movementSpeed": 14.0,
+  "colliderRadius": 8.0,
+  "cost": 150,
+  "unlockCost": 50,
   "ai": {
     "type": 0,
     "range": -1.0
@@ -7,14 +16,5 @@
     {
       "jsonfilename": "assets/units/shieldman.json"
     }
-  ],
-  "damage": 12.0,
-  "colliderRadius": 8.0,
-  "experience": 0,
-  "hitpoints": 250.0,
-  "attackTimerMax": 1.0,
-  "movementSpeed": 15.0,
-  "type": "shieldman",
-  "cost": 150,
-  "unlockCost": 50
+  ]
 }

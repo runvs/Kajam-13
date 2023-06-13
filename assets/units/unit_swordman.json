@@ -1,4 +1,13 @@
 {
+  "type": "swordman",
+  "expMax": 100,
+  "hitpoints": 90.0,
+  "damage": 8.0,
+  "attackTimerMax": 1.0,
+  "movementSpeed": 22.0,
+  "colliderRadius": 8.0,
+  "cost": 75,
+  "unlockCost": 50,
   "ai": {
     "type": 0,
     "range": -1.0
@@ -7,14 +16,5 @@
     {
       "jsonfilename": "assets/units/swordman.json"
     }
-  ],
-  "damage": 8.0,
-  "colliderRadius": 8.0,
-  "experience": 0,
-  "hitpoints": 90.0,
-  "attackTimerMax": 1.0,
-  "movementSpeed": 30.0,
-  "type": "swordman",
-  "cost": 75,
-  "unlockCost": 50
+  ]
 }

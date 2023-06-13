@@ -141,6 +141,7 @@ void StateGame::placeUnitsForOneTick(
                 continue;
             }
             unit->updateState(propsForOneUnit);
+            unit->update(0.0f);
             unitFound = true;
             break;
         }
@@ -163,10 +164,12 @@ void StateGame::transitionWaitForPlayersToStartPlaceUnits()
 
     m_placementManager = std::make_shared<PlacementManager>(
         m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
-    m_placementManager->addFunds(200);
     add(m_placementManager);
-    m_internalState = InternalState::PlaceUnits;
+    m_placementManager->addFunds(200);
+    m_placementManager->update(0.0f);
     m_placementManager->setActive(true);
+
+    m_internalState = InternalState::PlaceUnits;
 }
 
 void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
@@ -221,6 +224,7 @@ void StateGame::onDraw() const
     for (auto const& u : *m_units) {
         auto const lockedUnit = u.lock();
         if (lockedUnit->isUnitAlive()) {
+            lockedUnit->update(0.0f);
             lockedUnit->draw();
         }
     }

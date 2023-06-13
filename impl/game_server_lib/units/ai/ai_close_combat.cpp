@@ -36,9 +36,12 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
             DamageInfo d;
             d.damage = unit.getUnitInfoFull().damage;
             target->takeDamage(d);
+            if (!target->isAlive()) {
+                // TODO use real exp gain from unit
+                unit.gainExperience(100);
+            }
         }
     }
 
     unit.getPhysicsObject()->setVelocity(dir * speed);
-    //    unit.setPosition(unit.getPosition() + dir * elapsed * speed);
 }

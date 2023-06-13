@@ -1,23 +1,22 @@
 {
+  "type": "archer",
+  "expMax": 100,
+  "hitpoints": 20.0,
+  "damage": 10.0,
+  "attackTimerMax": 1.0,
+  "movementSpeed": 18.0,
+  "colliderRadius": 4.0,
+  "cost": 50,
+  "unlockCost": 50,
   "ai": {
     "type": 1,
     "range": 10.0,
     "arrowHeight": 32.0,
     "arrowSpeed": 60.0
-  }
-  ,
+  },
   "animations": [
     {
       "jsonfilename": "assets/units/archer.json"
     }
-  ],
-  "damage": 10.0,
-  "colliderRadius": 4.0,
-  "experience": 0,
-  "hitpoints": 20.0,
-  "attackTimerMax": 1.0,
-  "movementSpeed": 20.0,
-  "type": "archer",
-  "cost": 50,
-  "unlockCost": 50
+  ]
 }

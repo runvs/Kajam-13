@@ -24,10 +24,10 @@ void GameSimulation::prepareSimulationForNewRound()
     m_simulationObjects.clear();
     m_b2World = std::make_shared<jt::Box2DWorldImpl>(jt::Vector2f { 0.0f, 0.0f });
 
-    for (auto const& props : m_unitInformationForRoundStart) {
+    for (auto& props : m_unitInformationForRoundStart) {
         auto obj = std::make_shared<ServerUnit>(
             m_logger, m_unitInfos.getInfoForType(props.strings.at(jk::unitType)), m_b2World);
-        obj->updateState(props);
+        obj->updateState(&props);
         m_simulationObjects.emplace_back(std::move(obj));
     }
 }
@@ -41,7 +41,7 @@ void GameSimulation::addUnit(const ObjectProperties& props)
     m_unitInformationForRoundStart.push_back(props);
 }
 
-float arrowParaboloa(float x, float maxHeight) { return -maxHeight * 4 * (x - x * x); }
+float arrowParabola(float x, float maxHeight) { return -maxHeight * 4 * (x - x * x); }
 
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
@@ -60,7 +60,7 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
             }
             auto const dif = arrow.endPos - arrow.startPos;
             arrow.currentPos = arrow.startPos + dif * timePercent
-                + jt::Vector2f { 0.0f, arrowParaboloa(timePercent, arrow.maxHeight) };
+                + jt::Vector2f { 0.0f, arrowParabola(timePercent, arrow.maxHeight) };
 
             // check for collision arrow - targets
             for (auto& target : m_simulationObjects) {
@@ -93,10 +93,9 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
             currentFrame.m_units.push_back(data);
         }
         currentFrame.m_frameId = i;
-        // TODO allow to end simulation earlier
+        // TODO allow to end simulation earlier or last longer
         bool const isLastFrame = (i == GP::NumberOfStepsPerRound() - 1);
         if (isLastFrame) {
-
             for (auto& obj : m_simulationObjects) {
                 if (!obj->isAlive()) {
                     continue;
