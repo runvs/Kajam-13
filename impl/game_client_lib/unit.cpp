@@ -57,7 +57,9 @@ void Unit::doDraw() const
     if (m_hp > 0 && m_hp < m_hpMax) {
         m_hpBar->draw(renderTarget());
     }
-    m_levelText->draw(renderTarget());
+    if (m_hp > 0) {
+        m_levelText->draw(renderTarget());
+    }
 }
 
 void Unit::updateState(ObjectProperties const& props)
