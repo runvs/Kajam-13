@@ -15,6 +15,7 @@ public:
 
     virtual ObjectProperties saveState() const = 0;
     virtual void updateState(ObjectProperties const& props) = 0;
+    virtual void upgradeUnit(ObjectProperties const& props) = 0;
 
     virtual int getPlayerID() const = 0;
     virtual int getUnitID() const = 0;

@@ -35,6 +35,7 @@ constexpr auto playerHp = "playerHp";
 
 constexpr auto cost = "cost";
 constexpr auto unlockCost = "unlockCost";
+constexpr auto unitUpgrades = "unitUpgrades";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

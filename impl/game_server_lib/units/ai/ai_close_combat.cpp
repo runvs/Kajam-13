@@ -28,13 +28,13 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
     if (speedFactor == 0.0f) {
         // TODO walk around obstacle / choose another direction / path-finding?
     }
-    float speed = unit.getInfo().movementSpeed * speedFactor;
-    if (dist < unit.getInfo().colliderRadius * 2.0f) {
+    float speed = unit.getUnitInfoFull().movementSpeed * speedFactor;
+    if (dist < unit.getUnitInfoFull().colliderRadius * 2.0f) {
         speed = 0;
         if (m_attackTimer <= 0) {
-            m_attackTimer = unit.getInfo().attackTimerMax;
+            m_attackTimer = unit.getUnitInfoFull().attackTimerMax;
             DamageInfo d;
-            d.damage = unit.getInfo().damage;
+            d.damage = unit.getUnitInfoFull().damage;
             target->takeDamage(d);
         }
     }

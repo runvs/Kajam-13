@@ -4,8 +4,8 @@
 #include "simulation_result_data.hpp"
 #include "vector.hpp"
 #include <asio/ip/tcp.hpp>
-#include <client_end_placement_data.hpp>
 #include <client_network_connection.hpp>
+#include <client_placement_data.hpp>
 #include <game_object.hpp>
 #include <log/logger_interface.hpp>
 #include <object_properties.hpp>
@@ -18,7 +18,7 @@ public:
     void setConnection(std::shared_ptr<ClientNetworkConnection> connection);
     std::shared_ptr<ClientNetworkConnection> getConnection();
 
-    void readyRound(ClientEndPlacementData const& data);
+    void readyRound(ClientPlacementData const& data);
 
     bool areAllPlayersConnected() const;
     bool isRoundDataReady() const;

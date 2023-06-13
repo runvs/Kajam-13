@@ -15,22 +15,24 @@
 #include <memory>
 #include <string>
 
-ServerUnit::ServerUnit(jt::LoggerInterface& logger, const UnitInfo& info,
+ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
     std::shared_ptr<jt::Box2DWorldInterface> world)
     : m_logger { logger }
 {
-    m_info = info;
-    if (m_info.ai.type == AiInfo::CLOSE_COMBAT) {
+    m_infoBase = info;
+    m_infoLevel = info;
+
+    if (m_infoBase.ai.type == AiInfo::CLOSE_COMBAT) {
         m_ai = std::make_unique<AiCloseCombat>();
-    } else if (m_info.ai.type == AiInfo::RANGED_COMBAT) {
+    } else if (m_infoBase.ai.type == AiInfo::RANGED_COMBAT) {
         m_ai = std::make_unique<AiRangedCombat>();
     } else {
-        m_logger.error("Create a unit with unknown ai type: " + std::to_string(m_info.ai.type),
+        m_logger.error("Create a unit with unknown ai type: " + std::to_string(m_infoBase.ai.type),
             { "ServerUnit", "Ai" });
         m_ai = std::make_unique<AiCloseCombat>();
     }
 
-    m_hp = m_info.hitpoints;
+    m_hp = m_infoBase.hitpoints;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -57,8 +59,8 @@ ObjectProperties ServerUnit::saveState() const
     props.floats[jk::offsetX] = m_offset.x;
     props.floats[jk::offsetY] = m_offset.y;
     props.floats[jk::hpCurrent] = m_hp;
-    props.floats[jk::hpMax] = m_info.hitpoints;
-    props.strings[jk::unitType] = m_info.type;
+    props.floats[jk::hpMax] = m_infoLevel.hitpoints;
+    props.strings[jk::unitType] = m_infoBase.type;
     props.bools[jk::unitWalkingRight] = m_walkingRight;
     if (!m_newAnim.empty()) {
         props.strings[jk::unitAnim] = m_newAnim;
@@ -75,6 +77,23 @@ void ServerUnit::updateState(ObjectProperties const& props)
     m_pos = jt::Vector2f { props.floats.at(jk::positionX), props.floats.at(jk::positionY) };
     m_physicsObject->setPosition(m_pos);
     m_offset = jt::Vector2f { props.floats.at(jk::offsetX), props.floats.at(jk::offsetY) };
+}
+
+void ServerUnit::upgradeUnit(const ObjectProperties& props)
+{
+    m_logger.info("upgrade unit", { "ServerUnit" });
+    if (props.ints.at(jk::unitID) != m_unitID) {
+        m_logger.warning("upgrade unit with invalid unitID", { "ServerUnit" });
+    }
+    if (props.ints.at(jk::playerID) != m_playerID) {
+        m_logger.warning("upgrade unit with invalid playerID", { "ServerUnit" });
+    }
+
+    if (props.floats.count("level") == 1) {
+        m_level++;
+        m_infoLevel.hitpoints = m_infoBase.hitpoints * m_level;
+        m_infoLevel.damage = m_infoBase.damage * m_level;
+    }
 }
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
@@ -136,6 +155,24 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
 
 bool ServerUnit::isAlive() const { return m_hp > 0; }
 
-UnitInfo const& ServerUnit::getInfo() const { return m_info; }
+UnitInfo const& ServerUnit::getUnitInfoBase() const { return m_infoBase; }
+UnitInfo ServerUnit::getUnitInfoFull() const
+{
+    UnitInfo info;
+    info.hitpoints = m_infoLevel.hitpoints + m_infoUpgrades.hitpoints;
+    info.damage = m_infoLevel.damage + m_infoUpgrades.damage;
+    info.unlockCost = m_infoLevel.unlockCost - m_infoUpgrades.unlockCost;
+    info.cost = m_infoLevel.cost - m_infoUpgrades.cost;
+    info.type = m_infoBase.type;
+    info.ai = m_infoBase.ai;
+    info.attackTimerMax = m_infoLevel.attackTimerMax - m_infoUpgrades.attackTimerMax;
+    info.animations = m_infoBase.animations;
+    info.colliderRadius = m_infoBase.colliderRadius;
+    info.movementSpeed = m_infoLevel.movementSpeed + m_infoUpgrades.movementSpeed;
+    info.experience = m_infoBase.experience;
+
+    return info;
+}
+
 std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physicsObject; }
-int ServerUnit::getCost() { return m_info.cost; }
+int ServerUnit::getCost() { return m_infoBase.cost; }

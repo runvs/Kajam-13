@@ -1,8 +1,8 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
-#include <client_end_placement_data.hpp>
 #include <client_network_connection.hpp>
+#include <client_placement_data.hpp>
 #include <game_properties.hpp>
 #include <game_state.hpp>
 #include <map/terrain.hpp>
@@ -61,7 +61,7 @@ private:
     std::shared_ptr<PlacementManager> m_placementManager { nullptr };
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
 
-    mutable ClientEndPlacementData m_clientEndPlacementData;
+    mutable ClientPlacementData m_clientEndPlacementData;
 
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
 

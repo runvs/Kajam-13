@@ -52,7 +52,7 @@ void ServerConnection::doUpdate(const float elapsed)
     }
 }
 
-void ServerConnection::readyRound(ClientEndPlacementData const& data)
+void ServerConnection::readyRound(ClientPlacementData const& data)
 {
     Message m;
     m.type = MessageType::RoundReady;
