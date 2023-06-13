@@ -33,6 +33,7 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
     }
 
     m_hp = m_infoBase.hitpoints;
+    m_experience = m_infoBase.experienceForLevelUp;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -96,7 +97,7 @@ void ServerUnit::updateState(ObjectProperties* props)
 void ServerUnit::levelUnitUp()
 {
     m_logger.debug("Level up", { "ServerUnit" });
-    if (m_infoBase.experience > 0) {
+    if (m_experience > 0) {
         m_logger.warning("Not enough experience to upgrade unit", { "ServerUnit" });
         return;
     }
@@ -106,8 +107,7 @@ void ServerUnit::levelUnitUp()
     m_roundStartObjectProperties->ints[jk::level] = m_level;
     m_infoLevel.hitpoints = m_infoBase.hitpoints * m_level;
     m_infoLevel.damage = m_infoBase.damage * m_level;
-    // TODO store this in class variables and not in UnitInfo
-    m_infoBase.experience = m_infoBase.experienceForLevelUp * m_level;
+    m_experience = m_infoBase.experienceForLevelUp * m_level;
 }
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
@@ -184,7 +184,7 @@ UnitInfo ServerUnit::getUnitInfoFull() const
     info.animations = m_infoBase.animations;
     info.colliderRadius = m_infoBase.colliderRadius;
     info.movementSpeed = m_infoLevel.movementSpeed + m_infoUpgrades.movementSpeed;
-    info.experience = m_infoBase.experience;
+    info.experience = m_experience;
 
     return info;
 }
@@ -194,8 +194,8 @@ std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physi
 int ServerUnit::getCost() { return m_infoBase.cost; }
 void ServerUnit::gainExperience(int exp)
 {
-    m_infoBase.experience -= exp;
-    if (m_infoBase.experience <= 0) {
+    m_experience -= exp;
+    if (m_experience <= 0) {
         // TODO only level up if player pays for it
         levelUnitUp();
     }

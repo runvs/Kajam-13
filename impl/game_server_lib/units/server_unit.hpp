@@ -79,6 +79,7 @@ private:
     int m_playerID { 0 };
     float m_age { 0.0f };
     float m_hp { 1.0f };
+    int m_experience {};
 
     mutable std::string m_newAnim { "" };
 };
