@@ -37,18 +37,17 @@ void GameServer::update(float elapsed)
     if (m_allPlayersReady) {
         if (!m_simulationStarted) {
             std::unique_lock<std::mutex> lock { m_mutex };
-
-            auto const playerDataCopy = m_playerData;
             auto botDataCopy = m_botData;
             lock.unlock();
 
+            // TODO only pass in playerID of bo
             performAI(botDataCopy);
 
-            startRoundSimulation(playerDataCopy, botDataCopy);
+            startRoundSimulation();
 
+            m_logger.info(
+                "Round Simulation done. Waiting for next round", { "network", "GameServer" });
             for (auto& p : m_playerData) {
-                m_logger.info(
-                    "Round Simulation done. Waiting for next round", { "network", "GameServer" });
                 p.second.roundReady = false;
             }
             m_simulationStarted = false;
@@ -69,7 +68,7 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
         std::vector<std::string> const possibleUnits = m_unitInfos.getTypes();
         auto const unitType
             = *jt::SystemHelper::select_randomly(possibleUnits.cbegin(), possibleUnits.cend());
-        ;
+
         props.floats[jk::offsetX] = 0.0f;
         props.floats[jk::offsetY] = 0.0f;
         props.strings[jk::unitType] = unitType;
@@ -274,15 +273,8 @@ void GameServer::discard(
     m_logger.warning("discard message '" + messageContent + "'", { "network", "GameServer" });
 }
 
-void GameServer::startRoundSimulation(
-    std::map<int, PlayerInfo> const& playerData, std::map<int, PlayerInfo> const& botData)
+void GameServer::startRoundSimulation()
 {
-    // merge player and bot data
-    std::map<int, PlayerInfo> combinedData;
-    // TODO check that ids are unique
-    combinedData.insert(playerData.cbegin(), playerData.cend());
-    combinedData.insert(botData.cbegin(), botData.cend());
-
     m_logger.info(
         "start round simulation for round " + std::to_string(m_round), { "network", "GameServer" });
 

@@ -41,8 +41,7 @@ private:
     void checkForAllPlayersConnected();
 
     // explicit copy of player data is desired
-    void startRoundSimulation(
-        std::map<int, PlayerInfo> const& playerData, std::map<int, PlayerInfo> const& botData);
+    void startRoundSimulation();
 
     // all those functions will be called from the asio thread, synchronization is needed when
     // things should be handled from the main thread

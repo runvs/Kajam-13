@@ -16,7 +16,6 @@ int main()
 
     auto compressor = std::make_shared<CompressorImpl>();
     LoggingCompressor loggingCompressor { logger, compressor };
-    // TODO think about using jt::game with null window
     try {
         GameServer server { logger, loggingCompressor };
 
