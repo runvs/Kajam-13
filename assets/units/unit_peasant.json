@@ -8,13 +8,13 @@
       "jsonfilename": "assets/units/peasant.json"
     }
   ],
-  "damage": 4.0,
+  "damage": 3.0,
   "colliderRadius": 8.0,
   "experience": 0,
-  "hitpoints": 30.0,
+  "hitpoints": 20.0,
   "attackTimerMax": 0.75,
-  "movementSpeed": 50.0,
+  "movementSpeed": 45.0,
   "type": "peasant",
-  "cost": 40,
-  "unlockCost": 0
+  "cost": 45,
+  "unlockCost": 25
 }

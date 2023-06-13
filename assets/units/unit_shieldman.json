@@ -15,6 +15,6 @@
   "attackTimerMax": 1.0,
   "movementSpeed": 15.0,
   "type": "shieldman",
-  "cost": 200,
+  "cost": 150,
   "unlockCost": 50
 }

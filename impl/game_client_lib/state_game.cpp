@@ -57,6 +57,9 @@ void StateGame::onCreate()
 
     m_arrowShape = jt::dh::createShapeCircle(2, jt::colors::White, textureManager());
     m_arrowShape->setOffset(jt::OffsetMode::CENTER);
+
+    m_clouds = std::make_shared<jt::Clouds>(jt::Vector2f { 4.0f, 2.0f });
+    add(m_clouds);
 }
 
 void StateGame::onEnter() { }
@@ -107,6 +110,7 @@ void StateGame::playbackSimulation(float /*elapsed*/)
         placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
     }
 }
+
 void StateGame::placeUnitsForOneTick(
     SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick)
 {
@@ -174,6 +178,7 @@ void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
     m_placementManager->setActive(false);
     m_world_renderer->setDrawGrid(false);
 }
+
 void StateGame::transitionWaitForSimulationResultsToPlayback()
 {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
@@ -203,8 +208,26 @@ void StateGame::placeUnits(float /*elapsed*/)
 void StateGame::onDraw() const
 {
     m_world_renderer->draw();
-    drawObjects();
 
+    // first draw all dead units
+    for (auto const& u : *m_units) {
+        auto const lockedUnit = u.lock();
+        if (!lockedUnit->isUnitAlive()) {
+            lockedUnit->draw();
+        }
+    }
+
+    // then draw all alive units
+    for (auto const& u : *m_units) {
+        auto const lockedUnit = u.lock();
+        if (lockedUnit->isUnitAlive()) {
+            lockedUnit->draw();
+        }
+    }
+
+    if (m_placementManager) {
+        m_placementManager->draw();
+    }
     if (m_internalState == InternalState::Playback) {
         for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
             m_arrowShape->setPosition(a.currentPos);
@@ -213,6 +236,7 @@ void StateGame::onDraw() const
         }
     }
 
+    m_clouds->draw();
     m_vignette->draw();
 
     ImGui::Begin("Network");

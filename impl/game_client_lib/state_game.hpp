@@ -9,6 +9,7 @@
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
+#include <screeneffects/clouds.hpp>
 #include <server_connection.hpp>
 #include <simulation_result_data.hpp>
 #include <terrain_renderer.hpp>
@@ -60,6 +61,7 @@ private:
 
     std::shared_ptr<PlacementManager> m_placementManager { nullptr };
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
+    std::shared_ptr<jt::Clouds> m_clouds { nullptr };
 
     mutable ClientPlacementData m_clientEndPlacementData;
 
@@ -83,9 +85,13 @@ private:
     std::map<int, int> m_playerHP { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
     void onCreate() override;
+
     void onEnter() override;
+
     void onUpdate(float const elapsed) override;
+
     void onDraw() const override;
+
     void endGame();
 
     void createPlayer();
@@ -95,12 +101,17 @@ private:
     void playbackSimulation(float elapsed);
 
     void transitionWaitForPlayersToStartPlaceUnits();
+
     // const as it needs to be called from onDraw;
     void transitionPlaceUnitsToWaitForSimulationResults() const;
+
     void transitionWaitForSimulationResultsToPlayback();
+
     void transitionPlaybackToPlaceUnits();
+
     void placeUnitsForOneTick(
         SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick);
+
     void resetAllUnits();
 };
 
