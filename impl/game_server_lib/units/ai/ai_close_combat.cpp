@@ -1,9 +1,9 @@
-
 #include "ai_close_combat.hpp"
-#include "vector.hpp"
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
+#include <random/random.hpp>
 #include <units/server_unit.hpp>
+#include <vector.hpp>
 #include <world_info_interface.hpp>
 
 void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& world)
@@ -32,7 +32,8 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
     if (dist < attackRange) {
         speed = 0;
         if (m_attackTimer <= 0) {
-            m_attackTimer = unit.getUnitInfoFull().attackTimerMax;
+            m_attackTimer
+                = unit.getUnitInfoFull().attackTimerMax + jt::Random::getFloat(0.0f, 0.1f);
             DamageInfo d;
             d.damage = unit.getUnitInfoFull().damage;
             target->takeDamage(d);
