@@ -20,11 +20,20 @@ constexpr auto messageData = "data";
 
 constexpr auto hpCurrent = "hpCurrent";
 constexpr auto hpMax = "hpMax";
+constexpr auto hpInitial = "hitpoints";
+
 constexpr auto attackTimerMax = "attackTimerMax";
+
+constexpr auto movementSpeed = "movementSpeed";
+
+constexpr auto colliderRadius = "colliderRadius";
+
+constexpr auto ai = "ai";
+constexpr auto animations = "animations";
 
 constexpr auto files = "files";
 
-constexpr auto unitType = "unitType";
+constexpr auto unitType = "type";
 constexpr auto unitAnim = "unitNewAnim";
 constexpr auto unitWalkingRight = "walkRight";
 
@@ -38,7 +47,8 @@ constexpr auto unlockCost = "unlockCost";
 constexpr auto unitUpgrades = "unitUpgrades";
 
 constexpr auto experience = "exp";
-constexpr auto experienceForLevelUp = "expMax";
+constexpr auto experienceForLevelUp = "expRequiredForLevelUp";
+constexpr auto experienceGainWhenKilled = "expGainWhenKilled";
 constexpr auto level = "level";
 } // namespace jk
 

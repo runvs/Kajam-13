@@ -46,7 +46,7 @@ public:
     UnitInfo const& getUnitInfoBase() const;
 
     // with upgrades
-    UnitInfo getUnitInfoFull() const;
+    UnitInfo getUnitInfoFull() const override;
 
     std::shared_ptr<jt::Box2DObject> getPhysicsObject();
 

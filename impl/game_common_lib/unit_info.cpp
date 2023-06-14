@@ -17,25 +17,26 @@ void to_json(nlohmann::json& j, UnitInfo const& p)
 {
     j = nlohmann::json {
         // clang-format off
-        { "type", p.type },
+        { jk::unitType, p.type },
 
-        { jk::experienceForLevelUp, p.experienceForLevelUp },
+        { jk::experienceForLevelUp, p.experienceRequiredForLevelUp },
+        { jk::experienceGainWhenKilled, p.experienceGainWhenKilled },
 
-        { "hitpoints", p.hitpoints },
+        { jk::hpInitial, p.hitpointsMax },
 
-        { "damage", p.damage },
+        { jk::damage, p.damage },
 
         { jk::attackTimerMax, p.attackTimerMax },
-        { "movementSpeed", p.movementSpeed },
+        { jk::movementSpeed, p.movementSpeed },
 
-        { "colliderRadius", p.colliderRadius },
+        { jk::colliderRadius, p.colliderRadius },
 
         { jk::cost, p.cost },
         { jk::unlockCost, p.unlockCost },
 
 
-        { "animations", p.animations },
-        { "ai", p.ai }
+        { jk::animations, p.animations },
+        { jk::ai, p.ai }
         // clang-format on
     };
 }
@@ -59,23 +60,23 @@ void from_json(nlohmann::json const& j, AiInfo& p)
 
 void from_json(nlohmann::json const& j, UnitInfo& p)
 {
-    j.at("type").get_to(p.type);
+    j.at(jk::unitType).get_to(p.type);
 
-    j.at(jk::experienceForLevelUp).get_to(p.experienceForLevelUp);
-    p.experience = p.experienceForLevelUp;
+    j.at(jk::experienceForLevelUp).get_to(p.experienceRequiredForLevelUp);
+    j.at(jk::experienceGainWhenKilled).get_to(p.experienceGainWhenKilled);
 
-    j.at("hitpoints").get_to(p.hitpoints);
+    j.at(jk::hpInitial).get_to(p.hitpointsMax);
 
-    j.at("damage").get_to(p.damage);
+    j.at(jk::damage).get_to(p.damage);
 
     j.at(jk::attackTimerMax).get_to(p.attackTimerMax);
-    j.at("movementSpeed").get_to(p.movementSpeed);
+    j.at(jk::movementSpeed).get_to(p.movementSpeed);
 
-    j.at("colliderRadius").get_to(p.colliderRadius);
+    j.at(jk::colliderRadius).get_to(p.colliderRadius);
 
     j.at(jk::cost).get_to(p.cost);
     j.at(jk::unlockCost).get_to(p.unlockCost);
 
-    j.at("ai").get_to(p.ai);
-    j.at("animations").get_to(p.animations);
+    j.at(jk::ai).get_to(p.ai);
+    j.at(jk::animations).get_to(p.animations);
 }

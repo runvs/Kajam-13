@@ -164,7 +164,7 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
         // -60 -> 2
         return 0.0000983332f * slope * slope - 0.0122135f * slope + 0.957329f;
     }
-    return 0.0f;
+    return 0.1f;
 }
 
 jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos)

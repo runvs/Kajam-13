@@ -1,6 +1,7 @@
 {
   "type": "archer",
-  "expMax": 100,
+  "expRequiredForLevelUp": 100,
+  "expGainWhenKilled": 30,
   "hitpoints": 20.0,
   "damage": 10.0,
   "attackTimerMax": 1.0,

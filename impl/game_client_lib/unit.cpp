@@ -10,7 +10,7 @@
 Unit::Unit(const UnitInfo& info)
     : m_info { info }
 {
-    m_hpMax = m_info.hitpoints;
+    m_hpMax = m_info.hitpointsMax;
 }
 
 void Unit::doCreate()

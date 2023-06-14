@@ -1,8 +1,9 @@
 #ifndef JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 #define JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 
-#include "damage_info.hpp"
+#include <damage_info.hpp>
 #include <object_properties.hpp>
+#include <unit_info.hpp>
 #include <vector.hpp>
 
 class WorldInfoInterface;
@@ -28,6 +29,7 @@ public:
     virtual void takeDamage(DamageInfo const& damage) = 0;
     virtual int getCost() = 0;
     virtual void gainExperience(int exp) = 0;
+    virtual UnitInfo getUnitInfoFull() const = 0;
 };
 
 #endif // JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP

@@ -24,12 +24,12 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
     auto dir = target->getPosition() - unit.getPosition();
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
-    auto speedFactor = world.getLocalSpeedFactorAt(unit.getPosition(), dir);
-    if (speedFactor == 0.0f) {
-        // TODO walk around obstacle / choose another direction / path-finding?
-    }
+    auto const speedFactor = world.getLocalSpeedFactorAt(unit.getPosition(), dir);
     float speed = unit.getUnitInfoFull().movementSpeed * speedFactor;
-    if (dist < unit.getUnitInfoFull().colliderRadius * 2.0f) {
+    auto const attackRange
+        = (unit.getUnitInfoFull().colliderRadius * target->getUnitInfoFull().colliderRadius) / 2.0f
+        + 1.0f;
+    if (dist < attackRange) {
         speed = 0;
         if (m_attackTimer <= 0) {
             m_attackTimer = unit.getUnitInfoFull().attackTimerMax;
@@ -37,8 +37,7 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
             d.damage = unit.getUnitInfoFull().damage;
             target->takeDamage(d);
             if (!target->isAlive()) {
-                // TODO use real exp gain from unit
-                unit.gainExperience(100);
+                unit.gainExperience(target->getUnitInfoFull().experienceGainWhenKilled);
             }
         }
     }

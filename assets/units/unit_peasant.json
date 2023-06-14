@@ -1,6 +1,7 @@
 {
   "type": "peasant",
-  "expMax": 100,
+  "expRequiredForLevelUp": 100,
+  "expGainWhenKilled": 10,
   "hitpoints": 20.0,
   "damage": 3.0,
   "attackTimerMax": 0.75,

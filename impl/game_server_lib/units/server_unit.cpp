@@ -32,8 +32,8 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
         m_ai = std::make_unique<AiCloseCombat>();
     }
 
-    m_hp = m_infoBase.hitpoints;
-    m_experience = m_infoBase.experienceForLevelUp;
+    m_hp = m_infoBase.hitpointsMax;
+    m_experience = m_infoBase.experienceRequiredForLevelUp;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -56,8 +56,8 @@ ObjectProperties ServerUnit::saveState() const
     props.ints[jk::playerID] = m_playerID;
     props.strings[jk::unitType] = m_infoBase.type;
 
-    props.ints[jk::experience] = m_infoBase.experience;
-    props.ints[jk::experienceForLevelUp] = m_infoBase.experienceForLevelUp;
+    props.ints[jk::experience] = m_experience;
+    props.ints[jk::experienceForLevelUp] = m_infoBase.experienceRequiredForLevelUp;
     props.ints[jk::level] = m_level;
 
     props.floats[jk::positionX] = m_pos.x;
@@ -66,7 +66,7 @@ ObjectProperties ServerUnit::saveState() const
     props.floats[jk::offsetX] = m_offset.x;
     props.floats[jk::offsetY] = m_offset.y;
     props.floats[jk::hpCurrent] = m_hp;
-    props.floats[jk::hpMax] = m_infoLevel.hitpoints;
+    props.floats[jk::hpMax] = m_infoLevel.hitpointsMax;
 
     props.bools[jk::unitWalkingRight] = m_walkingRight;
 
@@ -105,9 +105,9 @@ void ServerUnit::levelUnitUp()
 
     m_level++;
     m_roundStartObjectProperties->ints[jk::level] = m_level;
-    m_infoLevel.hitpoints = m_infoBase.hitpoints * m_level;
+    m_infoLevel.hitpointsMax = m_infoBase.hitpointsMax * m_level;
     m_infoLevel.damage = m_infoBase.damage * m_level;
-    m_experience = m_infoBase.experienceForLevelUp * m_level;
+    m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
 }
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
@@ -174,7 +174,7 @@ UnitInfo const& ServerUnit::getUnitInfoBase() const { return m_infoBase; }
 UnitInfo ServerUnit::getUnitInfoFull() const
 {
     UnitInfo info;
-    info.hitpoints = m_infoLevel.hitpoints + m_infoUpgrades.hitpoints;
+    info.hitpointsMax = m_infoLevel.hitpointsMax + m_infoUpgrades.hitpointsMax;
     info.damage = m_infoLevel.damage + m_infoUpgrades.damage;
     info.unlockCost = m_infoLevel.unlockCost - m_infoUpgrades.unlockCost;
     info.cost = m_infoLevel.cost - m_infoUpgrades.cost;
@@ -184,7 +184,6 @@ UnitInfo ServerUnit::getUnitInfoFull() const
     info.animations = m_infoBase.animations;
     info.colliderRadius = m_infoBase.colliderRadius;
     info.movementSpeed = m_infoLevel.movementSpeed + m_infoUpgrades.movementSpeed;
-    info.experience = m_experience;
 
     return info;
 }

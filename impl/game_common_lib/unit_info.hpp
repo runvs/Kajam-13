@@ -19,13 +19,14 @@ struct AiInfo {
     float arrowSpeed { 0.0f };
 };
 
+/// Storage for initial values for units
 struct UnitInfo {
     std::string type = "";
 
-    int experience { 0 };
-    int experienceForLevelUp { 100 };
-    
-    float hitpoints { 0.0f };
+    int experienceRequiredForLevelUp { 0 };
+    int experienceGainWhenKilled { 0 };
+
+    float hitpointsMax { 0.0f };
 
     // TODO use damage struct
     float damage { 0.0f };

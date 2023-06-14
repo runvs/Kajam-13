@@ -1,11 +1,12 @@
 {
   "type": "shieldman",
-  "expMax": 100,
+  "expRequiredForLevelUp": 100,
+  "expGainWhenKilled": 100,
   "hitpoints": 250.0,
   "damage": 12.0,
   "attackTimerMax": 1.0,
   "movementSpeed": 14.0,
-  "colliderRadius": 8.0,
+  "colliderRadius": 6.0,
   "cost": 150,
   "unlockCost": 50,
   "ai": {
