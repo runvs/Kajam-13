@@ -36,6 +36,7 @@ class Hud;
 
 enum class InternalState {
     WaitForAllPlayers,
+    SelectStartingUnits,
     PlaceUnits,
     WaitForSimulationResults,
     Playback,
@@ -100,7 +101,8 @@ private:
 
     void playbackSimulation(float elapsed);
 
-    void transitionWaitForPlayersToStartPlaceUnits();
+    void transitionWaitForPlayersToSelectStartingUnits();
+    void transitionSelectStartingUnitsToPlaceUnits() const;
 
     // const as it needs to be called from onDraw;
     void transitionPlaceUnitsToWaitForSimulationResults() const;

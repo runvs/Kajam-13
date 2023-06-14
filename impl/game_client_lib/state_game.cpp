@@ -1,10 +1,9 @@
 ﻿#include "state_game.hpp"
-#include "color/color.hpp"
-#include "graphics/drawable_interface.hpp"
-#include "simulation_result_data.hpp"
+#include <color/color.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
+#include <graphics/drawable_interface.hpp>
 #include <input/keyboard/keyboard_defines.hpp>
 #include <json_keys.hpp>
 #include <message.hpp>
@@ -12,10 +11,10 @@
 #include <player_id_dispatcher.hpp>
 #include <screeneffects/vignette.hpp>
 #include <server_connection.hpp>
+#include <simulation_result_data.hpp>
 #include <state_menu.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
-#include "zlib.h"
 #include <imgui.h>
 #include <memory>
 #include <stdexcept>
@@ -78,7 +77,7 @@ void StateGame::onUpdate(float const elapsed)
 
         if (m_internalState == InternalState::WaitForAllPlayers) {
             if (m_serverConnection->areAllPlayersConnected()) {
-                transitionWaitForPlayersToStartPlaceUnits();
+                transitionWaitForPlayersToSelectStartingUnits();
             }
         } else if (m_internalState == InternalState::PlaceUnits) {
             m_world_renderer->setDrawGrid(true);
@@ -156,7 +155,7 @@ void StateGame::placeUnitsForOneTick(
     }
 }
 
-void StateGame::transitionWaitForPlayersToStartPlaceUnits()
+void StateGame::transitionWaitForPlayersToSelectStartingUnits()
 {
     m_playerIdDispatcher = std::make_shared<PlayerIdDispatcher>(m_serverConnection->getPlayerId());
     m_unitInfo = std::make_shared<UnitInfoCollection>(
@@ -165,9 +164,17 @@ void StateGame::transitionWaitForPlayersToStartPlaceUnits()
     m_placementManager = std::make_shared<PlacementManager>(
         m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     add(m_placementManager);
+
+    m_placementManager->setActive(false);
+
+    m_internalState = InternalState::SelectStartingUnits;
+}
+
+void StateGame::transitionSelectStartingUnitsToPlaceUnits() const
+{
+    m_placementManager->setActive(true);
     m_placementManager->addFunds(200);
     m_placementManager->update(0.0f);
-    m_placementManager->setActive(true);
 
     m_internalState = InternalState::PlaceUnits;
 }
@@ -238,6 +245,14 @@ void StateGame::onDraw() const
             m_arrowShape->update(0.0f);
             m_arrowShape->draw(renderTarget());
         }
+    } else if (m_internalState == InternalState::SelectStartingUnits) {
+        ImGui::Begin("Select Starting Units");
+        // TODO provide more options
+        if (ImGui::Button("Select Peasant")) {
+            m_unitInfo->unlockType("peasant");
+            transitionSelectStartingUnitsToPlaceUnits();
+        }
+        ImGui::End();
     }
 
     m_clouds->draw();
