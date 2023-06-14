@@ -1,10 +1,12 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
+#include "internal_state/internal_state_interface.hpp"
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
 #include <game_properties.hpp>
 #include <game_state.hpp>
+#include <internal_state/internal_state_manager.hpp>
 #include <map/terrain.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
@@ -33,16 +35,7 @@ class Vignette;
 } // namespace jt
 
 class Hud;
-
-enum class InternalState {
-    WaitForAllPlayers,
-    SelectStartingUnits,
-    PlaceUnits,
-    WaitForSimulationResults,
-    Playback,
-    EndWin,
-    EndLose
-};
+class InternalStateInterface;
 
 class StateGame : public jt::GameState {
 public:
@@ -51,6 +44,22 @@ public:
     void setConnection(std::shared_ptr<ClientNetworkConnection> connection, bool botAsPlayerZero,
         bool botAsPlayerOne);
 
+    std::shared_ptr<InternalStateManager> getStateManager();
+    std::shared_ptr<ServerConnection> getServerConnection();
+    std::shared_ptr<TerrainRenderer> getTerrainRenderer();
+    std::shared_ptr<PlacementManager> getPlacementManager();
+    std::shared_ptr<UnitInfoCollection> getUnitInfo();
+
+    // TODO move to InternalStateManager
+    void transitionWaitForPlayersToSelectStartingUnits();
+    void transitionWaitForSimulationResultsToPlayback();
+    void transitionPlaybackToPlaceUnits();
+
+    void playbackSimulation(float elapsed);
+    void drawArrows() const;
+
+    int getRound();
+
 private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
     std::shared_ptr<ServerConnection> m_serverConnection { nullptr };
@@ -58,17 +67,15 @@ private:
     std::shared_ptr<jt::Vignette> m_vignette { nullptr };
     std::shared_ptr<Hud> m_hud { nullptr };
     std::shared_ptr<Terrain> m_world { nullptr };
-    std::shared_ptr<TerrainRenderer> m_world_renderer { nullptr };
+    std::shared_ptr<TerrainRenderer> m_terrainRenderer { nullptr };
 
     std::shared_ptr<PlacementManager> m_placementManager { nullptr };
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
     std::shared_ptr<jt::Clouds> m_clouds { nullptr };
 
-    mutable ClientPlacementData m_clientEndPlacementData;
-
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
 
-    mutable InternalState m_internalState { InternalState::WaitForAllPlayers };
+    std::shared_ptr<InternalStateManager> m_internalStateManager;
 
     SimulationResultDataForAllFrames m_simulationResultsForAllFrames;
 
@@ -94,22 +101,6 @@ private:
     void onDraw() const override;
 
     void endGame();
-
-    void createPlayer();
-
-    void placeUnits(float elapsed);
-
-    void playbackSimulation(float elapsed);
-
-    void transitionWaitForPlayersToSelectStartingUnits();
-    void transitionSelectStartingUnitsToPlaceUnits() const;
-
-    // const as it needs to be called from onDraw;
-    void transitionPlaceUnitsToWaitForSimulationResults() const;
-
-    void transitionWaitForSimulationResultsToPlayback();
-
-    void transitionPlaybackToPlaceUnits();
 
     void placeUnitsForOneTick(
         SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick);

@@ -1,4 +1,6 @@
 ﻿#include "state_game.hpp"
+#include "internal_state/internal_state_manager.hpp"
+#include "internal_state/wait_for_all_players.hpp"
 #include <color/color.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
@@ -23,10 +25,10 @@ void StateGame::onCreate()
 {
     getGame()->gfx().createZLayer(GP::ZLayerUI());
     m_world = std::make_shared<Terrain>();
-    m_world_renderer = std::make_shared<TerrainRenderer>(*m_world);
-    add(m_world_renderer);
+    m_terrainRenderer = std::make_shared<TerrainRenderer>(*m_world);
+    add(m_terrainRenderer);
 
-    createPlayer();
+    m_internalStateManager = std::make_shared<InternalStateManager>();
 
     m_units = std::make_shared<jt::ObjectGroup<Unit>>();
     add(m_units);
@@ -54,7 +56,7 @@ void StateGame::onCreate()
         m_connection->sendMessage(m);
     }
 
-    m_arrowShape = jt::dh::createShapeCircle(2, jt::colors::White, textureManager());
+    m_arrowShape = jt::dh::createShapeCircle(1, jt::colors::White, textureManager());
     m_arrowShape->setOffset(jt::OffsetMode::CENTER);
 
     m_clouds = std::make_shared<jt::Clouds>(jt::Vector2f { 4.0f, 2.0f });
@@ -62,8 +64,6 @@ void StateGame::onCreate()
 }
 
 void StateGame::onEnter() { }
-
-void StateGame::createPlayer() { }
 
 void StateGame::onUpdate(float const elapsed)
 {
@@ -75,21 +75,7 @@ void StateGame::onUpdate(float const elapsed)
             endGame();
         }
 
-        if (m_internalState == InternalState::WaitForAllPlayers) {
-            if (m_serverConnection->areAllPlayersConnected()) {
-                transitionWaitForPlayersToSelectStartingUnits();
-            }
-        } else if (m_internalState == InternalState::PlaceUnits) {
-            m_world_renderer->setDrawGrid(true);
-            placeUnits(elapsed);
-            // transition to "WaitForSimulationResults" is done in onDraw for button push;
-        } else if (m_internalState == InternalState::WaitForSimulationResults) {
-            if (m_serverConnection->isRoundDataReady()) {
-                transitionWaitForSimulationResultsToPlayback();
-            }
-        } else if (m_internalState == InternalState::Playback) {
-            playbackSimulation(elapsed);
-        }
+        m_internalStateManager->getActiveState()->update(*this, elapsed);
     }
 
     m_vignette->update(elapsed);
@@ -100,9 +86,8 @@ void StateGame::playbackSimulation(float /*elapsed*/)
     if (m_simulationResultsForAllFrames.allFrames.size() != 0) {
         if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
             m_tickId++;
-
         } else {
-            transitionPlaybackToPlaceUnits();
+            getStateManager()->switchToState(InternalState::PlaceUnits, *this);
         }
         auto const& propertiesForAllUnitsForThisTick
             = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
@@ -119,9 +104,9 @@ void StateGame::placeUnitsForOneTick(
         auto const thisPlayerId = m_serverConnection->getPlayerId();
         auto const otherPlayerId = ((thisPlayerId == 0) ? 1 : 0);
         if (m_playerHP.at(thisPlayerId) <= 0) {
-            m_internalState = InternalState::EndLose;
+            getStateManager()->switchToState(InternalState::EndLose, *this);
         } else if (m_playerHP.at(otherPlayerId) <= 0) {
-            m_internalState = InternalState::EndWin;
+            getStateManager()->switchToState(InternalState::EndWin, *this);
         }
     }
     for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
@@ -164,60 +149,25 @@ void StateGame::transitionWaitForPlayersToSelectStartingUnits()
     m_placementManager = std::make_shared<PlacementManager>(
         m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     add(m_placementManager);
-
-    m_placementManager->setActive(false);
-
-    m_internalState = InternalState::SelectStartingUnits;
-}
-
-void StateGame::transitionSelectStartingUnitsToPlaceUnits() const
-{
-    m_placementManager->setActive(true);
-    m_placementManager->addFunds(200);
-    m_placementManager->update(0.0f);
-
-    m_internalState = InternalState::PlaceUnits;
-}
-
-void StateGame::transitionPlaceUnitsToWaitForSimulationResults() const
-{
-    m_clientEndPlacementData.m_properties = m_placementManager->getPlacedUnits();
-    m_placementManager->clearPlacedUnits();
-    m_serverConnection->readyRound(m_clientEndPlacementData);
-    m_internalState = InternalState::WaitForSimulationResults;
-    m_placementManager->setActive(false);
-    m_world_renderer->setDrawGrid(false);
 }
 
 void StateGame::transitionWaitForSimulationResultsToPlayback()
 {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
-    m_internalState = InternalState::Playback;
 }
 
 void StateGame::transitionPlaybackToPlaceUnits()
 {
     m_tickId = 0;
-
     resetAllUnits();
     m_round++;
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
-    m_internalState = InternalState::PlaceUnits;
-    m_placementManager->setActive(true);
-    m_placementManager->addFunds(150 + 50 * m_round);
-}
-
-void StateGame::placeUnits(float /*elapsed*/)
-{
-    if (m_internalState != InternalState::PlaceUnits) {
-        throw std::logic_error { "placeUnits called when not in placeUnits state" };
-    }
 }
 
 void StateGame::onDraw() const
 {
-    m_world_renderer->draw();
+    m_terrainRenderer->draw();
 
     // first draw all dead units
     for (auto const& u : *m_units) {
@@ -236,66 +186,39 @@ void StateGame::onDraw() const
         }
     }
 
-    if (m_placementManager) {
-        m_placementManager->draw();
-    }
-    if (m_internalState == InternalState::Playback) {
-        for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
-            m_arrowShape->setPosition(a.currentPos);
-            m_arrowShape->update(0.0f);
-            m_arrowShape->draw(renderTarget());
-        }
-    } else if (m_internalState == InternalState::SelectStartingUnits) {
-        ImGui::Begin("Select Starting Units");
-        // TODO provide more options
-        if (ImGui::Button("Select Peasant")) {
-            m_unitInfo->unlockType("peasant");
-            transitionSelectStartingUnitsToPlaceUnits();
-        }
-        ImGui::End();
-    }
+    // ouch
+    m_internalStateManager->getActiveState()->draw(const_cast<StateGame&>(*this));
 
     m_clouds->draw();
     m_vignette->draw();
 
-    ImGui::Begin("Network");
-    if (m_internalState == InternalState::WaitForAllPlayers) {
+    ImGui::Begin("State");
+    if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {
         ImGui::Text("Waiting for players to join");
-    } else if (m_internalState == InternalState::PlaceUnits) {
+    } else if (m_internalStateManager->getActiveStateE() == InternalState::PlaceUnits) {
         ImGui::Text("Place units");
-    } else if (m_internalState == InternalState::WaitForSimulationResults) {
+    } else if (m_internalStateManager->getActiveStateE()
+        == InternalState::WaitForSimulationResults) {
         ImGui::Text("Waiting for other players to end unit placement");
-    } else if (m_internalState == InternalState::Playback) {
+    } else if (m_internalStateManager->getActiveStateE() == InternalState::Playback) {
         ImGui::Text("Watch the battle evolve");
     }
     ImGui::Separator();
     ImGui::Text("round %i", m_round);
-    if (m_internalState != InternalState::WaitForAllPlayers) {
+    if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
         ImGui::Text("HP Player 0: %i", m_playerHP.at(0));
         ImGui::Text("HP Player 1: %i", m_playerHP.at(1));
     }
-    ImGui::Separator();
-    ImGui::BeginDisabled(m_internalState != InternalState::PlaceUnits);
-    if (ImGui::Button("ready")) {
-        transitionPlaceUnitsToWaitForSimulationResults();
-    }
-    ImGui::EndDisabled();
 
-    if (m_internalState == InternalState::EndWin || m_internalState == InternalState::EndLose) {
-        ImGui::Separator();
-        ImGui::Text("Game over");
-
-        if (m_internalState == InternalState::EndWin) {
-            ImGui::Text("Win");
-        } else {
-            ImGui::Text("Lose");
-        }
-
-        if (ImGui::Button("Back to menu")) {
-            getGame()->stateManager().switchState(std::make_shared<StateMenu>());
-        }
-    }
     ImGui::End();
+}
+void StateGame::drawArrows() const
+{
+    for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
+        m_arrowShape->setPosition(a.currentPos);
+        m_arrowShape->update(0.0f);
+        m_arrowShape->draw(renderTarget());
+    }
 }
 
 void StateGame::endGame()
@@ -329,3 +252,14 @@ void StateGame::resetAllUnits()
     }
     placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
 }
+
+std::shared_ptr<InternalStateManager> StateGame::getStateManager()
+{
+    return m_internalStateManager;
+}
+
+std::shared_ptr<ServerConnection> StateGame::getServerConnection() { return m_serverConnection; }
+std::shared_ptr<TerrainRenderer> StateGame::getTerrainRenderer() { return m_terrainRenderer; }
+std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_placementManager; }
+std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }
+int StateGame::getRound() { return m_round; }
