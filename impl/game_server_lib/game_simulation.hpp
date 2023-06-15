@@ -30,7 +30,7 @@ public:
     std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
         const jt::Vector2f& pos, int playerId) override;
     float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
-    jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos) override;
+    jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y) override;
     float getTerrainMappedFieldHeight(jt::Vector2f const& pos) override;
     void spawnArrow(const ArrowInfo& arrowInfo) override;
 

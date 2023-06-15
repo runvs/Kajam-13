@@ -167,9 +167,9 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
     return 0.1f;
 }
 
-jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos)
+jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y)
 {
-    return m_world->getMappedFieldPosition(pos);
+    return m_world->getMappedFieldPosition(pos, x, y);
 }
 
 float GameSimulation::getTerrainMappedFieldHeight(jt::Vector2f const& pos)

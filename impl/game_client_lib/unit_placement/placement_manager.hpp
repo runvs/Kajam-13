@@ -30,6 +30,7 @@ private:
     std::shared_ptr<Terrain> m_world;
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
     bool m_isActive { true };
+    std::array<bool, terrainWidthInChunks * terrainHeightInChunks> m_placedUnitsMap { false };
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> m_placedUnits;
     jt::GameObjectCollection m_placedUnitsGO;
     UnitIdManager m_unitIdManager;
@@ -46,7 +47,7 @@ private:
     void doDraw() const override;
 
     void placeUnit();
-    bool fieldInUse(jt::Vector2f const& pos) const;
+    bool& fieldInUse(int const x, int const y);
 };
 
 #endif // JAMTEMPLATE_PLACEMENT_MANAGER_HPP

@@ -130,7 +130,7 @@ Vector3f getNormalOfTriangleForPosition(
     auto const& chunk = chunks[coordToIndex(posX, posY)];
     auto const posHeight = chunk.heightCenter;
 
-    // the height of the map is ranged [0;terrainHeightMax] and thus needs to translated into a
+    // the height of the map is ranged [0;terrainHeightMax] and thus needs to be translated into a
     // value that can be used for an actual slope calculation when doing vector arithmetics
     auto const convertHeightToZ = [&](auto const v) {
         if (convertHeight) {
@@ -203,25 +203,23 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     return slope;
 }
 
-jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos)
+jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y)
 {
-    // cut off decimals
-    auto const posX = static_cast<int>(pos.x);
-    auto const posY = static_cast<int>(pos.y);
-    return { static_cast<float>(
-                 posX - (posX % terrainChunkSizeInPixel) + terrainChunkSizeInPixelHalf),
-        static_cast<float>(posY - (posY % terrainChunkSizeInPixel) + terrainChunkSizeInPixelHalf) };
+    if (!posToCoord(pos, x, y)) {
+        return {};
+    }
+    jt::Vector2f bla { static_cast<float>(
+                           x * terrainChunkSizeInPixel + terrainChunkSizeInPixelHalf),
+        static_cast<float>(y * terrainChunkSizeInPixel + terrainChunkSizeInPixelHalf) };
+    return bla;
 }
 
 float Terrain::getFieldHeight(jt::Vector2f const& pos) const
 {
-    int posX, posY;
-    if (!posToCoord(pos, posX, posY)) {
-        return 0.0f;
-    }
-    auto const& chunk = getChunk(posX, posY);
+    int x, y;
+    auto const posCenter = getMappedFieldPosition(pos, x, y);
+    auto const& chunk = getChunk(x, y);
     auto const posHeight = chunk.heightCenter;
-    auto const posCenter = getMappedFieldPosition(pos);
 
     if (posCenter == pos) {
         return posHeight;
