@@ -77,8 +77,6 @@ void StateGame::onUpdate(float const elapsed)
 
         m_internalStateManager->getActiveState()->update(*this, elapsed);
     }
-
-    m_vignette->update(elapsed);
 }
 
 void StateGame::playbackSimulation(float /*elapsed*/)
@@ -109,35 +107,33 @@ void StateGame::placeUnitsForOneTick(
             getStateManager()->switchToState(InternalState::EndWin, *this);
         }
     }
-    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
 
-        auto const unitID = propsForOneUnit.ints.at(jk::unitID);
-        auto const playerID = propsForOneUnit.ints.at(jk::playerID);
-        auto const unitType = propsForOneUnit.strings.at(jk::unitType);
-        // TODO make this code a bit nicer
-        bool unitFound = false;
-        for (auto& u : *m_units) {
-            auto unit = u.lock();
-            if (unit->getPlayerID() != playerID) {
-                continue;
-            }
-            if (unit->getUnitID() != unitID) {
-                continue;
-            }
-            unit->updateState(propsForOneUnit);
-            unit->update(0.0f);
-            unitFound = true;
-            break;
-        }
-        // Spawn a new  unit
-        if (!unitFound) {
-            auto unit = std::make_shared<Unit>(m_unitInfo->getInfoForType(unitType));
-            m_units->push_back(unit);
-            add(unit);
-            unit->setIDs(unitID, playerID);
-            unit->updateState(propsForOneUnit);
-        }
+    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
+        std::shared_ptr<Unit> foundUnit = findOrCreateUnit(propsForOneUnit.ints.at(jk::playerID),
+            propsForOneUnit.ints.at(jk::unitID), propsForOneUnit.strings.at(jk::unitType));
+        foundUnit->updateState(propsForOneUnit);
     }
+}
+
+std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::string& type)
+{
+    for (auto const& u : *m_units) {
+        auto currentUnit = u.lock();
+        if (currentUnit->getPlayerID() != pid) {
+            continue;
+        }
+        if (currentUnit->getUnitID() != uid) {
+            continue;
+        }
+        return currentUnit;
+    }
+
+    // Spawn a new  unit
+    std::shared_ptr<Unit> newUnit = std::make_shared<Unit>(m_unitInfo->getInfoForType(type));
+    m_units->push_back(newUnit);
+    add(newUnit);
+    newUnit->setIDs(uid, pid);
+    return newUnit;
 }
 
 void StateGame::transitionWaitForPlayersToSelectStartingUnits()
@@ -257,7 +253,6 @@ std::shared_ptr<InternalStateManager> StateGame::getStateManager()
 {
     return m_internalStateManager;
 }
-
 std::shared_ptr<ServerConnection> StateGame::getServerConnection() { return m_serverConnection; }
 std::shared_ptr<TerrainRenderer> StateGame::getTerrainRenderer() { return m_terrainRenderer; }
 std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_placementManager; }

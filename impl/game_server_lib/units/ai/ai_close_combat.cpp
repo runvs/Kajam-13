@@ -38,7 +38,8 @@ void AiCloseCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface& 
             d.damage = unit.getUnitInfoFull().damage;
             target->takeDamage(d);
             if (!target->isAlive()) {
-                unit.gainExperience(target->getUnitInfoFull().experienceGainWhenKilled);
+                auto const exp = target->getUnitInfoFull().experienceGainWhenKilled;
+                unit.gainExperience(exp);
             }
         }
     }

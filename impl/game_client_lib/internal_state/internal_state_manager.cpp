@@ -23,7 +23,6 @@ InternalStateManager::InternalStateManager()
     m_transitions[std::make_pair(
         InternalState::WaitForAllPlayers, InternalState::SelectStartingUnits)]
         = [](StateGame& state) {
-              state.getTerrainRenderer()->setDrawGrid(true);
               state.transitionWaitForPlayersToSelectStartingUnits();
               state.getPlacementManager()->setActive(false);
           };
@@ -31,8 +30,7 @@ InternalStateManager::InternalStateManager()
     m_transitions[std::make_pair(InternalState::SelectStartingUnits, InternalState::PlaceUnits)]
         = [](StateGame& state) {
               state.getPlacementManager()->setActive(true);
-              state.getPlacementManager()->addFunds(200);
-              state.getPlacementManager()->update(0.0f);
+              state.getTerrainRenderer()->setDrawGrid(true);
           };
 
     m_transitions[std::make_pair(

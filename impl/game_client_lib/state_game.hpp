@@ -105,6 +105,8 @@ private:
     void placeUnitsForOneTick(
         SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick);
 
+    std::shared_ptr<Unit> findOrCreateUnit(int pid, int uid, std::string const& type);
+
     void resetAllUnits();
 };
 

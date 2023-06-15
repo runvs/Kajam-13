@@ -33,7 +33,6 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
     }
 
     m_hp = m_infoBase.hitpointsMax;
-    m_experience = m_infoBase.experienceRequiredForLevelUp;
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -56,6 +55,7 @@ ObjectProperties ServerUnit::saveState() const
     props.ints[jk::playerID] = m_playerID;
     props.strings[jk::unitType] = m_infoBase.type;
 
+    //    m_logger.info("save exp with value: " + std::to_string(m_experience));
     props.ints[jk::experience] = m_experience;
     props.ints[jk::experienceForLevelUp] = m_infoBase.experienceRequiredForLevelUp;
     props.ints[jk::level] = m_level;
@@ -92,6 +92,12 @@ void ServerUnit::updateState(ObjectProperties* props)
     m_pos = jt::Vector2f { props->floats.at(jk::positionX), props->floats.at(jk::positionY) };
     m_physicsObject->setPosition(m_pos);
     m_offset = jt::Vector2f { props->floats.at(jk::offsetX), props->floats.at(jk::offsetY) };
+    if (props->ints.count(jk::experience) == 0) {
+        m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
+    } else {
+        m_experience = props->ints.at(jk::experience);
+        m_logger.info("load exp with value: " + std::to_string(m_experience));
+    }
 }
 
 void ServerUnit::levelUnitUp()
@@ -184,7 +190,7 @@ UnitInfo ServerUnit::getUnitInfoFull() const
     info.animations = m_infoBase.animations;
     info.colliderRadius = m_infoBase.colliderRadius;
     info.movementSpeed = m_infoLevel.movementSpeed + m_infoUpgrades.movementSpeed;
-
+    info.experienceGainWhenKilled = m_infoBase.experienceGainWhenKilled;
     return info;
 }
 
@@ -194,9 +200,12 @@ int ServerUnit::getCost() { return m_infoBase.cost; }
 void ServerUnit::gainExperience(int exp)
 {
     m_experience -= exp;
+
     if (m_experience <= 0) {
         // TODO only level up if player pays for it
         levelUnitUp();
     }
+    m_logger.info("gain experience. New exp: " + std::to_string(m_experience));
+    m_roundStartObjectProperties->ints[jk::experience] = m_experience;
 }
 int ServerUnit::getLevel() const { return m_level; }
