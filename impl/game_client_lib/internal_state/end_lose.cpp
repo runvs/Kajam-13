@@ -4,7 +4,7 @@
 #include <state_menu.hpp>
 #include <imgui.h>
 
-void EndLose::update(StateGame& state, float elapsed) { }
+void EndLose::update(StateGame& /*state*/, float /*elapsed*/) { }
 void EndLose::draw(StateGame& state)
 {
     ImGui::Begin("Game Over");

@@ -18,7 +18,6 @@ enum class MessageType : std::uint8_t {
 struct Message {
     MessageType type { MessageType::InitialPing };
     int playerId { -1 };
-    
     std::string data { "" };
 };
 

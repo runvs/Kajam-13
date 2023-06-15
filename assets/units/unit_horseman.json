@@ -1,0 +1,21 @@
+{
+  "type": "horseman",
+  "expRequiredForLevelUp": 100,
+  "expGainWhenKilled": 40,
+  "hitpoints": 60.0,
+  "damage": 5.0,
+  "attackTimerMax": 3.0,
+  "movementSpeed": 60.0,
+  "colliderRadius": 7.0,
+  "cost": 80,
+  "unlockCost": 70,
+  "ai": {
+    "type": 0,
+    "range": -1.0
+  },
+  "animations": [
+    {
+      "jsonfilename": "assets/units/horseman.json"
+    }
+  ]
+}

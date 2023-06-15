@@ -3,10 +3,9 @@
 #include "state_game.hpp"
 #include <imgui.h>
 
-void PlaceUnits::update(StateGame& state, float elapsed) { }
+void PlaceUnits::update(StateGame& /*state*/, float /*elapsed*/) { }
 void PlaceUnits::draw(StateGame& state)
 {
-
     state.getPlacementManager()->draw();
 
     ImGui::Begin("End Placement");

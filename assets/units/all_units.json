@@ -4,6 +4,7 @@
     "assets/units/unit_swordman.json",
     "assets/units/unit_shieldman.json",
     "assets/units/unit_archer.json",
-    "assets/units/unit_crossbow.json"
+    "assets/units/unit_crossbow.json",
+    "assets/units/unit_horseman.json"
   ]
 }
