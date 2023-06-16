@@ -191,3 +191,4 @@ void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
 void PlacementManager::setActive(bool active) { m_isActive = active; }
 
 void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
+int PlacementManager::getFunds() const { return m_availableFunds; }

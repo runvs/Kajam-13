@@ -1,7 +1,7 @@
 #include "place_units.hpp"
+#include "internal_state_manager.hpp"
 #include <game_interface.hpp>
 #include <input/mouse/mouse_defines.hpp>
-#include <internal_state_manager.hpp>
 #include <state_game.hpp>
 #include <imgui.h>
 
@@ -40,15 +40,23 @@ void PlaceUnits::draw(StateGame& state)
             if (m_selectedUnit->hasUpgrade(upg.name)) {
                 continue;
             }
-            if (ImGui::Button(upg.name.c_str())) {
+            auto const cost = upg.upgradeCost;
+            auto const str = upg.name + " (" + std::to_string(cost) + ")";
+            auto const available = state.getPlacementManager()->getFunds();
+            ImGui::BeginDisabled(available < cost);
+            if (ImGui::Button(str.c_str())) {
                 state.getGame()->logger().info("clicked upgrade: " + upg.name);
+                state.getPlacementManager()->addFunds(-cost);
+
                 UpgradeUnitData data;
                 data.upgrade = upg;
                 data.unityType = m_selectedUnit->getInfo().type;
                 data.playerID = m_selectedUnit->getPlayerID();
                 state.getServerConnection()->unitUpgrade(data);
+                // TODO add it to all units
                 m_selectedUnit->addUpgrade(upg.name);
             }
+            ImGui::EndDisabled();
         }
         ImGui::End();
     }

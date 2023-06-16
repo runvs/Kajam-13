@@ -25,6 +25,7 @@ public:
     void setActive(bool active);
 
     void addFunds(int funds);
+    int getFunds() const;
 
 private:
     std::shared_ptr<Terrain> m_world;
