@@ -12,14 +12,11 @@ class GP {
 public:
     GP() = delete;
 
-    static std::string GameName() { return "MyAwesomeGame"; }
-    static std::string AuthorName() { return "TODO"; }
-    static std::string JamName() { return "TODO"; }
-    static std::string JamDate() { return "TODO"; }
-    static std::string ExplanationText()
-    {
-        return "Win the game\n[W,A,S,D] to move \n[Space] to jump\n[M/U] to mute/unmute audio";
-    }
+    static std::string GameName() { return "Medibellum"; }
+    static std::string AuthorName() { return "Dr.Laguna & Semitalis"; }
+    static std::string JamName() { return "Kajam-13"; }
+    static std::string JamDate() { return "2023-06"; }
+    static std::string ExplanationText() { return ""; }
 
     static jt::Vector2f GetWindowSize() { return jt::Vector2f { 1024, 800 }; }
     static float GetZoom() { return 2.0f; }
