@@ -3,12 +3,12 @@
   "expRequiredForLevelUp": 100,
   "expGainWhenKilled": 40,
   "hitpoints": 60.0,
-  "damage": 5.0,
-  "attackTimerMax": 3.0,
+  "damage": 20.0,
+  "attackTimerMax": 2.0,
   "movementSpeed": 60.0,
   "colliderRadius": 7.0,
   "cost": 80,
-  "unlockCost": 70,
+  "unlockCost": 50,
   "ai": {
     "type": 0,
     "range": -1.0
@@ -19,5 +19,17 @@
     }
   ],
   "upgrades": [
+    {
+      "name": "carrot of agility",
+      "upgCost": 200,
+      "movementSpeed": {
+        "add": 10.0,
+        "factor": 0.0
+      },
+      "attackTimerMax": {
+        "add": 0.0,
+        "factor": -0.2
+      }
+    }
   ]
 }

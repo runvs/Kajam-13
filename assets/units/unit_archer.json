@@ -4,10 +4,10 @@
   "expGainWhenKilled": 30,
   "hitpoints": 20.0,
   "damage": 15.0,
-  "attackTimerMax": 1.5,
+  "attackTimerMax": 2.5,
   "movementSpeed": 18.0,
   "colliderRadius": 6.0,
-  "cost": 75,
+  "cost": 90,
   "unlockCost": 50,
   "ai": {
     "type": 1,
@@ -23,7 +23,7 @@
   "upgrades": [
     {
       "name": "range",
-      "upgCost": 50,
+      "upgCost": 150,
       "range": {
         "add": 4.0,
         "factor": 0.0
@@ -31,7 +31,7 @@
     },
     {
       "name": "fast attack",
-      "upgCost": 50,
+      "upgCost": 150,
       "attackTimerMax": {
         "add": -0.75,
         "factor": 0.0

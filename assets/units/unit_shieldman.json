@@ -19,5 +19,21 @@
     }
   ],
   "upgrades": [
+    {
+      "name": "heavy armor",
+      "upgCost": 125,
+      "hitpoints": {
+        "add": 100.0,
+        "factor": 0.0
+      }
+    },
+    {
+      "name": "boots of swiftness",
+      "upgCost": 200,
+      "movementSpeed": {
+        "add": 6.0,
+        "factor": 0.0
+      }
+    }
   ]
 }
