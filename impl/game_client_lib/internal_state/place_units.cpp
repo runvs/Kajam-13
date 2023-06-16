@@ -29,6 +29,8 @@ void showUnitTooltip(T& u)
     auto const lockedUnit = u.lock();
     if (lockedUnit->isMouseOver()) {
         auto const unitInfo = lockedUnit->getInfo();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
         ImGui::BeginTooltip();
         ImGui::Text("%s", unitInfo.type.c_str());
         if (ImGui::BeginTable("ttUnitInfo", 4)) {
@@ -66,6 +68,7 @@ void showUnitTooltip(T& u)
             }
         }
         ImGui::EndTooltip();
+        ImGui::PopStyleVar();
     }
 }
 
