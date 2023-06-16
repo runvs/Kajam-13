@@ -196,6 +196,7 @@ void GameSimulation::clear()
     m_arrows.clear();
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
+    m_unitUpgrades.clear();
     m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 }
 
