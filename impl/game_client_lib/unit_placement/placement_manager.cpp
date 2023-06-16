@@ -186,6 +186,11 @@ std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
     return properties;
 }
 
+std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& PlacementManager::getPlacedUnitsGO() const
+{
+    return m_placedUnits;
+}
+
 void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
 
 void PlacementManager::setActive(bool active) { m_isActive = active; }

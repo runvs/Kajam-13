@@ -1,8 +1,10 @@
 #include "placed_unit.hpp"
 #include "vector.hpp"
 #include <drawable_helpers.hpp>
+#include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <json_keys.hpp>
+#include <math_helper.hpp>
 #include <memory>
 
 PlacedUnit::PlacedUnit(UnitInfo info)
@@ -51,3 +53,13 @@ void PlacedUnit::setIDs(int uid, int pid)
     m_unitID = uid;
     m_playerID = pid;
 }
+
+bool PlacedUnit::isMouseOver() const
+{
+    auto const mp = getGame()->input().mouse()->getMousePositionWorld();
+    jt::Rectf const rect { m_position.x + m_offset.x, m_position.y + m_offset.y, 16.0f, 16.0f };
+
+    return jt::MathHelper::checkIsIn(rect, mp);
+}
+
+UnitInfo const& PlacedUnit::getInfo() const { return m_info; }

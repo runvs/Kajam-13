@@ -145,11 +145,11 @@ bool Unit::isUnitAlive() const { return m_hp > 0; }
 bool Unit::isMouseOver() const
 {
     auto const mp = getGame()->input().mouse()->getMousePositionWorld();
-    jt::Rectf const rect { m_position.x, m_position.y, 16.0f, 16.0f };
+    jt::Rectf const rect { m_position.x + m_offset.x, m_position.y + m_offset.y, 16.0f, 16.0f };
 
     return jt::MathHelper::checkIsIn(rect, mp);
 }
-UnitInfo Unit::getInfo() const { return m_info; }
+UnitInfo const& Unit::getInfo() const { return m_info; }
 
 void Unit::addUpgrade(const std::string& name) { m_boughtUpgrades.push_back(name); }
 bool Unit::hasUpgrade(const std::string& name) const

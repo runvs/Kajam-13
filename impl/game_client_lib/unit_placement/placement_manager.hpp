@@ -20,6 +20,7 @@ public:
         std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
     std::vector<ObjectProperties> getPlacedUnits() const;
+    std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnitsGO() const;
     void clearPlacedUnits();
 
     void setActive(bool active);

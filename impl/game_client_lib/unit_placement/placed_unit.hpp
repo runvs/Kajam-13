@@ -21,9 +21,11 @@ public:
     void setOffset(jt::Vector2f const& offset);
     jt::Vector2f getOffset() const;
 
+    bool isMouseOver() const;
+    UnitInfo const& getInfo() const;
+
 private:
     UnitInfo m_info;
-    //    std::shared_ptr<jt::Shape> m_shape;
     std::shared_ptr<jt::Animation> m_anim;
     int m_unitID { 0 };
     int m_playerID { 0 };

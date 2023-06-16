@@ -40,7 +40,7 @@ public:
 
     bool isMouseOver() const;
 
-    UnitInfo getInfo() const;
+    UnitInfo const& getInfo() const;
 
     void addUpgrade(std::string const& name);
     bool hasUpgrade(std::string const& name) const;

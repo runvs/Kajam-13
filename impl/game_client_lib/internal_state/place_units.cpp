@@ -3,7 +3,73 @@
 #include <game_interface.hpp>
 #include <input/mouse/mouse_defines.hpp>
 #include <state_game.hpp>
+#include <unit_placement/placed_unit.hpp>
 #include <imgui.h>
+#include <string>
+#include <vector>
+
+namespace {
+
+std::vector<std::string> getUpgradeList(PlacedUnit const& unit) { return {}; }
+
+std::vector<std::string> getUpgradeList(Unit const& unit)
+{
+    std::vector<std::string> upgrades;
+    for (auto& upg : unit.getInfo().possibleUpgrades) {
+        if (unit.hasUpgrade(upg.name)) {
+            upgrades.push_back(upg.name);
+        }
+    }
+    return upgrades;
+}
+
+template <typename T>
+void showUnitTooltip(T& u)
+{
+    auto const lockedUnit = u.lock();
+    if (lockedUnit->isMouseOver()) {
+        auto const unitInfo = lockedUnit->getInfo();
+        ImGui::BeginTooltip();
+        ImGui::Text("%s", unitInfo.type.c_str());
+        if (ImGui::BeginTable("ttUnitInfo", 4)) {
+            ImGui::TableNextColumn();
+            ImGui::Text("HP");
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+            ImGui::Text("%d", static_cast<int>(unitInfo.hitpointsMax));
+            ImGui::PopStyleColor();
+            ImGui::TableNextColumn();
+            ImGui::Text("SPD");
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+            ImGui::Text("%.2f", unitInfo.movementSpeed);
+            ImGui::PopStyleColor();
+            ImGui::TableNextColumn();
+            ImGui::Text("DMG");
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
+            ImGui::Text("%.2f", unitInfo.damage);
+            ImGui::PopStyleColor();
+            ImGui::TableNextColumn();
+            ImGui::Text("ATS");
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
+            ImGui::Text("%.2f", unitInfo.attackTimerMax);
+            ImGui::PopStyleColor();
+            ImGui::EndTable();
+        }
+        auto const upgrades = getUpgradeList(*lockedUnit);
+        if (!upgrades.empty()) {
+            ImGui::Text("Upgrades:");
+            for (auto const& upg : upgrades) {
+                ImGui::BulletText(upg.c_str());
+            }
+        }
+        ImGui::EndTooltip();
+    }
+}
+
+} // namespace
 
 void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 {
@@ -24,8 +90,16 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         m_selectedUnit = nullptr;
     }
 }
+
 void PlaceUnits::draw(StateGame& state)
 {
+    for (auto& u : *state.getUnits()) {
+        showUnitTooltip(u);
+    }
+    for (auto& u : *state.getPlacementManager()->getPlacedUnitsGO()) {
+        showUnitTooltip(u);
+    }
+
     state.getPlacementManager()->draw();
 
     ImGui::Begin("End Placement");
