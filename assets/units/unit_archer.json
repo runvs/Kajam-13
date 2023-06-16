@@ -7,7 +7,7 @@
   "attackTimerMax": 1.5,
   "movementSpeed": 18.0,
   "colliderRadius": 6.0,
-  "cost": 50,
+  "cost": 75,
   "unlockCost": 50,
   "ai": {
     "type": 1,

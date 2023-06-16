@@ -53,8 +53,9 @@ void PlaceUnits::draw(StateGame& state)
                 data.unityType = m_selectedUnit->getInfo().type;
                 data.playerID = m_selectedUnit->getPlayerID();
                 state.getServerConnection()->unitUpgrade(data);
-                // TODO add it to all units
-                m_selectedUnit->addUpgrade(upg.name);
+                for (auto& u : *state.getUnits()) {
+                    u.lock()->addUpgrade(upg.name);
+                }
             }
             ImGui::EndDisabled();
         }
