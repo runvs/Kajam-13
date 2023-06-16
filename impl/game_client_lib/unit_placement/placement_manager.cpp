@@ -132,8 +132,9 @@ void PlacementManager::placeUnit()
             return;
         }
 
+        int posX, posY;
         jt::Vector2f fieldPos { m_world->getMappedFieldPosition(
-            getGame()->input().mouse()->getMousePositionWorld()) };
+            getGame()->input().mouse()->getMousePositionWorld(), posX, posY) };
         static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
             AreaType::AREA_FLANK_BOT };
         bool inValidArea { false };
@@ -143,7 +144,7 @@ void PlacementManager::placeUnit()
                 break;
             }
         }
-        if (!inValidArea || fieldInUse(fieldPos)) {
+        if (!inValidArea || fieldInUse(posX, posY)) {
             // TODO Show some visual representation or play a sound that placing a unit here is not
             getGame()->logger().info(
                 "tried to place unit in invalid position", { "PlacementManager" });
@@ -155,6 +156,7 @@ void PlacementManager::placeUnit()
         auto unit = std::make_shared<PlacedUnit>(info);
         m_placedUnits->push_back(unit);
         m_placedUnitsGO.add(unit);
+        fieldInUse(posX, posY) = true;
         unit->setGameInstance(getGame());
         unit->create();
 
@@ -170,19 +172,9 @@ void PlacementManager::placeUnit()
     }
 }
 
-bool PlacementManager::fieldInUse(jt::Vector2f const& pos) const
+bool& PlacementManager::fieldInUse(int const x, int const y)
 {
-    auto const posx = static_cast<int>(pos.x / terrainChunkSizeInPixel);
-    auto const posy = static_cast<int>(pos.y / terrainChunkSizeInPixel);
-    for (auto const& unit : *m_placedUnits) {
-        auto const lockedUnit = unit.lock();
-        auto const unitx = static_cast<int>(lockedUnit->getPosition().x / terrainChunkSizeInPixel);
-        auto const unity = static_cast<int>(lockedUnit->getPosition().y / terrainChunkSizeInPixel);
-        if (posx == unitx && posy == unity) {
-            return true;
-        }
-    }
-    return false;
+    return m_placedUnitsMap[x + y * terrainWidthInChunks];
 }
 
 std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
