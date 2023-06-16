@@ -70,6 +70,15 @@ ObjectProperties ServerUnit::saveState() const
 
     props.bools[jk::unitWalkingRight] = m_walkingRight;
 
+    std::string str;
+    for (auto const& upg : m_upgrades) {
+        str += upg.name + ",";
+    }
+    if (!str.empty()) {
+        str.pop_back();
+    }
+    props.strings[jk::upgrades] = str;
+
     if (!m_newAnim.empty()) {
         props.strings[jk::unitAnim] = m_newAnim;
         m_newAnim = "";
@@ -180,17 +189,22 @@ UnitInfo const& ServerUnit::getUnitInfoBase() const { return m_infoBase; }
 UnitInfo ServerUnit::getUnitInfoFull() const
 {
     UnitInfo info;
-    info.hitpointsMax = m_infoLevel.hitpointsMax + m_infoUpgrades.hitpointsMax;
-    info.damage = m_infoLevel.damage + m_infoUpgrades.damage;
-    info.unlockCost = m_infoLevel.unlockCost - m_infoUpgrades.unlockCost;
-    info.cost = m_infoLevel.cost - m_infoUpgrades.cost;
+
+    info.hitpointsMax = m_infoLevel.hitpointsMax;
+    info.damage = m_infoLevel.damage;
+    info.unlockCost = m_infoLevel.unlockCost;
+    info.cost = m_infoLevel.cost;
     info.type = m_infoBase.type;
     info.ai = m_infoBase.ai;
-    info.attackTimerMax = m_infoLevel.attackTimerMax - m_infoUpgrades.attackTimerMax;
+    info.attackTimerMax = m_infoLevel.attackTimerMax;
     info.animations = m_infoBase.animations;
     info.colliderRadius = m_infoBase.colliderRadius;
-    info.movementSpeed = m_infoLevel.movementSpeed + m_infoUpgrades.movementSpeed;
+    info.movementSpeed = m_infoLevel.movementSpeed;
     info.experienceGainWhenKilled = m_infoBase.experienceGainWhenKilled;
+
+    for (auto const& upg : m_upgrades) {
+        applyUpgrade(info, upg);
+    }
     return info;
 }
 
@@ -209,3 +223,17 @@ void ServerUnit::gainExperience(int exp)
     m_roundStartObjectProperties->ints[jk::experience] = m_experience;
 }
 int ServerUnit::getLevel() const { return m_level; }
+
+void ServerUnit::applyUpgrades(const std::vector<UpgradeUnitData>& upgrades)
+{
+    for (auto const& upg : upgrades) {
+        if (upg.playerID != getPlayerID()) {
+            continue;
+        }
+        if (upg.unityType != m_infoBase.type) {
+            continue;
+        }
+
+        m_upgrades.push_back(upg.upgrade);
+    }
+}

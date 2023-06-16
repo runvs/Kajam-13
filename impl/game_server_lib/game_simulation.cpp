@@ -28,6 +28,7 @@ void GameSimulation::prepareSimulationForNewRound()
         auto obj = std::make_shared<ServerUnit>(
             m_logger, m_unitInfos.getInfoForType(props.strings.at(jk::unitType)), m_b2World);
         obj->updateState(&props);
+        obj->applyUpgrades(m_unitUpgrades);
         m_simulationObjects.emplace_back(std::move(obj));
     }
 }
@@ -196,4 +197,9 @@ void GameSimulation::clear()
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
     m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
+}
+
+void GameSimulation::addUnitUpgrade(const UpgradeUnitData& upg)
+{
+    m_unitUpgrades.emplace_back(upg);
 }

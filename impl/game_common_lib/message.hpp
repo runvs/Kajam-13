@@ -12,6 +12,7 @@ enum class MessageType : std::uint8_t {
     StayAlivePing,
     AllPlayersConnected,
     RoundReady,
+    UnitUpgrade,
     SimulationResult
 };
 

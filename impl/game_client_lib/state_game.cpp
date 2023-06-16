@@ -258,3 +258,4 @@ std::shared_ptr<TerrainRenderer> StateGame::getTerrainRenderer() { return m_terr
 std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_placementManager; }
 std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }
 int StateGame::getRound() { return m_round; }
+std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }

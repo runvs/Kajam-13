@@ -17,5 +17,7 @@
     {
       "jsonfilename": "assets/units/shieldman.json"
     }
+  ],
+  "upgrades": [
   ]
 }

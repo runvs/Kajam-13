@@ -40,6 +40,8 @@ constexpr auto unitWalkingRight = "walkRight";
 constexpr auto damage = "damage";
 constexpr auto arrows = "arrows";
 
+constexpr auto range = "range";
+
 constexpr auto playerHp = "playerHp";
 
 constexpr auto cost = "cost";
@@ -50,6 +52,12 @@ constexpr auto experience = "exp";
 constexpr auto experienceForLevelUp = "expRequiredForLevelUp";
 constexpr auto experienceGainWhenKilled = "expGainWhenKilled";
 constexpr auto level = "level";
+
+constexpr auto upgrades = "upgrades";
+constexpr auto upgName = "name";
+constexpr auto upgCost = "upgCost";
+constexpr auto upgAdd = "add";
+constexpr auto upgFactor = "factor";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

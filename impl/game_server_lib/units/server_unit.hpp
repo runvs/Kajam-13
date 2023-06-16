@@ -2,13 +2,14 @@
 #ifndef JAMTEMPLATE_SERVER_UNIT_HPP
 #define JAMTEMPLATE_SERVER_UNIT_HPP
 
-#include "object_properties.hpp"
-#include "simulation_object_interface.hpp"
-#include "unit_info.hpp"
-#include "units/ai/ai_interface.hpp"
-#include "vector.hpp"
 #include <box2dwrapper/box2d_object.hpp>
 #include <log/logger_interface.hpp>
+#include <object_properties.hpp>
+#include <simulation_object_interface.hpp>
+#include <unit_info.hpp>
+#include <units/ai/ai_interface.hpp>
+#include <upgrade_unit_data.hpp>
+#include <vector.hpp>
 #include <memory>
 
 class ServerUnit : public SimulationObjectInterface {
@@ -21,6 +22,8 @@ public:
     ObjectProperties saveState() const override;
 
     void updateState(ObjectProperties* props) override;
+
+    void applyUpgrades(std::vector<UpgradeUnitData> const& upgrades);
 
     void levelUnitUp() override;
 
@@ -45,7 +48,7 @@ public:
     // base values
     UnitInfo const& getUnitInfoBase() const;
 
-    // with upgrades
+    // with upgrades and level
     UnitInfo getUnitInfoFull() const override;
 
     std::shared_ptr<jt::Box2DObject> getPhysicsObject();
@@ -66,8 +69,8 @@ private:
     // leveled Values
     UnitInfo m_infoLevel;
 
-    // from upgrades
-    UnitInfo m_infoUpgrades;
+    std::vector<UpgradeInfo> m_upgrades;
+
     std::unique_ptr<AiInterface> m_ai { nullptr };
 
     jt::Vector2f m_pos;

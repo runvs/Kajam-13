@@ -1,15 +1,16 @@
 #ifndef JAMTEMPLATE_SERVER_CONNECTION_HPP
 #define JAMTEMPLATE_SERVER_CONNECTION_HPP
 
-#include "simulation_result_data.hpp"
-#include "vector.hpp"
 #include <asio/ip/tcp.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
 #include <game_object.hpp>
 #include <log/logger_interface.hpp>
 #include <object_properties.hpp>
+#include <simulation_result_data.hpp>
 #include <unit_info_collection.hpp>
+#include <upgrade_unit_data.hpp>
+#include <vector.hpp>
 
 class ServerConnection : public jt::GameObject {
 public:
@@ -19,6 +20,7 @@ public:
     std::shared_ptr<ClientNetworkConnection> getConnection();
 
     void readyRound(ClientPlacementData const& data);
+    void unitUpgrade(UpgradeUnitData const& data);
 
     bool areAllPlayersConnected() const;
     bool isRoundDataReady() const;

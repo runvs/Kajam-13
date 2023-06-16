@@ -14,6 +14,7 @@
 #include <simulation_result_message_sender.hpp>
 #include <unit_info_collection.hpp>
 #include <units/server_unit.hpp>
+#include <upgrade_unit_data.hpp>
 #include <world_info_interface.hpp>
 #include <map>
 #include <memory>
@@ -24,7 +25,10 @@ public:
     explicit GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos);
     void prepareSimulationForNewRound();
     void addUnit(ObjectProperties const& props);
+    void addUnitUpgrade(UpgradeUnitData const& upg);
+
     void performSimulation(SimulationResultMessageSender& sender);
+
     // TODO think about using an optional here, as there might not be a valid target.
     // TODO otherwise, just return the passed in position?
     std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
@@ -43,7 +47,10 @@ private:
     std::shared_ptr<jt::Box2DWorldInterface> m_b2World { nullptr };
     std::shared_ptr<Terrain> m_world;
     std::vector<ObjectProperties> m_unitInformationForRoundStart;
+    std::vector<UpgradeUnitData> m_unitUpgrades;
+
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
+
     std::vector<ArrowInfo> m_arrows;
     std::map<int, int> m_playerHp { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 

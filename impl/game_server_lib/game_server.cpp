@@ -1,5 +1,4 @@
 #include "game_server.hpp"
-#include "system_helper.hpp"
 #include <compression/compressor_interface.hpp>
 #include <game_properties.hpp>
 #include <game_simulation.hpp>
@@ -9,6 +8,8 @@
 #include <nlohmann.hpp>
 #include <player_info.hpp>
 #include <simulation_result_message_sender.hpp>
+#include <system_helper.hpp>
+#include <upgrade_unit_data.hpp>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -148,6 +149,7 @@ void GameServer::handleMessage(
     }
 
     lock.unlock();
+    // TODO avoid double/triple parsing
     if (m.type == MessageType::InitialPing) {
         handleMessageInitialPing(messageContent, endpoint);
     } else if (m.type == MessageType::AddBot) {
@@ -156,6 +158,8 @@ void GameServer::handleMessage(
         handleMessageStayAlivePing(messageContent, endpoint);
     } else if (m.type == MessageType::RoundReady) {
         handleMessageRoundReady(messageContent, endpoint);
+    } else if (m.type == MessageType::UnitUpgrade) {
+        handleMessageUnitUpgrade(m);
     } else {
         discard(messageContent, endpoint);
     }
@@ -265,6 +269,25 @@ void GameServer::handleMessageRoundReady(
         m_logger.info("all players ready");
         m_allPlayersReady.store(true);
     }
+}
+
+void GameServer::handleMessageUnitUpgrade(Message const& m)
+{
+    m_logger.info("Unit upgrade received", { "network", "GameServer" });
+
+    if (!m_matchHasStarted) {
+        m_logger.warning("unit upgrade data received although game has not started",
+            { "network", "game_server" });
+    }
+    if (m.type != MessageType::UnitUpgrade) {
+        m_logger.warning(
+            "unit upgrade called with message of incorrect type", { "network", "game_server" });
+        return;
+    }
+    nlohmann::json j = nlohmann::json::parse(m.data);
+
+    UpgradeUnitData data = j;
+    m_gameSimulation->addUnitUpgrade(data);
 }
 
 void GameServer::discard(

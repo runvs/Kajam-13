@@ -4,7 +4,10 @@
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <json_keys.hpp>
+#include <math_helper.hpp>
 #include <object_properties.hpp>
+#include <rect.hpp>
+#include <strutils.hpp>
 #include <vector.hpp>
 
 Unit::Unit(const UnitInfo& info)
@@ -100,6 +103,8 @@ void Unit::updateState(ObjectProperties const& props)
             m_levelText->setText(std::to_string(m_level));
         }
     }
+
+    m_boughtUpgrades = strutil::split(props.strings.at(jk::upgrades), ",");
 }
 
 void Unit::setPosition(jt::Vector2f const& pos)
@@ -137,3 +142,17 @@ void Unit::setIDs(int uid, int pid)
 int Unit::getPlayerID() const { return m_playerID; }
 
 bool Unit::isUnitAlive() const { return m_hp > 0; }
+bool Unit::isMouseOver() const
+{
+    auto const mp = getGame()->input().mouse()->getMousePositionWorld();
+    jt::Rectf const rect { m_position.x, m_position.y, 16.0f, 16.0f };
+
+    return jt::MathHelper::checkIsIn(rect, mp);
+}
+UnitInfo Unit::getInfo() const { return m_info; }
+
+void Unit::addUpgrade(const std::string& name) { m_boughtUpgrades.push_back(name); }
+bool Unit::hasUpgrade(const std::string& name) const
+{
+    return std::count(m_boughtUpgrades.begin(), m_boughtUpgrades.end(), name) == 1;
+}

@@ -19,5 +19,7 @@
     {
       "jsonfilename": "assets/units/crossbowman.json"
     }
+  ],
+  "upgrades": [
   ]
 }

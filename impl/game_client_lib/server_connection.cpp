@@ -62,6 +62,16 @@ void ServerConnection::readyRound(ClientPlacementData const& data)
     m_connection->sendMessage(m);
 }
 
+void ServerConnection::unitUpgrade(const UpgradeUnitData& data)
+{
+    Message m;
+    m.type = MessageType::UnitUpgrade;
+    m.playerId = m_playerId;
+    nlohmann::json j = data;
+    m.data = j.dump();
+    m_connection->sendMessage(m);
+}
+
 void ServerConnection::handleMessage(
     std::string const& messageContent, asio::ip::tcp::endpoint const& /*endpoint*/)
 {

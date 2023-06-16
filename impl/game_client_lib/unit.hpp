@@ -38,6 +38,13 @@ public:
 
     bool isUnitAlive() const;
 
+    bool isMouseOver() const;
+
+    UnitInfo getInfo() const;
+
+    void addUpgrade(std::string const& name);
+    bool hasUpgrade(std::string const& name) const;
+
 private:
     UnitInfo m_info;
 
@@ -53,6 +60,7 @@ private:
     float m_hpMax { 100.0f };
     float m_hp { 100.0f };
     int m_level { 1 };
+    std::vector<std::string> m_boughtUpgrades;
     std::shared_ptr<jt::Bar> m_hpBar;
 
     void doCreate() override;

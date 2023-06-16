@@ -1,6 +1,6 @@
 {
   "type": "peasant",
-  "expRequiredForLevelUp": 100,
+  "expRequiredForLevelUp": 50,
   "expGainWhenKilled": 10,
   "hitpoints": 20.0,
   "damage": 3.0,
@@ -16,6 +16,20 @@
   "animations": [
     {
       "jsonfilename": "assets/units/peasant.json"
+    }
+  ],
+  "upgrades": [
+    {
+      "name": "rage",
+      "upgCost": 100,
+      "movementSpeed": {
+        "add": 0.0,
+        "factor": 0.1
+      },
+      "attackTimerMax": {
+        "add": 0.0,
+        "factor": 0.5
+      }
     }
   ]
 }

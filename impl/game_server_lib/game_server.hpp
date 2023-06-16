@@ -7,6 +7,7 @@
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
 #include <unit_info_collection.hpp>
+#include <upgrade_unit_data.hpp>
 #include <atomic>
 #include <shared_mutex>
 
@@ -52,6 +53,7 @@ private:
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageRoundReady(
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
+    void handleMessageUnitUpgrade(Message const& m);
     void handleMessageAddBot();
 
     void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
