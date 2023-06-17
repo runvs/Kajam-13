@@ -14,6 +14,8 @@ struct ArrowInfo {
     float totalTime { 0.0f };
     int targetPlayerId { -1 };
     float maxHeight { 32.0f };
+    int shooterPlayerId { -1 };
+    int shooterUnitId { 0 };
 };
 
 void to_json(nlohmann::json& j, const ArrowInfo& data);

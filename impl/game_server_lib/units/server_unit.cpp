@@ -200,7 +200,7 @@ UnitInfo ServerUnit::getUnitInfoFull() const
     info.animations = m_infoBase.animations;
     info.colliderRadius = m_infoBase.colliderRadius;
     info.movementSpeed = m_infoLevel.movementSpeed;
-    info.experienceGainWhenKilled = m_infoBase.experienceGainWhenKilled;
+    info.experienceGainWhenKilled = m_infoBase.experienceGainWhenKilled * std::sqrt(m_level);
 
     for (auto const& upg : m_upgrades) {
         applyUpgrade(info, upg);

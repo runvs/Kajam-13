@@ -1,4 +1,3 @@
-
 #include "message.hpp"
 #include <json_keys.hpp>
 
@@ -13,8 +12,8 @@ void to_json(nlohmann::json& j, const Message& message)
 void from_json(const nlohmann::json& j, Message& message)
 {
     j.at(jk::messageType).get_to(message.type);
+    j.at(jk::playerID).get_to(message.playerId);
     if (j.count(jk::messageData)) {
         j.at(jk::messageData).get_to(message.data);
     }
-    j.at(jk::playerID).get_to(message.playerId);
 }

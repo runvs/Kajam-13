@@ -10,7 +10,8 @@
 
 namespace {
 
-std::vector<std::string> getUpgradeList(PlacedUnit const& unit) { return {}; }
+// TODO implement function
+std::vector<std::string> getUpgradeList(PlacedUnit const& /*unit*/) { return {}; }
 
 std::vector<std::string> getUpgradeList(Unit const& unit)
 {
@@ -64,7 +65,7 @@ void showUnitTooltip(T& u)
         if (!upgrades.empty()) {
             ImGui::Text("Upgrades:");
             for (auto const& upg : upgrades) {
-                ImGui::BulletText(upg.c_str());
+                ImGui::BulletText("%s", upg.c_str());
             }
         }
         ImGui::EndTooltip();

@@ -46,8 +46,10 @@ void AiRangedCombat::update(float elapsed, ServerUnit& unit, WorldInfoInterface&
             auto const heightScaling = jt::MathHelper::clamp(dist / attackRange, 0.05f, 1.0f);
             arrowInfo.maxHeight = heightScaling * unit.getUnitInfoFull().ai.arrowHeight;
 
+            arrowInfo.shooterPlayerId = unit.getPlayerID();
+            arrowInfo.shooterUnitId = unit.getUnitID();
+
             world.spawnArrow(arrowInfo);
-            // TODO some mechanism to get exp to shooting unit
         }
     }
 }

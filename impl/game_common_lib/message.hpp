@@ -23,7 +23,6 @@ struct Message {
 };
 
 void to_json(nlohmann::json& j, const Message& message);
-
 void from_json(const nlohmann::json& j, Message& message);
 
 #endif // JAMTEMPLATE_MESSAGE_HPP

@@ -12,12 +12,13 @@ struct SelectUnitInfo {
 };
 } // namespace
 
-void SelectStartingUnits::update(StateGame& state, float elapsed) { }
+void SelectStartingUnits::update(StateGame& /*state*/, float /*elapsed*/) { }
 void SelectStartingUnits::draw(StateGame& state)
 {
     ImGui::Begin("Select Starting Units");
 
     std::vector<SelectUnitInfo> options;
+    // TODO move to json files for parsing and easy configurability
     {
         SelectUnitInfo option;
         option.unit1 = "peasant";
@@ -26,12 +27,11 @@ void SelectStartingUnits::draw(StateGame& state)
         options.push_back(option);
     }
 
-    // TODO move to json files for parsing and easy configurability
     {
         SelectUnitInfo option;
         option.unit1 = "archer";
         option.unit2 = "swordman";
-        option.initialGold = 125;
+        option.initialGold = 150;
         options.push_back(option);
     }
 

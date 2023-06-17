@@ -52,7 +52,7 @@ InternalStateManager::InternalStateManager()
         = [](StateGame& state) {
               state.transitionPlaybackToPlaceUnits();
               state.getPlacementManager()->setActive(true);
-              state.getPlacementManager()->addFunds(150 + 50 * state.getRound());
+              state.getPlacementManager()->addFunds(100 + 50 * state.getRound());
 
               state.getTerrainRenderer()->setDrawGrid(true);
           };

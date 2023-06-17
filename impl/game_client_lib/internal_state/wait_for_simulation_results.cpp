@@ -9,4 +9,4 @@ void WaitForSimulationResults::update(StateGame& state, float /*elapsed*/)
     }
 }
 
-void WaitForSimulationResults::draw(StateGame& state) { }
+void WaitForSimulationResults::draw(StateGame& /*state*/) { }

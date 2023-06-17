@@ -3,17 +3,17 @@
 
 namespace jk {
 
-constexpr auto positionX = "posx";
-constexpr auto positionY = "posy";
+constexpr auto positionX = "px";
+constexpr auto positionY = "py";
 
-constexpr auto offsetX = "offsetx";
-constexpr auto offsetY = "offsety";
+constexpr auto offsetX = "ofsx";
+constexpr auto offsetY = "ofsy";
 
 constexpr auto unitID = "uid";
 constexpr auto playerID = "pid";
+constexpr auto frameID = "fid";
 
 constexpr auto units = "units";
-constexpr auto frameID = "fid";
 
 constexpr auto messageType = "type";
 constexpr auto messageData = "data";

@@ -69,10 +69,27 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
                     continue;
                 }
                 if (target->getPlayerID() == arrow.targetPlayerId) {
-                    auto const difTargetArrow = target->getPosition() - arrow.currentPos;
+                    auto const difTargetArrow
+                        = target->getPosition() - arrow.currentPos + jt::Vector2f { 4.0f, 4.0f };
                     auto const dist = jt::MathHelper::length(difTargetArrow);
                     if (dist <= 16) {
                         target->takeDamage(arrow.damage);
+                        if (!target->isAlive()) {
+                            // kill
+                            m_logger.verbose("arrow kill", { "GameSimulation" });
+                            auto const exp = target->getUnitInfoFull().experienceGainWhenKilled;
+                            for (auto& u : m_simulationObjects) {
+                                bool const correctUId = u->getUnitID() == arrow.shooterUnitId;
+                                bool const correctPId = u->getPlayerID() == arrow.shooterPlayerId;
+                                if (correctPId && correctUId) {
+                                    u->gainExperience(exp);
+                                    m_logger.verbose(
+                                        "gain exp from arrow kill: " + std::to_string(exp),
+                                        { "GameSimulation" });
+                                    break;
+                                }
+                            }
+                        }
                         arrow.age = 999999;
                         break;
                     }
