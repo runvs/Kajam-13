@@ -14,9 +14,6 @@ public:
     UnitInfo const& getInfoForType(std::string const& type) const;
     std::vector<std::string> getTypes() const;
 
-    std::vector<std::string> getUnlockedTypes() const;
-    void unlockType(std::string const& type);
-
     std::vector<UnitInfo>& getUnits();
     std::vector<UnitInfo> const& getUnits() const;
 

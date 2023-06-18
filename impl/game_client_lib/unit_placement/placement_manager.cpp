@@ -74,7 +74,7 @@ void PlacementManager::doDraw() const
 
         ImGui::Separator();
         ImGui::Text("Unlock");
-        auto unlockedTypes = m_unitInfo->getUnlockedTypes();
+        auto unlockedTypes = m_unlockedTypes;
         auto allTypes = m_unitInfo->getTypes();
         std::sort(unlockedTypes.begin(), unlockedTypes.end());
         std::sort(allTypes.begin(), allTypes.end());
@@ -88,7 +88,7 @@ void PlacementManager::doDraw() const
             ImGui::BeginDisabled(!canUnlock);
             std::string const buttonString = u.type + " (" + std::to_string(u.unlockCost) + ")";
             if (ImGui::Button(buttonString.c_str())) {
-                m_unitInfo->unlockType(t);
+                unlockType(t);
                 m_availableFunds -= u.unlockCost;
             }
             ImGui::EndDisabled();
@@ -197,3 +197,15 @@ void PlacementManager::setActive(bool active) { m_isActive = active; }
 
 void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
 int PlacementManager::getFunds() const { return m_availableFunds; }
+void PlacementManager::unlockType(const std::string& type) const
+{
+    //    if (std::count(m_unitInfo->getTypes().begin(), m_unitInfo->getTypes().end(), type) == 0) {
+    //        throw std::invalid_argument { "unit info for type " + type + " not found" };
+    //    }
+    //    if (std::count(m_unlockedTypes.begin(), m_unlockedTypes.end(), type) == 1) {
+    //        // TODO pass logger
+    //        //        m_logger.warning("type " + type + " already unlocked");
+    //    }
+
+    m_unlockedTypes.push_back(type);
+}

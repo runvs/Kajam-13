@@ -10,8 +10,7 @@
 
 namespace {
 
-// TODO implement function
-std::vector<std::string> getUpgradeList(PlacedUnit const& /*unit*/) { return {}; }
+std::vector<std::string> getUpgradeList(PlacedUnit const& unit) { return {}; }
 
 std::vector<std::string> getUpgradeList(Unit const& unit)
 {

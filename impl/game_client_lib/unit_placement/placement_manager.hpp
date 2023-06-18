@@ -28,6 +28,8 @@ public:
     void addFunds(int funds);
     int getFunds() const;
 
+    void unlockType(std::string const& type) const;
+
 private:
     std::shared_ptr<Terrain> m_world;
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
@@ -39,10 +41,12 @@ private:
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
     std::shared_ptr<jt::Shape> m_blockedUnitPlacementAreas[3];
     int m_playerId;
-    // TODO rework
+
     mutable std::string m_activeUnitType = "";
 
     mutable int m_availableFunds { 0 };
+
+    mutable std::vector<std::string> m_unlockedTypes;
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

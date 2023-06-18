@@ -50,8 +50,8 @@ void SelectStartingUnits::draw(StateGame& state)
             ImGui::TableNextColumn();
             auto buttonText = "Buy##" + std::to_string(i);
             if (ImGui::Button(buttonText.c_str())) {
-                state.getUnitInfo()->unlockType(options[i].unit1);
-                state.getUnitInfo()->unlockType(options[i].unit2);
+                state.getPlacementManager()->unlockType(options[i].unit1);
+                state.getPlacementManager()->unlockType(options[i].unit2);
                 state.getPlacementManager()->addFunds(options[i].initialGold);
                 state.getPlacementManager()->update(0.0f);
                 state.getStateManager()->switchToState(InternalState::PlaceUnits, state);

@@ -60,17 +60,6 @@ void UnitInfoCollection::parseUnitInfosFromFilename(const std::string& fileName)
     m_logger.info(
         "Parsed a total of " + std::to_string(m_infos.size()) + " units", { "UnitInfoCollection" });
 }
-void UnitInfoCollection::unlockType(const std::string& type)
-{
-    if (std::count(m_types.begin(), m_types.end(), type) == 0) {
-        throw std::invalid_argument { "unit info for type " + type + " not found" };
-    }
-    if (std::count(m_unlockedTypes.begin(), m_unlockedTypes.end(), type) == 1) {
-        m_logger.warning("type " + type + " already unlocked");
-    }
-    m_unlockedTypes.push_back(type);
-}
-std::vector<std::string> UnitInfoCollection::getUnlockedTypes() const { return m_unlockedTypes; }
 
 void to_json(nlohmann::json& j, UnitInfoCollection& p)
 {
