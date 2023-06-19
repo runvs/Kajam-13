@@ -41,7 +41,7 @@ private:
 
     std::thread m_thread;
 
-    ReceiveBuffer m_buffer;
+    std::unique_ptr<ReceiveBuffer> m_buffer;
 
     std::function<void(std::string const&, asio::ip::tcp::endpoint sendToEndpoint)>
         m_handleInComingMessageCallback;

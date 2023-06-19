@@ -50,7 +50,7 @@ private:
         m_handleInComingMessageCallback;
 
     asio::ip::tcp::endpoint m_receivedFromEndpoint;
-    ReceiveBuffer m_buffer;
+    std::unique_ptr<ReceiveBuffer> m_buffer;
     std::atomic_bool m_alreadyReceiving { false };
 
     void startProcessing();
