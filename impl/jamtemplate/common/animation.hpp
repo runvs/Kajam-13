@@ -118,6 +118,14 @@ public:
     /// \return the number of frames in this animation
     std::size_t getNumberOfFramesInCurrentAnimation() const;
 
+    /// Get the number of frames in this animation
+    ///
+    /// Note: will raise an exception if animName does not exist
+    /// \param animName the name of the animation
+    ///
+    /// \return the number of frames in this animation
+    std::size_t getNumberOfFramesInAnimation(std::string const& animName) const;
+
     /// Get the name of the current animation
     ///
     /// \return the name of the currently playing animation

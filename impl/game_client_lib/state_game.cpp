@@ -1,16 +1,15 @@
 ﻿#include "state_game.hpp"
-#include "internal_state/internal_state_manager.hpp"
-#include "internal_state/wait_for_all_players.hpp"
 #include <color/color.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <graphics/drawable_interface.hpp>
 #include <input/keyboard/keyboard_defines.hpp>
-#include <json_keys.hpp>
+#include <internal_state/internal_state_manager.hpp>
 #include <message.hpp>
 #include <object_group.hpp>
 #include <player_id_dispatcher.hpp>
+#include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <server_connection.hpp>
 #include <simulation_result_data.hpp>
@@ -61,6 +60,15 @@ void StateGame::onCreate()
 
     m_clouds = std::make_shared<jt::Clouds>(jt::Vector2f { 4.0f, 2.0f });
     add(m_clouds);
+
+    m_birds = std::make_shared<jt::ObjectGroup<Bird>>();
+
+    for (auto i = 0; i != 10; ++i) {
+        auto b = std::make_shared<Bird>();
+        m_birds->push_back(b);
+        add(b);
+        b->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+    }
 }
 
 void StateGame::onEnter() { }
@@ -171,6 +179,10 @@ void StateGame::onDraw() const
         if (!lockedUnit->isUnitAlive()) {
             lockedUnit->draw();
         }
+    }
+
+    for (auto const& b : *m_birds) {
+        b.lock()->draw();
     }
 
     // then draw all alive units

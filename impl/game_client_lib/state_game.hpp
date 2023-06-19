@@ -1,6 +1,7 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
+#include "bird.hpp"
 #include "internal_state/internal_state_interface.hpp"
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
@@ -74,14 +75,16 @@ private:
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
     std::shared_ptr<jt::Clouds> m_clouds { nullptr };
 
-    std::shared_ptr<UnitInfoCollection> m_unitInfo;
+    std::shared_ptr<jt::ObjectGroup<Bird>> m_birds { nullptr };
 
-    std::shared_ptr<InternalStateManager> m_internalStateManager;
+    std::shared_ptr<UnitInfoCollection> m_unitInfo { nullptr };
+
+    std::shared_ptr<InternalStateManager> m_internalStateManager { nullptr };
 
     SimulationResultDataForAllFrames m_simulationResultsForAllFrames;
 
-    std::shared_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
-    mutable std::shared_ptr<jt::Shape> m_arrowShape;
+    std::shared_ptr<PlayerIdDispatcher> m_playerIdDispatcher { nullptr };
+    mutable std::shared_ptr<jt::Shape> m_arrowShape { nullptr };
 
     mutable bool m_addBotAsPlayerZero { false };
     mutable bool m_addBotAsPlayerOne { false };

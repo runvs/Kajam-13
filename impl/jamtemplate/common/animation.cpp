@@ -330,6 +330,11 @@ std::size_t jt::Animation::getNumberOfFramesInCurrentAnimation() const
     return m_frames.at(m_currentAnimName).size();
 }
 
+std::size_t jt::Animation::getNumberOfFramesInAnimation(std::string const& animName) const
+{
+    return m_frames.at(animName).size();
+}
+
 std::string jt::Animation::getCurrentAnimationName() const { return m_currentAnimName; }
 
 bool jt::Animation::getIsLooping() const
