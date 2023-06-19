@@ -124,7 +124,7 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     std::unique_lock<std::mutex> lock { m_dataMutex };
     j_data.get_to(m_simulationResults);
     m_logger.info("received all simulation results (count: "
-        + std::to_string(m_simulationResults.allFrames.size()));
+        + std::to_string(m_simulationResults.allFrames.size()) + ")");
     m_dataReady = true;
 }
 bool ServerConnection::isRoundDataReady() const { return m_dataReady; }
