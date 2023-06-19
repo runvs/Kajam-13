@@ -1,10 +1,10 @@
 {
   "type": "peasant",
-  "expRequiredForLevelUp": 50,
+  "expRequiredForLevelUp": 30,
   "expGainWhenKilled": 10,
   "hitpoints": 20.0,
-  "damage": 3.0,
-  "attackTimerMax": 0.75,
+  "damage": 6.0,
+  "attackTimerMax": 0.7,
   "movementSpeed": 40.0,
   "colliderRadius": 4.0,
   "cost": 45,
@@ -28,7 +28,7 @@
       },
       "attackTimerMax": {
         "add": 0.0,
-        "factor": 0.5
+        "factor": -0.2
       }
     }
   ]

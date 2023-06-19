@@ -5,7 +5,6 @@
 #include <asio.hpp>
 
 struct PlayerInfo {
-    float timeSinceLastPing { 0.0f };
     asio::ip::tcp::endpoint endpoint;
     bool roundReady { false };
     ClientPlacementData roundEndPlacementData;

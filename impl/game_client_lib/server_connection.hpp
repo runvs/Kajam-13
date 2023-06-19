@@ -34,8 +34,6 @@ private:
     int m_playerId = -1;
     std::shared_ptr<ClientNetworkConnection> m_connection;
 
-    float m_alivePingTimer = 0.5f;
-
     std::atomic_bool m_allPlayersConnected { false };
 
     std::atomic_bool m_dataReady { false };

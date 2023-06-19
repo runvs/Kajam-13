@@ -86,27 +86,29 @@ ObjectProperties ServerUnit::saveState() const
     return props;
 }
 
-void ServerUnit::updateState(ObjectProperties* props)
+void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
 {
     m_roundStartObjectProperties = props;
 
     m_logger.debug("update State", { "ServerUnit" });
-    m_unitID = props->ints.at(jk::unitID);
-    m_playerID = props->ints.at(jk::playerID);
-    if (props->ints.count(jk::level) == 1) {
-        m_level = props->ints.at(jk::level);
+    m_unitID = props->unitClientToServerData.unitID;
+    m_playerID = props->unitClientToServerData.playerID;
+    if (props->level == 1) {
+        m_level = props->level;
     } else {
         m_level = 1;
     }
-    m_pos = jt::Vector2f { props->floats.at(jk::positionX), props->floats.at(jk::positionY) };
+    m_pos = jt::Vector2f { props->unitClientToServerData.positionX,
+        props->unitClientToServerData.positionY };
     m_physicsObject->setPosition(m_pos);
-    m_offset = jt::Vector2f { props->floats.at(jk::offsetX), props->floats.at(jk::offsetY) };
-    if (props->ints.count(jk::experience) == 0) {
-        m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
+    m_offset = jt::Vector2f { props->unitClientToServerData.offsetX,
+        props->unitClientToServerData.offsetY };
+    if (props->experience == 0) {
+        m_experience = getUnitInfoBase().experienceRequiredForLevelUp * sqrt(m_level);
     } else {
-        m_experience = props->ints.at(jk::experience);
-        m_logger.info("load exp with value: " + std::to_string(m_experience));
+        m_experience = props->experience;
     }
+    m_logger.debug("load exp with value: " + std::to_string(m_experience));
 }
 
 void ServerUnit::levelUnitUp()
@@ -119,7 +121,7 @@ void ServerUnit::levelUnitUp()
     m_logger.info("upgrade unit to level: " + std::to_string(m_level), { "ServerUnit" });
 
     m_level++;
-    m_roundStartObjectProperties->ints[jk::level] = m_level;
+    m_roundStartObjectProperties->level = m_level;
     m_infoLevel.hitpointsMax = m_infoBase.hitpointsMax * m_level;
     m_infoLevel.damage = m_infoBase.damage * m_level;
     m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
@@ -220,7 +222,7 @@ void ServerUnit::gainExperience(int exp)
         levelUnitUp();
     }
     m_logger.info("gain experience. New exp: " + std::to_string(m_experience));
-    m_roundStartObjectProperties->ints[jk::experience] = m_experience;
+    m_roundStartObjectProperties->experience = m_experience;
 }
 int ServerUnit::getLevel() const { return m_level; }
 

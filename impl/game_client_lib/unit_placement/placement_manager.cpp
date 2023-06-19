@@ -5,8 +5,8 @@
 #include <map/placement_area.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
+#include <network_data/unit_client_to_server_data.hpp>
 #include <object_group.hpp>
-#include <object_properties.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <vector.hpp>
@@ -22,6 +22,13 @@ PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
 {
     m_playerId = playerId;
     m_playerIdDispatcher = playerIdDispatcher;
+
+    // Build list of possible upgrades
+    for (auto const& u : m_unitInfo->getUnits()) {
+        for (auto const& upg : u.possibleUpgrades) {
+            m_possibleUpgrades[u.type].push_back(upg.name);
+        }
+    }
 }
 
 void PlacementManager::doCreate()
@@ -177,9 +184,9 @@ bool& PlacementManager::fieldInUse(int const x, int const y)
     return m_placedUnitsMap[x + y * terrainWidthInChunks];
 }
 
-std::vector<ObjectProperties> PlacementManager::getPlacedUnits() const
+std::vector<UnitClientToServerData> PlacementManager::getPlacedUnits() const
 {
-    std::vector<ObjectProperties> properties;
+    std::vector<UnitClientToServerData> properties;
     for (auto const& u : *m_placedUnits) {
         properties.push_back(u.lock()->saveState());
     }
@@ -199,13 +206,17 @@ void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
 int PlacementManager::getFunds() const { return m_availableFunds; }
 void PlacementManager::unlockType(const std::string& type) const
 {
-    //    if (std::count(m_unitInfo->getTypes().begin(), m_unitInfo->getTypes().end(), type) == 0) {
-    //        throw std::invalid_argument { "unit info for type " + type + " not found" };
-    //    }
-    //    if (std::count(m_unlockedTypes.begin(), m_unlockedTypes.end(), type) == 1) {
-    //        // TODO pass logger
-    //        //        m_logger.warning("type " + type + " already unlocked");
-    //    }
-
+    // TODO check for duplicates
     m_unlockedTypes.push_back(type);
+}
+void PlacementManager::buyUpgrade(std::string const& unitType, const std::string& upgrade) const
+{
+    auto& vec = m_possibleUpgrades.at(unitType);
+    vec.erase(std::remove(vec.begin(), vec.end(), upgrade), vec.end());
+}
+
+std::vector<std::string> PlacementManager::getPossibleUpgradesForUnit(
+    std::string const& unitType) const
+{
+    return m_possibleUpgrades.at(unitType);
 }

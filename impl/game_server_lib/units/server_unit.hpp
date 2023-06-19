@@ -21,7 +21,7 @@ public:
 
     ObjectProperties saveState() const override;
 
-    void updateState(ObjectProperties* props) override;
+    void setRoundStartState(UnitServerRoundStartData* props) override;
 
     void applyUpgrades(std::vector<UpgradeUnitData> const& upgrades);
 
@@ -62,7 +62,7 @@ private:
     jt::LoggerInterface& m_logger;
     std::shared_ptr<jt::Box2DObject> m_physicsObject { nullptr };
 
-    ObjectProperties* m_roundStartObjectProperties { nullptr };
+    UnitServerRoundStartData* m_roundStartObjectProperties { nullptr };
 
     // basic values
     UnitInfo m_infoBase;

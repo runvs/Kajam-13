@@ -17,6 +17,9 @@ public:
     std::vector<UnitInfo>& getUnits();
     std::vector<UnitInfo> const& getUnits() const;
 
+    UpgradeInfo const& getUpgradeForUnit(
+        std::string const& unitType, std::string const& upgradeName) const;
+
 private:
     jt::LoggerInterface& m_logger;
     std::vector<UnitInfo> m_infos;

@@ -1,13 +1,11 @@
 #include "game_simulation.hpp"
-#include "arrow_info.hpp"
-#include "box2dwrapper/box2d_world_impl.hpp"
-#include "simulation_result_data.hpp"
-#include "units/server_unit.hpp"
+#include <arrow_info.hpp>
+#include <box2dwrapper/box2d_world_impl.hpp>
 #include <game_properties.hpp>
-#include <json_keys.hpp>
 #include <math_helper.hpp>
-#include <object_properties.hpp>
 #include <simulation_object_interface.hpp>
+#include <simulation_result_data.hpp>
+#include <units/server_unit.hpp>
 #include <vector.hpp>
 #include <memory>
 #include <string>
@@ -26,20 +24,23 @@ void GameSimulation::prepareSimulationForNewRound()
 
     for (auto& props : m_unitInformationForRoundStart) {
         auto obj = std::make_shared<ServerUnit>(
-            m_logger, m_unitInfos.getInfoForType(props.strings.at(jk::unitType)), m_b2World);
-        obj->updateState(&props);
+            m_logger, m_unitInfos.getInfoForType(props.unitClientToServerData.unitType), m_b2World);
+        obj->setRoundStartState(&props);
         obj->applyUpgrades(m_unitUpgrades);
         m_simulationObjects.emplace_back(std::move(obj));
     }
 }
 
-void GameSimulation::addUnit(const ObjectProperties& props)
+void GameSimulation::addUnit(UnitClientToServerData const& unitData)
 {
-    // TODO check validity of placement
-    if (!checkIfUnitIsUnique(props)) {
+    // TODO sanity check validity of placement
+    if (!checkIfUnitIsUnique(unitData)) {
         return;
     }
-    m_unitInformationForRoundStart.push_back(props);
+    UnitServerRoundStartData roundStartData;
+    roundStartData.unitClientToServerData = unitData;
+
+    m_unitInformationForRoundStart.push_back(roundStartData);
 }
 
 float arrowParabola(float x, float maxHeight) { return -maxHeight * 4 * (x - x * x); }
@@ -195,11 +196,11 @@ float GameSimulation::getTerrainMappedFieldHeight(jt::Vector2f const& pos)
     return m_world->getFieldHeight(pos);
 }
 
-bool GameSimulation::checkIfUnitIsUnique(const ObjectProperties& newUnitProps)
+bool GameSimulation::checkIfUnitIsUnique(UnitClientToServerData const& newUnitData)
 {
-    for (auto const& props : m_unitInformationForRoundStart) {
-        if (props.ints.at(jk::unitID) == newUnitProps.ints.at(jk::unitID)
-            && props.ints.at(jk::playerID) == newUnitProps.ints.at(jk::playerID)) {
+    for (auto const& unitData : m_unitInformationForRoundStart) {
+        if (unitData.unitClientToServerData.unitID == newUnitData.unitID
+            && unitData.unitClientToServerData.playerID == newUnitData.playerID) {
             m_logger.warning("Adding a unit that is already present in the game simulation");
             return false;
         }

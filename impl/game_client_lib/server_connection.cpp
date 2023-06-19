@@ -40,15 +40,10 @@ void ServerConnection::setConnection(std::shared_ptr<ClientNetworkConnection> co
 
 std::shared_ptr<ClientNetworkConnection> ServerConnection::getConnection() { return m_connection; }
 
-void ServerConnection::doUpdate(const float elapsed)
+void ServerConnection::doUpdate(const float /*elapsed*/)
 {
     if (!m_connection) {
         return;
-    }
-    m_alivePingTimer -= elapsed;
-    if (m_alivePingTimer <= 0) {
-        m_alivePingTimer += NetworkProperties::AlivePingTimer();
-        m_connection->sendAlivePing(m_playerId);
     }
 }
 

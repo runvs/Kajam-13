@@ -4,6 +4,7 @@
 #include <damage_info.hpp>
 #include <object_properties.hpp>
 #include <unit_info.hpp>
+#include <unit_server_round_start_data.hpp>
 #include <vector.hpp>
 
 class WorldInfoInterface;
@@ -15,7 +16,7 @@ public:
     virtual void update(float elapsed, WorldInfoInterface& world) = 0;
 
     virtual ObjectProperties saveState() const = 0;
-    virtual void updateState(ObjectProperties* props) = 0;
+    virtual void setRoundStartState(UnitServerRoundStartData* props) = 0;
     virtual void levelUnitUp() = 0;
     virtual int getLevel() const = 0;
 

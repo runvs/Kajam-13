@@ -10,6 +10,7 @@
 
 namespace {
 
+// TODO
 std::vector<std::string> getUpgradeList(PlacedUnit const& unit) { return {}; }
 
 std::vector<std::string> getUpgradeList(Unit const& unit)
@@ -113,17 +114,20 @@ void PlaceUnits::draw(StateGame& state)
 
     if (m_selectedUnit) {
         ImGui::Begin("Unit upgrades");
-        for (auto& upg : m_selectedUnit->getInfo().possibleUpgrades) {
+        auto const unitType = m_selectedUnit->getInfo().type;
+        for (auto& upgName : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
+            auto const upg = state.getUnitInfo()->getUpgradeForUnit(unitType, upgName);
             if (m_selectedUnit->hasUpgrade(upg.name)) {
                 continue;
             }
             auto const cost = upg.upgradeCost;
-            auto const str = upg.name + " (" + std::to_string(cost) + ")";
+            auto const str = upgName + " (" + std::to_string(cost) + ")";
             auto const available = state.getPlacementManager()->getFunds();
             ImGui::BeginDisabled(available < cost);
             if (ImGui::Button(str.c_str())) {
-                state.getGame()->logger().info("clicked upgrade: " + upg.name);
+                state.getGame()->logger().info("clicked upgrade: " + upgName);
                 state.getPlacementManager()->addFunds(-cost);
+                state.getPlacementManager()->buyUpgrade(m_selectedUnit->getInfo().type, upgName);
 
                 UpgradeUnitData data;
                 data.upgrade = upg;

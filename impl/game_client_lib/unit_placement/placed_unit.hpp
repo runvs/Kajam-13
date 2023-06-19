@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_PLACED_UNIT_HPP
 #define JAMTEMPLATE_PLACED_UNIT_HPP
 
-#include "state_menu.hpp"
 #include <animation.hpp>
 #include <game_object.hpp>
+#include <network_data/unit_client_to_server_data.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
 #include <unit_info.hpp>
@@ -13,7 +13,7 @@
 class PlacedUnit : public jt::GameObject {
 public:
     explicit PlacedUnit(UnitInfo info);
-    ObjectProperties saveState() const;
+    UnitClientToServerData saveState() const;
 
     void setIDs(int uid, int pid);
     void setPosition(jt::Vector2f const& pos);

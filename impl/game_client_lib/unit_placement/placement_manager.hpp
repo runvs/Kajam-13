@@ -11,6 +11,7 @@
 #include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector>
+#include <network_data/unit_client_to_server_data.hpp>
 
 class PlacedUnit;
 
@@ -19,7 +20,7 @@ public:
     PlacementManager(std::shared_ptr<Terrain> world, int playerId,
         std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
-    std::vector<ObjectProperties> getPlacedUnits() const;
+    std::vector<UnitClientToServerData> getPlacedUnits() const;
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnitsGO() const;
     void clearPlacedUnits();
 
@@ -29,6 +30,9 @@ public:
     int getFunds() const;
 
     void unlockType(std::string const& type) const;
+
+    void buyUpgrade(std::string const& unitType, const std::string& upgrade) const;
+    std::vector<std::string> getPossibleUpgradesForUnit(std::string const& unitType) const;
 
 private:
     std::shared_ptr<Terrain> m_world;
@@ -47,6 +51,7 @@ private:
     mutable int m_availableFunds { 0 };
 
     mutable std::vector<std::string> m_unlockedTypes;
+    mutable std::map<std::string, std::vector<std::string>> m_possibleUpgrades;
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

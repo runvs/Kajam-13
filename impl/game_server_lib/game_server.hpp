@@ -49,8 +49,6 @@ private:
     void handleMessage(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageInitialPing(
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
-    void handleMessageStayAlivePing(
-        std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageRoundReady(
         std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessageUnitUpgrade(Message const& m);
@@ -58,7 +56,7 @@ private:
 
     void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
 
-    void removePlayersIfNoAlivePingReceived(float elapsed);
+    void removePlayerIfConnectionClosed(float elapsed);
     void performAI(std::map<int, PlayerInfo>& botDataCopy) const;
 
     void resetServer();

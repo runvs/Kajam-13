@@ -4,6 +4,7 @@
 #include <game_simulation.hpp>
 #include <json_keys.hpp>
 #include <message.hpp>
+#include <network_data/unit_client_to_server_data.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
 #include <player_info.hpp>
@@ -33,7 +34,7 @@ void GameServer::update(float elapsed)
 {
     m_connection.update();
 
-    removePlayersIfNoAlivePingReceived(elapsed);
+    removePlayerIfConnectionClosed(elapsed);
 
     if (m_allPlayersReady) {
         if (!m_simulationStarted) {
@@ -41,7 +42,7 @@ void GameServer::update(float elapsed)
             auto botDataCopy = m_botData;
             lock.unlock();
 
-            // TODO only pass in playerID of bo
+            // TODO only pass in playerID of bot
             performAI(botDataCopy);
 
             startRoundSimulation();
@@ -57,46 +58,32 @@ void GameServer::update(float elapsed)
     }
 }
 
+// TODO move out into separate AI class
 void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
 {
     if (!botDataCopy.empty()) {
-        ObjectProperties props;
-        props.ints[jk::unitID] = m_round;
-        props.ints[jk::playerID] = botDataCopy.begin()->first;
-        props.floats[jk::positionX]
+        UnitClientToServerData unitData;
+        unitData.unitID = m_round;
+        unitData.playerID = botDataCopy.begin()->first;
+        unitData.positionX
             = static_cast<float>(botDataCopy.begin()->first == 0 ? 48 : GP::GetScreenSize().x - 47);
-        props.floats[jk::positionY] = terrainChunkSizeInPixel * 10 + 32 * m_round;
+        unitData.positionY = terrainChunkSizeInPixel * 10 + 32 * m_round;
         std::vector<std::string> const possibleUnits = m_unitInfos.getTypes();
         auto const unitType
             = *jt::SystemHelper::select_randomly(possibleUnits.cbegin(), possibleUnits.cend());
 
-        props.floats[jk::offsetX] = 0.0f;
-        props.floats[jk::offsetY] = 0.0f;
-        props.strings[jk::unitType] = unitType;
+        unitData.offsetX = 0.0f;
+        unitData.offsetY = 0.0f;
+        unitData.unitType = unitType;
 
-        m_gameSimulation->addUnit(props);
+        m_gameSimulation->addUnit(unitData);
     }
 }
 
-void GameServer::removePlayersIfNoAlivePingReceived(float elapsed)
+void GameServer::removePlayerIfConnectionClosed(float /*elapsed*/)
 {
     std::unique_lock<std::mutex> const lock { m_mutex };
-    // Note: remove_if does not work for map
-    for (auto it = m_playerData.begin(); it != m_playerData.end();) {
-        it->second.timeSinceLastPing += elapsed;
-        if (it->second.timeSinceLastPing >= 35.0f) {
-            std::stringstream ss_log;
-            ss_log << "erase endpoint '" << it->second.endpoint.address()
-                   << "' because of missing ping for player " << it->first << "\n";
-            m_logger.info(ss_log.str(), { "network", "GameServer" });
-
-            it = m_playerData.erase(it);
-
-        } else {
-            ++it;
-        }
-    }
-    // also clear player data if socket is closed or no longer in list of sockets
+    // clear player data if socket is closed or no longer in list of sockets
     for (auto it = m_playerData.begin(); it != m_playerData.end();) {
         if (!m_connection.isSocketOpenFor(it->second.endpoint)) {
             std::stringstream ss_log;
@@ -154,8 +141,6 @@ void GameServer::handleMessage(
         handleMessageInitialPing(messageContent, endpoint);
     } else if (m.type == MessageType::AddBot) {
         handleMessageAddBot();
-    } else if (m.type == MessageType::StayAlivePing) {
-        handleMessageStayAlivePing(messageContent, endpoint);
     } else if (m.type == MessageType::RoundReady) {
         handleMessageRoundReady(messageContent, endpoint);
     } else if (m.type == MessageType::UnitUpgrade) {
@@ -191,7 +176,6 @@ void GameServer::handleMessageInitialPing(
     m_logger.info(
         "assigned new player ID: " + std::to_string(newPlayerId), { "network", "GameServer" });
 
-    m_playerData[newPlayerId].timeSinceLastPing = 0.0f;
     m_playerData[newPlayerId].endpoint = endpoint;
     lock.unlock();
 
@@ -219,19 +203,10 @@ void GameServer::handleMessageAddBot()
     m_logger.info(
         "assign bot new player ID: " + std::to_string(newPlayerId), { "network", "GameServer" });
 
-    m_botData[newPlayerId].timeSinceLastPing = 0.0f;
     m_botData[newPlayerId];
     lock.unlock();
 
     checkForAllPlayersConnected();
-}
-
-void GameServer::handleMessageStayAlivePing(
-    std::string const& messageContent, const asio::ip::tcp::endpoint& /*endpoint*/)
-{
-    Message const m = nlohmann::json::parse(messageContent);
-    std::unique_lock<std::mutex> const lock { m_mutex };
-    m_playerData[m.playerId].timeSinceLastPing = 0.0f;
 }
 
 void GameServer::handleMessageRoundReady(
@@ -252,7 +227,7 @@ void GameServer::handleMessageRoundReady(
     std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
-    for (auto const& props : m_playerData[playerId].roundEndPlacementData.m_properties) {
+    for (auto const& props : m_playerData[playerId].roundEndPlacementData.m_units) {
         // add new unity to game simulation
         m_gameSimulation->addUnit(props);
     }

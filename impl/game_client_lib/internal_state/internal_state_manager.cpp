@@ -37,7 +37,7 @@ InternalStateManager::InternalStateManager()
         InternalState::PlaceUnits, InternalState::WaitForSimulationResults)]
         = [](StateGame& state) {
               ClientPlacementData clientEndPlacementData;
-              clientEndPlacementData.m_properties = state.getPlacementManager()->getPlacedUnits();
+              clientEndPlacementData.m_units = state.getPlacementManager()->getPlacedUnits();
               state.getServerConnection()->readyRound(clientEndPlacementData);
               state.getPlacementManager()->clearPlacedUnits();
 

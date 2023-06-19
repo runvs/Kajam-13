@@ -20,8 +20,6 @@ public:
 
     void updateState(ObjectProperties const& props);
 
-    ObjectProperties saveState() const;
-
     void setPosition(jt::Vector2f const& pos);
 
     jt::Vector2f getPosition() const;

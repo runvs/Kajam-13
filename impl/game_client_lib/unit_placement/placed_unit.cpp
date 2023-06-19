@@ -1,10 +1,9 @@
 #include "placed_unit.hpp"
-#include "vector.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
-#include <json_keys.hpp>
 #include <math_helper.hpp>
+#include <network_data/unit_client_to_server_data.hpp>
 #include <memory>
 
 PlacedUnit::PlacedUnit(UnitInfo info)
@@ -23,17 +22,17 @@ void PlacedUnit::doUpdate(const float elapsed) { m_anim->update(elapsed); }
 
 void PlacedUnit::doDraw() const { m_anim->draw(renderTarget()); }
 
-ObjectProperties PlacedUnit::saveState() const
+UnitClientToServerData PlacedUnit::saveState() const
 {
-    ObjectProperties props;
-    props.ints[jk::unitID] = m_unitID;
-    props.ints[jk::playerID] = m_playerID;
-    props.floats[jk::positionX] = m_position.x;
-    props.floats[jk::positionY] = m_position.y;
-    props.floats[jk::offsetX] = m_offset.x;
-    props.floats[jk::offsetY] = m_offset.y;
-    props.strings[jk::unitType] = m_info.type;
-    return props;
+    UnitClientToServerData unitData;
+    unitData.unitID = m_unitID;
+    unitData.playerID = m_playerID;
+    unitData.positionX = m_position.x;
+    unitData.positionY = m_position.y;
+    unitData.offsetX = m_offset.x;
+    unitData.offsetY = m_offset.y;
+    unitData.unitType = m_info.type;
+    return unitData;
 }
 
 void PlacedUnit::setPosition(const jt::Vector2f& pos)

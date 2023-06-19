@@ -119,18 +119,6 @@ void Unit::setOffset(jt::Vector2f const& offset) { m_offset = offset; }
 
 jt::Vector2f Unit::getOffset() const { return m_offset; }
 
-ObjectProperties Unit::saveState() const
-{
-    ObjectProperties props;
-    props.ints[jk::unitID] = m_unitID;
-    props.ints[jk::playerID] = m_playerID;
-    props.floats[jk::positionX] = m_position.x;
-    props.floats[jk::positionY] = m_position.y;
-    props.floats[jk::offsetX] = m_offset.x;
-    props.floats[jk::offsetY] = m_offset.y;
-    return props;
-}
-
 int Unit::getUnitID() const { return m_unitID; }
 
 void Unit::setIDs(int uid, int pid)

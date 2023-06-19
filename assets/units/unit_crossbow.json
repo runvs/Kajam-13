@@ -2,7 +2,7 @@
   "type": "crossbow",
   "expRequiredForLevelUp": 100,
   "expGainWhenKilled": 30,
-  "hitpoints": 15.0,
+  "hitpoints": 30.0,
   "damage": 90.0,
   "attackTimerMax": 5.0,
   "movementSpeed": 12.0,
