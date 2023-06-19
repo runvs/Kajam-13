@@ -1,12 +1,12 @@
 #include "place_units.hpp"
-#include "internal_state_manager.hpp"
 #include <game_interface.hpp>
 #include <input/mouse/mouse_defines.hpp>
+#include <internal_state/common_functions.hpp>
+#include <internal_state/internal_state_manager.hpp>
 #include <state_game.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <imgui.h>
 #include <string>
-#include <vector>
 
 namespace {
 
@@ -79,6 +79,8 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         m_selectedUnit = nullptr;
     }
+
+    CommonFunctions::updateBirds(state);
 }
 
 void PlaceUnits::draw(StateGame& state)

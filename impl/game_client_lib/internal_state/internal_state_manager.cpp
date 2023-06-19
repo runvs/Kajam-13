@@ -55,6 +55,10 @@ InternalStateManager::InternalStateManager()
               state.getPlacementManager()->addFunds(100 + 50 * state.getRound());
 
               state.getTerrainRenderer()->setDrawGrid(true);
+
+              for (auto& b : *state.getBirds()) {
+                  b.lock()->resetOnRoundStart();
+              }
           };
 
     m_activeState = InternalState::WaitForAllPlayers;

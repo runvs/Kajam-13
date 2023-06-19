@@ -25,6 +25,7 @@ public:
     auto cbegin() const { return m_data.cbegin(); }
     auto cend() const { return m_data.cend(); }
 
+    // TODO empty()
     auto size() const { return m_data.size(); }
     auto at(std::size_t idx) { return m_data.at(idx); }
     void push_back(std::weak_ptr<T> wptr) { m_data.push_back(wptr); }

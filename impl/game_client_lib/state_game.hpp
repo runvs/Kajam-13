@@ -51,6 +51,7 @@ public:
     std::shared_ptr<PlacementManager> getPlacementManager();
     std::shared_ptr<UnitInfoCollection> getUnitInfo();
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
+    std::shared_ptr<jt::ObjectGroup<Bird>> getBirds();
 
     // TODO move to InternalStateManager
     void transitionWaitForPlayersToSelectStartingUnits();
