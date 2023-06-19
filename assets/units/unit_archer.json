@@ -1,19 +1,19 @@
 {
   "type": "archer",
-  "expRequiredForLevelUp": 100,
+  "expRequiredForLevelUp": 80,
   "expGainWhenKilled": 30,
   "hitpoints": 20.0,
   "damage": 15.0,
-  "attackTimerMax": 2.5,
+  "attackTimerMax": 2.7,
   "movementSpeed": 18.0,
   "colliderRadius": 6.0,
-  "cost": 90,
+  "cost": 100,
   "unlockCost": 50,
   "ai": {
     "type": 1,
-    "range": 10.0,
-    "arrowHeight": 32.0,
-    "arrowSpeed": 60.0
+    "range": 9.0,
+    "arrowHeight": 48.0,
+    "arrowSpeed": 65.0
   },
   "animations": [
     {
@@ -33,7 +33,7 @@
       "name": "fast attack",
       "upgCost": 150,
       "attackTimerMax": {
-        "add": -0.75,
+        "add": -0.7,
         "factor": 0.0
       }
     }
