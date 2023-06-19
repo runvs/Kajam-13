@@ -6,6 +6,7 @@
 #include <bar.hpp>
 #include <counted_object.hpp>
 #include <game_object.hpp>
+#include <network_data/unit_server_to_client_data.hpp>
 #include <nlohmann.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
@@ -18,7 +19,7 @@ class Unit : public jt::GameObject {
 public:
     explicit Unit(UnitInfo const& info);
 
-    void updateState(ObjectProperties const& props);
+    void updateState(UnitServerToClientData const& props);
 
     void setPosition(jt::Vector2f const& pos);
 

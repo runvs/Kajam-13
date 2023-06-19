@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 
 #include <damage_info.hpp>
+#include <network_data/unit_server_to_client_data.hpp>
 #include <object_properties.hpp>
 #include <unit_info.hpp>
 #include <unit_server_round_start_data.hpp>
@@ -15,7 +16,7 @@ public:
 
     virtual void update(float elapsed, WorldInfoInterface& world) = 0;
 
-    virtual ObjectProperties saveState() const = 0;
+    virtual UnitServerToClientData saveState() const = 0;
     virtual void setRoundStartState(UnitServerRoundStartData* props) = 0;
     virtual void levelUnitUp() = 0;
     virtual int getLevel() const = 0;

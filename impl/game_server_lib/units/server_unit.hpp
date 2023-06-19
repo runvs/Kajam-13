@@ -19,7 +19,7 @@ public:
 
     void update(float elapsed, WorldInfoInterface& world) override;
 
-    ObjectProperties saveState() const override;
+    UnitServerToClientData saveState() const override;
 
     void setRoundStartState(UnitServerRoundStartData* props) override;
 

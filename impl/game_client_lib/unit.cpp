@@ -65,46 +65,46 @@ void Unit::doDraw() const
     }
 }
 
-void Unit::updateState(ObjectProperties const& props)
+void Unit::updateState(UnitServerToClientData const& props)
 {
-    if (props.ints.at(jk::unitID) != m_unitID) {
+    if (props.unitID != m_unitID) {
         getGame()->logger().error(
             "updateState called with invalid unit id", { "Unit", "updateState" });
         return;
     }
-    setOffset({ props.floats.at(jk::offsetX), props.floats.at(jk::offsetY) });
-    setPosition({ props.floats.at(jk::positionX), props.floats.at(jk::positionY) });
-    if (props.ints.at(jk::playerID) == 0) {
+    setOffset({ props.offsetX, props.offsetY });
+    setPosition({ props.positionX, props.positionY });
+    if (props.playerID == 0) {
         m_anim->setColor(GP::ColorPlayer0());
     } else {
         m_anim->setColor(GP::ColorPlayer1());
     }
-    m_hp = props.floats.at(jk::hpCurrent);
+    m_hp = props.hpCurrent;
 
-    if (props.strings.count(jk::unitAnim) == 1) {
-        auto const animName = props.strings.at(jk::unitAnim);
-        m_anim->play(props.strings.at(jk::unitAnim));
+    if (props.unitAnim.has_value()) {
+        auto const animName = props.unitAnim.value();
+        m_anim->play(animName);
         if (animName == "damage") {
             m_animTimeUntilBackToIdle = m_anim->getCurrentAnimTotalTime();
         }
         m_anim->update(0.0f);
     }
 
-    if (props.bools.at(jk::unitWalkingRight)) {
+    if (props.unitWalkingRight) {
         m_anim->setOffset(GP::UnitAnimationOffset());
         m_anim->setScale(jt::Vector2f { 1.0f, 1.0f });
     } else {
         m_anim->setScale(jt::Vector2f { -1.0f, 1.0f });
         m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
     }
-    if (props.ints.count(jk::level) == 1) {
-        m_level = props.ints.at(jk::level);
+    if (props.level != 1) {
+        m_level = props.level;
         if (m_level != 1) {
             m_levelText->setText(std::to_string(m_level));
         }
     }
-
-    m_boughtUpgrades = strutil::split(props.strings.at(jk::upgrades), ",");
+    // TODO use placement manager instead
+    //    m_boughtUpgrades = strutil::split(props.strings.at(jk::upgrades), ",");
 }
 
 void Unit::setPosition(jt::Vector2f const& pos)

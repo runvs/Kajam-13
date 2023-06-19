@@ -10,6 +10,7 @@
 #include "world_info_interface.hpp"
 #include <game_properties.hpp>
 #include <map/terrain.hpp>
+#include <network_data/unit_server_to_client_data.hpp>
 #include <Box2D/Dynamics/b2Body.h>
 #include <cmath>
 #include <memory>
@@ -47,28 +48,29 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
     m_physicsObject->getB2Body()->CreateFixture(&fixtureDef);
 }
 
-ObjectProperties ServerUnit::saveState() const
+UnitServerToClientData ServerUnit::saveState() const
 {
     m_logger.verbose("save State", { "ServerUnit" });
-    ObjectProperties props;
-    props.ints[jk::unitID] = m_unitID;
-    props.ints[jk::playerID] = m_playerID;
-    props.strings[jk::unitType] = m_infoBase.type;
+    UnitServerToClientData props;
+    props.unitID = m_unitID;
+    props.playerID = m_playerID;
+    props.unitType = m_infoBase.type;
 
-    //    m_logger.info("save exp with value: " + std::to_string(m_experience));
-    props.ints[jk::experience] = m_experience;
-    props.ints[jk::experienceForLevelUp] = m_infoBase.experienceRequiredForLevelUp;
-    props.ints[jk::level] = m_level;
+    // TODO think about adding exp
 
-    props.floats[jk::positionX] = m_pos.x;
-    props.floats[jk::positionY] = m_pos.y;
+    //    props.experience = m_experience;
+    //    props.experienceForLevelUp = m_infoBase.experienceRequiredForLevelUp;
+    props.level = m_level;
 
-    props.floats[jk::offsetX] = m_offset.x;
-    props.floats[jk::offsetY] = m_offset.y;
-    props.floats[jk::hpCurrent] = m_hp;
-    props.floats[jk::hpMax] = m_infoLevel.hitpointsMax;
+    props.positionX = m_pos.x;
+    props.positionY = m_pos.y;
 
-    props.bools[jk::unitWalkingRight] = m_walkingRight;
+    props.offsetX = m_offset.x;
+    props.offsetY = m_offset.y;
+    props.hpCurrent = m_hp;
+    props.hpMax = m_infoLevel.hitpointsMax;
+
+    props.unitWalkingRight = m_walkingRight;
 
     std::string str;
     for (auto const& upg : m_upgrades) {
@@ -77,10 +79,10 @@ ObjectProperties ServerUnit::saveState() const
     if (!str.empty()) {
         str.pop_back();
     }
-    props.strings[jk::upgrades] = str;
+    //    props.upgrades = str;
 
     if (!m_newAnim.empty()) {
-        props.strings[jk::unitAnim] = m_newAnim;
+        props.unitAnim = m_newAnim;
         m_newAnim = "";
     }
     return props;

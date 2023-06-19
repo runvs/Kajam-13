@@ -109,8 +109,8 @@ void StateGame::placeUnitsForOneTick(
     }
 
     for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
-        std::shared_ptr<Unit> foundUnit = findOrCreateUnit(propsForOneUnit.ints.at(jk::playerID),
-            propsForOneUnit.ints.at(jk::unitID), propsForOneUnit.strings.at(jk::unitType));
+        std::shared_ptr<Unit> foundUnit = findOrCreateUnit(
+            propsForOneUnit.playerID, propsForOneUnit.unitID, propsForOneUnit.unitType);
         foundUnit->updateState(propsForOneUnit);
     }
 }
@@ -243,8 +243,8 @@ void StateGame::resetAllUnits()
 {
     auto propertiesForAllUnitsForThisTick = m_simulationResultsForAllFrames.allFrames.at(0);
     for (auto& props : propertiesForAllUnitsForThisTick.m_units) {
-        props.strings[jk::unitAnim] = "idle";
-        props.floats[jk::hpCurrent] = props.floats[jk::hpMax];
+        props.unitAnim = "idle";
+        props.hpCurrent = props.hpMax;
     }
     placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
 }
