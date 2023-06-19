@@ -1,11 +1,11 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
-#include <arrow_info.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <game_properties.hpp>
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
+#include <network_data/arrow_info.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
 #include <object_properties.hpp>
 #include <player_info.hpp>

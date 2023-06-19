@@ -81,8 +81,8 @@ void StateGame::onUpdate(float const elapsed)
 
 void StateGame::playbackSimulation(float /*elapsed*/)
 {
-    if (m_simulationResultsForAllFrames.allFrames.size() != 0) {
-        if (m_tickId < GP::NumberOfStepsPerRound() - 1) {
+    if (!m_simulationResultsForAllFrames.allFrames.empty()) {
+        if (m_tickId < m_simulationResultsForAllFrames.allFrames.size() - 1) {
             m_tickId++;
         } else {
             getStateManager()->switchToState(InternalState::PlaceUnits, *this);

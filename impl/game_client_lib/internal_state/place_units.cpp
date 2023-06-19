@@ -47,9 +47,7 @@ void showUnitTooltip(T& u, PlacementManager const& pm)
             ImGui::PopStyleColor();
             ImGui::EndTable();
         }
-        std::vector<std::string> result;
-        result = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
-        auto const upgrades = result;
+        auto const upgrades = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
         if (!upgrades.empty()) {
             ImGui::Text("Upgrades:");
             for (auto const& upg : upgrades) {

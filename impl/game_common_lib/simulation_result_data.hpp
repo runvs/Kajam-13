@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_SIMULATION_RESULT_DATA_HPP
 #define JAMTEMPLATE_SIMULATION_RESULT_DATA_HPP
 
-#include <arrow_info.hpp>
+#include <network_data/arrow_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 
 struct SimulationResultDataForOneFrame {
@@ -17,5 +17,8 @@ void from_json(const nlohmann::json& j, SimulationResultDataForOneFrame& data);
 struct SimulationResultDataForAllFrames {
     std::vector<SimulationResultDataForOneFrame> allFrames;
 };
+
+void to_json(nlohmann::json& j, const SimulationResultDataForAllFrames& data);
+void from_json(const nlohmann::json& j, SimulationResultDataForAllFrames& data);
 
 #endif // JAMTEMPLATE_SIMULATION_RESULT_DATA_HPP

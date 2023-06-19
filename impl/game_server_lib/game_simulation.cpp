@@ -1,8 +1,8 @@
 #include "game_simulation.hpp"
-#include <arrow_info.hpp>
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
+#include <network_data/arrow_info.hpp>
 #include <simulation_object_interface.hpp>
 #include <simulation_result_data.hpp>
 #include <units/server_unit.hpp>

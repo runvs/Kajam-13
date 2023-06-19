@@ -12,6 +12,8 @@ public:
 
     static std::uint16_t DefaultServerPort() { return 1500; }
     static std::uint16_t DefaultClientPort() { return 1501; }
+
+    static float floatPrecision() { return 10.0f; }
 };
 
 #endif // JAMTEMPLATE_NETWORK_PROPERTIES_HPP

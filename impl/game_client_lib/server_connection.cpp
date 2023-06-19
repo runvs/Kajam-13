@@ -121,17 +121,11 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
     nlohmann::json j = nlohmann::json::parse(messageContent);
     Message const m = j;
     nlohmann::json j_data = nlohmann::json::parse(m.data);
-    SimulationResultDataForOneFrame data;
-    j_data.get_to(data);
     std::unique_lock<std::mutex> lock { m_dataMutex };
-    m_simulationResults.allFrames.push_back(data);
-    m_logger.debug("received tick " + std::to_string(m_simulationResults.allFrames.size()) + " / "
-        + std::to_string(GP::NumberOfStepsPerRound()));
-    if (m_simulationResults.allFrames.size() == GP::NumberOfStepsPerRound()) {
-        m_logger.info("received all simulation results");
-        m_dataReady = true;
-    }
-    lock.unlock();
+    j_data.get_to(m_simulationResults);
+    m_logger.info("received all simulation results (count: "
+        + std::to_string(m_simulationResults.allFrames.size()));
+    m_dataReady = true;
 }
 bool ServerConnection::isRoundDataReady() const { return m_dataReady; }
 

@@ -1,8 +1,8 @@
 #include "ai_ranged_combat.hpp"
-#include <arrow_info.hpp>
 #include <damage_info.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
+#include <network_data/arrow_info.hpp>
 #include <random/random.hpp>
 #include <units/server_unit.hpp>
 #include <vector.hpp>

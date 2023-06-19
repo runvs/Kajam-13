@@ -13,13 +13,15 @@ constexpr auto unitID = "uid";
 constexpr auto playerID = "pid";
 constexpr auto frameID = "fid";
 
+constexpr auto allFrames = "allFrames";
+
 constexpr auto units = "units";
 
 constexpr auto messageType = "type";
 constexpr auto messageData = "data";
 
-constexpr auto hpCurrent = "hpCurrent";
-constexpr auto hpMax = "hpMax";
+constexpr auto hpCurrent = "hpc";
+constexpr auto hpMax = "hpm";
 constexpr auto hpInitial = "hitpoints";
 
 constexpr auto attackTimerMax = "attackTimerMax";
@@ -35,7 +37,7 @@ constexpr auto files = "files";
 
 constexpr auto unitType = "type";
 constexpr auto unitAnim = "unitNewAnim";
-constexpr auto unitWalkingRight = "walkRight";
+constexpr auto unitWalkingRight = "wr";
 
 constexpr auto damage = "damage";
 constexpr auto arrows = "arrows";
@@ -58,6 +60,7 @@ constexpr auto upgName = "name";
 constexpr auto upgCost = "upgCost";
 constexpr auto upgAdd = "add";
 constexpr auto upgFactor = "factor";
+
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

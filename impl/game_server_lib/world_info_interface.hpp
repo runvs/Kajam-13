@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP
 #define JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP
 
-#include "arrow_info.hpp"
+#include <network_data/arrow_info.hpp>
 #include <simulation_object_interface.hpp>
 #include <vector.hpp>
 #include <memory>

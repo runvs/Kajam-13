@@ -4,7 +4,7 @@
 #include <array>
 struct ReceiveBuffer {
     std::array<char, 32> size;
-    std::array<char, 102400> data;
+    std::array<char, 2048000> data;
 };
 
 #endif // JAMTEMPLATE_RECEIVE_BUFFER_HPP

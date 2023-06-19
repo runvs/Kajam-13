@@ -11,12 +11,10 @@ SimulationResultMessageSender::SimulationResultMessageSender(ServerNetworkConnec
 void SimulationResultMessageSender::sendSimulationResults(
     SimulationResultDataForAllFrames const& data)
 {
-    for (auto const& currentFrameData : data.allFrames) {
-        Message m;
-        m.type = MessageType::SimulationResult;
-        nlohmann::json j = currentFrameData;
-        m.data = j.dump();
+    Message m;
+    m.type = MessageType::SimulationResult;
+    nlohmann::json j = data;
+    m.data = j.dump();
 
-        m_connection.sendMessageToAll(m);
-    }
+    m_connection.sendMessageToAll(m);
 }
