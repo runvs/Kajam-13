@@ -4,6 +4,7 @@
 #include <game_object.hpp>
 #include <game_object_collection.hpp>
 #include <map/terrain.hpp>
+#include <network_data/unit_client_to_server_data.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
@@ -11,7 +12,6 @@
 #include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector>
-#include <network_data/unit_client_to_server_data.hpp>
 
 class PlacedUnit;
 
@@ -33,6 +33,7 @@ public:
 
     void buyUpgrade(std::string const& unitType, const std::string& upgrade) const;
     std::vector<std::string> getPossibleUpgradesForUnit(std::string const& unitType) const;
+    std::vector<std::string> getBoughtUpgradesForUnit(std::string const& unitType) const;
 
 private:
     std::shared_ptr<Terrain> m_world;
@@ -52,6 +53,7 @@ private:
 
     mutable std::vector<std::string> m_unlockedTypes;
     mutable std::map<std::string, std::vector<std::string>> m_possibleUpgrades;
+    mutable std::map<std::string, std::vector<std::string>> m_boughtUpgrades;
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

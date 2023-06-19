@@ -213,10 +213,16 @@ void PlacementManager::buyUpgrade(std::string const& unitType, const std::string
 {
     auto& vec = m_possibleUpgrades.at(unitType);
     vec.erase(std::remove(vec.begin(), vec.end(), upgrade), vec.end());
+    m_boughtUpgrades[unitType].push_back(upgrade);
 }
 
 std::vector<std::string> PlacementManager::getPossibleUpgradesForUnit(
     std::string const& unitType) const
 {
     return m_possibleUpgrades.at(unitType);
+}
+std::vector<std::string> PlacementManager::getBoughtUpgradesForUnit(
+    const std::string& unitType) const
+{
+    return m_boughtUpgrades[unitType];
 }

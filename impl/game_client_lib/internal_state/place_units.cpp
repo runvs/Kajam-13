@@ -10,22 +10,8 @@
 
 namespace {
 
-// TODO
-std::vector<std::string> getUpgradeList(PlacedUnit const& unit) { return {}; }
-
-std::vector<std::string> getUpgradeList(Unit const& unit)
-{
-    std::vector<std::string> upgrades;
-    for (auto& upg : unit.getInfo().possibleUpgrades) {
-        if (unit.hasUpgrade(upg.name)) {
-            upgrades.push_back(upg.name);
-        }
-    }
-    return upgrades;
-}
-
 template <typename T>
-void showUnitTooltip(T& u)
+void showUnitTooltip(T& u, PlacementManager const& pm)
 {
     auto const lockedUnit = u.lock();
     if (lockedUnit->isMouseOver()) {
@@ -61,7 +47,9 @@ void showUnitTooltip(T& u)
             ImGui::PopStyleColor();
             ImGui::EndTable();
         }
-        auto const upgrades = getUpgradeList(*lockedUnit);
+        std::vector<std::string> result;
+        result = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
+        auto const upgrades = result;
         if (!upgrades.empty()) {
             ImGui::Text("Upgrades:");
             for (auto const& upg : upgrades) {
@@ -98,10 +86,10 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 void PlaceUnits::draw(StateGame& state)
 {
     for (auto& u : *state.getUnits()) {
-        showUnitTooltip(u);
+        showUnitTooltip(u, *state.getPlacementManager());
     }
     for (auto& u : *state.getPlacementManager()->getPlacedUnitsGO()) {
-        showUnitTooltip(u);
+        showUnitTooltip(u, *state.getPlacementManager());
     }
 
     state.getPlacementManager()->draw();
