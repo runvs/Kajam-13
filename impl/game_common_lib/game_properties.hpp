@@ -33,7 +33,7 @@ public:
 
     static jt::Palette getPalette();
 
-    static std::size_t NumberOfStepsPerRound();
+    static std::size_t MaxNumberOfStepsPerRound();
 
     static jt::Vector2f UnitAnimationOffset();
     static int InitialPlayerHP();

@@ -49,7 +49,7 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
     auto const timePerUpdate = 0.005f;
     SimulationResultDataForAllFrames allFrames;
-    for (auto i = 0u; i != GP::NumberOfStepsPerRound(); ++i) {
+    for (auto i = 0u; i != GP::MaxNumberOfStepsPerRound(); ++i) {
         SimulationResultDataForOneFrame currentFrame;
 
         m_b2World->step(timePerUpdate, 10, 10);
@@ -112,8 +112,27 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
             currentFrame.m_units.push_back(data);
         }
         currentFrame.m_frameId = i;
-        // TODO allow to end simulation earlier or last longer
-        bool const isLastFrame = (i == GP::NumberOfStepsPerRound() - 1);
+        bool isLastFrame = (i == GP::MaxNumberOfStepsPerRound() - 1);
+        bool playerZeroAlive { false };
+        bool playerOneAlive { false };
+        if (!isLastFrame) {
+            for (auto& obj : m_simulationObjects) {
+                if (!obj->isAlive()) {
+                    continue;
+                }
+                if (obj->getPlayerID() == 0) {
+                    playerZeroAlive = true;
+                } else {
+                    playerOneAlive = true;
+                }
+                if (playerZeroAlive && playerOneAlive) {
+                    break;
+                }
+            }
+            if (!playerZeroAlive || !playerOneAlive) {
+                isLastFrame = true;
+            }
+        }
         if (isLastFrame) {
             for (auto& obj : m_simulationObjects) {
                 if (!obj->isAlive()) {
@@ -126,6 +145,9 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
             currentFrame.m_playerHP = m_playerHp;
         }
         allFrames.allFrames.push_back(currentFrame);
+        if (isLastFrame) {
+            break;
+        }
     }
 
     m_logger.info("simulation finished");
