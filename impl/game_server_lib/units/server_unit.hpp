@@ -63,12 +63,8 @@ private:
     std::shared_ptr<jt::Box2DObject> m_physicsObject { nullptr };
 
     UnitServerRoundStartData* m_roundStartObjectProperties { nullptr };
-
-    // basic values
+    
     UnitInfo m_infoBase;
-    // leveled Values
-    UnitInfo m_infoLevel;
-
     std::vector<UpgradeInfo> m_upgrades;
 
     std::unique_ptr<AiInterface> m_ai { nullptr };

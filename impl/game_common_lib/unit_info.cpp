@@ -157,3 +157,22 @@ void applyUpgrade(UnitInfo& info, const UpgradeInfo& upg)
     applyUpgradeFloat(info.movementSpeed, upg.movementSpeed);
     applyUpgradeFloat(info.ai.range, upg.range);
 }
+
+UnitInfo getUnitInfoWithLevelAndUpgrades(
+    const UnitInfo& baseInfo, int level, std::vector<UpgradeInfo> const& upgrades)
+{
+    UnitInfo info = baseInfo;
+
+    info.hitpointsMax = baseInfo.hitpointsMax * level;
+    info.damage = baseInfo.damage * level;
+
+    info.cost = baseInfo.cost * level;
+
+    info.experienceGainWhenKilled = baseInfo.experienceGainWhenKilled * level;
+    info.experienceRequiredForLevelUp = baseInfo.experienceRequiredForLevelUp * sqrt(level);
+
+    for (auto const& upg : upgrades) {
+        applyUpgrade(info, upg);
+    }
+    return info;
+}

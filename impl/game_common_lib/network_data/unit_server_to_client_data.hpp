@@ -20,9 +20,6 @@ struct UnitServerToClientData {
     float hpMax { 1.0f };
 
     bool unitWalkingRight { false };
-    // TODO think about adding upgrades here, but they should actually be stored on the client
-
-    // TODO think about adding exp
 
     std::optional<std::string> unitAnim {};
 };

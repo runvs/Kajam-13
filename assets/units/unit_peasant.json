@@ -24,7 +24,7 @@
       "upgCost": 100,
       "movementSpeed": {
         "add": 0.0,
-        "factor": 0.1
+        "factor": 0.2
       },
       "attackTimerMax": {
         "add": 0.0,

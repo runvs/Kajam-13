@@ -1,16 +1,13 @@
 #include "server_unit.hpp"
-#include "ai/ai_close_combat.hpp"
-#include "ai/ai_ranged_combat.hpp"
-#include "damage_info.hpp"
-#include "json_keys.hpp"
-#include "map/terrain.hpp"
-#include "math_helper.hpp"
-#include "object_properties.hpp"
-#include "unit_info.hpp"
-#include "world_info_interface.hpp"
+#include <damage_info.hpp>
 #include <game_properties.hpp>
 #include <map/terrain.hpp>
+#include <math_helper.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
+#include <unit_info.hpp>
+#include <units/ai/ai_close_combat.hpp>
+#include <units/ai/ai_ranged_combat.hpp>
+#include <world_info_interface.hpp>
 #include <Box2D/Dynamics/b2Body.h>
 #include <cmath>
 #include <memory>
@@ -21,7 +18,6 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
     : m_logger { logger }
 {
     m_infoBase = info;
-    m_infoLevel = info;
 
     if (m_infoBase.ai.type == AiInfo::CLOSE_COMBAT) {
         m_ai = std::make_unique<AiCloseCombat>();
@@ -51,41 +47,32 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
 UnitServerToClientData ServerUnit::saveState() const
 {
     m_logger.verbose("save State", { "ServerUnit" });
-    UnitServerToClientData props;
-    props.unitID = m_unitID;
-    props.playerID = m_playerID;
-    props.unitType = m_infoBase.type;
+    auto const info = getUnitInfoWithLevelAndUpgrades(m_infoBase, m_level, m_upgrades);
+    UnitServerToClientData data;
+    data.unitID = m_unitID;
+    data.playerID = m_playerID;
+    data.unitType = info.type;
 
     // TODO think about adding exp
-
     //    props.experience = m_experience;
     //    props.experienceForLevelUp = m_infoBase.experienceRequiredForLevelUp;
-    props.level = m_level;
+    data.level = m_level;
 
-    props.positionX = m_pos.x;
-    props.positionY = m_pos.y;
+    data.positionX = m_pos.x;
+    data.positionY = m_pos.y;
 
-    props.offsetX = m_offset.x;
-    props.offsetY = m_offset.y;
-    props.hpCurrent = m_hp;
-    props.hpMax = m_infoLevel.hitpointsMax;
+    data.offsetX = m_offset.x;
+    data.offsetY = m_offset.y;
+    data.hpCurrent = m_hp;
+    data.hpMax = info.hitpointsMax;
 
-    props.unitWalkingRight = m_walkingRight;
-
-    std::string str;
-    for (auto const& upg : m_upgrades) {
-        str += upg.name + ",";
-    }
-    if (!str.empty()) {
-        str.pop_back();
-    }
-    //    props.upgrades = str;
+    data.unitWalkingRight = m_walkingRight;
 
     if (!m_newAnim.empty()) {
-        props.unitAnim = m_newAnim;
+        data.unitAnim = m_newAnim;
         m_newAnim = "";
     }
-    return props;
+    return data;
 }
 
 void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
@@ -124,8 +111,6 @@ void ServerUnit::levelUnitUp()
 
     m_level++;
     m_roundStartObjectProperties->level = m_level;
-    m_infoLevel.hitpointsMax = m_infoBase.hitpointsMax * m_level;
-    m_infoLevel.damage = m_infoBase.damage * m_level;
     m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
 }
 
@@ -192,24 +177,7 @@ UnitInfo const& ServerUnit::getUnitInfoBase() const { return m_infoBase; }
 
 UnitInfo ServerUnit::getUnitInfoFull() const
 {
-    UnitInfo info;
-
-    info.hitpointsMax = m_infoLevel.hitpointsMax;
-    info.damage = m_infoLevel.damage;
-    info.unlockCost = m_infoLevel.unlockCost;
-    info.cost = m_infoLevel.cost;
-    info.type = m_infoBase.type;
-    info.ai = m_infoBase.ai;
-    info.attackTimerMax = m_infoLevel.attackTimerMax;
-    info.animations = m_infoBase.animations;
-    info.colliderRadius = m_infoBase.colliderRadius;
-    info.movementSpeed = m_infoLevel.movementSpeed;
-    info.experienceGainWhenKilled = m_infoBase.experienceGainWhenKilled * std::sqrt(m_level);
-
-    for (auto const& upg : m_upgrades) {
-        applyUpgrade(info, upg);
-    }
-    return info;
+    return getUnitInfoWithLevelAndUpgrades(m_infoBase, m_level, m_upgrades);
 }
 
 std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physicsObject; }
@@ -218,9 +186,7 @@ int ServerUnit::getCost() { return m_infoBase.cost; }
 void ServerUnit::gainExperience(int exp)
 {
     m_experience -= exp;
-
     if (m_experience <= 0) {
-        // TODO only level up if player pays for it
         levelUnitUp();
     }
     m_logger.info("gain experience. New exp: " + std::to_string(m_experience));

@@ -77,4 +77,7 @@ void from_json(const nlohmann::json& j, UnitInfo& p);
 
 void applyUpgrade(UnitInfo& info, UpgradeInfo const& upg);
 
+UnitInfo getUnitInfoWithLevelAndUpgrades(
+    const UnitInfo& baseInfo, int level, std::vector<UpgradeInfo> const& upgrades);
+
 #endif // JAMTEMPLATE_UNIT_INFO_HPP
