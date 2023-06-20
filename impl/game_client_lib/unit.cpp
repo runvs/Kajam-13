@@ -144,3 +144,4 @@ bool Unit::hasUpgrade(const std::string& name) const
 {
     return std::count(m_boughtUpgrades.begin(), m_boughtUpgrades.end(), name) == 1;
 }
+int Unit::getLevel() const { return m_level; }

@@ -15,7 +15,8 @@ void showUnitTooltip(T& u, PlacementManager const& pm)
 {
     auto const lockedUnit = u.lock();
     if (lockedUnit->isMouseOver()) {
-        auto const unitInfo = lockedUnit->getInfo();
+        auto const unitInfo = getUnitInfoWithLevelAndUpgrades(lockedUnit->getInfo(),
+            lockedUnit->getLevel(), pm.getBoughtUpgradesForUnit(lockedUnit->getInfo().type));
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
         ImGui::BeginTooltip();
@@ -47,7 +48,7 @@ void showUnitTooltip(T& u, PlacementManager const& pm)
             ImGui::PopStyleColor();
             ImGui::EndTable();
         }
-        auto const upgrades = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
+        auto const upgrades = pm.getBoughtUpgradeNamesForUnit((*lockedUnit).getInfo().type);
         if (!upgrades.empty()) {
             ImGui::Text("Upgrades:");
             for (auto const& upg : upgrades) {

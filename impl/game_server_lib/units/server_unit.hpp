@@ -44,10 +44,6 @@ public:
     void takeDamage(const DamageInfo& damage) override;
 
     bool isAlive() const override;
-
-    // base values
-    UnitInfo const& getUnitInfoBase() const;
-
     // with upgrades and level
     UnitInfo getUnitInfoFull() const override;
 
@@ -63,7 +59,7 @@ private:
     std::shared_ptr<jt::Box2DObject> m_physicsObject { nullptr };
 
     UnitServerRoundStartData* m_roundStartObjectProperties { nullptr };
-    
+
     UnitInfo m_infoBase;
     std::vector<UpgradeInfo> m_upgrades;
 
@@ -73,11 +69,13 @@ private:
     jt::Vector2f m_offset;
 
     bool m_walkingRight { true };
-    int m_level { 1 };
+
     int m_unitID { 0 };
     int m_playerID { 0 };
     float m_age { 0.0f };
     float m_hp { 1.0f };
+
+    int m_level { 1 };
     int m_experience {};
 
     mutable std::string m_newAnim { "" };

@@ -27,6 +27,8 @@ public:
 
     std::shared_ptr<jt::Tween> createInitialTween();
 
+    int getLevel() const;
+
 private:
     UnitInfo m_info;
     std::shared_ptr<jt::Animation> m_anim;

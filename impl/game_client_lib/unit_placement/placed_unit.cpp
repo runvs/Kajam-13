@@ -78,3 +78,4 @@ std::shared_ptr<jt::Tween> PlacedUnit::createInitialTween()
     tw->addCompleteCallback([this]() { getGame()->gfx().camera().shake(0.2f, 4.0f); });
     return tw;
 }
+int PlacedUnit::getLevel() const { return 1; }

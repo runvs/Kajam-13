@@ -29,8 +29,6 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
         m_ai = std::make_unique<AiCloseCombat>();
     }
 
-    m_hp = m_infoBase.hitpointsMax;
-
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
     m_physicsObject = std::make_shared<jt::Box2DObject>(world, &bodyDef);
@@ -82,6 +80,7 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
     m_logger.debug("update State", { "ServerUnit" });
     m_unitID = props->unitClientToServerData.unitID;
     m_playerID = props->unitClientToServerData.playerID;
+
     if (props->level == 1) {
         m_level = props->level;
     } else {
@@ -93,11 +92,16 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
     m_offset = jt::Vector2f { props->unitClientToServerData.offsetX,
         props->unitClientToServerData.offsetY };
     if (props->experience == 0) {
-        m_experience = getUnitInfoBase().experienceRequiredForLevelUp * sqrt(m_level);
+        m_experience = m_infoBase.experienceRequiredForLevelUp * sqrt(m_level);
     } else {
         m_experience = props->experience;
     }
-    m_logger.debug("load exp with value: " + std::to_string(m_experience));
+
+    auto const info = getUnitInfoWithLevelAndUpgrades(m_infoBase, m_level, m_upgrades);
+    m_hp = info.hitpointsMax;
+
+    m_logger.info("load exp with value: " + std::to_string(m_experience));
+    ;
 }
 
 void ServerUnit::levelUnitUp()
@@ -172,8 +176,6 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
 }
 
 bool ServerUnit::isAlive() const { return m_hp > 0; }
-
-UnitInfo const& ServerUnit::getUnitInfoBase() const { return m_infoBase; }
 
 UnitInfo ServerUnit::getUnitInfoFull() const
 {

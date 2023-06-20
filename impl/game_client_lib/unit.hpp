@@ -30,10 +30,10 @@ public:
     jt::Vector2f getOffset() const;
 
     int getUnitID() const;
-
+    int getPlayerID() const;
     void setIDs(int uid, int pid);
 
-    int getPlayerID() const;
+    int getLevel() const;
 
     bool isUnitAlive() const;
 
