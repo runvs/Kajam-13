@@ -60,6 +60,37 @@ void showUnitTooltip(T& u, PlacementManager const& pm)
     }
 }
 
+template <typename T>
+void drawUnitUpgrade(T& selectedUnit, StateGame& state)
+{
+    ImGui::Begin("Unit upgrades");
+    auto const unitType = selectedUnit->getInfo().type;
+    for (auto& upgName : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
+        auto const upg = state.getUnitInfo()->getUpgradeForUnit(unitType, upgName);
+        auto const cost = upg.upgradeCost;
+        auto const str = upgName + " (" + std::to_string(cost) + ")";
+
+        const auto canAffordUpgrade = state.getPlacementManager()->getFunds() < cost;
+        ImGui::BeginDisabled(canAffordUpgrade);
+        if (ImGui::Button(str.c_str())) {
+            state.getGame()->logger().info("clicked upgrade: " + upgName);
+            state.getPlacementManager()->addFunds(-cost);
+            state.getPlacementManager()->buyUpgrade(selectedUnit->getInfo().type, upgName);
+
+            UpgradeUnitData data;
+            data.upgrade = upg;
+            data.unityType = selectedUnit->getInfo().type;
+            data.playerID = selectedUnit->getPlayerID();
+            state.getServerConnection()->unitUpgrade(data);
+            for (auto& u : *state.getUnits()) {
+                u.lock()->addUpgrade(upg.name);
+            }
+        }
+        ImGui::EndDisabled();
+    }
+    ImGui::End();
+}
+
 } // namespace
 
 void PlaceUnits::update(StateGame& state, float /*elapsed*/)
@@ -71,7 +102,19 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
                 continue;
             }
             if (unit->isMouseOver()) {
+                m_selectedPlacedUnit = nullptr;
                 m_selectedUnit = unit;
+                break;
+            }
+        }
+        for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
+            auto unit = u.lock();
+            if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
+                continue;
+            }
+            if (unit->isMouseOver()) {
+                m_selectedUnit = nullptr;
+                m_selectedPlacedUnit = unit;
                 break;
             }
         }
@@ -79,6 +122,7 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         m_selectedUnit = nullptr;
+        m_selectedPlacedUnit = nullptr;
     }
 
     CommonFunctions::updateBirds(state);
@@ -102,33 +146,8 @@ void PlaceUnits::draw(StateGame& state)
     ImGui::End();
 
     if (m_selectedUnit) {
-        ImGui::Begin("Unit upgrades");
-        auto const unitType = m_selectedUnit->getInfo().type;
-        for (auto& upgName : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
-            auto const upg = state.getUnitInfo()->getUpgradeForUnit(unitType, upgName);
-            if (m_selectedUnit->hasUpgrade(upg.name)) {
-                continue;
-            }
-            auto const cost = upg.upgradeCost;
-            auto const str = upgName + " (" + std::to_string(cost) + ")";
-            auto const available = state.getPlacementManager()->getFunds();
-            ImGui::BeginDisabled(available < cost);
-            if (ImGui::Button(str.c_str())) {
-                state.getGame()->logger().info("clicked upgrade: " + upgName);
-                state.getPlacementManager()->addFunds(-cost);
-                state.getPlacementManager()->buyUpgrade(m_selectedUnit->getInfo().type, upgName);
-
-                UpgradeUnitData data;
-                data.upgrade = upg;
-                data.unityType = m_selectedUnit->getInfo().type;
-                data.playerID = m_selectedUnit->getPlayerID();
-                state.getServerConnection()->unitUpgrade(data);
-                for (auto& u : *state.getUnits()) {
-                    u.lock()->addUpgrade(upg.name);
-                }
-            }
-            ImGui::EndDisabled();
-        }
-        ImGui::End();
+        drawUnitUpgrade(m_selectedUnit, state);
+    } else if (m_selectedPlacedUnit) {
+        drawUnitUpgrade(m_selectedPlacedUnit, state);
     }
 }

@@ -2,6 +2,8 @@
 #define JAMTEMPLATE_PLACE_UNITS_HPP
 
 #include "internal_state_interface.hpp"
+#include "state_game.hpp"
+#include "unit_placement/placed_unit.hpp"
 #include <unit.hpp>
 #include <memory>
 
@@ -11,7 +13,9 @@ public:
     void draw(StateGame& state) override;
 
 private:
+    // TODO extract a common interface
     std::shared_ptr<Unit> m_selectedUnit { nullptr };
+    std::shared_ptr<PlacedUnit> m_selectedPlacedUnit { nullptr };
 };
 
 #endif // JAMTEMPLATE_PLACE_UNITS_HPP

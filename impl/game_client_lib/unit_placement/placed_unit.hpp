@@ -29,6 +29,8 @@ public:
 
     int getLevel() const;
 
+    int getPlayerID() const;
+
 private:
     UnitInfo m_info;
     std::shared_ptr<jt::Animation> m_anim;

@@ -79,3 +79,4 @@ std::shared_ptr<jt::Tween> PlacedUnit::createInitialTween()
     return tw;
 }
 int PlacedUnit::getLevel() const { return 1; }
+int PlacedUnit::getPlayerID() const { return m_playerID; }
