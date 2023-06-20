@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP
 #define JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP
 
+#include <close_combat_info.hpp>
 #include <network_data/arrow_info.hpp>
 #include <simulation_object_interface.hpp>
 #include <vector.hpp>
@@ -17,7 +18,8 @@ public:
     virtual float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& direction) = 0;
     virtual jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y) = 0;
     virtual float getTerrainMappedFieldHeight(jt::Vector2f const& pos) = 0;
-    virtual void spawnArrow(const ArrowInfo& arrowInfo) = 0;
+    virtual void spawnArrow(ArrowInfo const& arrowInfo, float delay) = 0;
+    virtual void scheduleAttack(CloseCombatInfo const& info, float delay) = 0;
 };
 
 #endif // JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP

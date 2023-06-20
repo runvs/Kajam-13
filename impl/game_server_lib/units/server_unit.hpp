@@ -54,6 +54,8 @@ public:
     void gainExperience(int exp) override;
     int getLevel() const override;
 
+    void setAnim(std::string const& newAnimName);
+
 private:
     jt::LoggerInterface& m_logger;
     std::shared_ptr<jt::Box2DObject> m_physicsObject { nullptr };

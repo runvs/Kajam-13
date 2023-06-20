@@ -125,7 +125,7 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     if (!isAlive()) {
         return;
     }
-    m_ai->update(elapsed, *this, world);
+    m_ai->update(elapsed, this, world);
 
     if (m_walkingRight && m_physicsObject->getVelocity().x < 0) {
         m_walkingRight = false;
@@ -170,6 +170,7 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
     m_hp -= damage.damage;
     if (m_hp > 0) {
         m_newAnim = "damage";
+
     } else {
         m_newAnim = "death";
     }
@@ -209,3 +210,4 @@ void ServerUnit::applyUpgrades(const std::vector<UpgradeUnitData>& upgrades)
         m_upgrades.push_back(upg.upgrade);
     }
 }
+void ServerUnit::setAnim(const std::string& newAnimName) { m_newAnim = newAnimName; }

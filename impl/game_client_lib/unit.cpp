@@ -83,9 +83,15 @@ void Unit::updateState(UnitServerToClientData const& props)
 
     if (props.unitAnim.has_value()) {
         auto const animName = props.unitAnim.value();
-        m_anim->play(animName);
+
+        if (animName == "damage" || animName == "attack") {
+            m_animTimeUntilBackToIdle = m_anim->getAnimTotalTime(animName);
+        }
         if (animName == "damage") {
-            m_animTimeUntilBackToIdle = m_anim->getCurrentAnimTotalTime();
+            m_anim->flash(0.15f, jt::colors::Red);
+        }
+        if (!(animName == "damage" && m_anim->getCurrentAnimationName() == "attack")) {
+            m_anim->play(animName, 0, true);
         }
         m_anim->update(0.0f);
     }
@@ -98,13 +104,12 @@ void Unit::updateState(UnitServerToClientData const& props)
         m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
     }
     if (props.level != 1) {
+
         m_level = props.level;
         if (m_level != 1) {
             m_levelText->setText(std::to_string(m_level));
         }
     }
-    // TODO use placement manager instead
-    //    m_boughtUpgrades = strutil::split(props.strings.at(jk::upgrades), ",");
 }
 
 void Unit::setPosition(jt::Vector2f const& pos)
@@ -139,9 +144,4 @@ bool Unit::isMouseOver() const
 }
 UnitInfo const& Unit::getInfo() const { return m_info; }
 
-void Unit::addUpgrade(const std::string& name) { m_boughtUpgrades.push_back(name); }
-bool Unit::hasUpgrade(const std::string& name) const
-{
-    return std::count(m_boughtUpgrades.begin(), m_boughtUpgrades.end(), name) == 1;
-}
 int Unit::getLevel() const { return m_level; }

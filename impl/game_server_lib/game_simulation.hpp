@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
 #include <box2dwrapper/box2d_world_interface.hpp>
+#include <close_combat_info.hpp>
 #include <game_properties.hpp>
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
@@ -37,7 +38,9 @@ public:
     float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
     jt::Vector2f getTerrainMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y) override;
     float getTerrainMappedFieldHeight(jt::Vector2f const& pos) override;
-    void spawnArrow(const ArrowInfo& arrowInfo) override;
+
+    void spawnArrow(ArrowInfo const& arrowInfo, float delay) override;
+    void scheduleAttack(CloseCombatInfo const& info, float delay) override;
 
     // clear all units, e.g. when resetting the server
     void clear();
@@ -53,9 +56,15 @@ private:
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
 
     std::vector<ArrowInfo> m_arrows;
+    std::vector<std::pair<float, ArrowInfo>> m_arrowsToBeSpawned;
+    std::vector<std::pair<float, CloseCombatInfo>> m_scheduledCloseCombatAttacks;
     std::map<int, int> m_playerHp { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
     bool checkIfUnitIsUnique(UnitClientToServerData const& unitData);
+    void handleScheduledAttacks(float timePerUpdate);
+    void handleArrowsToBeSpawned(float timePerUpdate);
+    void handleArrows(float timePerUpdate);
+    bool checkIsLastFrame(unsigned int i);
 };
 
 #endif // JAMTEMPLATE_GAME_SIMULATION_HPP

@@ -19,6 +19,9 @@ GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& 
 
 void GameSimulation::prepareSimulationForNewRound()
 {
+    m_arrows.clear();
+    m_arrowsToBeSpawned.clear();
+    m_scheduledCloseCombatAttacks.clear();
     m_simulationObjects.clear();
     m_b2World = std::make_shared<jt::Box2DWorldImpl>(jt::Vector2f { 0.0f, 0.0f });
 
@@ -54,53 +57,10 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 
         m_b2World->step(timePerUpdate, 10, 10);
 
-        for (auto& arrow : m_arrows) {
-            arrow.age += timePerUpdate;
-            float timePercent = arrow.age / arrow.totalTime;
-            if (timePercent >= 1) {
-                timePercent = 1;
-            }
-            auto const dif = arrow.endPos - arrow.startPos;
-            arrow.currentPos = arrow.startPos + dif * timePercent
-                + jt::Vector2f { 0.0f, arrowParabola(timePercent, arrow.maxHeight) };
+        handleScheduledAttacks(timePerUpdate);
+        handleArrowsToBeSpawned(timePerUpdate);
 
-            // check for collision arrow - targets
-            for (auto& target : m_simulationObjects) {
-                if (!target->isAlive()) {
-                    continue;
-                }
-                if (target->getPlayerID() == arrow.targetPlayerId) {
-                    auto const difTargetArrow
-                        = target->getPosition() - arrow.currentPos + jt::Vector2f { 4.0f, 4.0f };
-                    auto const dist = jt::MathHelper::length(difTargetArrow);
-                    if (dist <= 16) {
-                        target->takeDamage(arrow.damage);
-                        if (!target->isAlive()) {
-                            // kill
-                            m_logger.verbose("arrow kill", { "GameSimulation" });
-                            auto const exp = target->getUnitInfoFull().experienceGainWhenKilled;
-                            for (auto& u : m_simulationObjects) {
-                                bool const correctUId = u->getUnitID() == arrow.shooterUnitId;
-                                bool const correctPId = u->getPlayerID() == arrow.shooterPlayerId;
-                                if (correctPId && correctUId) {
-                                    u->gainExperience(exp);
-                                    m_logger.verbose(
-                                        "gain exp from arrow kill: " + std::to_string(exp),
-                                        { "GameSimulation" });
-                                    break;
-                                }
-                            }
-                        }
-                        arrow.age = 999999;
-                        break;
-                    }
-                }
-            }
-        }
-
-        m_arrows.erase(std::remove_if(m_arrows.begin(), m_arrows.end(),
-                           [](auto& arrow) { return arrow.age > arrow.totalTime; }),
-            m_arrows.end());
+        handleArrows(timePerUpdate);
 
         currentFrame.m_arrows = m_arrows;
 
@@ -111,28 +71,10 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 
             currentFrame.m_units.push_back(data);
         }
+
         currentFrame.m_frameId = i;
-        bool isLastFrame = (i == GP::MaxNumberOfStepsPerRound() - 1);
-        bool playerZeroAlive { false };
-        bool playerOneAlive { false };
-        if (!isLastFrame) {
-            for (auto& obj : m_simulationObjects) {
-                if (!obj->isAlive()) {
-                    continue;
-                }
-                if (obj->getPlayerID() == 0) {
-                    playerZeroAlive = true;
-                } else {
-                    playerOneAlive = true;
-                }
-                if (playerZeroAlive && playerOneAlive) {
-                    break;
-                }
-            }
-            if (!playerZeroAlive || !playerOneAlive) {
-                isLastFrame = true;
-            }
-        }
+        bool isLastFrame = checkIsLastFrame(i);
+
         if (isLastFrame) {
             for (auto& obj : m_simulationObjects) {
                 if (!obj->isAlive()) {
@@ -153,6 +95,121 @@ void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
     m_logger.info("simulation finished");
     sender.sendSimulationResults(allFrames);
     m_logger.info("sending of simulation results done");
+}
+
+bool GameSimulation::checkIsLastFrame(unsigned int i)
+{
+    bool isLastFrame = (i == GP::MaxNumberOfStepsPerRound() - 1);
+    bool playerZeroAlive { false };
+    bool playerOneAlive { false };
+
+    for (auto& obj : m_simulationObjects) {
+        if (!obj->isAlive()) {
+            continue;
+        }
+        if (obj->getPlayerID() == 0) {
+            playerZeroAlive = true;
+        } else {
+            playerOneAlive = true;
+        }
+        if (playerZeroAlive && playerOneAlive) {
+            break;
+        }
+    }
+    if (!playerZeroAlive || !playerOneAlive) {
+        isLastFrame = true;
+    }
+    return isLastFrame;
+}
+
+void GameSimulation::handleArrows(float timePerUpdate)
+{
+    for (auto& arrow : m_arrows) {
+        arrow.age += timePerUpdate;
+        float timePercent = arrow.age / arrow.totalTime;
+        if (timePercent >= 1) {
+            timePercent = 1;
+        }
+        auto const dif = arrow.endPos - arrow.startPos;
+        arrow.currentPos = arrow.startPos + dif * timePercent
+            + jt::Vector2f { 0.0f, arrowParabola(timePercent, arrow.maxHeight) };
+
+        // check for collision arrow - targets
+        for (auto& target : m_simulationObjects) {
+            if (!target->isAlive()) {
+                continue;
+            }
+            if (target->getPlayerID() == arrow.targetPlayerId) {
+                auto const difTargetArrow
+                    = target->getPosition() - arrow.currentPos + jt::Vector2f { 4.0f, 4.0f };
+                auto const dist = jt::MathHelper::length(difTargetArrow);
+                if (dist <= 16) {
+                    target->takeDamage(arrow.damage);
+                    if (!target->isAlive()) {
+                        // kill
+                        m_logger.verbose("arrow kill", { "GameSimulation" });
+                        auto const exp = target->getUnitInfoFull().experienceGainWhenKilled;
+                        for (auto& u : m_simulationObjects) {
+                            bool const correctUId = u->getUnitID() == arrow.shooterUnitId;
+                            bool const correctPId = u->getPlayerID() == arrow.shooterPlayerId;
+                            if (correctPId && correctUId) {
+                                u->gainExperience(exp);
+                                m_logger.verbose("gain exp from arrow kill: " + std::to_string(exp),
+                                    { "GameSimulation" });
+                                break;
+                            }
+                        }
+                    }
+                    arrow.age = 999999;
+                    break;
+                }
+            }
+        }
+    }
+    m_arrows.erase(std::remove_if(m_arrows.begin(), m_arrows.end(),
+                       [](auto& arrow) { return arrow.age > arrow.totalTime; }),
+        m_arrows.end());
+}
+
+void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
+{
+    for (auto& kvp : m_arrowsToBeSpawned) {
+        kvp.first -= timePerUpdate;
+        if (kvp.first <= 0) {
+            // TODO check if shooter was killed already. In this case, do not spawn an arrow
+            m_arrows.push_back(kvp.second);
+        }
+    }
+
+    m_arrowsToBeSpawned.erase(std::remove_if(m_arrowsToBeSpawned.begin(), m_arrowsToBeSpawned.end(),
+                                  [](auto& kvp) { return kvp.first <= 0; }),
+        m_arrowsToBeSpawned.end());
+}
+
+void GameSimulation::handleScheduledAttacks(float timePerUpdate)
+{
+    for (auto& kvp : m_scheduledCloseCombatAttacks) {
+        kvp.first -= timePerUpdate;
+        if (!kvp.second.attacker->isAlive()) {
+            continue;
+        }
+        if (!kvp.second.attacked->isAlive()) {
+            continue;
+        }
+
+        if (kvp.first <= 0) {
+            kvp.second.attacked->takeDamage(kvp.second.damage);
+            if (!kvp.second.attacked->isAlive()) {
+                auto const exp = kvp.second.attacked->getUnitInfoFull().experienceGainWhenKilled;
+                kvp.second.attacker->gainExperience(exp);
+            }
+        }
+    }
+
+    m_scheduledCloseCombatAttacks.erase(
+        std::remove_if(m_scheduledCloseCombatAttacks.begin(), m_scheduledCloseCombatAttacks.end(),
+            [](auto& kvp) { return kvp.first <= 0; }),
+        m_scheduledCloseCombatAttacks.end());
 }
 
 std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
@@ -205,7 +262,7 @@ float GameSimulation::getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2
         // -60 -> 2
         return 0.0000983332f * slope * slope - 0.0122135f * slope + 0.957329f;
     }
-    return 0.1f;
+    return 0.15f;
 }
 
 jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y)
@@ -230,11 +287,16 @@ bool GameSimulation::checkIfUnitIsUnique(UnitClientToServerData const& newUnitDa
     return true;
 }
 
-void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo) { m_arrows.push_back(arrowInfo); }
+void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo, float delay)
+{
+    m_arrowsToBeSpawned.push_back(std::make_pair(delay, arrowInfo));
+}
 
 void GameSimulation::clear()
 {
     m_arrows.clear();
+    m_arrowsToBeSpawned.clear();
+    m_scheduledCloseCombatAttacks.clear();
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
     m_unitUpgrades.clear();
@@ -244,4 +306,8 @@ void GameSimulation::clear()
 void GameSimulation::addUnitUpgrade(const UpgradeUnitData& upg)
 {
     m_unitUpgrades.emplace_back(upg);
+}
+void GameSimulation::scheduleAttack(CloseCombatInfo const& info, float delay)
+{
+    m_scheduledCloseCombatAttacks.push_back(std::make_pair(delay, info));
 }

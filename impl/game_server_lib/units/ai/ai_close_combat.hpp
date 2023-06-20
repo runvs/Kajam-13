@@ -5,7 +5,7 @@
 
 class AiCloseCombat : public AiInterface {
 public:
-    void update(float elapsed, ServerUnit& unit, WorldInfoInterface& world) override;
+    void update(float elapsed, ServerUnit* unit, WorldInfoInterface& world) override;
 
 private:
     float m_attackTimer { 0.0f };
