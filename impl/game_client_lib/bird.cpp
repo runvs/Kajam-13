@@ -34,7 +34,6 @@ void Bird::setPosition(jt::Vector2f const& pos)
 
 void Bird::resetOnRoundStart()
 {
-    getGame()->logger().warning("reset bird");
     m_animation->setPosition(m_initialPos);
 
     auto const numberOfFrames = m_animation->getNumberOfFramesInAnimation("idle");
