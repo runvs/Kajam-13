@@ -56,6 +56,7 @@ void PlacementManager::doUpdate(const float elapsed)
 {
     m_placedUnitsGO.update(elapsed);
     m_placedUnits->update(elapsed);
+    m_tweens.update(elapsed);
     placeUnit();
     for (auto& area : m_blockedUnitPlacementAreas) {
         area->update(elapsed);
@@ -175,6 +176,8 @@ void PlacementManager::placeUnit()
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);
 
+        m_tweens.add(unit->createInitialTween());
+
         m_availableFunds -= info.cost;
     }
 }
@@ -184,7 +187,7 @@ bool& PlacementManager::fieldInUse(int const x, int const y)
     return m_placedUnitsMap[x + y * terrainWidthInChunks];
 }
 
-std::vector<UnitClientToServerData> PlacementManager::getPlacedUnits() const
+std::vector<UnitClientToServerData> PlacementManager::getPlacedUnitDataForRoundStart() const
 {
     std::vector<UnitClientToServerData> properties;
     for (auto const& u : *m_placedUnits) {
@@ -193,7 +196,7 @@ std::vector<UnitClientToServerData> PlacementManager::getPlacedUnits() const
     return properties;
 }
 
-std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& PlacementManager::getPlacedUnitsGO() const
+std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& PlacementManager::getPlacedUnits() const
 {
     return m_placedUnits;
 }
@@ -203,12 +206,15 @@ void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
 void PlacementManager::setActive(bool active) { m_isActive = active; }
 
 void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
+
 int PlacementManager::getFunds() const { return m_availableFunds; }
+
 void PlacementManager::unlockType(const std::string& type) const
 {
     // TODO check for duplicates
     m_unlockedTypes.push_back(type);
 }
+
 void PlacementManager::buyUpgrade(std::string const& unitType, const std::string& upgrade) const
 {
     auto& vec = m_possibleUpgrades.at(unitType);
@@ -221,6 +227,7 @@ std::vector<std::string> PlacementManager::getPossibleUpgradesForUnit(
 {
     return m_possibleUpgrades.at(unitType);
 }
+
 std::vector<std::string> PlacementManager::getBoughtUpgradesForUnit(
     const std::string& unitType) const
 {

@@ -29,7 +29,7 @@ void CommonFunctions::updateBirds(StateGame& state)
         for (auto& u : *state.getUnits()) {
             lmb(u);
         }
-        for (auto& u : *state.getPlacementManager()->getPlacedUnitsGO()) {
+        for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
             lmb(u);
         }
 

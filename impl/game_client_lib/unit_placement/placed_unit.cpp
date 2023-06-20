@@ -4,6 +4,8 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <tweens/tween_position.hpp>
+#include <vector.hpp>
 #include <memory>
 
 PlacedUnit::PlacedUnit(UnitInfo info)
@@ -62,3 +64,17 @@ bool PlacedUnit::isMouseOver() const
 }
 
 UnitInfo const& PlacedUnit::getInfo() const { return m_info; }
+
+std::shared_ptr<jt::Tween> PlacedUnit::createInitialTween()
+{
+    auto const startPosition
+        = m_anim->getPosition() + jt::Vector2f { 0.0f, -GP::GetScreenSize().y * 1.2f };
+    auto tw = jt::TweenPosition::create(m_anim, 0.3f, startPosition, m_anim->getPosition());
+    tw->setAgePercentConversion([](float f) { return std::pow(f, 0.25f); });
+    tw->setSkipFrames(1);
+    m_anim->setPosition(startPosition);
+    m_anim->update(0.0f);
+
+    tw->addCompleteCallback([this]() { getGame()->gfx().camera().shake(0.2f, 4.0f); });
+    return tw;
+}

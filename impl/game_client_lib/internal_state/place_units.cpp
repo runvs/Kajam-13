@@ -88,7 +88,7 @@ void PlaceUnits::draw(StateGame& state)
     for (auto& u : *state.getUnits()) {
         showUnitTooltip(u, *state.getPlacementManager());
     }
-    for (auto& u : *state.getPlacementManager()->getPlacedUnitsGO()) {
+    for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
         showUnitTooltip(u, *state.getPlacementManager());
     }
 

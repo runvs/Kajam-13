@@ -9,6 +9,7 @@
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
 #include <shape.hpp>
+#include <tween_collection.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector>
@@ -20,8 +21,8 @@ public:
     PlacementManager(std::shared_ptr<Terrain> world, int playerId,
         std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
-    std::vector<UnitClientToServerData> getPlacedUnits() const;
-    std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnitsGO() const;
+    std::vector<UnitClientToServerData> getPlacedUnitDataForRoundStart() const;
+    std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnits() const;
     void clearPlacedUnits();
 
     void setActive(bool active);
@@ -40,8 +41,14 @@ private:
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
     bool m_isActive { true };
     std::array<bool, terrainWidthInChunks * terrainHeightInChunks> m_placedUnitsMap { false };
+    // Note: both ObjectGroup and GameObjectCollection is needed:
+    // * ObjectGroup is not owning
+    // * GaeObjectCollection only stores GameObjects
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> m_placedUnits;
     jt::GameObjectCollection m_placedUnitsGO;
+
+    jt::TweenCollection m_tweens;
+
     UnitIdManager m_unitIdManager;
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
     std::shared_ptr<jt::Shape> m_blockedUnitPlacementAreas[3];

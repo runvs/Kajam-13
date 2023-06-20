@@ -6,6 +6,7 @@
 #include <network_data/unit_client_to_server_data.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
+#include <tweens/tween_base.hpp>
 #include <unit_info.hpp>
 #include <vector.hpp>
 #include <memory>
@@ -23,6 +24,8 @@ public:
 
     bool isMouseOver() const;
     UnitInfo const& getInfo() const;
+
+    std::shared_ptr<jt::Tween> createInitialTween();
 
 private:
     UnitInfo m_info;
