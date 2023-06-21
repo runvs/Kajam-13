@@ -1,5 +1,6 @@
 #include "unit.hpp"
 #include <animation.hpp>
+#include <color/color.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -167,3 +168,4 @@ void Unit::resetForNewRound()
     m_anim->play("idle", 0, true);
     m_animTimeUntilBackToIdle = -1.0f;
 }
+void Unit::flash() { m_anim->flash(0.4f, jt::colors::Green); }

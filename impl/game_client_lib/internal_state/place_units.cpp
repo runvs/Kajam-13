@@ -82,6 +82,7 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
             data.unityType = selectedUnit->getInfo().type;
             data.playerID = selectedUnit->getPlayerID();
             state.getServerConnection()->unitUpgrade(data);
+            state.flashUnitsForUpgrade(selectedUnit->getInfo().type);
         }
         ImGui::EndDisabled();
     }

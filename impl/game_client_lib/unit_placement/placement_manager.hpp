@@ -38,6 +38,8 @@ public:
     std::vector<UpgradeInfo> getBoughtUpgradesForUnit(std::string const& unitType) const;
     std::vector<std::string> getBoughtUpgradeNamesForUnit(std::string const& unitType) const;
 
+    void flashForUpgrade(std::string const& unitType);
+
 private:
     std::shared_ptr<Terrain> m_world;
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
@@ -69,6 +71,7 @@ private:
     void doDraw() const override;
 
     void placeUnit();
+
     bool& fieldInUse(int const x, int const y);
 };
 

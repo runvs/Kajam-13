@@ -31,6 +31,8 @@ public:
 
     int getPlayerID() const;
 
+    void flash();
+
 private:
     UnitInfo m_info;
     std::shared_ptr<jt::Animation> m_anim;
@@ -43,4 +45,5 @@ private:
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 };
+
 #endif // JAMTEMPLATE_PLACED_UNIT_HPP

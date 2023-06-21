@@ -63,6 +63,7 @@ public:
     void drawArrows() const;
 
     int getRound();
+    void flashUnitsForUpgrade(std::string const& unitType);
 
 private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };

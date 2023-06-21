@@ -40,6 +40,7 @@ public:
     UnitInfo const& getInfo() const;
 
     void resetForNewRound();
+    void flash();
 
 private:
     UnitInfo m_info;
@@ -62,10 +63,9 @@ private:
     std::shared_ptr<jt::Bar> m_hpBar;
 
     void doCreate() override;
-
     void doUpdate(float const elapsed) override;
-
     void doDraw() const override;
+
     void playAnimation();
 };
 

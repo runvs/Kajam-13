@@ -1,4 +1,5 @@
 #include "placed_unit.hpp"
+#include <color/color.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -20,6 +21,7 @@ void PlacedUnit::doCreate()
     m_anim->play("idle");
     m_anim->setOffset(GP::UnitAnimationOffset());
 }
+
 void PlacedUnit::doUpdate(const float elapsed) { m_anim->update(elapsed); }
 
 void PlacedUnit::doDraw() const { m_anim->draw(renderTarget()); }
@@ -78,5 +80,8 @@ std::shared_ptr<jt::Tween> PlacedUnit::createInitialTween()
     tw->addCompleteCallback([this]() { getGame()->gfx().camera().shake(0.2f, 4.0f); });
     return tw;
 }
+
 int PlacedUnit::getLevel() const { return 1; }
 int PlacedUnit::getPlayerID() const { return m_playerID; }
+
+void PlacedUnit::flash() { m_anim->flash(0.4f, jt::colors::Green); }

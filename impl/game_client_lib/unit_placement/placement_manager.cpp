@@ -243,3 +243,13 @@ std::vector<std::string> PlacementManager::getBoughtUpgradeNamesForUnit(
     }
     return names;
 }
+
+void PlacementManager::flashForUpgrade(std::string const& unitType)
+{
+    for (auto& u : *m_placedUnits) {
+        auto unit = u.lock();
+        if (unit->getInfo().type == unitType) {
+            unit->flash();
+        }
+    }
+}

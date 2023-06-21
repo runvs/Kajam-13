@@ -300,3 +300,16 @@ std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo
 int StateGame::getRound() { return m_round; }
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
 std::shared_ptr<jt::ObjectGroup<Bird>> StateGame::getBirds() { return m_birds; }
+void StateGame::flashUnitsForUpgrade(const std::string& unitType)
+{
+    for (auto& u : *m_units) {
+        auto unit = u.lock();
+        if (unit->getPlayerID() != m_serverConnection->getPlayerId()) {
+            continue;
+        }
+        if (unit->getInfo().type == unitType) {
+            unit->flash();
+        }
+    }
+    m_placementManager->flashForUpgrade(unitType);
+}
