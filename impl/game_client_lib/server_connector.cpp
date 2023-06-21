@@ -23,8 +23,8 @@ void ServerConnector::doDraw() const
     ImGui::InputInt("Server Port", &m_serverPort, 1, 1);
     ImGui::InputInt("Client Port", &m_clientPort, 1, 1);
     ImGui::InputText("IP", &m_ip);
-    ImGui::Checkbox("Add bot as Player 0", &m_addBotAsPlayerZero);
-    ImGui::Checkbox("Add bot as Player 1", &m_addBotAsPlayerOne);
+    ImGui::Checkbox("Add bot as blue player (left)", &m_addBotAsPlayerZero);
+    ImGui::Checkbox("Add bot as red player (right)", &m_addBotAsPlayerOne);
     if (ImGui::Button("connect")) {
         m_connection = std::make_shared<ClientNetworkConnection>(
             m_ip, m_serverPort, m_clientPort, getGame()->logger(), m_compressor);

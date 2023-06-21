@@ -241,8 +241,14 @@ void StateGame::onDraw() const
     ImGui::Separator();
     ImGui::Text("round %i", m_round);
     if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
-        ImGui::Text("HP Player 0: %i", m_playerHP.at(0));
-        ImGui::Text("HP Player 1: %i", m_playerHP.at(1));
+        auto const bpc = GP::ColorPlayer0();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(bpc.r, bpc.g, bpc.b, 255));
+        ImGui::Text("HP blue player: %i", m_playerHP.at(0));
+        ImGui::PopStyleColor();
+        auto const rpc = GP::ColorPlayer1();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(rpc.r, rpc.g, rpc.b, 255));
+        ImGui::Text("HP red player: %i", m_playerHP.at(1));
+        ImGui::PopStyleColor();
     }
 
     ImGui::End();
