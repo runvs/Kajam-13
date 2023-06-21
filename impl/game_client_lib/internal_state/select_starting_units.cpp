@@ -22,8 +22,8 @@ void SelectStartingUnits::draw(StateGame& state)
     {
         SelectUnitInfo option;
         option.unit1 = "peasant";
-        option.unit2 = "shieldman";
-        option.initialGold = 150;
+        option.unit2 = "cannon";
+        option.initialGold = 135;
         options.push_back(option);
     }
 
@@ -31,7 +31,15 @@ void SelectStartingUnits::draw(StateGame& state)
         SelectUnitInfo option;
         option.unit1 = "archer";
         option.unit2 = "swordman";
-        option.initialGold = 150;
+        option.initialGold = 175;
+        options.push_back(option);
+    }
+
+    {
+        SelectUnitInfo option;
+        option.unit1 = "shieldman";
+        option.unit2 = "swordman";
+        option.initialGold = 225;
         options.push_back(option);
     }
 

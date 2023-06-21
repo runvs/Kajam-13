@@ -1,9 +1,9 @@
 {
   "type": "cannon",
   "expRequiredForLevelUp": 120,
-  "expGainWhenKilled": 40,
+  "expGainWhenKilled": 25,
   "hitpoints": 10.0,
-  "damage": 20.0,
+  "damage": 25.0,
   "attackTimerMax": 8.0,
   "movementSpeed": 6.0,
   "colliderRadius": 6.0,
@@ -13,7 +13,7 @@
     "type": 2,
     "range": 13.0,
     "arrowHeight": 48.0,
-    "arrowSpeed": 60.0
+    "arrowSpeed": 70.0
   },
   "animations": [
     {

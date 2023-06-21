@@ -40,7 +40,9 @@ void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world
 
             ArrowInfo arrowInfo;
             arrowInfo.targetPlayerId = target->getPlayerID();
-            arrowInfo.endPos = target->getPosition();
+            arrowInfo.endPos = target->getPosition()
+                + jt::Vector2f { jt::Random::getFloatGauss(0, 8),
+                      jt::Random::getFloatGauss(0, 16) };
             arrowInfo.startPos = unit->getPosition() + unit->getOffset();
             if (arrowInfo.endPos.x > arrowInfo.startPos.x) {
                 arrowInfo.startPos += jt::Vector2f { 9.0f, 4.0f };
@@ -57,7 +59,7 @@ void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world
             arrowInfo.shooterPlayerId = unit->getPlayerID();
             arrowInfo.shooterUnitId = unit->getUnitID();
 
-            arrowInfo.splashRadius = 32.0f;
+            arrowInfo.splashRadius = 40.0f;
             arrowInfo.arrowScale = 3.0f;
 
             world.spawnArrow(arrowInfo, 0.2f);
