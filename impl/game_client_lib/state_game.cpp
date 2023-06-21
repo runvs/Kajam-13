@@ -8,17 +8,20 @@
 #include <internal_state/internal_state_manager.hpp>
 #include <message.hpp>
 #include <object_group.hpp>
+#include <particle_system.hpp>
 #include <player_id_dispatcher.hpp>
 #include <random/random.hpp>
 #include <screeneffects/vignette.hpp>
 #include <server_connection.hpp>
+#include <shape.hpp>
 #include <simulation_result_data.hpp>
 #include <state_menu.hpp>
+#include <tweens/tween_alpha.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
+#include <vector.hpp>
 #include <imgui.h>
 #include <memory>
-#include <stdexcept>
 
 void StateGame::onCreate()
 {
@@ -69,6 +72,20 @@ void StateGame::onCreate()
         add(b);
         b->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
     }
+
+    m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
+        [this]() {
+            std::shared_ptr<jt::Shape> shape
+                = jt::dh::createShapeCircle(4, jt::colors::White, textureManager());
+            shape->setPosition(jt::Vector2f { -5000.0f, -5000.0f });
+            return shape;
+        },
+        [this](auto shape, auto const& pos) {
+            shape->setPosition(pos);
+            auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
+            add(tw);
+        });
+    add(m_explosionParticles);
 }
 
 void StateGame::onEnter() { }
@@ -76,6 +93,7 @@ void StateGame::onEnter() { }
 void StateGame::onUpdate(float const elapsed)
 {
     if (m_running) {
+        m_explosionParticles->update(elapsed);
         // update game logic here
 
         if (getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)
@@ -95,18 +113,17 @@ void StateGame::playbackSimulation(float /*elapsed*/)
         } else {
             getStateManager()->switchToState(InternalState::PlaceUnits, *this);
         }
-        auto const& propertiesForAllUnitsForThisTick
+        auto const& propertiesForAllUnitsForThisFrame
             = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
-        placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
+        playbackOneFrame(propertiesForAllUnitsForThisFrame);
     }
 }
 
-void StateGame::placeUnitsForOneTick(
-    SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick)
+void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentFrame)
 {
-    if (!propertiesForAllUnitsForThisTick.m_playerHP.empty()) {
+    if (!currentFrame.m_playerHP.empty()) {
         getGame()->logger().info("new player hp received");
-        m_playerHP = propertiesForAllUnitsForThisTick.m_playerHP;
+        m_playerHP = currentFrame.m_playerHP;
         auto const thisPlayerId = m_serverConnection->getPlayerId();
         auto const otherPlayerId = ((thisPlayerId == 0) ? 1 : 0);
         if (m_playerHP.at(thisPlayerId) <= 0) {
@@ -116,10 +133,18 @@ void StateGame::placeUnitsForOneTick(
         }
     }
 
-    for (auto const& propsForOneUnit : propertiesForAllUnitsForThisTick.m_units) {
+    for (auto const& propsForOneUnit : currentFrame.m_units) {
         std::shared_ptr<Unit> foundUnit = findOrCreateUnit(
             propsForOneUnit.playerID, propsForOneUnit.unitID, propsForOneUnit.unitType);
         foundUnit->updateState(propsForOneUnit);
+    }
+
+    for (auto const& expl : currentFrame.m_explosions) {
+        getGame()->gfx().camera().shake(0.5f, 5);
+        for (auto i = 0; i != 10; ++i) {
+            auto const pos = jt::Random::getRandomPointInCircle(expl.radius) + expl.position;
+            m_explosionParticles->fire(1, pos);
+        }
     }
 }
 
@@ -197,6 +222,8 @@ void StateGame::onDraw() const
     // ouch
     m_internalStateManager->getActiveState()->draw(const_cast<StateGame&>(*this));
 
+    m_explosionParticles->draw();
+
     m_clouds->draw();
     m_vignette->draw();
 
@@ -225,6 +252,7 @@ void StateGame::drawArrows() const
     for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
         m_arrowShape->setPosition(a.currentPos);
         m_arrowShape->update(0.0f);
+        m_arrowShape->setScale(jt::Vector2f { a.arrowScale, a.arrowScale });
         m_arrowShape->draw(renderTarget());
     }
 }
@@ -258,7 +286,7 @@ void StateGame::resetAllUnits()
         props.unitAnim = "idle";
         props.hpCurrent = props.hpMax;
     }
-    placeUnitsForOneTick(propertiesForAllUnitsForThisTick);
+    playbackOneFrame(propertiesForAllUnitsForThisTick);
 }
 
 std::shared_ptr<InternalStateManager> StateGame::getStateManager()

@@ -1,0 +1,41 @@
+{
+  "type": "cannon",
+  "expRequiredForLevelUp": 120,
+  "expGainWhenKilled": 40,
+  "hitpoints": 10.0,
+  "damage": 20.0,
+  "attackTimerMax": 8.0,
+  "movementSpeed": 6.0,
+  "colliderRadius": 6.0,
+  "cost": 150,
+  "unlockCost": 150,
+  "ai": {
+    "type": 2,
+    "range": 13.0,
+    "arrowHeight": 48.0,
+    "arrowSpeed": 60.0
+  },
+  "animations": [
+    {
+      "jsonfilename": "assets/units/cannon.json"
+    }
+  ],
+  "upgrades": [
+    {
+      "name": "range",
+      "upgCost": 125,
+      "range": {
+        "add": 3.0,
+        "factor": 0.0
+      }
+    },
+    {
+      "name": "fast reload",
+      "upgCost": 175,
+      "attackTimerMax": {
+        "add": -2.0,
+        "factor": 0.0
+      }
+    }
+  ]
+}

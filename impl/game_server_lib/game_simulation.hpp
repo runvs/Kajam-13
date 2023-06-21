@@ -63,7 +63,7 @@ private:
     bool checkIfUnitIsUnique(UnitClientToServerData const& unitData);
     void handleScheduledAttacks(float timePerUpdate);
     void handleArrowsToBeSpawned(float timePerUpdate);
-    void handleArrows(float timePerUpdate);
+    void handleArrows(float timePerUpdate, SimulationResultDataForOneFrame& currentFrame);
     bool checkIsLastFrame(unsigned int i);
 };
 

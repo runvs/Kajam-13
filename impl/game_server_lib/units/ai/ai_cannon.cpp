@@ -1,4 +1,4 @@
-#include "ai_ranged_combat.hpp"
+#include "ai_cannon.hpp"
 #include <damage_info.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
@@ -8,7 +8,7 @@
 #include <vector.hpp>
 #include <world_info_interface.hpp>
 
-void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)
+void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)
 {
     m_attackTimer -= elapsed;
     auto t = world.getClosestTargetTo(unit->getPosition(), unit->getPlayerID());
@@ -37,6 +37,7 @@ void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface&
             unit->setAnim("attack");
             m_attackTimer
                 = unit->getUnitInfoFull().attackTimerMax + jt::Random::getFloat(0.0f, 0.1f);
+
             ArrowInfo arrowInfo;
             arrowInfo.targetPlayerId = target->getPlayerID();
             arrowInfo.endPos = target->getPosition();
@@ -56,10 +57,10 @@ void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface&
             arrowInfo.shooterPlayerId = unit->getPlayerID();
             arrowInfo.shooterUnitId = unit->getUnitID();
 
-            arrowInfo.splashRadius = 0.0f;
-            arrowInfo.arrowScale = 1.0f;
+            arrowInfo.splashRadius = 32.0f;
+            arrowInfo.arrowScale = 3.0f;
 
-            world.spawnArrow(arrowInfo, 0.81f);
+            world.spawnArrow(arrowInfo, 0.2f);
         }
     }
 }

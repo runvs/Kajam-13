@@ -22,11 +22,9 @@ public:
     void updateState(UnitServerToClientData const& props);
 
     void setPosition(jt::Vector2f const& pos);
-
     jt::Vector2f getPosition() const;
 
     void setOffset(jt::Vector2f const& offset);
-
     jt::Vector2f getOffset() const;
 
     int getUnitID() const;
@@ -40,7 +38,9 @@ public:
     bool isMouseOver() const;
 
     UnitInfo const& getInfo() const;
-    
+
+    void resetForNewRound();
+
 private:
     UnitInfo m_info;
 
@@ -48,6 +48,8 @@ private:
     jt::Vector2f m_offset;
 
     std::shared_ptr<jt::Animation> m_anim;
+    std::string m_newAnimName { "" };
+
     std::shared_ptr<jt::Text> m_levelText;
     float m_animTimeUntilBackToIdle = -1.0f;
 
@@ -64,6 +66,7 @@ private:
     void doUpdate(float const elapsed) override;
 
     void doDraw() const override;
+    void playAnimation();
 };
 
 #endif // JAMTEMPLATE_UNIT_HPP

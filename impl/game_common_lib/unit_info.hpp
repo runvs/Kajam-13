@@ -14,7 +14,7 @@ void to_json(nlohmann::json& j, const AnimationInfo& p);
 void from_json(const nlohmann::json& j, AnimationInfo& p);
 
 struct AiInfo {
-    enum AiType { CLOSE_COMBAT, RANGED_COMBAT };
+    enum AiType { CLOSE_COMBAT, RANGED_COMBAT, CANNON };
     AiType type;
     float range { -1.0f };
     float arrowHeight { 0.0f };

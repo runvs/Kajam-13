@@ -35,3 +35,16 @@ std::size_t GP::MaxNumberOfStepsPerRound() { return 6000; }
 jt::Vector2f GP::UnitAnimationOffset() { return jt::Vector2f { -9.0f, -16.0f }; }
 int GP::InitialPlayerHP() { return 4000; }
 int GP::ZLayerUI() { return 100; }
+
+std::map<std::string, int> GP::animationPriorities()
+{
+    return {
+        // clang-format off
+            { "idle", 0 },
+            { "damage", 1 },
+            { "walk", 2 },
+            { "attack", 2 },
+            { "death", 3 }
+        // clang-format on
+    };
+}

@@ -45,6 +45,8 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
             // TODO adjust depending on unit type/animation
             world.scheduleAttack(cci, attackDelay);
         }
+    } else {
+        unit->setAnim("walk");
     }
 
     unit->getPhysicsObject()->setVelocity(dir * speed);

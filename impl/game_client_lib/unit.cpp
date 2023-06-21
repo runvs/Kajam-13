@@ -3,11 +3,8 @@
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
-#include <json_keys.hpp>
 #include <math_helper.hpp>
-#include <object_properties.hpp>
 #include <rect.hpp>
-#include <strutils.hpp>
 #include <vector.hpp>
 
 Unit::Unit(const UnitInfo& info)
@@ -39,7 +36,8 @@ void Unit::doUpdate(float const elapsed)
     m_levelText->setPosition(m_anim->getPosition() + jt::Vector2f { -4.0f, -6.0f });
     m_levelText->update(elapsed);
 
-    if (m_hp > 0) {
+    playAnimation();
+    if (isUnitAlive()) {
         if (m_animTimeUntilBackToIdle != -1.0f) {
             m_animTimeUntilBackToIdle -= elapsed;
             if (m_animTimeUntilBackToIdle <= 0) {
@@ -82,18 +80,7 @@ void Unit::updateState(UnitServerToClientData const& props)
     m_hp = props.hpCurrent;
 
     if (props.unitAnim.has_value()) {
-        auto const animName = props.unitAnim.value();
-
-        if (animName == "damage" || animName == "attack") {
-            m_animTimeUntilBackToIdle = m_anim->getAnimTotalTime(animName);
-        }
-        if (animName == "damage") {
-            m_anim->flash(0.15f, jt::colors::Red);
-        }
-        if (!(animName == "damage" && m_anim->getCurrentAnimationName() == "attack")) {
-            m_anim->play(animName, 0, true);
-        }
-        m_anim->update(0.0f);
+        m_newAnimName = props.unitAnim.value();
     }
 
     if (props.unitWalkingRight) {
@@ -110,6 +97,35 @@ void Unit::updateState(UnitServerToClientData const& props)
             m_levelText->setText(std::to_string(m_level));
         }
     }
+}
+
+void Unit::playAnimation()
+{
+    if (m_newAnimName == "") {
+        return;
+    }
+    auto const newAnimName = m_newAnimName;
+    m_newAnimName = "";
+
+    if (newAnimName != "idle") {
+        m_animTimeUntilBackToIdle = m_anim->getAnimTotalTime(newAnimName);
+    }
+    if (newAnimName == "damage" || newAnimName == "death") {
+        m_anim->flash(0.15f, jt::colors::Red);
+    }
+    auto const currentAnimationName = m_anim->getCurrentAnimationName();
+
+    auto const currentPriority = GP::animationPriorities().at(currentAnimationName);
+    auto const newPriority = GP::animationPriorities().at(newAnimName);
+
+    if (newPriority < currentPriority) {
+        return;
+    }
+
+    bool const forceRestart = (newAnimName != "walk");
+
+    m_anim->play(newAnimName, 0, forceRestart);
+    m_anim->update(0.0f);
 }
 
 void Unit::setPosition(jt::Vector2f const& pos)
@@ -145,3 +161,9 @@ bool Unit::isMouseOver() const
 UnitInfo const& Unit::getInfo() const { return m_info; }
 
 int Unit::getLevel() const { return m_level; }
+
+void Unit::resetForNewRound()
+{
+    m_anim->play("idle", 0, true);
+    m_animTimeUntilBackToIdle = -1.0f;
+}

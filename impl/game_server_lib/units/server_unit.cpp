@@ -5,6 +5,7 @@
 #include <math_helper.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 #include <unit_info.hpp>
+#include <units/ai/ai_cannon.hpp>
 #include <units/ai/ai_close_combat.hpp>
 #include <units/ai/ai_ranged_combat.hpp>
 #include <world_info_interface.hpp>
@@ -23,6 +24,8 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
         m_ai = std::make_unique<AiCloseCombat>();
     } else if (m_infoBase.ai.type == AiInfo::RANGED_COMBAT) {
         m_ai = std::make_unique<AiRangedCombat>();
+    } else if (m_infoBase.ai.type == AiInfo::CANNON) {
+        m_ai = std::make_unique<AiCannon>();
     } else {
         m_logger.error("Create a unit with unknown ai type: " + std::to_string(m_infoBase.ai.type),
             { "ServerUnit", "Ai" });
@@ -169,10 +172,10 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
     // TODO take armor into account
     m_hp -= damage.damage;
     if (m_hp > 0) {
-        m_newAnim = "damage";
+        setAnim("damage");
 
     } else {
-        m_newAnim = "death";
+        setAnim("death");
     }
 }
 

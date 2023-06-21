@@ -1,16 +1,17 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
-#include "bird.hpp"
-#include "internal_state/internal_state_interface.hpp"
+#include <bird.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
 #include <game_properties.hpp>
 #include <game_state.hpp>
+#include <internal_state/internal_state_interface.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <map/terrain.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
+#include <particle_system.hpp>
 #include <player_id_dispatcher.hpp>
 #include <screeneffects/clouds.hpp>
 #include <server_connection.hpp>
@@ -97,6 +98,8 @@ private:
     std::size_t m_tickId { 0 };
     std::map<int, int> m_playerHP { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
+    std::shared_ptr<jt::ParticleSystem<jt::Shape, 50>> m_explosionParticles { nullptr };
+
     void onCreate() override;
 
     void onEnter() override;
@@ -107,8 +110,7 @@ private:
 
     void endGame();
 
-    void placeUnitsForOneTick(
-        SimulationResultDataForOneFrame const& propertiesForAllUnitsForThisTick);
+    void playbackOneFrame(SimulationResultDataForOneFrame const& currentFrame);
 
     std::shared_ptr<Unit> findOrCreateUnit(int pid, int uid, std::string const& type);
 

@@ -5,6 +5,7 @@
 #include "color/palette.hpp"
 #include "vector.hpp"
 #include <color/color_factory.hpp>
+#include <map>
 #include <memory>
 #include <string>
 
@@ -39,6 +40,7 @@ public:
     static int InitialPlayerHP();
 
     static int ZLayerUI();
+    static std::map<std::string, int> animationPriorities();
 };
 
 #endif

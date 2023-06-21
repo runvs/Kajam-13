@@ -60,6 +60,9 @@ InternalStateManager::InternalStateManager()
               for (auto& b : *state.getBirds()) {
                   b.lock()->resetOnRoundStart();
               }
+              for (auto& b : *state.getUnits()) {
+                  b.lock()->resetForNewRound();
+              }
           };
 
     m_activeState = InternalState::WaitForAllPlayers;

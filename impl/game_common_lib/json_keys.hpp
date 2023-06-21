@@ -6,6 +6,8 @@ namespace jk {
 constexpr auto positionX = "px";
 constexpr auto positionY = "py";
 
+constexpr auto scale = "scale";
+
 constexpr auto offsetX = "ofsx";
 constexpr auto offsetY = "ofsy";
 
@@ -45,6 +47,7 @@ constexpr auto arrows = "arrows";
 constexpr auto range = "range";
 
 constexpr auto playerHp = "playerHp";
+constexpr auto explosions = "explosions";
 
 constexpr auto cost = "cost";
 constexpr auto unlockCost = "unlockCost";

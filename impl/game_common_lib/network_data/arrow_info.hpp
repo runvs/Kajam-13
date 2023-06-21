@@ -16,6 +16,8 @@ struct ArrowInfo {
     float maxHeight { 32.0f };
     int shooterPlayerId { -1 };
     int shooterUnitId { 0 };
+    float splashRadius { 0.0f };
+    float arrowScale { 1.0f };
 };
 
 void to_json(nlohmann::json& j, const ArrowInfo& data);
