@@ -1,5 +1,8 @@
 ﻿#include "state_game.hpp"
 #include <color/color.hpp>
+#include <critters/bird.hpp>
+#include <critters/bunny.hpp>
+#include <critters/deer.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -64,13 +67,27 @@ void StateGame::onCreate()
     m_clouds = std::make_shared<jt::Clouds>(jt::Vector2f { 4.0f, 2.0f });
     add(m_clouds);
 
-    m_birds = std::make_shared<jt::ObjectGroup<Bird>>();
+    m_critters = std::make_shared<jt::ObjectGroup<Critter>>();
 
-    for (auto i = 0; i != 10; ++i) {
-        auto b = std::make_shared<Bird>();
-        m_birds->push_back(b);
-        add(b);
-        b->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+    for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
+        auto c = std::make_shared<Bird>();
+        m_critters->push_back(c);
+        add(c);
+        c->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+    }
+
+    for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
+        auto c = std::make_shared<Bunny>();
+        m_critters->push_back(c);
+        add(c);
+        c->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+    }
+
+    for (auto i = jt::Random::getInt(2, 6); i != 0; --i) {
+        auto c = std::make_shared<Deer>();
+        m_critters->push_back(c);
+        add(c);
+        c->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
     }
 
     m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
@@ -206,8 +223,8 @@ void StateGame::onDraw() const
         }
     }
 
-    for (auto const& b : *m_birds) {
-        b.lock()->draw();
+    for (auto const& c : *m_critters) {
+        c.lock()->draw();
     }
 
     // then draw all alive units
@@ -305,7 +322,7 @@ std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_pl
 std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }
 int StateGame::getRound() { return m_round; }
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
-std::shared_ptr<jt::ObjectGroup<Bird>> StateGame::getBirds() { return m_birds; }
+std::shared_ptr<jt::ObjectGroup<Critter>> StateGame::getCritters() { return m_critters; }
 void StateGame::flashUnitsForUpgrade(const std::string& unitType)
 {
     for (auto& u : *m_units) {

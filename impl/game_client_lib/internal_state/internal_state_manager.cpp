@@ -57,11 +57,11 @@ InternalStateManager::InternalStateManager()
 
               state.getTerrainRenderer()->setDrawGrid(true);
 
-              for (auto& b : *state.getBirds()) {
-                  b.lock()->resetOnRoundStart();
+              for (auto& c : *state.getCritters()) {
+                  c.lock()->resetOnRoundStart();
               }
-              for (auto& b : *state.getUnits()) {
-                  b.lock()->resetForNewRound();
+              for (auto& u : *state.getUnits()) {
+                  u.lock()->resetForNewRound();
               }
           };
 

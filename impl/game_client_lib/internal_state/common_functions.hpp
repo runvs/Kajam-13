@@ -5,7 +5,7 @@
 
 namespace CommonFunctions {
 
-void updateBirds(StateGame& state);
+void updateCritters(StateGame& state);
 
 } // namespace CommonFunctions
 

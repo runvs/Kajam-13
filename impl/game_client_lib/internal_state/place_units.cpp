@@ -123,7 +123,7 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         m_selectedPlacedUnit = nullptr;
     }
 
-    CommonFunctions::updateBirds(state);
+    CommonFunctions::updateCritters(state);
 }
 
 void PlaceUnits::draw(StateGame& state)

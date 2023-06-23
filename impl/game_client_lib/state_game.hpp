@@ -1,9 +1,9 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
-#include <bird.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
+#include <critters/critter.hpp>
 #include <game_properties.hpp>
 #include <game_state.hpp>
 #include <internal_state/internal_state_interface.hpp>
@@ -52,7 +52,7 @@ public:
     std::shared_ptr<PlacementManager> getPlacementManager();
     std::shared_ptr<UnitInfoCollection> getUnitInfo();
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
-    std::shared_ptr<jt::ObjectGroup<Bird>> getBirds();
+    std::shared_ptr<jt::ObjectGroup<Critter>> getCritters();
 
     // TODO move to InternalStateManager
     void transitionWaitForPlayersToSelectStartingUnits();
@@ -78,7 +78,7 @@ private:
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
     std::shared_ptr<jt::Clouds> m_clouds { nullptr };
 
-    std::shared_ptr<jt::ObjectGroup<Bird>> m_birds { nullptr };
+    std::shared_ptr<jt::ObjectGroup<Critter>> m_critters { nullptr };
 
     std::shared_ptr<UnitInfoCollection> m_unitInfo { nullptr };
 
