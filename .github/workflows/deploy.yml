@@ -33,8 +33,9 @@ jobs:
         run: |
           mkdir ${{github.workspace}}/release
           mkdir ${{github.workspace}}/release/release_win
-          cp ${{github.workspace}}/build/impl/game/Release/*.exe ${{github.workspace}}/release/release_win/
-          cp -r ${{github.workspace}}/build/impl/game/assets ${{github.workspace}}/release/release_win/
+          cp ${{github.workspace}}/build/impl/game_client/Release/*.exe ${{github.workspace}}/release/release_win/
+          cp ${{github.workspace}}/build/impl/game_server/Release/*.exe ${{github.workspace}}/release/release_win/
+          cp -r ${{github.workspace}}/build/impl/game_client/Release/assets ${{github.workspace}}/release/release_win/
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.6.2
@@ -81,8 +82,9 @@ jobs:
         run: |
           export RELEASE_NAME=$(echo "${GITHUB_REPOSITORY}" | sed 's/^[^\/]*\///g')
           mkdir -p ${{github.workspace}}/release/${RELEASE_NAME}_linux
-          cd ${{github.workspace}}/build/impl/game/
-          rsync -avr --exclude="Makefile" --exclude="CMakeFiles" --exclude="*.cmake" . ${{github.workspace}}/release/${RELEASE_NAME}_linux
+          cp ${{github.workspace}}/build/impl/game_client/game_client ${{github.workspace}}/release/${RELEASE_NAME}_linux
+          cp ${{github.workspace}}/build/impl/game_server/game_server ${{github.workspace}}/release/${RELEASE_NAME}_linux
+          cp -R ${{github.workspace}}/build/impl/game_server/assets ${{github.workspace}}/release/${RELEASE_NAME}_linux
           cd ${{github.workspace}}/release
           tar -czvf ${{github.workspace}}/release/release_linux-x86_64.tar.gz ${RELEASE_NAME}_linux
 
@@ -127,8 +129,9 @@ jobs:
         run: |
           export RELEASE_NAME=$(echo "${GITHUB_REPOSITORY}" | sed 's/^[^\/]*\///g')
           mkdir -p ${{github.workspace}}/release/${RELEASE_NAME}_mac
-          cd ${{github.workspace}}/build/impl/game/
-          rsync -avr --exclude="Makefile" --exclude="CMakeFiles" --exclude="*.cmake" . ${{github.workspace}}/release/${RELEASE_NAME}_mac
+          cp ${{github.workspace}}/build/impl/game_client/game_client ${{github.workspace}}/release/${RELEASE_NAME}_mac
+          cp ${{github.workspace}}/build/impl/game_server/game_server ${{github.workspace}}/release/${RELEASE_NAME}_mac
+          cp -R ${{github.workspace}}/build/impl/game_server/assets ${{github.workspace}}/release/${RELEASE_NAME}_mac
           cd ${{github.workspace}}/release
           tar -czvf ${{github.workspace}}/release/release_mac.tar.gz ${RELEASE_NAME}_mac
 

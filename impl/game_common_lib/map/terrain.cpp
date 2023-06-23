@@ -32,11 +32,6 @@ struct Map {
     std::vector<TowerInfo> towers;
 };
 
-void to_json(nlohmann::json& j, Map const& v)
-{
-    j = { { "heights", v.heights }, { "towers", v.towers } };
-}
-
 void from_json(nlohmann::json const& j, Map& v)
 {
     j.at("heights").get_to(v.heights);
@@ -113,11 +108,6 @@ struct Vector3f {
 
     bool isZero() const { return x == 0 && y == 0 && z == 0; }
 };
-
-std::ostream& operator<<(std::ostream& s, Vector3f const& v)
-{
-    return s << "(" << v.x << "," << v.y << "," << v.z << ")";
-}
 
 template <typename T>
 Vector3f getNormalOfTriangleForPosition(
