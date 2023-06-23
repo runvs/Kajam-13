@@ -17,7 +17,7 @@ std::string compress(const std::string& str, int compressionlevel = Z_BEST_COMPR
         throw(std::runtime_error("deflateInit failed while compressing."));
 
     zs.next_in = (Bytef*)str.data();
-    zs.avail_in = str.size(); // set the z_stream's input
+    zs.avail_in = static_cast<uInt>(str.size()); // set the z_stream's input
 
     int ret;
     char outbuffer[10240];
@@ -57,7 +57,7 @@ std::string decompress(const std::string& str)
         throw(std::runtime_error("inflateInit failed while decompressing."));
 
     zs.next_in = (Bytef*)str.data();
-    zs.avail_in = str.size();
+    zs.avail_in = static_cast<uInt>(str.size());
 
     int ret;
     char outbuffer[10240];

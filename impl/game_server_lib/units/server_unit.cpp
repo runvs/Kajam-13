@@ -95,7 +95,7 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
     m_offset = jt::Vector2f { props->unitClientToServerData.offsetX,
         props->unitClientToServerData.offsetY };
     if (props->experience == 0) {
-        m_experience = m_infoBase.experienceRequiredForLevelUp * sqrt(m_level);
+        m_experience = static_cast<int>(m_infoBase.experienceRequiredForLevelUp * sqrt(m_level));
     } else {
         m_experience = props->experience;
     }

@@ -139,7 +139,7 @@ void from_json(nlohmann::json const& j, UnitInfo& p)
 namespace {
 void applyUpgradeInt(int& value, const UpgradeValue& upg)
 {
-    value = value * (1.0f + upg.factor) + upg.add;
+    value = static_cast<int>(value * (1.0f + upg.factor) + upg.add);
 }
 void applyUpgradeFloat(float& value, const UpgradeValue& upg)
 {
@@ -169,7 +169,8 @@ UnitInfo getUnitInfoWithLevelAndUpgrades(
     info.cost = baseInfo.cost * level;
 
     info.experienceGainWhenKilled = baseInfo.experienceGainWhenKilled * level;
-    info.experienceRequiredForLevelUp = baseInfo.experienceRequiredForLevelUp * sqrt(level);
+    info.experienceRequiredForLevelUp
+        = static_cast<int>(baseInfo.experienceRequiredForLevelUp * sqrt(level));
 
     for (auto const& upg : upgrades) {
         applyUpgrade(info, upg);
