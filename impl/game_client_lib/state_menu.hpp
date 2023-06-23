@@ -1,9 +1,10 @@
 ﻿#ifndef GAME_STATE_MENU_HPP
 #define GAME_STATE_MENU_HPP
 
-#include "compression/compressor_interface.hpp"
-#include "server_connector.hpp"
+#include <compression/compressor_interface.hpp>
 #include <game_state.hpp>
+#include <server_connector.hpp>
+#include <memory>
 
 namespace jt {
 class Text;

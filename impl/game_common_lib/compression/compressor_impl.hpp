@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_COMPRESSOR_IMPL_HPP
 #define JAMTEMPLATE_COMPRESSOR_IMPL_HPP
 
-#include "compressor_interface.hpp"
+#include <compression/compressor_interface.hpp>
 
 class CompressorImpl : public CompressorInterface {
 public:

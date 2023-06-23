@@ -14,6 +14,8 @@
 #include <unit_info.hpp>
 #include <vector.hpp>
 #include <memory>
+#include <string>
+#include <vector>
 
 class Unit : public jt::GameObject {
 public:

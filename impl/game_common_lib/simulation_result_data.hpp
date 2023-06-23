@@ -5,6 +5,8 @@
 #include <network_data/explosion_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 #include <nlohmann.hpp>
+#include <map>
+#include <vector>
 
 struct SimulationResultDataForOneFrame {
     int m_frameId { 0 };

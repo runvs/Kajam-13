@@ -5,8 +5,8 @@
 #include <asio/ip/tcp.hpp>
 #include <log/logger_interface.hpp>
 #include <receive_buffer.hpp>
-#include <iostream>
-#include <sstream>
+#include <cstddef>
+#include <functional>
 #include <string>
 
 namespace NetworkHelpers {

@@ -3,6 +3,8 @@
 
 #include <animation.hpp>
 #include <game_object.hpp>
+#include <memory>
+#include <string>
 
 class Critter : public jt::GameObject {
     std::shared_ptr<jt::Animation> m_animation;

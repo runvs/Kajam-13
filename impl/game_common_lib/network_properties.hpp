@@ -3,7 +3,7 @@
 
 #include <asio/ip/tcp.hpp>
 #include <cstdint>
-#include <functional>
+#include <string>
 
 class NetworkProperties {
 public:

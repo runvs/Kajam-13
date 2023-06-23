@@ -3,6 +3,7 @@
 
 #include <compression/compressor_interface.hpp>
 #include <log/logger_interface.hpp>
+#include <memory>
 
 class LoggingCompressor : public CompressorInterface {
 public:

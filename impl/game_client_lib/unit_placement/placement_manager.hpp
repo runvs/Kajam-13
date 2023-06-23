@@ -13,6 +13,10 @@
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
+#include <array>
+#include <map>
+#include <memory>
+#include <string>
 #include <vector>
 
 class PlacedUnit;

@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_END_WIN_HPP
 #define JAMTEMPLATE_END_WIN_HPP
 
-#include "internal_state_interface.hpp"
+#include <internal_state/internal_state_interface.hpp>
 
 class EndWin : public InternalStateInterface {
 public:

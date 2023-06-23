@@ -23,8 +23,10 @@
 #include <unit_placement/placement_manager.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector.hpp>
+#include <cstddef>
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 // fwd decls

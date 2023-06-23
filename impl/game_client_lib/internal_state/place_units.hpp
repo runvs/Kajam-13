@@ -1,10 +1,10 @@
 #ifndef JAMTEMPLATE_PLACE_UNITS_HPP
 #define JAMTEMPLATE_PLACE_UNITS_HPP
 
-#include "internal_state_interface.hpp"
-#include "state_game.hpp"
-#include "unit_placement/placed_unit.hpp"
+#include <internal_state/internal_state_interface.hpp>
+#include <state_game.hpp>
 #include <unit.hpp>
+#include <unit_placement/placed_unit.hpp>
 #include <memory>
 
 class PlaceUnits : public InternalStateInterface {
