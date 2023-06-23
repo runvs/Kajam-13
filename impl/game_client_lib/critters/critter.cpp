@@ -1,5 +1,6 @@
 #include "bunny.hpp"
 #include <game_interface.hpp>
+#include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <random/random.hpp>
 
@@ -22,8 +23,10 @@ void Critter::doCreate()
     // random looking direction
     if (jt::Random::getInt(0, 1) == 0) {
         m_animation->setScale(jt::Vector2f { 1.0f, 1.0f });
+        m_animation->setOffset(GP::UnitAnimationOffset());
     } else {
         m_animation->setScale(jt::Vector2f { -1.0f, 1.0f });
+        m_animation->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
     }
 }
 
@@ -67,8 +70,10 @@ void Critter::setClosestUnitPosition(const jt::Vector2f& unitPos)
         m_movingDir = jt::MathHelper::normalized(dir) * 40.0f;
         if (m_movingDir.x > 0) {
             m_animation->setScale(jt::Vector2f { 1.0f, 1.0f });
+            m_animation->setOffset(GP::UnitAnimationOffset());
         } else {
             m_animation->setScale(jt::Vector2f { -1.0f, 1.0f });
+            m_animation->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
         }
         m_animation->play(m_movingAnimName.c_str());
     }
