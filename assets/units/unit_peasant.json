@@ -21,6 +21,7 @@
   "upgrades": [
     {
       "name": "rage",
+      "iconPath": "assets/upgrades/rage.png",
       "upgCost": 100,
       "movementSpeed": {
         "add": 0.0,

@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_UNIT_INFO_HPP
 
 #include <nlohmann.hpp>
+#include <sprite.hpp>
 #include <vector.hpp>
 #include <string>
 #include <vector>
@@ -31,6 +32,8 @@ struct UpgradeValue {
 
 struct UpgradeInfo {
     std::string name;
+    std::string iconPath;
+    std::shared_ptr<jt::Sprite> icon { nullptr };
     int upgradeCost { 0 };
 
     UpgradeValue damage;

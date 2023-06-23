@@ -21,6 +21,7 @@
   "upgrades": [
     {
       "name": "fast attack",
+      "iconPath": "assets/upgrades/fast_attack_melee.png",
       "upgCost": 125,
       "attackTimerMax": {
         "add": 0.0,
@@ -29,6 +30,7 @@
     },
     {
       "name": "boots of swiftness",
+      "iconPath": "assets/upgrades/boots_of_swiftness.png",
       "upgCost": 200,
       "movementSpeed": {
         "add": 10.0,

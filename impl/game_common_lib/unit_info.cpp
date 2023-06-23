@@ -35,7 +35,7 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
     j = nlohmann::json {
         // clang-format off
         { jk::upgName, p.name },
-
+        { jk::upgIconPath, p.iconPath },
         { jk::damage, p.damage },
         { jk::attackTimerMax, p.attackSpeed },
         { jk::movementSpeed, p.movementSpeed },
@@ -49,6 +49,7 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
 void from_json(const nlohmann::json& j, UpgradeInfo& p)
 {
     j.at(jk::upgName).get_to(p.name);
+    j.at(jk::upgIconPath).get_to(p.iconPath);
     j.at(jk::upgCost).get_to(p.upgradeCost);
 
     if (j.count(jk::damage) == 1) {

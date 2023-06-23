@@ -3,6 +3,8 @@
 #include <input/mouse/mouse_defines.hpp>
 #include <internal_state/common_functions.hpp>
 #include <internal_state/internal_state_manager.hpp>
+#include <rect.hpp>
+#include <sprite.hpp>
 #include <state_game.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <imgui.h>
@@ -14,7 +16,7 @@ template <typename T>
 void showUnitTooltip(T& u, PlacementManager const& pm)
 {
     auto const lockedUnit = u.lock();
-    if (lockedUnit->isMouseOver()) {
+    if (lockedUnit && lockedUnit->isMouseOver()) {
         auto const unitInfo = getUnitInfoWithLevelAndUpgrades(lockedUnit->getInfo(),
             lockedUnit->getLevel(), pm.getBoughtUpgradesForUnit(lockedUnit->getInfo().type));
 
@@ -48,11 +50,17 @@ void showUnitTooltip(T& u, PlacementManager const& pm)
             ImGui::PopStyleColor();
             ImGui::EndTable();
         }
-        auto const upgrades = pm.getBoughtUpgradeNamesForUnit((*lockedUnit).getInfo().type);
+        auto& upgrades = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
         if (!upgrades.empty()) {
-            ImGui::Text("Upgrades:");
-            for (auto const& upg : upgrades) {
-                ImGui::BulletText("%s", upg.c_str());
+            for (auto& upg : upgrades) {
+                if (!upg.icon) {
+                    upg.icon = std::make_shared<jt::Sprite>(upg.iconPath,
+                        jt ::Recti { 0, 0, 256, 256 }, pm.getGame()->gfx().textureManager());
+                }
+                ImGui::Image(upg.icon->getSFSprite().getTexture()->getNativeHandle(),
+                    ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
+                ImGui::SameLine(0, -1);
+                ImGui::Text("%s", upg.name.c_str());
             }
         }
         ImGui::EndTooltip();
@@ -65,17 +73,25 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
 {
     ImGui::Begin("Unit upgrades");
     auto const unitType = selectedUnit->getInfo().type;
-    for (auto& upgName : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
-        auto const upg = state.getUnitInfo()->getUpgradeForUnit(unitType, upgName);
+    for (auto& upg : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
+        if (upg.name.empty()) {
+            continue;
+        }
         auto const cost = upg.upgradeCost;
-        auto const str = upgName + " (" + std::to_string(cost) + ")";
+        auto const str = upg.name + " (" + std::to_string(cost) + ")";
 
         const auto canAffordUpgrade = state.getPlacementManager()->getFunds() < cost;
         ImGui::BeginDisabled(canAffordUpgrade);
+        if (!upg.icon) {
+            upg.icon = std::make_shared<jt::Sprite>(upg.iconPath, jt ::Recti { 0, 0, 256, 256 },
+                state.getGame()->gfx().textureManager());
+        }
+        ImGui::Image(upg.icon->getSFSprite().getTexture()->getNativeHandle(),
+            ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
+        ImGui::SameLine(0, -1);
         if (ImGui::Button(str.c_str())) {
-            state.getGame()->logger().info("clicked upgrade: " + upgName);
+            state.getGame()->logger().info("clicked upgrade: " + upg.name);
             state.getPlacementManager()->addFunds(-cost);
-            state.getPlacementManager()->buyUpgrade(selectedUnit->getInfo().type, upgName);
 
             UpgradeUnitData data;
             data.upgrade = upg;
@@ -83,6 +99,8 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
             data.playerID = selectedUnit->getPlayerID();
             state.getServerConnection()->unitUpgrade(data);
             state.flashUnitsForUpgrade(selectedUnit->getInfo().type);
+
+            state.getPlacementManager()->buyUpgrade(selectedUnit->getInfo().type, upg.name);
         }
         ImGui::EndDisabled();
     }
@@ -96,6 +114,9 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
         for (auto& u : *state.getUnits()) {
             auto unit = u.lock();
+            if (!unit) {
+                continue;
+            }
             if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
                 continue;
             }
@@ -107,6 +128,9 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         }
         for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
             auto unit = u.lock();
+            if (!unit) {
+                continue;
+            }
             if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
                 continue;
             }

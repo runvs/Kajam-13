@@ -6,6 +6,9 @@ void CommonFunctions::updateCritters(StateGame& state)
 {
     for (auto& c : *state.getCritters()) {
         auto critter = c.lock();
+        if (!critter) {
+            return;
+        }
         if (critter->isMoving()) {
             continue;
         }
@@ -18,6 +21,9 @@ void CommonFunctions::updateCritters(StateGame& state)
 
         auto const lmb = [&bp, &closestDistance, &closestPosition](auto u) {
             auto const unit = u.lock();
+            if (!unit) {
+                return;
+            }
             auto const up = unit->getPosition();
             auto const dist = jt::MathHelper::lengthSquared(bp - up);
             if (dist < closestDistance) {

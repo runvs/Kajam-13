@@ -169,6 +169,9 @@ std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::s
 {
     for (auto const& u : *m_units) {
         auto currentUnit = u.lock();
+        if (!currentUnit) {
+            continue;
+        }
         if (currentUnit->getPlayerID() != pid) {
             continue;
         }
@@ -218,7 +221,7 @@ void StateGame::onDraw() const
     // first draw all dead units
     for (auto const& u : *m_units) {
         auto const lockedUnit = u.lock();
-        if (!lockedUnit->isUnitAlive()) {
+        if (lockedUnit && !lockedUnit->isUnitAlive()) {
             lockedUnit->draw();
         }
     }
@@ -230,7 +233,7 @@ void StateGame::onDraw() const
     // then draw all alive units
     for (auto const& u : *m_units) {
         auto const lockedUnit = u.lock();
-        if (lockedUnit->isUnitAlive()) {
+        if (lockedUnit && lockedUnit->isUnitAlive()) {
             lockedUnit->update(0.0f);
             lockedUnit->draw();
         }
@@ -327,7 +330,7 @@ void StateGame::flashUnitsForUpgrade(const std::string& unitType)
 {
     for (auto& u : *m_units) {
         auto unit = u.lock();
-        if (unit->getPlayerID() != m_serverConnection->getPlayerId()) {
+        if (!unit || unit->getPlayerID() != m_serverConnection->getPlayerId()) {
             continue;
         }
         if (unit->getInfo().type == unitType) {
