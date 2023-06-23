@@ -1,4 +1,6 @@
 #include "network_helpers.hpp"
+#include <asio/read.hpp>
+#include <asio/write.hpp>
 #include <iomanip>
 
 void NetworkHelpers::freeSendString(

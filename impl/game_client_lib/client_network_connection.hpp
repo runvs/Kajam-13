@@ -2,9 +2,10 @@
 #define JAMTEMPLATE_CLIENT_NETWORK_CONNECTION_HPP
 
 #include "receive_buffer.hpp"
-#include <asio.hpp>
 #include <asio/buffer.hpp>
-#include <asio/executor_work_guard.hpp>
+#include <asio/error_code.hpp>
+#include <asio/io_context.hpp>
+#include <asio/ip/tcp.hpp>
 #include <compression/compressor_interface.hpp>
 #include <log/logger_interface.hpp>
 #include <message.hpp>

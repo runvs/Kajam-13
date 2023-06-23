@@ -2,11 +2,12 @@
 #ifndef JAMTEMPLATE_SERVER_NETWORK_CONNECTION_HPP
 #define JAMTEMPLATE_SERVER_NETWORK_CONNECTION_HPP
 
-#include "log/logger_interface.hpp"
-#include "receive_buffer.hpp"
-#include <asio.hpp>
+#include <asio/error_code.hpp>
+#include <asio/ip/tcp.hpp>
 #include <compression/compressor_interface.hpp>
+#include <log/logger_interface.hpp>
 #include <message.hpp>
+#include <receive_buffer.hpp>
 #include <memory>
 #include <set>
 
