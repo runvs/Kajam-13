@@ -15,11 +15,6 @@ struct TowerInfo {
     jt::Vector2f position {};
 };
 
-void to_json(nlohmann::json& j, TowerInfo const& v)
-{
-    j = { { "player", v.playerId }, { "x", v.position.x }, { "y", v.position.y } };
-}
-
 void from_json(nlohmann::json const& j, TowerInfo& v)
 {
     j.at("player").get_to(v.playerId);
