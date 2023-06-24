@@ -132,12 +132,14 @@ void StateGame::onCreate()
     m_textRound->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
 
     m_textPlayerZeroHp
-        = jt::dh::createText(renderTarget(), "4000", 22, GP::ColorPlayer0(), GP::HpFontAssetPath());
+        = jt::dh::createText(renderTarget(), std::to_string(GP::InitialPlayerHP()).c_str(), 22,
+            GP::ColorPlayer0(), GP::HpFontAssetPath());
     m_textPlayerZeroHp->setTextAlign(jt::Text::TextAlign::LEFT);
     m_textPlayerZeroHp->setPosition({ 4, 0 });
     m_textPlayerZeroHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 1, 1 });
     m_textPlayerOneHp
-        = jt::dh::createText(renderTarget(), "4000", 22, GP::ColorPlayer1(), GP::HpFontAssetPath());
+        = jt::dh::createText(renderTarget(), std::to_string(GP::InitialPlayerHP()).c_str(), 22,
+            GP::ColorPlayer1(), GP::HpFontAssetPath());
     m_textPlayerOneHp->setTextAlign(jt::Text::TextAlign::RIGHT);
     m_textPlayerOneHp->setPosition({ GP::GetScreenSize().x - 4, 0 });
     m_textPlayerOneHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { -1, 1 });
