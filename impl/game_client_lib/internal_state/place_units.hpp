@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_PLACE_UNITS_HPP
 
 #include <internal_state/internal_state_interface.hpp>
+#include <sprite.hpp>
 #include <state_game.hpp>
 #include <unit.hpp>
 #include <unit_placement/placed_unit.hpp>
@@ -14,6 +15,7 @@ public:
 
 private:
     // TODO extract a common interface
+    std::shared_ptr<jt::Sprite> m_imageEndPlacement { nullptr };
     std::shared_ptr<Unit> m_selectedUnit { nullptr };
     std::shared_ptr<PlacedUnit> m_selectedPlacedUnit { nullptr };
 };

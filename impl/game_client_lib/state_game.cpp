@@ -293,7 +293,8 @@ void StateGame::onDraw() const
     m_vignette->draw();
 
     ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
-        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove };
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
+        | ImGuiWindowFlags_NoScrollWithMouse };
     ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 32, 32 }, ImGuiCond_Always);
     ImGui::Begin("State", nullptr, window_flags);
     if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {

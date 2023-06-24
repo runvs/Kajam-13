@@ -167,10 +167,26 @@ void PlaceUnits::draw(StateGame& state)
 
     state.getPlacementManager()->draw();
 
-    ImGui::Begin("End Placement");
-    if (ImGui::Button("End Placement")) {
+    if (!m_imageEndPlacement) {
+        m_imageEndPlacement = std::make_shared<jt::Sprite>("assets/images/menus/end_placement.png",
+            jt::Recti { 0, 0, 483, 64 }, state.getGame()->gfx().textureManager());
+    }
+
+    ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
+        | ImGuiWindowFlags_NoScrollWithMouse };
+    auto const wp = ImGui::GetStyle().WindowPadding.x + ImGui::GetStyle().WindowBorderSize;
+    ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 100 - wp / 2, 100 }, ImGuiCond_Always);
+    ImGui::SetNextWindowSize({ 196 + wp, 26 }, ImGuiCond_Always);
+    ImGui::Begin("End Placement", nullptr, window_flags);
+    ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(212, 180, 134, 120));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(0, 0, 0, 0));
+    if (ImGui::ImageButton(m_imageEndPlacement->getSFSprite().getTexture()->getNativeHandle(),
+            { 196, 26 }, { 0, 0 }, { 1, 1 }, 0)) {
         state.getStateManager()->switchToState(InternalState::WaitForSimulationResults, state);
     }
+    ImGui::PopStyleColor(3);
     ImGui::End();
 
     if (m_selectedUnit) {
