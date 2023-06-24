@@ -255,6 +255,7 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
                     chunk.heightCorners[0] = top.heightCorners[2];
                     chunk.heightCorners[1] = top.heightCorners[3];
                 } else if (top.heightCenter > chunk.height) {
+                    chunk.heightCenter = top.height + (chunk.height - top.height) / 2;
                     chunk.heightCorners[0] = top.heightCorners[2];
                     chunk.heightCorners[1] = top.heightCorners[3];
                 }
@@ -282,6 +283,7 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
                     chunk.heightCorners[0] = left.heightCorners[1];
                     chunk.heightCorners[2] = left.heightCorners[3];
                 } else if (left.heightCenter < chunk.heightCenter) {
+                    chunk.heightCenter = left.height + (chunk.height - left.height) / 2;
                     left.heightCorners[1] = chunk.heightCorners[0];
                     left.heightCorners[3] = chunk.heightCorners[2];
                 }
