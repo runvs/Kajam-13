@@ -148,38 +148,39 @@ void TerrainRenderer::doCreate()
             vertices[11] = { { posX + chunkSize, posYtr }, colorTr };
 
             // draw stones for dirt layer
-            if (chunk.heightCenter < 0.1) {
+            if (chunk.heightCenter < 0.1
+                || (chunk.heightCenter >= 2.8 && chunk.heightCenter <= 3.7)) {
                 auto const numStones
-                    = static_cast<std::size_t>(jt::Random::getChance(0.35f) ? 1 : 0);
+                    = static_cast<std::size_t>(jt::Random::getChance(0.45f) ? 1 : 0);
                 auto& decals = gridDecals[chunkIdx] = { sf::TriangleFan, numStones * 6 };
                 for (int i = 0; i != numStones; ++i) {
                     auto const pos = jt::Random::getRandomPointIn(chunkRect);
-                    decals[i * 6 + 0] = { { pos.x, pos.y + posYc }, colorStone };
-                    decals[i * 6 + 1] = { { pos.x + 3, pos.y - 1 + posYc }, colorStone };
-                    decals[i * 6 + 2] = { { pos.x + 2, pos.y - 2 + posYc }, colorStone };
-                    decals[i * 6 + 3] = { { pos.x, pos.y - 3 + posYc }, colorStone };
-                    decals[i * 6 + 4] = { { pos.x - 2, pos.y - 2 + posYc }, colorStone };
-                    decals[i * 6 + 5] = { { pos.x - 3, pos.y - 1 + posYc }, colorStone };
+                    decals[i * 6 + 0] = { { pos.x, pos.y }, colorStone };
+                    decals[i * 6 + 1] = { { pos.x + 3, pos.y - 1 }, colorStone };
+                    decals[i * 6 + 2] = { { pos.x + 2, pos.y - 2 }, colorStone };
+                    decals[i * 6 + 3] = { { pos.x, pos.y - 3 }, colorStone };
+                    decals[i * 6 + 4] = { { pos.x - 2, pos.y - 2 }, colorStone };
+                    decals[i * 6 + 5] = { { pos.x - 3, pos.y - 1 }, colorStone };
                 }
             }
             // draw grass decals for grass
-            else if (chunk.heightCenter >= 0.3 && chunk.heightCenter <= 2.4) {
+            else if (chunk.heightCenter >= 0.3 && chunk.heightCenter <= 1.6) {
                 jt::Rectf const chunkRect { posX, posY, chunkSize, chunkSize };
                 auto const numGrass = static_cast<std::size_t>(jt::Random::getInt(1, 3));
                 auto& decals = gridDecals[chunkIdx] = { sf::Lines, numGrass * 6 };
                 for (int i = 0; i != numGrass; ++i) {
                     auto const pos = jt::Random::getRandomPointIn(chunkRect);
                     auto const colOffset
-                        = jt::Random::getInt(4, 12) * (jt::Random::getChance(0.5f) ? -1 : 1);
+                        = jt::Random::getInt(4, 9) * (jt::Random::getChance(0.5f) ? -1 : 1);
                     sf::Color const col { static_cast<sf::Uint8>(colorC.r + colOffset),
                         static_cast<sf::Uint8>(colorC.g + colOffset),
                         static_cast<sf::Uint8>(colorC.b + colOffset) };
-                    decals[i * 6 + 0] = { { pos.x, pos.y + posYc }, col };
-                    decals[i * 6 + 1] = { { pos.x - 1, pos.y + posYc - 4 }, col };
-                    decals[i * 6 + 2] = { { pos.x - 1, pos.y + posYc }, col };
-                    decals[i * 6 + 3] = { { pos.x - 3, pos.y + posYc - 3 }, col };
-                    decals[i * 6 + 4] = { { pos.x + 1, pos.y + posYc }, col };
-                    decals[i * 6 + 5] = { { pos.x + 2, pos.y + posYc - 3 }, col };
+                    decals[i * 6 + 0] = { { pos.x, pos.y }, col };
+                    decals[i * 6 + 1] = { { pos.x - 1, pos.y - 4 }, col };
+                    decals[i * 6 + 2] = { { pos.x - 1, pos.y }, col };
+                    decals[i * 6 + 3] = { { pos.x - 3, pos.y - 3 }, col };
+                    decals[i * 6 + 4] = { { pos.x + 1, pos.y }, col };
+                    decals[i * 6 + 5] = { { pos.x + 2, pos.y - 3 }, col };
                 }
             } else {
                 gridDecals[chunkIdx] = { sf::Points, 0 };
