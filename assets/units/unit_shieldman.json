@@ -21,7 +21,7 @@
   "upgrades": [
     {
       "name": "heavy armor",
-      "iconPath": "assets/upgrades/heavy_armor.png",
+      "iconPath": "assets/images/upgrades/heavy_armor.png",
       "upgCost": 125,
       "hitpoints": {
         "add": 100.0,
@@ -30,7 +30,7 @@
     },
     {
       "name": "boots of swiftness",
-      "iconPath": "assets/upgrades/boots_of_swiftness.png",
+      "iconPath": "assets/images/upgrades/boots_of_swiftness.png",
       "upgCost": 200,
       "movementSpeed": {
         "add": 6.0,

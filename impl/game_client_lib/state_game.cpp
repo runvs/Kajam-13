@@ -103,6 +103,28 @@ void StateGame::onCreate()
             add(tw);
         });
     add(m_explosionParticles);
+
+    m_stateIconWaiting = std::make_shared<jt::Sprite>(
+        "assets/images/states/waiting.png", jt::Recti { 0, 0, 183, 256 }, textureManager());
+    m_stateIconPlacing = std::make_shared<jt::Sprite>(
+        "assets/images/states/placing.png", jt::Recti { 0, 0, 183, 256 }, textureManager());
+    m_stateIconFighting = std::make_shared<jt::Sprite>(
+        "assets/images/states/fighting.png", jt::Recti { 0, 0, 183, 256 }, textureManager());
+
+    m_textRound = jt::dh::createText(renderTarget(), "Round " + std::to_string(m_round), 14);
+    m_textRound->setPosition({ GP::GetScreenSize().x / 2, 0 });
+    m_textRound->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
+
+    m_textPlayerZeroHp
+        = jt::dh::createText(renderTarget(), "4000", 22, GP::ColorPlayer0(), GP::HpFontAssetPath());
+    m_textPlayerZeroHp->setTextAlign(jt::Text::TextAlign::LEFT);
+    m_textPlayerZeroHp->setPosition({ 4, 0 });
+    m_textPlayerZeroHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 1, 1 });
+    m_textPlayerOneHp
+        = jt::dh::createText(renderTarget(), "4000", 22, GP::ColorPlayer1(), GP::HpFontAssetPath());
+    m_textPlayerOneHp->setTextAlign(jt::Text::TextAlign::RIGHT);
+    m_textPlayerOneHp->setPosition({ GP::GetScreenSize().x - 4, 0 });
+    m_textPlayerOneHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { -1, 1 });
 }
 
 void StateGame::onEnter() { }
@@ -120,6 +142,10 @@ void StateGame::onUpdate(float const elapsed)
 
         m_internalStateManager->getActiveState()->update(*this, elapsed);
     }
+
+    m_textRound->update(elapsed);
+    m_textPlayerZeroHp->update(elapsed);
+    m_textPlayerOneHp->update(elapsed);
 }
 
 void StateGame::playbackSimulation(float /*elapsed*/)
@@ -143,6 +169,8 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
         m_playerHP = currentFrame.m_playerHP;
         auto const thisPlayerId = m_serverConnection->getPlayerId();
         auto const otherPlayerId = ((thisPlayerId == 0) ? 1 : 0);
+        m_textPlayerZeroHp->setText(std::to_string(m_playerHP.at(0)));
+        m_textPlayerOneHp->setText(std::to_string(m_playerHP.at(1)));
         if (m_playerHP.at(thisPlayerId) <= 0) {
             getStateManager()->switchToState(InternalState::EndLose, *this);
         } else if (m_playerHP.at(otherPlayerId) <= 0) {
@@ -211,6 +239,7 @@ void StateGame::transitionPlaybackToPlaceUnits()
     m_tickId = 0;
     resetAllUnits();
     m_round++;
+    m_textRound->setText("Round " + std::to_string(m_round));
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
 }
 
@@ -247,32 +276,54 @@ void StateGame::onDraw() const
     m_clouds->draw();
     m_vignette->draw();
 
-    ImGui::Begin("State");
+    ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove };
+    ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 32, 32 }, ImGuiCond_Always);
+    ImGui::Begin("State", nullptr, window_flags);
     if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {
-        ImGui::Text("Waiting for players to join");
-    } else if (m_internalStateManager->getActiveStateE() == InternalState::PlaceUnits) {
-        ImGui::Text("Place units");
+        ImGui::Image(m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Waiting for players to join");
+            ImGui::EndTooltip();
+        }
     } else if (m_internalStateManager->getActiveStateE()
         == InternalState::WaitForSimulationResults) {
-        ImGui::Text("Waiting for other players to end unit placement");
+        ImGui::Image(m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Waiting for other players to end unit placement");
+            ImGui::EndTooltip();
+        }
+    } else if (m_internalStateManager->getActiveStateE() == InternalState::PlaceUnits) {
+        ImGui::Image(m_stateIconPlacing->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Place units");
+            ImGui::EndTooltip();
+        }
     } else if (m_internalStateManager->getActiveStateE() == InternalState::Playback) {
-        ImGui::Text("Watch the battle evolve");
+        ImGui::Image(m_stateIconFighting->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Watch the battle evolve");
+            ImGui::EndTooltip();
+        }
     }
-    ImGui::Separator();
-    ImGui::Text("round %i", m_round);
-    if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
-        auto const bpc = GP::ColorPlayer0();
-        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(bpc.r, bpc.g, bpc.b, 255));
-        ImGui::Text("HP blue player: %i", m_playerHP.at(0));
-        ImGui::PopStyleColor();
-        auto const rpc = GP::ColorPlayer1();
-        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(rpc.r, rpc.g, rpc.b, 255));
-        ImGui::Text("HP red player: %i", m_playerHP.at(1));
-        ImGui::PopStyleColor();
-    }
-
     ImGui::End();
+
+    m_textRound->draw(renderTarget());
+
+    if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
+        m_textPlayerZeroHp->draw(renderTarget());
+        m_textPlayerOneHp->draw(renderTarget());
+    }
 }
+
 void StateGame::drawArrows() const
 {
     for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {

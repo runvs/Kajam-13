@@ -169,7 +169,7 @@ void PlacementManager::placeUnit()
         unit->create();
 
         unit->setOffset({ 0,
-            m_world->getFieldHeight(fieldPos + (terrainChunkSizeInPixel / 2.0f))
+            m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf)
                 * -terrainHeightScalingFactor });
         fieldPos -= terrainChunkSizeInPixelHalf; // offset position to top left corner of field
         unit->setPosition(fieldPos);

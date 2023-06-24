@@ -169,7 +169,7 @@ Terrain::Terrain(std::string const& mapFilename) { parseMapFromFilename(mapFilen
 Chunk const& Terrain::getChunk(int x, int y) const
 {
     auto idx = coordToIndex(x, y);
-    assert(idx <= m_chunks.size());
+    assert(idx < m_chunks.size());
     return m_chunks[idx];
 }
 

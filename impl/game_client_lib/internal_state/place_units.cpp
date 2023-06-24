@@ -13,59 +13,61 @@
 namespace {
 
 template <typename T>
-void showUnitTooltip(T& u, PlacementManager const& pm)
+bool showUnitTooltip(T& u, PlacementManager const& pm)
 {
     auto const lockedUnit = u.lock();
-    if (lockedUnit && lockedUnit->isMouseOver()) {
-        auto const unitInfo = getUnitInfoWithLevelAndUpgrades(lockedUnit->getInfo(),
-            lockedUnit->getLevel(), pm.getBoughtUpgradesForUnit(lockedUnit->getInfo().type));
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
-        ImGui::BeginTooltip();
-        ImGui::Text("%s", unitInfo.type.c_str());
-        if (ImGui::BeginTable("ttUnitInfo", 4)) {
-            ImGui::TableNextColumn();
-            ImGui::Text("HP");
-            ImGui::TableNextColumn();
-            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
-            ImGui::Text("%d", static_cast<int>(unitInfo.hitpointsMax));
-            ImGui::PopStyleColor();
-            ImGui::TableNextColumn();
-            ImGui::Text("SPD");
-            ImGui::TableNextColumn();
-            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
-            ImGui::Text("%.2f", unitInfo.movementSpeed);
-            ImGui::PopStyleColor();
-            ImGui::TableNextColumn();
-            ImGui::Text("DMG");
-            ImGui::TableNextColumn();
-            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
-            ImGui::Text("%.2f", unitInfo.damage);
-            ImGui::PopStyleColor();
-            ImGui::TableNextColumn();
-            ImGui::Text("ATS");
-            ImGui::TableNextColumn();
-            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
-            ImGui::Text("%.2f", unitInfo.attackTimerMax);
-            ImGui::PopStyleColor();
-            ImGui::EndTable();
-        }
-        auto& upgrades = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
-        if (!upgrades.empty()) {
-            for (auto& upg : upgrades) {
-                if (!upg.icon) {
-                    upg.icon = std::make_shared<jt::Sprite>(upg.iconPath,
-                        jt ::Recti { 0, 0, 256, 256 }, pm.getGame()->gfx().textureManager());
-                }
-                ImGui::Image(upg.icon->getSFSprite().getTexture()->getNativeHandle(),
-                    ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
-                ImGui::SameLine(0, -1);
-                ImGui::Text("%s", upg.name.c_str());
-            }
-        }
-        ImGui::EndTooltip();
-        ImGui::PopStyleVar();
+    if (!lockedUnit || !lockedUnit->isMouseOver()) {
+        return false;
     }
+    auto const unitInfo = getUnitInfoWithLevelAndUpgrades(lockedUnit->getInfo(),
+        lockedUnit->getLevel(), pm.getBoughtUpgradesForUnit(lockedUnit->getInfo().type));
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
+    ImGui::BeginTooltip();
+    ImGui::Text("%s", unitInfo.type.c_str());
+    if (ImGui::BeginTable("ttUnitInfo", 4)) {
+        ImGui::TableNextColumn();
+        ImGui::Text("HP");
+        ImGui::TableNextColumn();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+        ImGui::Text("%d", static_cast<int>(unitInfo.hitpointsMax));
+        ImGui::PopStyleColor();
+        ImGui::TableNextColumn();
+        ImGui::Text("SPD");
+        ImGui::TableNextColumn();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+        ImGui::Text("%.2f", unitInfo.movementSpeed);
+        ImGui::PopStyleColor();
+        ImGui::TableNextColumn();
+        ImGui::Text("DMG");
+        ImGui::TableNextColumn();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
+        ImGui::Text("%.2f", unitInfo.damage);
+        ImGui::PopStyleColor();
+        ImGui::TableNextColumn();
+        ImGui::Text("ATS");
+        ImGui::TableNextColumn();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
+        ImGui::Text("%.2f", unitInfo.attackTimerMax);
+        ImGui::PopStyleColor();
+        ImGui::EndTable();
+    }
+    auto& upgrades = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
+    if (!upgrades.empty()) {
+        for (auto& upg : upgrades) {
+            if (!upg.icon) {
+                upg.icon = std::make_shared<jt::Sprite>(upg.iconPath, jt ::Recti { 0, 0, 64, 64 },
+                    pm.getGame()->gfx().textureManager());
+            }
+            ImGui::Image(upg.icon->getSFSprite().getTexture()->getNativeHandle(),
+                ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
+            ImGui::SameLine(0, -1);
+            ImGui::Text("%s", upg.name.c_str());
+        }
+    }
+    ImGui::EndTooltip();
+    ImGui::PopStyleVar();
+    return true;
 }
 
 template <typename T>
@@ -153,10 +155,14 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 void PlaceUnits::draw(StateGame& state)
 {
     for (auto& u : *state.getUnits()) {
-        showUnitTooltip(u, *state.getPlacementManager());
+        if (showUnitTooltip(u, *state.getPlacementManager())) {
+            break;
+        }
     }
     for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
-        showUnitTooltip(u, *state.getPlacementManager());
+        if (showUnitTooltip(u, *state.getPlacementManager())) {
+            break;
+        }
     }
 
     state.getPlacementManager()->draw();

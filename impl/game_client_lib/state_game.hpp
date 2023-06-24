@@ -17,6 +17,7 @@
 #include <server_connection.hpp>
 #include <simulation_result_data.hpp>
 #include <terrain_renderer.hpp>
+#include <text.hpp>
 #include <unit.hpp>
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>
@@ -90,6 +91,14 @@ private:
 
     std::shared_ptr<PlayerIdDispatcher> m_playerIdDispatcher { nullptr };
     mutable std::shared_ptr<jt::Shape> m_arrowShape { nullptr };
+
+    std::shared_ptr<jt::Sprite> m_stateIconWaiting { nullptr };
+    std::shared_ptr<jt::Sprite> m_stateIconPlacing { nullptr };
+    std::shared_ptr<jt::Sprite> m_stateIconFighting { nullptr };
+
+    std::shared_ptr<jt::Text> m_textRound { nullptr };
+    std::shared_ptr<jt::Text> m_textPlayerZeroHp { nullptr };
+    std::shared_ptr<jt::Text> m_textPlayerOneHp { nullptr };
 
     mutable bool m_addBotAsPlayerZero { false };
     mutable bool m_addBotAsPlayerOne { false };

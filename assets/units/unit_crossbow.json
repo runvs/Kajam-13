@@ -23,7 +23,7 @@
   "upgrades": [
     {
       "name": "range",
-      "iconPath": "assets/upgrades/range_crossbow.png",
+      "iconPath": "assets/images/upgrades/range_crossbow.png",
       "upgCost": 125,
       "range": {
         "add": 3.0,
@@ -32,7 +32,7 @@
     },
     {
       "name": "strength",
-      "iconPath": "assets/upgrades/strength_crossbow.png",
+      "iconPath": "assets/images/upgrades/strength_crossbow.png",
       "upgCost": 175,
       "damage": {
         "add": 30.0,
