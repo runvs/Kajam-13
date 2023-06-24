@@ -1,6 +1,5 @@
 #include "unit_info.hpp"
-#include "json_keys.hpp"
-#include <nlohmann.hpp>
+#include <json_keys.hpp>
 
 void to_json(nlohmann::json& j, AiInfo const& p)
 {

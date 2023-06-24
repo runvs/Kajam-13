@@ -1,12 +1,12 @@
 #include "internal_state_manager.hpp"
-#include "end_lose.hpp"
-#include "end_win.hpp"
-#include "place_units.hpp"
-#include "playback.hpp"
-#include "select_starting_units.hpp"
-#include "state_game.hpp"
-#include "wait_for_all_players.hpp"
-#include "wait_for_simulation_results.hpp"
+#include <internal_state/end_lose.hpp>
+#include <internal_state/end_win.hpp>
+#include <internal_state/place_units.hpp>
+#include <internal_state/playback.hpp>
+#include <internal_state/select_starting_units.hpp>
+#include <internal_state/wait_for_all_players.hpp>
+#include <internal_state/wait_for_simulation_results.hpp>
+#include <state_game.hpp>
 #include <memory>
 
 InternalStateManager::InternalStateManager()

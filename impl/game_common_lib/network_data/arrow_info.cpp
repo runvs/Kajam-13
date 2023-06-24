@@ -1,6 +1,6 @@
 
 #include "arrow_info.hpp"
-#include "json_keys.hpp"
+#include <json_keys.hpp>
 #include <network_properties.hpp>
 
 void to_json(nlohmann::json& j, const ArrowInfo& data)
@@ -11,7 +11,7 @@ void to_json(nlohmann::json& j, const ArrowInfo& data)
         { jk::positionY, static_cast<int>(data.currentPos.y * NetworkProperties::floatPrecision()) }
         // clang-format on
     };
-    
+
     if (data.arrowScale != 1.0f) {
         j[jk::scale] = static_cast<int>(data.arrowScale * NetworkProperties::floatPrecision());
     }

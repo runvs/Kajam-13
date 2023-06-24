@@ -1,12 +1,12 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "vector.hpp"
-#include <map/terrain.hpp>
+#include "terrain.hpp"
 #include <math_helper.hpp>
 #include <nlohmann.hpp>
+#include <vector.hpp>
 #include <fstream>
-#include <iostream>
+#include <vector>
 
 namespace {
 

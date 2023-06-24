@@ -4,12 +4,9 @@
 #include <json_keys.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
-#include <object_properties.hpp>
 #include <simulation_result_data.hpp>
 #include <unit_info.hpp>
-#include <mutex>
 #include <stdexcept>
-#include <string>
 
 ServerConnection::ServerConnection(jt::LoggerInterface& logger)
     : m_logger { logger }

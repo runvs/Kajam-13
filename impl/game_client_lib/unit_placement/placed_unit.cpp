@@ -5,6 +5,7 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <rect.hpp>
 #include <tweens/tween_position.hpp>
 #include <vector.hpp>
 #include <memory>
@@ -82,6 +83,7 @@ std::shared_ptr<jt::Tween> PlacedUnit::createInitialTween()
 }
 
 int PlacedUnit::getLevel() const { return 1; }
+
 int PlacedUnit::getPlayerID() const { return m_playerID; }
 
 void PlacedUnit::flash() { m_anim->flash(0.4f, jt::colors::Green); }

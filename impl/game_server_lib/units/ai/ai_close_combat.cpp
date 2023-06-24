@@ -1,5 +1,5 @@
 #include "ai_close_combat.hpp"
-#include "close_combat_info.hpp"
+#include <close_combat_info.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <random/random.hpp>

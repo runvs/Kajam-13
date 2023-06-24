@@ -36,9 +36,7 @@ private:
 
     void doUpdate(const float /*elapsed*/) override
     {
-        m_data.erase(std::remove_if(m_data.begin(), m_data.end(),
-                         [](std::weak_ptr<T> wptr) { return wptr.expired(); }),
-            m_data.end());
+        (void)std::erase_if(m_data, [](auto const& wptr) { return wptr.expired(); });
     }
 };
 

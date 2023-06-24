@@ -72,7 +72,7 @@ void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
             unitData.positionX -= terrainChunkSizeInPixel * 2;
             unitData.positionY -= terrainChunkSizeInPixel * 5 + 32 * (m_round - 10);
         }
-        std::vector<std::string> const possibleUnits = m_unitInfos.getTypes();
+        auto const possibleUnits = m_unitInfos.getTypes();
         auto const unitType
             = *jt::SystemHelper::select_randomly(possibleUnits.cbegin(), possibleUnits.cend());
 

@@ -215,9 +215,7 @@ void GameSimulation::handleArrows(
             }
         }
     }
-    m_arrows.erase(std::remove_if(m_arrows.begin(), m_arrows.end(),
-                       [](auto& arrow) { return arrow.age > arrow.totalTime; }),
-        m_arrows.end());
+    (void)std::erase_if(m_arrows, [](auto const& arrow) { return arrow.age > arrow.totalTime; });
 }
 
 void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
@@ -231,9 +229,7 @@ void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
         }
     }
 
-    m_arrowsToBeSpawned.erase(std::remove_if(m_arrowsToBeSpawned.begin(), m_arrowsToBeSpawned.end(),
-                                  [](auto& kvp) { return kvp.first <= 0; }),
-        m_arrowsToBeSpawned.end());
+    (void)std::erase_if(m_arrowsToBeSpawned, [](auto const& kvp) { return kvp.first <= 0; });
 }
 
 void GameSimulation::handleScheduledAttacks(float timePerUpdate)
@@ -256,10 +252,8 @@ void GameSimulation::handleScheduledAttacks(float timePerUpdate)
         }
     }
 
-    m_scheduledCloseCombatAttacks.erase(
-        std::remove_if(m_scheduledCloseCombatAttacks.begin(), m_scheduledCloseCombatAttacks.end(),
-            [](auto& kvp) { return kvp.first <= 0; }),
-        m_scheduledCloseCombatAttacks.end());
+    (void)std::erase_if(
+        m_scheduledCloseCombatAttacks, [](auto const& kvp) { return kvp.first <= 0; });
 }
 
 std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(

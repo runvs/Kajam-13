@@ -1,10 +1,11 @@
 #include "state_intro.hpp"
-#include "game_properties.hpp"
 #include <audio/sound/sound.hpp>
 #include <game_interface.hpp>
+#include <game_properties.hpp>
 #include <state_menu.hpp>
 #include <tweens/tween_alpha.hpp>
 #include <tweens/tween_position.hpp>
+#include <vector.hpp>
 
 void StateIntro::onCreate()
 {
