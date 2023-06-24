@@ -69,25 +69,35 @@ void StateGame::onCreate()
 
     m_critters = std::make_shared<jt::ObjectGroup<Critter>>();
 
+    jt::Vector2f pos;
     for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
         auto c = std::make_shared<Bird>();
         m_critters->push_back(c);
         add(c);
-        c->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+        while (
+            m_world->getFieldHeight(pos = jt::Random::getRandomPointIn(GP::GetScreenSize())) > 2.4f)
+            ;
+        c->setPosition(pos);
     }
 
     for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
         auto c = std::make_shared<Bunny>();
         m_critters->push_back(c);
         add(c);
-        c->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+        while (
+            m_world->getFieldHeight(pos = jt::Random::getRandomPointIn(GP::GetScreenSize())) > 2.4f)
+            ;
+        c->setPosition(pos);
     }
 
     for (auto i = jt::Random::getInt(2, 6); i != 0; --i) {
         auto c = std::make_shared<Deer>();
         m_critters->push_back(c);
         add(c);
-        c->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+        while (
+            m_world->getFieldHeight(pos = jt::Random::getRandomPointIn(GP::GetScreenSize())) > 2.4f)
+            ;
+        c->setPosition(pos);
     }
 
     m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
