@@ -17,7 +17,7 @@ public:
     SoundGroup() = default;
 
     /// Constructor for convenience
-    /// \param sounds list of filepaths to load
+    /// \param sounds list sounds to be stored in the group
     explicit SoundGroup(std::vector<std::shared_ptr<jt::SoundInterface>> const& sounds);
 
     std::size_t size() const;

@@ -1,4 +1,5 @@
 #include "unit.hpp"
+#include "audio/sound/sound_group.hpp"
 #include <animation.hpp>
 #include <color/color.hpp>
 #include <drawable_helpers.hpp>
@@ -29,6 +30,19 @@ void Unit::doCreate()
 
     m_levelText = jt::dh::createText(renderTarget(), "", 12);
     m_levelText->setZ(GP::ZLayerUI());
+
+    m_sfxCloseCombat1 = getGame()->audio().addTemporarySound("assets/sfx/cc1.wav");
+    m_sfxCloseCombat2 = getGame()->audio().addTemporarySound("assets/sfx/cc2.wav");
+    m_sfxCloseCombat3 = getGame()->audio().addTemporarySound("assets/sfx/cc3.wav");
+
+    m_sfxCloseCombat1->setVolume(0.5f);
+    m_sfxCloseCombat2->setVolume(0.5f);
+    m_sfxCloseCombat3->setVolume(0.5f);
+    m_sfxGrpCloseCombat = getGame()->audio().addTemporarySoundGroup(
+        { m_sfxCloseCombat1, m_sfxCloseCombat2, m_sfxCloseCombat3 });
+
+    m_sfxArcher = getGame()->audio().addTemporarySound("assets/sfx/archer.wav");
+    m_sfxCrossbow = getGame()->audio().addTemporarySound("assets/sfx/crossbow.wav");
 }
 
 void Unit::doUpdate(float const elapsed)
@@ -47,6 +61,14 @@ void Unit::doUpdate(float const elapsed)
             }
         }
     }
+
+    for (auto& kvp : m_soundsToPlay) {
+        kvp.first -= elapsed;
+        if (kvp.first <= 0) {
+            kvp.second->play();
+        }
+    }
+    (void)std::erase_if(m_soundsToPlay, [](auto const& kvp) { return kvp.first <= 0; });
 
     m_hpBar->setCurrentValue(m_hp);
     m_hpBar->setPosition(m_anim->getPosition() + jt::Vector2f { 0.0f, -6.0f });
@@ -113,6 +135,15 @@ void Unit::playAnimation()
     }
     if (newAnimName == "damage" || newAnimName == "death") {
         m_anim->flash(0.15f, jt::colors::Red);
+    }
+    if (newAnimName == "attack") {
+        if (m_info.type == "swordman" || m_info.type == "shieldman" || m_info.type == "horseman") {
+            m_soundsToPlay.push_back(std::make_pair(0.4f, m_sfxGrpCloseCombat));
+        } else if (m_info.type == "archer") {
+            m_soundsToPlay.push_back(std::make_pair(0.81f, m_sfxArcher));
+        } else if (m_info.type == "crossbow") {
+            m_soundsToPlay.push_back(std::make_pair(0.81f, m_sfxCrossbow));
+        }
     }
     auto const currentAnimationName = m_anim->getCurrentAnimationName();
 

@@ -2,6 +2,8 @@
 #ifndef JAMTEMPLATE_UNIT_HPP
 #define JAMTEMPLATE_UNIT_HPP
 
+#include "audio/sound/sound_group.hpp"
+#include "audio/sound/sound_interface.hpp"
 #include <animation.hpp>
 #include <bar.hpp>
 #include <counted_object.hpp>
@@ -54,6 +56,15 @@ private:
     std::string m_newAnimName { "" };
 
     std::shared_ptr<jt::Text> m_levelText;
+    std::shared_ptr<jt::SoundInterface> m_sfxGrpCloseCombat { nullptr };
+    std::shared_ptr<jt::SoundInterface> m_sfxCloseCombat1 { nullptr };
+    std::shared_ptr<jt::SoundInterface> m_sfxCloseCombat2 { nullptr };
+    std::shared_ptr<jt::SoundInterface> m_sfxCloseCombat3 { nullptr };
+
+    std::shared_ptr<jt::SoundInterface> m_sfxArcher { nullptr };
+    std::shared_ptr<jt::SoundInterface> m_sfxCrossbow { nullptr };
+
+    std::vector<std::pair<float, std::shared_ptr<jt::SoundInterface>>> m_soundsToPlay;
     float m_animTimeUntilBackToIdle = -1.0f;
 
     int m_unitID;
