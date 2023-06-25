@@ -27,7 +27,7 @@ public:
     static jt::Color PaletteBackground() { return GP::getPalette().getColor(5); }
     static jt::Color PaletteFontFront() { return GP::getPalette().getColor(0); }
     static jt::Color PalleteFrontHighlight() { return GP::getPalette().getColor(1); }
-    static jt::Color PaletteFontShadow() { return GP::getPalette().getColor(6); }
+    static jt::Color PaletteFontShadow() { return jt::Color { 50, 50, 50, 100 }; }
     static jt::Color PaletteFontCredits() { return GP::getPalette().getColor(2); }
 
     static jt::Color ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4"); }

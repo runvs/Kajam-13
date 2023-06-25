@@ -50,6 +50,11 @@ void PlacementManager::doCreate()
         getUnitPlacementArea(m_playerId == 1 ? 0 : 1, AreaType::AREA_FLANK_BOT),
         jt::Color { 20, 20, 20, 100 }, textureManager());
     m_placedUnits = std::make_shared<jt::ObjectGroup<PlacedUnit>>();
+
+    m_sfxPlaceUnit = getGame()->audio().addTemporarySound("assets/sfx/drop_unit.wav");
+    m_sfxPlaceUnit->setVolume(0.7f);
+    m_sfxBuyUpgrade = getGame()->audio().addTemporarySound("assets/sfx/powerup.wav");
+    m_sfxBuyUpgrade->setVolume(0.7f);
 }
 
 void PlacementManager::doUpdate(const float elapsed)
@@ -176,7 +181,9 @@ void PlacementManager::placeUnit()
 
         unit->setIDs(m_unitIdManager.getIdForPlayer(m_playerId), m_playerId);
 
-        m_tweens.add(unit->createInitialTween());
+        auto tw = unit->createInitialTween();
+        tw->addCompleteCallback([this]() { m_sfxPlaceUnit->play(); });
+        m_tweens.add(tw);
 
         m_availableFunds -= info.cost;
     }
@@ -221,6 +228,7 @@ void PlacementManager::buyUpgrade(std::string const& unitType, const std::string
     auto const& upg = m_unitInfo->getUpgradeForUnit(unitType, upgrade);
     m_boughtUpgrades[unitType].push_back(upg);
     (void)std::erase_if(vec, [&](auto const& v) { return v.name == upgrade; });
+    m_sfxBuyUpgrade->play();
 }
 
 std::vector<UpgradeInfo>& PlacementManager::getPossibleUpgradesForUnit(

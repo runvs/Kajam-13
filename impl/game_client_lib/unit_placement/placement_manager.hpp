@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_PLACEMENT_MANAGER_HPP
 #define JAMTEMPLATE_PLACEMENT_MANAGER_HPP
 
+#include "audio/sound/sound_interface.hpp"
 #include <game_object.hpp>
 #include <game_object_collection.hpp>
 #include <map/terrain.hpp>
@@ -65,6 +66,9 @@ private:
     mutable std::string m_activeUnitType = "";
 
     mutable int m_availableFunds { 0 };
+
+    std::shared_ptr<jt::SoundInterface> m_sfxPlaceUnit { nullptr };
+    std::shared_ptr<jt::SoundInterface> m_sfxBuyUpgrade { nullptr };
 
     mutable std::vector<std::string> m_unlockedTypes;
     mutable std::map<std::string, std::vector<UpgradeInfo>> m_possibleUpgrades;
