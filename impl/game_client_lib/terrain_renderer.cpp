@@ -125,7 +125,7 @@ void TerrainRenderer::doCreate()
             auto const colorBr = getTerrainColor(chunk.heightCorners[3]);
 
             // draw chunk triangles
-            auto& vertices = grid[chunkIdx] = { sf::Triangles, 12 };
+            auto& vertices = grid[chunkIdx] = sf::VertexArray { sf::Triangles, 12u };
 
             // top triangle
             vertices[0] = { { posX, posYtl }, colorTl };
@@ -152,8 +152,9 @@ void TerrainRenderer::doCreate()
                 || (chunk.heightCenter >= 2.8 && chunk.heightCenter <= 3.7)) {
                 auto const numStones
                     = static_cast<std::size_t>(jt::Random::getChance(0.45f) ? 1 : 0);
-                auto& decals = gridDecals[chunkIdx] = { sf::TriangleFan, numStones * 6 };
-                for (int i = 0; i != numStones; ++i) {
+                auto& decals = gridDecals[chunkIdx]
+                    = sf::VertexArray { sf::TriangleFan, numStones * 6 };
+                for (auto i = 0u; i != numStones; ++i) {
                     auto const pos = jt::Random::getRandomPointIn(chunkRect);
                     decals[i * 6 + 0] = { { pos.x, pos.y }, colorStone };
                     decals[i * 6 + 1] = { { pos.x + 3, pos.y - 1 }, colorStone };
@@ -167,8 +168,8 @@ void TerrainRenderer::doCreate()
             else if (chunk.heightCenter >= 0.3 && chunk.heightCenter <= 1.6) {
                 jt::Rectf const chunkRect { posX, posY, chunkSize, chunkSize };
                 auto const numGrass = static_cast<std::size_t>(jt::Random::getInt(1, 3));
-                auto& decals = gridDecals[chunkIdx] = { sf::Lines, numGrass * 6 };
-                for (int i = 0; i != numGrass; ++i) {
+                auto& decals = gridDecals[chunkIdx] = sf::VertexArray { sf::Lines, numGrass * 6 };
+                for (auto i = 0u; i != numGrass; ++i) {
                     auto const pos = jt::Random::getRandomPointIn(chunkRect);
                     auto const colOffset
                         = jt::Random::getInt(4, 9) * (jt::Random::getChance(0.5f) ? -1 : 1);
@@ -183,7 +184,7 @@ void TerrainRenderer::doCreate()
                     decals[i * 6 + 5] = { { pos.x + 2, pos.y - 3 }, col };
                 }
             } else {
-                gridDecals[chunkIdx] = { sf::Points, 0 };
+                gridDecals[chunkIdx] = sf::VertexArray { sf::Points, 0 };
             }
         }
     }

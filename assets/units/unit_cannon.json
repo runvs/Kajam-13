@@ -42,6 +42,7 @@
     },
     {
       "name": "heavy attack",
+      "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 125,
       "attackTimerMax": {
         "add": 0.0,

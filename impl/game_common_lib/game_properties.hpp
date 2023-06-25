@@ -33,8 +33,6 @@ public:
     static jt::Color ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4"); }
     static jt::Color ColorPlayer1() { return jt::ColorFactory::fromHexString("#f57979"); }
 
-    static char const* HpFontAssetPath() { return "assets/fonts/PorspicanSerif-Regular.otf"; }
-
     static jt::Palette getPalette();
 
     static std::size_t MaxNumberOfStepsPerRound();
