@@ -31,9 +31,9 @@ void Unit::doCreate()
     m_levelText = jt::dh::createText(renderTarget(), "", 12);
     m_levelText->setZ(GP::ZLayerUI());
 
-    m_sfxCloseCombat1 = getGame()->audio().addTemporarySound("assets/sfx/cc1.wav");
-    m_sfxCloseCombat2 = getGame()->audio().addTemporarySound("assets/sfx/cc2.wav");
-    m_sfxCloseCombat3 = getGame()->audio().addTemporarySound("assets/sfx/cc3.wav");
+    m_sfxCloseCombat1 = getGame()->audio().soundPool("cc1", "assets/sfx/cc1.wav", 10);
+    m_sfxCloseCombat2 = getGame()->audio().soundPool("cc2", "assets/sfx/cc2.wav", 10);
+    m_sfxCloseCombat3 = getGame()->audio().soundPool("cc3", "assets/sfx/cc3.wav", 10);
 
     m_sfxCloseCombat1->setVolume(0.5f);
     m_sfxCloseCombat2->setVolume(0.5f);
@@ -41,8 +41,11 @@ void Unit::doCreate()
     m_sfxGrpCloseCombat = getGame()->audio().addTemporarySoundGroup(
         { m_sfxCloseCombat1, m_sfxCloseCombat2, m_sfxCloseCombat3 });
 
-    m_sfxArcher = getGame()->audio().addTemporarySound("assets/sfx/archer.wav");
-    m_sfxCrossbow = getGame()->audio().addTemporarySound("assets/sfx/crossbow.wav");
+    if (m_info.type == "archer") {
+        m_sfxArcher = getGame()->audio().soundPool("cc4", "assets/sfx/archer.wav", 10);
+    } else if (m_info.type == "crossbow") {
+        m_sfxCrossbow = getGame()->audio().soundPool("cc5", "assets/sfx/crossbow.wav", 10);
+    }
 }
 
 void Unit::doUpdate(float const elapsed)
@@ -137,7 +140,8 @@ void Unit::playAnimation()
         m_anim->flash(0.15f, jt::colors::Red);
     }
     if (newAnimName == "attack") {
-        if (m_info.type == "swordman" || m_info.type == "shieldman" || m_info.type == "horseman") {
+        if (m_info.type == "peasant" || m_info.type == "swordman" || m_info.type == "shieldman"
+            || m_info.type == "horseman") {
             m_soundsToPlay.push_back(std::make_pair(0.4f, m_sfxGrpCloseCombat));
         } else if (m_info.type == "archer") {
             m_soundsToPlay.push_back(std::make_pair(0.81f, m_sfxArcher));
