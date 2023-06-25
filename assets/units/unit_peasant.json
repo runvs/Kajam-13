@@ -5,7 +5,7 @@
   "expGainWhenKilled": 10,
   "hitpoints": 25.0,
   "damage": 8.0,
-  "attackTimerMax": 0.7,
+  "attackTimerMax": 0.8,
   "movementSpeed": 35.0,
   "colliderRadius": 4.0,
   "cost": 45,

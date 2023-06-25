@@ -151,7 +151,7 @@ void TerrainRenderer::doCreate()
             if (chunk.heightCenter < 0.1
                 || (chunk.heightCenter >= 2.8 && chunk.heightCenter <= 3.7)) {
                 auto const numStones
-                    = static_cast<std::size_t>(jt::Random::getChance(0.45f) ? 1 : 0);
+                    = static_cast<std::size_t>(jt::Random::getChance(0.25f) ? 1 : 0);
                 auto& decals = gridDecals[chunkIdx]
                     = sf::VertexArray { sf::TriangleFan, numStones * 6 };
                 for (auto i = 0u; i != numStones; ++i) {

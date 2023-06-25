@@ -114,7 +114,7 @@ void StateGame::onCreate()
             return shape;
         },
         [this](auto shape, auto const& pos) {
-            shape->setPosition(pos);
+            shape->setPosition(jt::Random::getRandomPointInCircle(40.0f) + pos);
             auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
             add(tw);
         });
@@ -206,10 +206,7 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
 
     for (auto const& expl : currentFrame.m_explosions) {
         getGame()->gfx().camera().shake(0.5f, 5);
-        for (auto i = 0; i != 10; ++i) {
-            auto const pos = jt::Random::getRandomPointInCircle(expl.radius) + expl.position;
-            m_explosionParticles->fire(1, pos);
-        }
+        m_explosionParticles->fire(20, expl.position);
     }
 }
 
