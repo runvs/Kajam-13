@@ -38,7 +38,7 @@ public:
     static jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y);
 
     // TODO share map information from server to clients
-    Terrain(std::string const& mapFilename = "assets/maps/map_de_dust_2.json");
+    explicit Terrain(std::string const& mapFilename = "assets/maps/map_over_the_hills.json");
 
     Grid const& getChunks() const { return m_chunks; }
 

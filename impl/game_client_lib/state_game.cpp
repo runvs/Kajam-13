@@ -69,42 +69,26 @@ void StateGame::onCreate()
 
     m_critters = std::make_shared<jt::ObjectGroup<Critter>>();
 
-    jt::Vector2f tmpPos;
-    float tmpHeight;
+    auto const placeCritterFn
+        = [this](auto CritterT, float lowerbound, float upperbound, int count) {
+              for (auto i = 0; i != count; ++i) {
+                  for (auto x = 0; x != 10; ++x) {
+                      auto const tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize());
+                      auto const tmpHeight = m_world->getFieldHeight(tmpPos);
+                      if (tmpHeight >= lowerbound && tmpHeight <= upperbound) {
+                          auto c = std::make_shared<typename decltype(CritterT)::element_type>();
+                          c->setPosition(tmpPos);
+                          add(c);
+                          m_critters->push_back(c);
+                          break;
+                      }
+                  }
+              }
+          };
 
-    for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
-        auto c = std::make_shared<Bird>();
-        m_critters->push_back(c);
-        add(c);
-        while (m_world->getFieldHeight(tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize()))
-            > 2.4f)
-            ;
-        c->setPosition(tmpPos);
-    }
-
-    for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
-        auto c = std::make_shared<Bunny>();
-        m_critters->push_back(c);
-        add(c);
-        while ((tmpHeight = m_world->getFieldHeight(
-                    tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize())))
-                > 2.4f
-            || tmpHeight < 1.0f)
-            ;
-        c->setPosition(tmpPos);
-    }
-
-    for (auto i = jt::Random::getInt(2, 6); i != 0; --i) {
-        auto c = std::make_shared<Deer>();
-        m_critters->push_back(c);
-        add(c);
-        while ((tmpHeight = m_world->getFieldHeight(
-                    tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize())))
-                > 2.4f
-            || tmpHeight < 1.0f)
-            ;
-        c->setPosition(tmpPos);
-    }
+    placeCritterFn(std::shared_ptr<Bird> { nullptr }, 0.0f, 4.4f, jt::Random::getInt(5, 10));
+    placeCritterFn(std::shared_ptr<Bunny> { nullptr }, 1.0f, 2.4f, jt::Random::getInt(5, 10));
+    placeCritterFn(std::shared_ptr<Deer> { nullptr }, 1.0f, 2.4f, jt::Random::getInt(2, 6));
 
     m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
         [this]() {

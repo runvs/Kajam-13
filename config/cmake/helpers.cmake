@@ -23,23 +23,27 @@ file(WRITE "${script_copy_directory}" "
 ")
 
 function(jt_use_assets TGT)
-    add_custom_command(TARGET ${TGT} PRE_BUILD
+    add_custom_target(${TGT}_ASSETS
             COMMAND ${CMAKE_COMMAND}
-                "-DDIR_SRC=${CMAKE_SOURCE_DIR}/assets"
-                "-DDIR_DST=${CMAKE_CURRENT_BINARY_DIR}/assets"
-                -P "${script_copy_directory}")
+            "-DDIR_SRC=${CMAKE_SOURCE_DIR}/assets"
+            "-DDIR_DST=${CMAKE_CURRENT_BINARY_DIR}/assets"
+            -P "${script_copy_directory}")
+
+    add_dependencies(${TGT} ${TGT}_ASSETS)
 
     if (MSVC)
-        add_custom_command(TARGET ${TGT} PRE_BUILD
-                COMMAND ${CMAKE_COMMAND} 
+        add_custom_target(${TGT}_ASSETS_MSVC_DEBUG
+                COMMAND ${CMAKE_COMMAND}
                 "-DDIR_SRC=${CMAKE_SOURCE_DIR}/assets"
                 "-DDIR_DST=${CMAKE_CURRENT_BINARY_DIR}/Debug/assets"
                 -P "${script_copy_directory}")
-        add_custom_command(TARGET ${TGT} PRE_BUILD
-                COMMAND ${CMAKE_COMMAND} 
+        add_dependencies(${TGT} ${TGT}_ASSETS_MSVC_DEBUG)
+        add_custom_target(${TGT}_ASSETS_MSVC_RELEASE
+                COMMAND ${CMAKE_COMMAND}
                 "-DDIR_SRC=${CMAKE_SOURCE_DIR}/assets"
                 "-DDIR_DST=${CMAKE_CURRENT_BINARY_DIR}/Release/assets"
                 -P "${script_copy_directory}")
+        add_dependencies(${TGT} ${TGT}_ASSETS_MSVC_RELEASE)
     endif ()
 endfunction()
 

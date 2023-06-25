@@ -28,6 +28,7 @@ void Critter::doCreate()
         m_animation->setScale(jt::Vector2f { -1.0f, 1.0f });
         m_animation->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
     }
+    m_animation->setPosition(m_initialPos);
 }
 
 void Critter::doUpdate(const float elapsed)
@@ -42,11 +43,7 @@ void Critter::doUpdate(const float elapsed)
 
 void Critter::doDraw() const { m_animation->draw(renderTarget()); }
 
-void Critter::setPosition(jt::Vector2f const& pos)
-{
-    m_animation->setPosition(pos);
-    m_initialPos = pos;
-}
+void Critter::setPosition(jt::Vector2f const& pos) { m_initialPos = pos; }
 
 void Critter::resetOnRoundStart()
 {
