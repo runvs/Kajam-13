@@ -105,17 +105,21 @@ void StateGame::onUpdate(float const elapsed)
     }
 }
 
-void StateGame::playbackSimulation(float /*elapsed*/)
+void StateGame::playbackSimulation(float elapsed)
 {
     if (!m_simulationResultsForAllFrames.allFrames.empty()) {
         if (m_tickId < m_simulationResultsForAllFrames.allFrames.size() - 1) {
             m_tickId++;
+            auto const& propertiesForAllUnitsForThisFrame
+                = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
+            playbackOneFrame(propertiesForAllUnitsForThisFrame);
         } else {
-            getStateManager()->switchToState(InternalState::PlaceUnits, *this);
+            m_playbackOverflowTime -= elapsed;
+            if (m_playbackOverflowTime <= 0) {
+                m_playbackOverflowTime = 2.5f;
+                getStateManager()->switchToState(InternalState::PlaceUnits, *this);
+            }
         }
-        auto const& propertiesForAllUnitsForThisFrame
-            = m_simulationResultsForAllFrames.allFrames.at(m_tickId);
-        playbackOneFrame(propertiesForAllUnitsForThisFrame);
     }
 }
 
@@ -227,19 +231,15 @@ void StateGame::onDraw() const
     m_clouds->draw();
     m_vignette->draw();
 
-    ImGui::Begin("State");
-    if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {
-        ImGui::Text("Waiting for players to join");
-    } else if (m_internalStateManager->getActiveStateE() == InternalState::PlaceUnits) {
-        ImGui::Text("Place units");
-    } else if (m_internalStateManager->getActiveStateE()
-        == InternalState::WaitForSimulationResults) {
-        ImGui::Text("Waiting for other players to end unit placement");
-    } else if (m_internalStateManager->getActiveStateE() == InternalState::Playback) {
-        ImGui::Text("Watch the battle evolve");
-    }
-    ImGui::Separator();
-    ImGui::Text("round %i", m_round);
+    ImGui::SetNextWindowSize(ImVec2 { 196, 64 });
+    ImGui::Begin("State", nullptr,
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
+    std::string const text = "round " + std::to_string(m_round);
+    auto windowWidth = ImGui::GetWindowSize().x;
+    auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+
+    ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+    ImGui::Text("%s", text.c_str());
     if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
         auto const bpc = GP::ColorPlayer0();
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(bpc.r, bpc.g, bpc.b, 255));

@@ -18,6 +18,9 @@ void CommonFunctions::updateBirds(StateGame& state)
 
         auto const lmb = [&bp, &closestDistance, &closestPosition](auto u) {
             auto const unit = u.lock();
+            if (!unit) {
+                return;
+            }
             auto const up = unit->getPosition();
             auto const dist = jt::MathHelper::lengthSquared(bp - up);
             if (dist < closestDistance) {

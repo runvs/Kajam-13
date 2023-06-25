@@ -1,11 +1,12 @@
 {
   "type": "swordman",
+  "description": "well armed fighter with decent armor.",
   "expRequiredForLevelUp": 100,
   "expGainWhenKilled": 30,
   "hitpoints": 90.0,
   "damage": 8.0,
   "attackTimerMax": 1.0,
-  "movementSpeed": 20.0,
+  "movementSpeed": 18.0,
   "colliderRadius": 6.0,
   "cost": 75,
   "unlockCost": 50,
@@ -33,6 +34,14 @@
       "movementSpeed": {
         "add": 10.0,
         "factor": 0.0
+      }
+    },
+    {
+      "name": "sharp swords",
+      "upgCost": 200,
+      "movementSpeed": {
+        "add": 0.0,
+        "factor": 1.0
       }
     }
   ]

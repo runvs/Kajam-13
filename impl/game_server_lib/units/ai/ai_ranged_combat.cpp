@@ -22,7 +22,8 @@ void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface&
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
 
-    auto const attackRange = unit->getUnitInfoFull().ai.range * terrainChunkSizeInPixel;
+    auto const attackRange = unit->getUnitInfoFull().ai.range * terrainChunkSizeInPixel
+        + world.getTerrainMappedFieldHeight(unit->getPosition());
     if (dist > attackRange) {
         unit->setOffset(jt::Vector2f { 0.0f,
             -world.getTerrainMappedFieldHeight(unit->getPosition() + terrainChunkSizeInPixelHalf)

@@ -101,12 +101,12 @@ private:
 
     std::shared_ptr<jt::ParticleSystem<jt::Shape, 50>> m_explosionParticles { nullptr };
 
+    // at end of round
+    float m_playbackOverflowTime = 2.5f;
+
     void onCreate() override;
-
     void onEnter() override;
-
     void onUpdate(float const elapsed) override;
-
     void onDraw() const override;
 
     void endGame();

@@ -86,6 +86,7 @@ void to_json(nlohmann::json& j, UnitInfo const& p)
     j = nlohmann::json {
         // clang-format off
         { jk::unitType, p.type },
+        {jk::description, p.description},
 
         { jk::experienceForLevelUp, p.experienceRequiredForLevelUp },
         { jk::experienceGainWhenKilled, p.experienceGainWhenKilled },
@@ -114,6 +115,7 @@ void to_json(nlohmann::json& j, UnitInfo const& p)
 void from_json(nlohmann::json const& j, UnitInfo& p)
 {
     j.at(jk::unitType).get_to(p.type);
+    j.at(jk::description).get_to(p.description);
 
     j.at(jk::experienceForLevelUp).get_to(p.experienceRequiredForLevelUp);
     j.at(jk::experienceGainWhenKilled).get_to(p.experienceGainWhenKilled);

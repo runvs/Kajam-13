@@ -1,11 +1,12 @@
 {
   "type": "crossbow",
+  "description": "long range fighter with high single target damage.",
   "expRequiredForLevelUp": 100,
   "expGainWhenKilled": 30,
   "hitpoints": 30.0,
   "damage": 90.0,
   "attackTimerMax": 5.0,
-  "movementSpeed": 12.0,
+  "movementSpeed": 10.0,
   "colliderRadius": 6.0,
   "cost": 150,
   "unlockCost": 150,
@@ -30,7 +31,7 @@
       }
     },
     {
-      "name": "strength",
+      "name": "charged shot",
       "upgCost": 175,
       "damage": {
         "add": 30.0,

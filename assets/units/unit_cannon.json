@@ -1,11 +1,12 @@
 {
   "type": "cannon",
+  "description": "long range cannon with splash damage. Very vulnerable.",
   "expRequiredForLevelUp": 120,
   "expGainWhenKilled": 25,
   "hitpoints": 10.0,
   "damage": 25.0,
   "attackTimerMax": 8.0,
-  "movementSpeed": 6.0,
+  "movementSpeed": 5.0,
   "colliderRadius": 6.0,
   "cost": 150,
   "unlockCost": 150,
@@ -35,6 +36,18 @@
       "attackTimerMax": {
         "add": -2.0,
         "factor": 0.0
+      }
+    },
+    {
+      "name": "heavy attack",
+      "upgCost": 125,
+      "attackTimerMax": {
+        "add": 0.0,
+        "factor": 0.5
+      },
+      "damage": {
+        "add": 0.0,
+        "factor": 0.75
       }
     }
   ]

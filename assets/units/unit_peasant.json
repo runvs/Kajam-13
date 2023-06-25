@@ -1,11 +1,12 @@
 {
   "type": "peasant",
+  "description": "weak fighter, not properly armed. Dangerous in masses.",
   "expRequiredForLevelUp": 30,
   "expGainWhenKilled": 10,
   "hitpoints": 25.0,
   "damage": 8.0,
   "attackTimerMax": 0.7,
-  "movementSpeed": 40.0,
+  "movementSpeed": 35.0,
   "colliderRadius": 4.0,
   "cost": 45,
   "unlockCost": 25,

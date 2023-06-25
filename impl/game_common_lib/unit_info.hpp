@@ -43,7 +43,9 @@ struct UpgradeInfo {
 
 /// Storage for initial values for units
 struct UnitInfo {
-    std::string type = "";
+    std::string type { "" };
+
+    std::string description { "" };
 
     int experienceRequiredForLevelUp { 0 };
     int experienceGainWhenKilled { 0 };

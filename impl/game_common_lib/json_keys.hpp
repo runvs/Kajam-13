@@ -38,6 +38,7 @@ constexpr auto animations = "animations";
 constexpr auto files = "files";
 
 constexpr auto unitType = "type";
+constexpr auto description = "description";
 constexpr auto unitAnim = "unitNewAnim";
 constexpr auto unitWalkingRight = "wr";
 
