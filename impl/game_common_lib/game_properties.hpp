@@ -1,10 +1,11 @@
 ﻿#ifndef GAME_GAMEPROPERTIES_HPP
 #define GAME_GAMEPROPERTIES_HPP
 
-#include "color/color.hpp"
-#include "color/palette.hpp"
-#include "vector.hpp"
+#include <color/color.hpp>
 #include <color/color_factory.hpp>
+#include <color/palette.hpp>
+#include <vector.hpp>
+#include <cstddef>
 #include <map>
 #include <memory>
 #include <string>
@@ -31,6 +32,8 @@ public:
 
     static jt::Color ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4"); }
     static jt::Color ColorPlayer1() { return jt::ColorFactory::fromHexString("#f57979"); }
+
+    static char const* HpFontAssetPath() { return "assets/fonts/PorspicanSerif-Regular.otf"; }
 
     static jt::Palette getPalette();
 

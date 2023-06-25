@@ -1,6 +1,7 @@
 #include "select_starting_units.hpp"
-#include "state_game.hpp"
+#include <state_game.hpp>
 #include <imgui.h>
+#include <string>
 
 namespace {
 // TODO move to separate file

@@ -61,6 +61,7 @@ constexpr auto level = "level";
 
 constexpr auto upgrades = "upgrades";
 constexpr auto upgName = "name";
+constexpr auto upgIconPath = "iconPath";
 constexpr auto upgCost = "upgCost";
 constexpr auto upgAdd = "add";
 constexpr auto upgFactor = "factor";

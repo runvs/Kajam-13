@@ -24,6 +24,7 @@
   "upgrades": [
     {
       "name": "range",
+      "iconPath": "assets/images/upgrades/range_bow.png",
       "upgCost": 150,
       "range": {
         "add": 4.0,
@@ -32,6 +33,7 @@
     },
     {
       "name": "fast attack",
+      "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 150,
       "attackTimerMax": {
         "add": -0.7,

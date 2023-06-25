@@ -9,7 +9,11 @@
 #include <unit_info_collection.hpp>
 #include <upgrade_unit_data.hpp>
 #include <atomic>
+#include <map>
+#include <memory>
+#include <mutex>
 #include <shared_mutex>
+#include <string>
 
 class GameServer {
 public:

@@ -1,6 +1,6 @@
 #include "wait_for_all_players.hpp"
-#include "internal_state_manager.hpp"
-#include "state_game.hpp"
+#include <internal_state/internal_state_manager.hpp>
+#include <state_game.hpp>
 
 void WaitForAllPlayers::update(StateGame& state, float /*elapsed*/)
 {

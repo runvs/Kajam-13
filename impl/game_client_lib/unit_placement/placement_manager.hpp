@@ -13,6 +13,10 @@
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
+#include <array>
+#include <map>
+#include <memory>
+#include <string>
 #include <vector>
 
 class PlacedUnit;
@@ -34,8 +38,8 @@ public:
     void unlockType(std::string const& type) const;
 
     void buyUpgrade(std::string const& unitType, const std::string& upgrade) const;
-    std::vector<std::string> getPossibleUpgradesForUnit(std::string const& unitType) const;
-    std::vector<UpgradeInfo> getBoughtUpgradesForUnit(std::string const& unitType) const;
+    std::vector<UpgradeInfo>& getPossibleUpgradesForUnit(std::string const& unitType) const;
+    std::vector<UpgradeInfo>& getBoughtUpgradesForUnit(std::string const& unitType) const;
     std::vector<std::string> getBoughtUpgradeNamesForUnit(std::string const& unitType) const;
 
     void flashForUpgrade(std::string const& unitType);
@@ -63,7 +67,7 @@ private:
     mutable int m_availableFunds { 0 };
 
     mutable std::vector<std::string> m_unlockedTypes;
-    mutable std::map<std::string, std::vector<std::string>> m_possibleUpgrades;
+    mutable std::map<std::string, std::vector<UpgradeInfo>> m_possibleUpgrades;
     mutable std::map<std::string, std::vector<UpgradeInfo>> m_boughtUpgrades;
 
     void doCreate() override;

@@ -5,7 +5,7 @@
 void Playback::update(StateGame& state, float elapsed)
 {
     state.playbackSimulation(elapsed);
-    CommonFunctions::updateBirds(state);
+    CommonFunctions::updateCritters(state);
 }
 
 void Playback::draw(StateGame& state) { state.drawArrows(); }

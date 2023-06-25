@@ -1,5 +1,5 @@
+#include "placement_area.hpp"
 #include <game_properties.hpp>
-#include <map/placement_area.hpp>
 #include <map/terrain.hpp>
 
 namespace {

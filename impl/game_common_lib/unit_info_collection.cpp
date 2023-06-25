@@ -1,9 +1,7 @@
 #include "unit_info_collection.hpp"
 #include <json_keys.hpp>
-#include <nlohmann.hpp>
 #include <fstream>
 #include <stdexcept>
-#include <string>
 
 UnitInfoCollection::UnitInfoCollection(jt::LoggerInterface& logger, const std::string& infoFilename)
     : m_logger { logger }

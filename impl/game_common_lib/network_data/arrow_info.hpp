@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_ARROW_INFO_HPP
 #define JAMTEMPLATE_ARROW_INFO_HPP
 
-#include "damage_info.hpp"
-#include "vector.hpp"
+#include <damage_info.hpp>
 #include <nlohmann.hpp>
+#include <vector.hpp>
 
 struct ArrowInfo {
     jt::Vector2f startPos { 0.0f, 0.0f };

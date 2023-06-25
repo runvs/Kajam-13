@@ -1,11 +1,9 @@
 #include "server_connector.hpp"
-#include "message.hpp"
-#include "state_game.hpp"
 #include <game_interface.hpp>
-#include "imgui.h"
-#include "misc/cpp/imgui_stdlib.h"
-#include <iostream>
-#include <memory>
+#include <message.hpp>
+#include <state_game.hpp>
+#include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 ServerConnector::ServerConnector(std::shared_ptr<CompressorInterface> compressor)
     : m_compressor { compressor }

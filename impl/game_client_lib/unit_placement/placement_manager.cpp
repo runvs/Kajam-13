@@ -26,7 +26,7 @@ PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
     // Build list of possible upgrades
     for (auto const& u : m_unitInfo->getUnits()) {
         for (auto const& upg : u.possibleUpgrades) {
-            m_possibleUpgrades[u.type].push_back(upg.name);
+            m_possibleUpgrades[u.type].push_back(upg);
         }
     }
 }
@@ -169,7 +169,7 @@ void PlacementManager::placeUnit()
         unit->create();
 
         unit->setOffset({ 0,
-            m_world->getFieldHeight(fieldPos + (terrainChunkSizeInPixel / 2.0f))
+            m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf)
                 * -terrainHeightScalingFactor });
         fieldPos -= terrainChunkSizeInPixelHalf; // offset position to top left corner of field
         unit->setPosition(fieldPos);
@@ -218,17 +218,18 @@ void PlacementManager::unlockType(const std::string& type) const
 void PlacementManager::buyUpgrade(std::string const& unitType, const std::string& upgrade) const
 {
     auto& vec = m_possibleUpgrades.at(unitType);
-    vec.erase(std::remove(vec.begin(), vec.end(), upgrade), vec.end());
-    m_boughtUpgrades[unitType].push_back(m_unitInfo->getUpgradeForUnit(unitType, upgrade));
+    auto const& upg = m_unitInfo->getUpgradeForUnit(unitType, upgrade);
+    m_boughtUpgrades[unitType].push_back(upg);
+    (void)std::erase_if(vec, [&](auto const& v) { return v.name == upgrade; });
 }
 
-std::vector<std::string> PlacementManager::getPossibleUpgradesForUnit(
+std::vector<UpgradeInfo>& PlacementManager::getPossibleUpgradesForUnit(
     std::string const& unitType) const
 {
     return m_possibleUpgrades.at(unitType);
 }
 
-std::vector<UpgradeInfo> PlacementManager::getBoughtUpgradesForUnit(
+std::vector<UpgradeInfo>& PlacementManager::getBoughtUpgradesForUnit(
     const std::string& unitType) const
 {
     return m_boughtUpgrades[unitType];
@@ -248,7 +249,7 @@ void PlacementManager::flashForUpgrade(std::string const& unitType)
 {
     for (auto& u : *m_placedUnits) {
         auto unit = u.lock();
-        if (unit->getInfo().type == unitType) {
+        if (unit && unit->getInfo().type == unitType) {
             unit->flash();
         }
     }

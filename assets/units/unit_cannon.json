@@ -24,6 +24,7 @@
   "upgrades": [
     {
       "name": "range",
+      "iconPath": "assets/images/upgrades/range_canon.png",
       "upgCost": 125,
       "range": {
         "add": 3.0,
@@ -32,6 +33,7 @@
     },
     {
       "name": "fast reload",
+      "iconPath": "assets/images/upgrades/fast_reload_canon.png",
       "upgCost": 175,
       "attackTimerMax": {
         "add": -2.0,

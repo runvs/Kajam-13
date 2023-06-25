@@ -5,6 +5,7 @@
 #include <nlohmann.hpp>
 #include <unit_info.hpp>
 #include <string>
+#include <vector>
 
 class UnitInfoCollection {
 public:

@@ -1,8 +1,6 @@
 #ifndef JAMTEMPLATE_AI_INTERFACE_HPP
 #define JAMTEMPLATE_AI_INTERFACE_HPP
 
-#include <string>
-
 class ServerUnit;
 class WorldInfoInterface;
 

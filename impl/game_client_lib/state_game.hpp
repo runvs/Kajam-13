@@ -1,9 +1,9 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
-#include <bird.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
+#include <critters/critter.hpp>
 #include <game_properties.hpp>
 #include <game_state.hpp>
 #include <internal_state/internal_state_interface.hpp>
@@ -17,14 +17,17 @@
 #include <server_connection.hpp>
 #include <simulation_result_data.hpp>
 #include <terrain_renderer.hpp>
+#include <text.hpp>
 #include <unit.hpp>
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector.hpp>
+#include <cstddef>
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 // fwd decls
@@ -52,7 +55,7 @@ public:
     std::shared_ptr<PlacementManager> getPlacementManager();
     std::shared_ptr<UnitInfoCollection> getUnitInfo();
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
-    std::shared_ptr<jt::ObjectGroup<Bird>> getBirds();
+    std::shared_ptr<jt::ObjectGroup<Critter>> getCritters();
 
     // TODO move to InternalStateManager
     void transitionWaitForPlayersToSelectStartingUnits();
@@ -78,7 +81,7 @@ private:
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
     std::shared_ptr<jt::Clouds> m_clouds { nullptr };
 
-    std::shared_ptr<jt::ObjectGroup<Bird>> m_birds { nullptr };
+    std::shared_ptr<jt::ObjectGroup<Critter>> m_critters { nullptr };
 
     std::shared_ptr<UnitInfoCollection> m_unitInfo { nullptr };
 
@@ -88,6 +91,14 @@ private:
 
     std::shared_ptr<PlayerIdDispatcher> m_playerIdDispatcher { nullptr };
     mutable std::shared_ptr<jt::Shape> m_arrowShape { nullptr };
+
+    std::shared_ptr<jt::Sprite> m_stateIconWaiting { nullptr };
+    std::shared_ptr<jt::Sprite> m_stateIconPlacing { nullptr };
+    std::shared_ptr<jt::Sprite> m_stateIconFighting { nullptr };
+
+    std::shared_ptr<jt::Text> m_textRound { nullptr };
+    std::shared_ptr<jt::Text> m_textPlayerZeroHp { nullptr };
+    std::shared_ptr<jt::Text> m_textPlayerOneHp { nullptr };
 
     mutable bool m_addBotAsPlayerZero { false };
     mutable bool m_addBotAsPlayerOne { false };

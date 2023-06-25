@@ -6,6 +6,7 @@
 #include "network_properties.hpp"
 #include <game_object.hpp>
 #include <memory>
+#include <string>
 
 class ServerConnector : public jt::GameObject {
 public:

@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_NETWORK_PROPERTIES_HPP
 #define JAMTEMPLATE_NETWORK_PROPERTIES_HPP
 
-#include <asio.hpp>
+#include <asio/ip/tcp.hpp>
 #include <cstdint>
-#include <functional>
+#include <string>
 
 class NetworkProperties {
 public:

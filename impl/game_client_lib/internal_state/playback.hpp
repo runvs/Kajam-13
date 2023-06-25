@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_PLAYBACK_HPP
 #define JAMTEMPLATE_PLAYBACK_HPP
 
-#include "internal_state_interface.hpp"
+#include <internal_state/internal_state_interface.hpp>
 
 class Playback : public InternalStateInterface {
 public:

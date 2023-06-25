@@ -1,9 +1,8 @@
 ﻿#include "state_menu.hpp"
-#include "compression/compressor_impl.hpp"
-#include "compression/logging_compressor.hpp"
-#include "server_connector.hpp"
 #include <build_info.hpp>
 #include <color/color.hpp>
+#include <compression/compressor_impl.hpp>
+#include <compression/logging_compressor.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -23,7 +22,6 @@
 #include <tweens/tween_scale.hpp>
 #include <algorithm>
 #include <iostream>
-#include <memory>
 
 void StateMenu::onCreate()
 {

@@ -3,6 +3,7 @@
 
 #include <nlohmann.hpp>
 #include <cstdint>
+#include <string>
 
 enum class MessageType : std::uint8_t {
     InitialPing,

@@ -1,5 +1,6 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
+#include <random/random.hpp>
 #include <sprite.hpp>
 #include <terrain_renderer.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -10,16 +11,18 @@ namespace {
 constexpr float const chunkSize { terrainChunkSizeInPixel };
 constexpr auto const chunkSizeHalf = chunkSize / 2.0f;
 
+sf::Color const colorStone { 100, 100, 100 };
+
 // clang-format off
-sf::Color colorMap[] {
+sf::Color const colorMap[] {
     // dirt layer
     { 89, 60, 47 },
     // grassy layer
     { 53, 99, 50 }, { 41, 79, 39 },
+    // hill layer
+    { 80, 80, 80 }, { 120, 120, 120 },
     // mountain layer
-    { 60, 60, 60 }, { 120, 120, 120 }, { 160, 160, 160 },
-    // mountain top
-    { 200, 200, 200 }
+    { 160, 160, 160 }, { 200, 200, 200 }
 };
 // clang-format on
 
@@ -31,21 +34,25 @@ float getTerrainHeight(int y, float height)
 sf::Color getTerrainColor(float height)
 {
     height = jt::MathHelper::clamp(height, 0.0f, terrainHeightMax);
+    // dirty
     if (height < 0.4) {
         return colorMap[0];
     }
+    // grassy
     if (height < 1.4) {
         return colorMap[1];
     }
     if (height < 2.4) {
         return colorMap[2];
     }
+    // hilly
     if (height < 3.7) {
         return colorMap[3];
     }
     if (height < 4.2) {
         return colorMap[4];
     }
+    // mountainy
     if (height < 4.6) {
         return colorMap[5];
     }
@@ -95,13 +102,17 @@ void TerrainRenderer::doCreate()
 {
     // create chunk to vertex map
     std::array<sf::VertexArray, terrainWidthInChunks * terrainHeightInChunks> grid;
+    std::array<sf::VertexArray, terrainWidthInChunks * terrainHeightInChunks> gridDecals;
     auto const& chunks = m_terrain.getChunks();
     for (unsigned short h { 0 }; h < terrainHeightInChunks; ++h) {
         bool const lastLine { h == terrainHeightInChunks - 1 };
         auto const wOffset = h * terrainWidthInChunks;
         for (unsigned short w { 0 }; w < terrainWidthInChunks; ++w) {
-            auto const& chunk = chunks[wOffset + w];
+            auto const chunkIdx = wOffset + w;
+            auto const& chunk = chunks[chunkIdx];
             auto const posX = w * chunkSize;
+            auto const posY = h * chunkSize;
+            jt::Rectf const chunkRect { posX, posY, chunkSize, chunkSize };
             auto const posYc = getTerrainHeight(h, chunk.heightCenter);
             auto const posYtl = getTerrainHeight(h, chunk.heightCorners[0]);
             auto const posYtr = getTerrainHeight(h, chunk.heightCorners[1]);
@@ -114,7 +125,7 @@ void TerrainRenderer::doCreate()
             auto const colorBr = getTerrainColor(chunk.heightCorners[3]);
 
             // draw chunk triangles
-            auto& vertices = grid[wOffset + w] = sf::VertexArray { sf::Triangles, 12 };
+            auto& vertices = grid[chunkIdx] = { sf::Triangles, 12 };
 
             // top triangle
             vertices[0] = { { posX, posYtl }, colorTl };
@@ -135,6 +146,45 @@ void TerrainRenderer::doCreate()
             vertices[9] = { { posX + chunkSize, posYbr + chunkSize }, colorBr };
             vertices[10] = { { posX + chunkSizeHalf, posYc + chunkSizeHalf }, colorC };
             vertices[11] = { { posX + chunkSize, posYtr }, colorTr };
+
+            // draw stones for dirt layer
+            if (chunk.heightCenter < 0.1
+                || (chunk.heightCenter >= 2.8 && chunk.heightCenter <= 3.7)) {
+                auto const numStones
+                    = static_cast<std::size_t>(jt::Random::getChance(0.45f) ? 1 : 0);
+                auto& decals = gridDecals[chunkIdx] = { sf::TriangleFan, numStones * 6 };
+                for (int i = 0; i != numStones; ++i) {
+                    auto const pos = jt::Random::getRandomPointIn(chunkRect);
+                    decals[i * 6 + 0] = { { pos.x, pos.y }, colorStone };
+                    decals[i * 6 + 1] = { { pos.x + 3, pos.y - 1 }, colorStone };
+                    decals[i * 6 + 2] = { { pos.x + 2, pos.y - 2 }, colorStone };
+                    decals[i * 6 + 3] = { { pos.x, pos.y - 3 }, colorStone };
+                    decals[i * 6 + 4] = { { pos.x - 2, pos.y - 2 }, colorStone };
+                    decals[i * 6 + 5] = { { pos.x - 3, pos.y - 1 }, colorStone };
+                }
+            }
+            // draw grass decals for grass
+            else if (chunk.heightCenter >= 0.3 && chunk.heightCenter <= 1.6) {
+                jt::Rectf const chunkRect { posX, posY, chunkSize, chunkSize };
+                auto const numGrass = static_cast<std::size_t>(jt::Random::getInt(1, 3));
+                auto& decals = gridDecals[chunkIdx] = { sf::Lines, numGrass * 6 };
+                for (int i = 0; i != numGrass; ++i) {
+                    auto const pos = jt::Random::getRandomPointIn(chunkRect);
+                    auto const colOffset
+                        = jt::Random::getInt(4, 9) * (jt::Random::getChance(0.5f) ? -1 : 1);
+                    sf::Color const col { static_cast<sf::Uint8>(colorC.r + colOffset),
+                        static_cast<sf::Uint8>(colorC.g + colOffset),
+                        static_cast<sf::Uint8>(colorC.b + colOffset) };
+                    decals[i * 6 + 0] = { { pos.x, pos.y }, col };
+                    decals[i * 6 + 1] = { { pos.x - 1, pos.y - 4 }, col };
+                    decals[i * 6 + 2] = { { pos.x - 1, pos.y }, col };
+                    decals[i * 6 + 3] = { { pos.x - 3, pos.y - 3 }, col };
+                    decals[i * 6 + 4] = { { pos.x + 1, pos.y }, col };
+                    decals[i * 6 + 5] = { { pos.x + 2, pos.y - 3 }, col };
+                }
+            } else {
+                gridDecals[chunkIdx] = { sf::Points, 0 };
+            }
         }
     }
 
@@ -146,6 +196,9 @@ void TerrainRenderer::doCreate()
     m->texture.clear(sf::Color::Black);
     // m->texture.setSmooth(true);
     for (auto const& e : grid) {
+        m->texture.draw(e);
+    }
+    for (auto const& e : gridDecals) {
         m->texture.draw(e);
     }
     m->texture.display();

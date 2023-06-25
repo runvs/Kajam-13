@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_WAIT_FOR_SIMULATION_RESULTS_HPP
 #define JAMTEMPLATE_WAIT_FOR_SIMULATION_RESULTS_HPP
 
-#include "internal_state_interface.hpp"
+#include <internal_state/internal_state_interface.hpp>
 
 class WaitForSimulationResults : public InternalStateInterface {
 public:

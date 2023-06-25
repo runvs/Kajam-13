@@ -1,10 +1,9 @@
 #ifndef JAMTEMPLATE_CLOSE_COMBAT_INFO_HPP
 #define JAMTEMPLATE_CLOSE_COMBAT_INFO_HPP
 
-#include "damage_info.hpp"
-#include "simulation_object_interface.hpp"
+#include <damage_info.hpp>
+#include <simulation_object_interface.hpp>
 #include <units/server_unit.hpp>
-#include <memory>
 
 struct CloseCombatInfo {
     ServerUnit* attacker;

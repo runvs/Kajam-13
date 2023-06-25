@@ -1,9 +1,9 @@
 #include "server_network_connection.hpp"
-#include "asio/error_code.hpp"
-#include "asio/ip/tcp.hpp"
-#include "asio/write.hpp"
 #include "compression/compressor_interface.hpp"
 #include "message.hpp"
+#include <asio/error_code.hpp>
+#include <asio/executor_work_guard.hpp>
+#include <asio/write.hpp>
 #include <network_helpers.hpp>
 #include <network_properties.hpp>
 #include <iostream>
@@ -21,7 +21,6 @@ ServerNetworkConnection::ServerNetworkConnection(
             NetworkProperties::NetworkProtocolType(), NetworkProperties::DefaultServerPort() } }
     , m_buffer { std::make_unique<ReceiveBuffer>() }
 {
-
     awaitNextAccept();
 
     startProcessing();
@@ -83,15 +82,12 @@ void ServerNetworkConnection::update()
     std::lock_guard<std::mutex> lock { m_socketsMutex };
 
     // clean up sockets
-    m_sockets.erase(
-        std::remove_if(m_sockets.begin(), m_sockets.end(),
-            [this](auto const& s) {
-                if (!s->is_open()) {
-                    m_logger.info("remove closed socket", { "network", "ServerNetworkConnection" });
-                }
-                return !s->is_open();
-            }),
-        m_sockets.end());
+    (void)std::erase_if(m_sockets, [this](auto const& s) {
+        if (!s->is_open()) {
+            m_logger.info("remove closed socket", { "network", "ServerNetworkConnection" });
+        }
+        return !s->is_open();
+    });
 }
 
 void ServerNetworkConnection::handleReceive(

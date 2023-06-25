@@ -1,6 +1,5 @@
 #include "unit_info.hpp"
-#include "json_keys.hpp"
-#include <nlohmann.hpp>
+#include <json_keys.hpp>
 
 void to_json(nlohmann::json& j, AiInfo const& p)
 {
@@ -35,7 +34,7 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
     j = nlohmann::json {
         // clang-format off
         { jk::upgName, p.name },
-
+        { jk::upgIconPath, p.iconPath },
         { jk::damage, p.damage },
         { jk::attackTimerMax, p.attackSpeed },
         { jk::movementSpeed, p.movementSpeed },
@@ -49,6 +48,7 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
 void from_json(const nlohmann::json& j, UpgradeInfo& p)
 {
     j.at(jk::upgName).get_to(p.name);
+    j.at(jk::upgIconPath).get_to(p.iconPath);
     j.at(jk::upgCost).get_to(p.upgradeCost);
 
     if (j.count(jk::damage) == 1) {
@@ -141,7 +141,7 @@ void from_json(nlohmann::json const& j, UnitInfo& p)
 namespace {
 void applyUpgradeInt(int& value, const UpgradeValue& upg)
 {
-    value = value * (1.0f + upg.factor) + upg.add;
+    value = static_cast<int>(value * (1.0f + upg.factor) + upg.add);
 }
 void applyUpgradeFloat(float& value, const UpgradeValue& upg)
 {
@@ -171,7 +171,8 @@ UnitInfo getUnitInfoWithLevelAndUpgrades(
     info.cost = baseInfo.cost * level;
 
     info.experienceGainWhenKilled = baseInfo.experienceGainWhenKilled * level;
-    info.experienceRequiredForLevelUp = baseInfo.experienceRequiredForLevelUp * sqrt(level);
+    info.experienceRequiredForLevelUp
+        = static_cast<int>(baseInfo.experienceRequiredForLevelUp * sqrt(level));
 
     for (auto const& upg : upgrades) {
         applyUpgrade(info, upg);

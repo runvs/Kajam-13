@@ -2,14 +2,17 @@
 #include <math_helper.hpp>
 #include <unit_placement/placed_unit.hpp>
 
-void CommonFunctions::updateBirds(StateGame& state)
+void CommonFunctions::updateCritters(StateGame& state)
 {
-    for (auto& b : *state.getBirds()) {
-        auto bird = b.lock();
-        if (bird->isFlying()) {
+    for (auto& c : *state.getCritters()) {
+        auto critter = c.lock();
+        if (!critter) {
+            return;
+        }
+        if (critter->isMoving()) {
             continue;
         }
-        auto const bp = bird->getPosition();
+        auto const bp = critter->getPosition();
         jt::Vector2f closestPosition { -999999, -999999 };
         float closestDistance = 9999999;
         if (!state.getUnits()) {
@@ -36,6 +39,6 @@ void CommonFunctions::updateBirds(StateGame& state)
             lmb(u);
         }
 
-        bird->setClosestUnitPosition(closestPosition);
+        critter->setClosestUnitPosition(closestPosition);
     }
 }

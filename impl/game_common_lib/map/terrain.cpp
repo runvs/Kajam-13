@@ -1,12 +1,12 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "vector.hpp"
-#include <map/terrain.hpp>
+#include "terrain.hpp"
 #include <math_helper.hpp>
 #include <nlohmann.hpp>
+#include <vector.hpp>
 #include <fstream>
-#include <iostream>
+#include <vector>
 
 namespace {
 
@@ -14,11 +14,6 @@ struct TowerInfo {
     int playerId {};
     jt::Vector2f position {};
 };
-
-void to_json(nlohmann::json& j, TowerInfo const& v)
-{
-    j = { { "player", v.playerId }, { "x", v.position.x }, { "y", v.position.y } };
-}
 
 void from_json(nlohmann::json const& j, TowerInfo& v)
 {
@@ -31,11 +26,6 @@ struct Map {
     float heights[terrainWidthInChunks * terrainHeightInChunks];
     std::vector<TowerInfo> towers;
 };
-
-void to_json(nlohmann::json& j, Map const& v)
-{
-    j = { { "heights", v.heights }, { "towers", v.towers } };
-}
 
 void from_json(nlohmann::json const& j, Map& v)
 {
@@ -114,11 +104,6 @@ struct Vector3f {
     bool isZero() const { return x == 0 && y == 0 && z == 0; }
 };
 
-std::ostream& operator<<(std::ostream& s, Vector3f const& v)
-{
-    return s << "(" << v.x << "," << v.y << "," << v.z << ")";
-}
-
 template <typename T>
 Vector3f getNormalOfTriangleForPosition(
     T const& chunks, jt::Vector2f const& pos, bool const convertHeight)
@@ -184,7 +169,7 @@ Terrain::Terrain(std::string const& mapFilename) { parseMapFromFilename(mapFilen
 Chunk const& Terrain::getChunk(int x, int y) const
 {
     auto idx = coordToIndex(x, y);
-    assert(idx <= m_chunks.size());
+    assert(idx < m_chunks.size());
     return m_chunks[idx];
 }
 
@@ -270,6 +255,7 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
                     chunk.heightCorners[0] = top.heightCorners[2];
                     chunk.heightCorners[1] = top.heightCorners[3];
                 } else if (top.heightCenter > chunk.height) {
+                    chunk.heightCenter = top.height + (chunk.height - top.height) / 2;
                     chunk.heightCorners[0] = top.heightCorners[2];
                     chunk.heightCorners[1] = top.heightCorners[3];
                 }
@@ -297,6 +283,7 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
                     chunk.heightCorners[0] = left.heightCorners[1];
                     chunk.heightCorners[2] = left.heightCorners[3];
                 } else if (left.heightCenter < chunk.heightCenter) {
+                    chunk.heightCenter = left.height + (chunk.height - left.height) / 2;
                     left.heightCorners[1] = chunk.heightCorners[0];
                     left.heightCorners[3] = chunk.heightCorners[2];
                 }

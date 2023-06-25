@@ -22,6 +22,7 @@
   "upgrades": [
     {
       "name": "carrot of agility",
+      "iconPath": "assets/images/upgrades/carrot_of_agility.png",
       "upgCost": 200,
       "movementSpeed": {
         "add": 10.0,

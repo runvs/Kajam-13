@@ -30,15 +30,13 @@ void jt::GameObjectCollection::draw() const
 
 void jt::GameObjectCollection::cleanUpObjects()
 {
-    m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(),
-                        [](auto go) {
-                            bool const isDead = !go->isAlive();
-                            if (isDead) {
-                                go->destroy();
-                            }
-                            return isDead;
-                        }),
-        m_objects.end());
+    (void)std::erase_if(m_objects, [](auto const& go) {
+        bool const isDead = !go->isAlive();
+        if (isDead) {
+            go->destroy();
+        }
+        return isDead;
+    });
 }
 void jt::GameObjectCollection::addNewObjects()
 {

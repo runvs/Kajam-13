@@ -17,10 +17,7 @@ void jt::TweenCollection::update(float elapsed)
     if (m_tweens.empty()) {
         return;
     }
-    m_tweens.erase(
-        std::remove_if(m_tweens.begin(), m_tweens.end(),
-            [](std::shared_ptr<TweenInterface> const& tween) { return !(tween->isAlive()); }),
-        m_tweens.cend());
+    std::erase_if(m_tweens, [](auto const& tween) { return !(tween->isAlive()); });
 
     for (auto& tween : m_tweens) {
         tween->update(elapsed);

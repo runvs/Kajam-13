@@ -395,3 +395,6 @@ cmake-build-*
 
 doc/doxygen/html
 doc/doxygen/latex
+
+# Blender backup files
+*.blend1

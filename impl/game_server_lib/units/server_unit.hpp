@@ -11,6 +11,8 @@
 #include <upgrade_unit_data.hpp>
 #include <vector.hpp>
 #include <memory>
+#include <string>
+#include <vector>
 
 class ServerUnit : public SimulationObjectInterface {
 public:

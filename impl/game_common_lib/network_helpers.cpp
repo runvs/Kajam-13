@@ -1,5 +1,8 @@
 #include "network_helpers.hpp"
+#include <asio/read.hpp>
+#include <asio/write.hpp>
 #include <iomanip>
+#include <sstream>
 
 void NetworkHelpers::freeSendString(
     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)

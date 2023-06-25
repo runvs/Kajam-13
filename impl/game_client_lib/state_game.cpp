@@ -1,5 +1,8 @@
 ﻿#include "state_game.hpp"
 #include <color/color.hpp>
+#include <critters/bird.hpp>
+#include <critters/bunny.hpp>
+#include <critters/deer.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -64,13 +67,43 @@ void StateGame::onCreate()
     m_clouds = std::make_shared<jt::Clouds>(jt::Vector2f { 4.0f, 2.0f });
     add(m_clouds);
 
-    m_birds = std::make_shared<jt::ObjectGroup<Bird>>();
+    m_critters = std::make_shared<jt::ObjectGroup<Critter>>();
 
-    for (auto i = 0; i != 10; ++i) {
-        auto b = std::make_shared<Bird>();
-        m_birds->push_back(b);
-        add(b);
-        b->setPosition(jt::Random::getRandomPointIn(GP::GetScreenSize()));
+    jt::Vector2f tmpPos;
+    float tmpHeight;
+
+    for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
+        auto c = std::make_shared<Bird>();
+        m_critters->push_back(c);
+        add(c);
+        while (m_world->getFieldHeight(tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize()))
+            > 2.4f)
+            ;
+        c->setPosition(tmpPos);
+    }
+
+    for (auto i = jt::Random::getInt(5, 10); i != 0; --i) {
+        auto c = std::make_shared<Bunny>();
+        m_critters->push_back(c);
+        add(c);
+        while ((tmpHeight = m_world->getFieldHeight(
+                    tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize())))
+                > 2.4f
+            || tmpHeight < 1.0f)
+            ;
+        c->setPosition(tmpPos);
+    }
+
+    for (auto i = jt::Random::getInt(2, 6); i != 0; --i) {
+        auto c = std::make_shared<Deer>();
+        m_critters->push_back(c);
+        add(c);
+        while ((tmpHeight = m_world->getFieldHeight(
+                    tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize())))
+                > 2.4f
+            || tmpHeight < 1.0f)
+            ;
+        c->setPosition(tmpPos);
     }
 
     m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
@@ -86,6 +119,30 @@ void StateGame::onCreate()
             add(tw);
         });
     add(m_explosionParticles);
+
+    m_stateIconWaiting = std::make_shared<jt::Sprite>(
+        "assets/images/states/waiting.png", jt::Recti { 0, 0, 183, 256 }, textureManager());
+    m_stateIconPlacing = std::make_shared<jt::Sprite>(
+        "assets/images/states/placing.png", jt::Recti { 0, 0, 183, 256 }, textureManager());
+    m_stateIconFighting = std::make_shared<jt::Sprite>(
+        "assets/images/states/fighting.png", jt::Recti { 0, 0, 183, 256 }, textureManager());
+
+    m_textRound = jt::dh::createText(renderTarget(), "Round " + std::to_string(m_round), 14);
+    m_textRound->setPosition({ GP::GetScreenSize().x / 2, 0 });
+    m_textRound->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
+
+    m_textPlayerZeroHp
+        = jt::dh::createText(renderTarget(), std::to_string(GP::InitialPlayerHP()).c_str(), 22,
+            GP::ColorPlayer0(), GP::HpFontAssetPath());
+    m_textPlayerZeroHp->setTextAlign(jt::Text::TextAlign::LEFT);
+    m_textPlayerZeroHp->setPosition({ 4, 0 });
+    m_textPlayerZeroHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 1, 1 });
+    m_textPlayerOneHp
+        = jt::dh::createText(renderTarget(), std::to_string(GP::InitialPlayerHP()).c_str(), 22,
+            GP::ColorPlayer1(), GP::HpFontAssetPath());
+    m_textPlayerOneHp->setTextAlign(jt::Text::TextAlign::RIGHT);
+    m_textPlayerOneHp->setPosition({ GP::GetScreenSize().x - 4, 0 });
+    m_textPlayerOneHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { -1, 1 });
 }
 
 void StateGame::onEnter() { }
@@ -103,6 +160,10 @@ void StateGame::onUpdate(float const elapsed)
 
         m_internalStateManager->getActiveState()->update(*this, elapsed);
     }
+
+    m_textRound->update(elapsed);
+    m_textPlayerZeroHp->update(elapsed);
+    m_textPlayerOneHp->update(elapsed);
 }
 
 void StateGame::playbackSimulation(float elapsed)
@@ -130,6 +191,8 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
         m_playerHP = currentFrame.m_playerHP;
         auto const thisPlayerId = m_serverConnection->getPlayerId();
         auto const otherPlayerId = ((thisPlayerId == 0) ? 1 : 0);
+        m_textPlayerZeroHp->setText(std::to_string(m_playerHP.at(0)));
+        m_textPlayerOneHp->setText(std::to_string(m_playerHP.at(1)));
         if (m_playerHP.at(thisPlayerId) <= 0) {
             getStateManager()->switchToState(InternalState::EndLose, *this);
         } else if (m_playerHP.at(otherPlayerId) <= 0) {
@@ -156,6 +219,9 @@ std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::s
 {
     for (auto const& u : *m_units) {
         auto currentUnit = u.lock();
+        if (!currentUnit) {
+            continue;
+        }
         if (currentUnit->getPlayerID() != pid) {
             continue;
         }
@@ -195,6 +261,7 @@ void StateGame::transitionPlaybackToPlaceUnits()
     m_tickId = 0;
     resetAllUnits();
     m_round++;
+    m_textRound->setText("Round " + std::to_string(m_round));
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
 }
 
@@ -205,19 +272,19 @@ void StateGame::onDraw() const
     // first draw all dead units
     for (auto const& u : *m_units) {
         auto const lockedUnit = u.lock();
-        if (!lockedUnit->isUnitAlive()) {
+        if (lockedUnit && !lockedUnit->isUnitAlive()) {
             lockedUnit->draw();
         }
     }
 
-    for (auto const& b : *m_birds) {
-        b.lock()->draw();
+    for (auto const& c : *m_critters) {
+        c.lock()->draw();
     }
 
     // then draw all alive units
     for (auto const& u : *m_units) {
         auto const lockedUnit = u.lock();
-        if (lockedUnit->isUnitAlive()) {
+        if (lockedUnit && lockedUnit->isUnitAlive()) {
             lockedUnit->update(0.0f);
             lockedUnit->draw();
         }
@@ -231,28 +298,55 @@ void StateGame::onDraw() const
     m_clouds->draw();
     m_vignette->draw();
 
-    ImGui::SetNextWindowSize(ImVec2 { 196, 64 });
-    ImGui::Begin("State", nullptr,
-        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
-    std::string const text = "round " + std::to_string(m_round);
-    auto windowWidth = ImGui::GetWindowSize().x;
-    auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
-
-    ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-    ImGui::Text("%s", text.c_str());
-    if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
-        auto const bpc = GP::ColorPlayer0();
-        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(bpc.r, bpc.g, bpc.b, 255));
-        ImGui::Text("HP blue player: %i", m_playerHP.at(0));
-        ImGui::PopStyleColor();
-        auto const rpc = GP::ColorPlayer1();
-        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(rpc.r, rpc.g, rpc.b, 255));
-        ImGui::Text("HP red player: %i", m_playerHP.at(1));
-        ImGui::PopStyleColor();
+    ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
+        | ImGuiWindowFlags_NoScrollWithMouse };
+    ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 32, 32 }, ImGuiCond_Always);
+    ImGui::Begin("State", nullptr, window_flags);
+    if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {
+        ImGui::Image(m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Waiting for players to join");
+            ImGui::EndTooltip();
+        }
+    } else if (m_internalStateManager->getActiveStateE()
+        == InternalState::WaitForSimulationResults) {
+        ImGui::Image(m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Waiting for other players to end unit placement");
+            ImGui::EndTooltip();
+        }
+    } else if (m_internalStateManager->getActiveStateE() == InternalState::PlaceUnits) {
+        ImGui::Image(m_stateIconPlacing->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Place units");
+            ImGui::EndTooltip();
+        }
+    } else if (m_internalStateManager->getActiveStateE() == InternalState::Playback) {
+        ImGui::Image(m_stateIconFighting->getSFSprite().getTexture()->getNativeHandle(),
+            { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
+        if (ImGui::IsItemHovered()) {
+            ImGui::BeginTooltip();
+            ImGui::Text("Watch the battle evolve");
+            ImGui::EndTooltip();
+        }
     }
-
     ImGui::End();
+
+    m_textRound->draw(renderTarget());
+
+    if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
+        m_textPlayerZeroHp->draw(renderTarget());
+        m_textPlayerOneHp->draw(renderTarget());
+    }
 }
+
 void StateGame::drawArrows() const
 {
     for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
@@ -305,12 +399,12 @@ std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_pl
 std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }
 int StateGame::getRound() { return m_round; }
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
-std::shared_ptr<jt::ObjectGroup<Bird>> StateGame::getBirds() { return m_birds; }
+std::shared_ptr<jt::ObjectGroup<Critter>> StateGame::getCritters() { return m_critters; }
 void StateGame::flashUnitsForUpgrade(const std::string& unitType)
 {
     for (auto& u : *m_units) {
         auto unit = u.lock();
-        if (unit->getPlayerID() != m_serverConnection->getPlayerId()) {
+        if (!unit || unit->getPlayerID() != m_serverConnection->getPlayerId()) {
             continue;
         }
         if (unit->getInfo().type == unitType) {

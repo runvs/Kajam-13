@@ -4,7 +4,6 @@
 #include <network_data/unit_client_to_server_data.hpp>
 #include <nlohmann.hpp>
 #include <object_properties.hpp>
-#include <vector.hpp>
 #include <vector>
 
 struct ClientPlacementData {

@@ -1,7 +1,6 @@
 #include "simulation_result_message_sender.hpp"
-#include "object_properties.hpp"
-#include "simulation_result_data.hpp"
-#include <iostream>
+#include <message.hpp>
+#include <nlohmann.hpp>
 
 SimulationResultMessageSender::SimulationResultMessageSender(ServerNetworkConnection& connection)
     : m_connection { connection }

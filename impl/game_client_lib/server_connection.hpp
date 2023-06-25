@@ -11,6 +11,11 @@
 #include <unit_info_collection.hpp>
 #include <upgrade_unit_data.hpp>
 #include <vector.hpp>
+#include <atomic>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
 
 class ServerConnection : public jt::GameObject {
 public:

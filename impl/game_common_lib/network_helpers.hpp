@@ -1,11 +1,12 @@
 #ifndef JAMTEMPLATE_NETWORK_HELPERS_HPP
 #define JAMTEMPLATE_NETWORK_HELPERS_HPP
 
-#include <asio.hpp>
+#include <asio/error_code.hpp>
+#include <asio/ip/tcp.hpp>
 #include <log/logger_interface.hpp>
 #include <receive_buffer.hpp>
-#include <iostream>
-#include <sstream>
+#include <cstddef>
+#include <functional>
 #include <string>
 
 namespace NetworkHelpers {

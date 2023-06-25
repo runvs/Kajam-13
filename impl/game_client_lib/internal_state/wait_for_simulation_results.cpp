@@ -1,6 +1,6 @@
 #include "wait_for_simulation_results.hpp"
-#include "internal_state_manager.hpp"
-#include "state_game.hpp"
+#include <internal_state/internal_state_manager.hpp>
+#include <state_game.hpp>
 
 void WaitForSimulationResults::update(StateGame& state, float /*elapsed*/)
 {

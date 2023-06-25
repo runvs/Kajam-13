@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_INTERNAL_STATE_MANAGER_HPP
 #define JAMTEMPLATE_INTERNAL_STATE_MANAGER_HPP
 
-#include "internal_state_interface.hpp"
+#include <internal_state/internal_state_interface.hpp>
 #include <functional>
 #include <map>
 #include <memory>

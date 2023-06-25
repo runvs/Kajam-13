@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_SIMULATION_RESULT_MESSAGE_SENDER_HPP
 #define JAMTEMPLATE_SIMULATION_RESULT_MESSAGE_SENDER_HPP
 
-#include "object_properties.hpp"
-#include "server_network_connection.hpp"
-#include "simulation_result_data.hpp"
+#include <object_properties.hpp>
+#include <server_network_connection.hpp>
+#include <simulation_result_data.hpp>
 
 class SimulationResultMessageSender {
 public:

@@ -3,6 +3,7 @@
 
 #include <nlohmann.hpp>
 #include <unit_info.hpp>
+#include <string>
 
 struct UpgradeUnitData {
     int playerID;
