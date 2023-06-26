@@ -46,6 +46,8 @@ public:
     void resetForNewRound();
     void flash();
 
+    void setHighlight(bool v);
+
 private:
     UnitInfo m_info;
 
@@ -54,6 +56,8 @@ private:
 
     std::shared_ptr<jt::Animation> m_anim;
     std::string m_newAnimName { "" };
+    bool m_glowActive { false };
+    std::shared_ptr<jt::Sprite> m_glow;
 
     std::shared_ptr<jt::Text> m_levelText;
     std::shared_ptr<jt::SoundInterface> m_sfxGrpCloseCombat { nullptr };

@@ -23,6 +23,11 @@ void Unit::doCreate()
     m_anim->play("idle");
     m_anim->setLooping("death", false);
     m_anim->setOffset(GP::UnitAnimationOffset());
+
+    m_glow = std::make_shared<jt::Sprite>("#g#33#200", textureManager());
+    m_glow->setColor(jt::colors::Green);
+    m_glow->setOffset({ -9, -6 });
+
     m_hpBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
     m_hpBar->setMaxValue(m_hpMax);
     m_hpBar->setBackColor(jt::colors::Gray);
@@ -51,6 +56,8 @@ void Unit::doCreate()
 
 void Unit::doUpdate(float const elapsed)
 {
+    m_glow->setPosition(m_anim->getPosition());
+    m_glow->update(elapsed);
     m_anim->update(elapsed);
     m_levelText->setPosition(m_anim->getPosition() + jt::Vector2f { -4.0f, -6.0f });
     m_levelText->update(elapsed);
@@ -81,6 +88,9 @@ void Unit::doUpdate(float const elapsed)
 
 void Unit::doDraw() const
 {
+    if (m_glowActive) {
+        m_glow->draw(renderTarget());
+    }
     m_anim->draw(renderTarget());
     if (m_hp > 0 && m_hp < m_hpMax) {
         m_hpBar->draw(renderTarget());
@@ -200,3 +210,5 @@ void Unit::resetForNewRound()
     m_animTimeUntilBackToIdle = -1.0f;
 }
 void Unit::flash() { m_anim->flash(0.4f, jt::colors::Green); }
+
+void Unit::setHighlight(bool v) { m_glowActive = v; }

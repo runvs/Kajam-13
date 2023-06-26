@@ -73,8 +73,8 @@ bool showUnitTooltip(T& u, PlacementManager const& pm)
 template <typename T>
 void drawUnitUpgrade(T& selectedUnit, StateGame& state)
 {
-    ImGui::Begin("Unit upgrades");
     auto const unitType = selectedUnit->getInfo().type;
+    ImGui::Begin(("Unit upgrades (" + unitType + ")").c_str());
     for (auto& upg : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
         if (upg.name.empty()) {
             continue;
@@ -125,6 +125,7 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
             if (unit->isMouseOver()) {
                 m_selectedPlacedUnit = nullptr;
                 m_selectedUnit = unit;
+                m_selectedUnitType = unit->getInfo().type;
                 break;
             }
         }
@@ -139,14 +140,39 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
             if (unit->isMouseOver()) {
                 m_selectedUnit = nullptr;
                 m_selectedPlacedUnit = unit;
+                m_selectedUnitType = unit->getInfo().type;
                 break;
             }
+        }
+    }
+
+    for (auto& u : *state.getUnits()) {
+        auto unit = u.lock();
+        if (!unit) {
+            continue;
+        }
+        if (!m_selectedUnitType.empty() && (unit->getInfo().type == m_selectedUnitType)) {
+            unit->setHighlight(true);
+        } else {
+            unit->setHighlight(false);
+        }
+    }
+    for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
+        auto unit = u.lock();
+        if (!unit) {
+            continue;
+        }
+        if (!m_selectedUnitType.empty() && (unit->getInfo().type == m_selectedUnitType)) {
+            unit->setHighlight(true);
+        } else {
+            unit->setHighlight(false);
         }
     }
 
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         m_selectedUnit = nullptr;
         m_selectedPlacedUnit = nullptr;
+        m_selectedUnitType.clear();
     }
 
     CommonFunctions::updateCritters(state);

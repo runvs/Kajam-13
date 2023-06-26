@@ -44,6 +44,19 @@ InternalStateManager::InternalStateManager()
 
               state.getPlacementManager()->setActive(false);
               state.getTerrainRenderer()->setDrawGrid(false);
+
+              for (auto& u : *state.getUnits()) {
+                  auto unit = u.lock();
+                  if (unit) {
+                      unit->setHighlight(false);
+                  }
+              }
+              for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
+                  auto unit = u.lock();
+                  if (unit) {
+                      unit->setHighlight(false);
+                  }
+              }
           };
 
     m_transitions[std::make_pair(InternalState::WaitForSimulationResults, InternalState::Playback)]

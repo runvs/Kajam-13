@@ -18,6 +18,7 @@ private:
     std::shared_ptr<jt::Sprite> m_imageEndPlacement { nullptr };
     std::shared_ptr<Unit> m_selectedUnit { nullptr };
     std::shared_ptr<PlacedUnit> m_selectedPlacedUnit { nullptr };
+    std::string m_selectedUnitType {};
 };
 
 #endif // JAMTEMPLATE_PLACE_UNITS_HPP

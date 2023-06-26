@@ -21,15 +21,27 @@ void PlacedUnit::doCreate()
     m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
     m_anim->play("idle");
     m_anim->setOffset(GP::UnitAnimationOffset());
+
+    m_glow = std::make_shared<jt::Sprite>("#g#33#200", textureManager());
+    m_glow->setColor(jt::colors::Green);
+    m_glow->setOffset({ -9, -6 });
 }
 
 void PlacedUnit::doUpdate(const float elapsed)
 {
     turnUnitIntoDirection(m_anim, m_playerID == 0);
     m_anim->update(elapsed);
+    m_glow->setPosition(m_anim->getPosition());
+    m_glow->update(elapsed);
 }
 
-void PlacedUnit::doDraw() const { m_anim->draw(renderTarget()); }
+void PlacedUnit::doDraw() const
+{
+    if (m_glowActive) {
+        m_glow->draw(renderTarget());
+    }
+    m_anim->draw(renderTarget());
+}
 
 UnitClientToServerData PlacedUnit::saveState() const
 {
@@ -91,3 +103,5 @@ int PlacedUnit::getLevel() const { return 1; }
 int PlacedUnit::getPlayerID() const { return m_playerID; }
 
 void PlacedUnit::flash() { m_anim->flash(0.4f, jt::colors::Green); }
+
+void PlacedUnit::setHighlight(bool v) { m_glowActive = v; }

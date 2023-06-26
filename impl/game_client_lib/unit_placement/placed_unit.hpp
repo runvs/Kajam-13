@@ -31,9 +31,13 @@ public:
 
     void flash();
 
+    void setHighlight(bool v);
+
 private:
     UnitInfo m_info;
     std::shared_ptr<jt::Animation> m_anim;
+    bool m_glowActive { false };
+    std::shared_ptr<jt::Sprite> m_glow;
     int m_unitID { 0 };
     int m_playerID { 0 };
     jt::Vector2f m_position;
