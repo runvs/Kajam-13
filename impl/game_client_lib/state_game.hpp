@@ -98,6 +98,7 @@ private:
     std::shared_ptr<jt::Sprite> m_stateIconFighting { nullptr };
 
     std::shared_ptr<jt::Text> m_textRound { nullptr };
+    std::shared_ptr<jt::Text> m_textTimeIndicator { nullptr };
     std::shared_ptr<jt::Text> m_textPlayerZeroHp { nullptr };
     std::shared_ptr<jt::Text> m_textPlayerOneHp { nullptr };
 

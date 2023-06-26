@@ -77,7 +77,7 @@ float arrowParabola(float x, float maxHeight) { return -maxHeight * 4 * (x - x *
 
 void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
 {
-    auto const timePerUpdate = 0.005f;
+    auto const timePerUpdate = GP::TimePerSimulationUpdate();
     SimulationResultDataForAllFrames allFrames;
     for (auto i = 0u; i != GP::MaxNumberOfStepsPerRound(); ++i) {
         SimulationResultDataForOneFrame currentFrame;

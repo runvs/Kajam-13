@@ -36,6 +36,7 @@ public:
     static jt::Palette getPalette();
 
     static std::size_t MaxNumberOfStepsPerRound();
+    static float TimePerSimulationUpdate() { return 0.005f; }
 
     static jt::Vector2f UnitAnimationOffset();
     static int InitialPlayerHP();

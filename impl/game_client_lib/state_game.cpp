@@ -26,6 +26,7 @@
 #include <vector.hpp>
 #include <imgui.h>
 #include <memory>
+#include <ostream>
 
 void StateGame::onCreate()
 {
@@ -117,6 +118,10 @@ void StateGame::onCreate()
     m_textRound->setPosition({ GP::GetScreenSize().x / 2, 0 });
     m_textRound->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
 
+    m_textTimeIndicator = jt::dh::createText(renderTarget(), "30.0", 16);
+    m_textTimeIndicator->setPosition({ GP::GetScreenSize().x / 2, 48 });
+    m_textTimeIndicator->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
+
     m_textPlayerZeroHp = jt::dh::createText(renderTarget(),
         std::to_string(GP::InitialPlayerHP()).c_str(), 22, GP::ColorPlayer0(), "assets/font.ttf");
     m_textPlayerZeroHp->setTextAlign(jt::Text::TextAlign::LEFT);
@@ -146,6 +151,7 @@ void StateGame::onUpdate(float const elapsed)
     }
 
     m_textRound->update(elapsed);
+    m_textTimeIndicator->update(elapsed);
     m_textPlayerZeroHp->update(elapsed);
     m_textPlayerOneHp->update(elapsed);
 }
@@ -153,6 +159,13 @@ void StateGame::onUpdate(float const elapsed)
 void StateGame::playbackSimulation(float elapsed)
 {
     if (!m_simulationResultsForAllFrames.allFrames.empty()) {
+        auto const maxTicks = m_simulationResultsForAllFrames.allFrames.size();
+        auto const maxTime = GP::TimePerSimulationUpdate() * maxTicks;
+        auto const percentage = (maxTicks - m_tickId) * 1.0f / maxTicks;
+        std::ostringstream out;
+        out.precision(1);
+        out << std::fixed << (percentage * maxTime);
+        m_textTimeIndicator->setText(std::move(out).str());
         if (m_tickId < m_simulationResultsForAllFrames.allFrames.size() - 1) {
             m_tickId++;
             auto const& propertiesForAllUnitsForThisFrame
@@ -320,9 +333,12 @@ void StateGame::onDraw() const
     }
     ImGui::End();
 
-    m_textRound->draw(renderTarget());
+    if (m_internalStateManager->getActiveStateE() == InternalState::Playback) {
+        m_textTimeIndicator->draw(renderTarget());
+    }
 
     if (m_internalStateManager->getActiveStateE() != InternalState::WaitForAllPlayers) {
+        m_textRound->draw(renderTarget());
         m_textPlayerZeroHp->draw(renderTarget());
         m_textPlayerOneHp->draw(renderTarget());
     }
