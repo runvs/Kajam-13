@@ -1,4 +1,5 @@
 #include "game_simulation.hpp"
+#include "system_helper.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
@@ -17,15 +18,14 @@ namespace {
 std::string getRandomMapName()
 {
     // clang-format off
-    char const* mapList[] {
+    static std::vector<std::string> mapList {
         "assets/maps/map_de_dust_2.json",
         "assets/maps/map_over_the_hills.json",
         "assets/maps/map_plains.json",
         "assets/maps/map_valley_of_death.json"
     };
     // clang-format on
-    jt::Random::useTimeAsRandomSeed();
-    return mapList[jt::Random::getInt(0, (sizeof(mapList) / sizeof(char const*)) - 1)];
+    return *jt::SystemHelper::select_randomly(mapList.cbegin(), mapList.cend());
 }
 
 } // namespace
@@ -37,7 +37,12 @@ GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& 
 {
 }
 
-void GameSimulation::rollNewMap() { m_world = std::make_shared<Terrain>(getRandomMapName()); }
+void GameSimulation::rollNewMap()
+{
+    const auto name = getRandomMapName();
+    m_logger.info("new map: " + name);
+    m_world = std::make_shared<Terrain>(name);
+}
 
 void GameSimulation::prepareSimulationForNewRound()
 {

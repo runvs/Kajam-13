@@ -37,7 +37,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "sourceSize": { "w": 32, "h": 32 },
-    "duration": 400
+    "duration": 100
    },
    "bunny 5.aseprite": {
     "frame": { "x": 160, "y": 0, "w": 32, "h": 32 },
@@ -129,8 +129,8 @@
    }
  },
  "meta": {
-  "app": "https://www.aseprite.org/",
-  "version": "1.3-rc2-x64",
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc4-x64",
   "image": "bunny.png",
   "format": "RGBA8888",
   "size": { "w": 512, "h": 32 },
