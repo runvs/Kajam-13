@@ -1,4 +1,4 @@
-#include "main.hpp"
+﻿#include "main.hpp"
 #include <action_commands/action_command_manager.hpp>
 #include <action_commands/basic_action_commands.hpp>
 #include <audio/audio/audio_impl.hpp>
@@ -19,9 +19,10 @@
 #include <log/logger.hpp>
 #include <logging_camera.hpp>
 #include <random/random.hpp>
-#include <state_intro.hpp>
+// #include <state_intro.hpp>
 #include <state_manager/logging_state_manager.hpp>
 #include <state_manager/state_manager.hpp>
+#include <state_menu.hpp>
 #include <memory>
 
 std::shared_ptr<jt::GameBase> game;
@@ -60,7 +61,8 @@ int main()
     jt::AudioImpl audio { std::make_unique<jt::LoggingSoundFadeManager>(fades, logger) };
     jt::LoggingAudio loggingAudio { audio, logger };
 
-    jt::StateManager stateManager { std::make_shared<StateIntro>() };
+    // jt::StateManager stateManager { std::make_shared<StateIntro>() };
+    jt::StateManager stateManager { std::make_shared<StateMenu>() };
     jt::LoggingStateManager loggingStateManager { stateManager, logger };
 
     jt::ActionCommandManager actionCommandManager(logger);
