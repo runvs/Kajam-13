@@ -1,8 +1,10 @@
 #ifndef JAMTEMPLATE_TERRAIN_HPP
 #define JAMTEMPLATE_TERRAIN_HPP
 
+#include <nlohmann.hpp>
 #include <vector.hpp>
 #include <array>
+#include <functional>
 #include <string>
 
 constexpr int terrainWidthPerPlayerInChunks { 16 };
@@ -19,11 +21,14 @@ constexpr float terrainHeightMax { 5.0f };
 constexpr float terrainHeightScalingFactor { terrainChunkSizeInPixel / 4.0f };
 
 struct Chunk {
-    unsigned short x, y;
-    float height;
-    float heightCenter;
-    float heightCorners[4];
+    unsigned short x {}, y {};
+    float height {};
+    float heightCenter {};
+    float heightCorners[4] {};
 };
+
+void to_json(nlohmann::json& j, Chunk const& v);
+void from_json(nlohmann::json const& j, Chunk& v);
 
 // This class describes the terrain of the play field devided into chunks.
 // Each chunk has a position and a height value associated, resulting in slopes from one chunk to
@@ -31,22 +36,34 @@ struct Chunk {
 // for units. Too steep slopes will result in a blocked path, thus the unit will not be able to
 // travel to a neigbouring chunk.
 class Terrain {
-    using Grid = std::array<Chunk, terrainWidthInChunks * terrainHeightInChunks>;
-    Grid m_chunks;
-
 public:
+    using Grid = std::array<Chunk, terrainWidthInChunks * terrainHeightInChunks>;
+    using UpdateCallback = std::function<void()>;
+
     static jt::Vector2f getMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y);
 
-    // TODO share map information from server to clients
-    explicit Terrain(std::string const& mapFilename = "assets/maps/map_over_the_hills.json");
+    explicit Terrain(std::string const& mapFilename);
+    Terrain() = default;
 
+    void from_json(nlohmann::json const& j);
+
+    std::string const& getName() const { return m_name; }
     Grid const& getChunks() const { return m_chunks; }
 
+    void setOnUpdate(UpdateCallback&& cb) const;
     Chunk const& getChunk(int x, int y) const;
     float getChunkHeight(int x, int y) const;
     float getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const;
     float getFieldHeight(jt::Vector2f const& pos) const;
-    void parseMapFromFilename(std::string const& fileName);
+
+private:
+    std::string m_name;
+    Grid m_chunks;
+    UpdateCallback mutable m_updateCallback;
+
+    void setChunks(Grid const& grid);
 };
+
+void to_json(nlohmann::json& j, Terrain const& v);
 
 #endif // JAMTEMPLATE_TERRAIN_HPP

@@ -26,6 +26,9 @@
 class GameSimulation : public WorldInfoInterface {
 public:
     explicit GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos);
+
+    void rollNewMap();
+
     void prepareSimulationForNewRound();
     void addUnit(UnitClientToServerData const& unitData);
     void addUnitUpgrade(UpgradeUnitData const& upg);
@@ -45,6 +48,8 @@ public:
 
     // clear all units, e.g. when resetting the server
     void clear();
+
+    Terrain const& getTerrain() const { return *m_world; }
 
 private:
     jt::LoggerInterface& m_logger;

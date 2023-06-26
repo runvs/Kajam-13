@@ -227,7 +227,7 @@ void PlacementManager::buyUpgrade(std::string const& unitType, const std::string
     auto& vec = m_possibleUpgrades.at(unitType);
     auto const& upg = m_unitInfo->getUpgradeForUnit(unitType, upgrade);
     m_boughtUpgrades[unitType].push_back(upg);
-    (void)std::erase_if(vec, [&](auto const& v) { return v.name == upgrade; });
+    std::erase_if(vec, [&](auto const& v) { return v.name == upgrade; });
     m_sfxBuyUpgrade->play();
 }
 

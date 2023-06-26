@@ -11,14 +11,13 @@ void SoundFadeManager::volumeFade(std::weak_ptr<SoundInterface> sound, float dur
 
 void SoundFadeManager::update(float elapsed)
 {
-    (void)std::erase_if(
-        m_fadeInfos, [](auto const& fadeInfo) { return !fadeInfo.hasValidSound(); });
+    std::erase_if(m_fadeInfos, [](auto const& fadeInfo) { return !fadeInfo.hasValidSound(); });
 
     for (auto& fade : m_fadeInfos) {
         fade.update(elapsed);
     }
 
-    (void)std::erase_if(m_fadeInfos, [](auto const& fadeInfo) { return !fadeInfo.isAlive(); });
+    std::erase_if(m_fadeInfos, [](auto const& fadeInfo) { return !fadeInfo.isAlive(); });
 }
 std::size_t SoundFadeManager::size() const { return m_fadeInfos.size(); }
 

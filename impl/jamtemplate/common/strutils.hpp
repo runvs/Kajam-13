@@ -416,7 +416,7 @@ static inline std::string join(const std::vector<T>& tokens, const std::string& 
  */
 static inline void drop_empty(std::vector<std::string>& tokens)
 {
-    (void)std::erase_if(tokens, [](auto const& s) { return s.empty(); });
+    std::erase_if(tokens, [](auto const& s) { return s.empty(); });
 }
 
 /**

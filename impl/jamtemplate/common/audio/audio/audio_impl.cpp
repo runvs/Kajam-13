@@ -34,7 +34,7 @@ void jt::AudioImpl::update(float elapsed)
 
 void jt::AudioImpl::cleanUpUnusedSounds()
 {
-    (void)std::erase_if(m_temporarySounds, [](auto const& wptr) { return wptr.expired(); });
+    std::erase_if(m_temporarySounds, [](auto const& wptr) { return wptr.expired(); });
 }
 
 std::shared_ptr<jt::SoundInterface> jt::AudioImpl::addTemporarySound(std::string const& fileName)

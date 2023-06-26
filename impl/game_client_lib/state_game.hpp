@@ -9,6 +9,7 @@
 #include <internal_state/internal_state_interface.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <map/terrain.hpp>
+#include <nlohmann.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <particle_system.hpp>
@@ -74,7 +75,7 @@ private:
 
     std::shared_ptr<jt::Vignette> m_vignette { nullptr };
     std::shared_ptr<Hud> m_hud { nullptr };
-    std::shared_ptr<Terrain> m_world { nullptr };
+    std::shared_ptr<Terrain> m_terrain { nullptr };
     std::shared_ptr<TerrainRenderer> m_terrainRenderer { nullptr };
 
     std::shared_ptr<PlacementManager> m_placementManager { nullptr };
@@ -119,6 +120,8 @@ private:
     void onEnter() override;
     void onUpdate(float const elapsed) override;
     void onDraw() const override;
+
+    void updateServerInfo(nlohmann::json const& j);
 
     void endGame();
 

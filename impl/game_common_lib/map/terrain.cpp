@@ -2,36 +2,13 @@
 #include <cmath>
 
 #include "terrain.hpp"
+#include <json_keys.hpp>
 #include <math_helper.hpp>
-#include <nlohmann.hpp>
 #include <vector.hpp>
 #include <fstream>
 #include <vector>
 
 namespace {
-
-struct TowerInfo {
-    int playerId {};
-    jt::Vector2f position {};
-};
-
-void from_json(nlohmann::json const& j, TowerInfo& v)
-{
-    j.at("player").get_to(v.playerId);
-    j.at("x").get_to(v.position.x);
-    j.at("y").get_to(v.position.y);
-}
-
-struct Map {
-    float heights[terrainWidthInChunks * terrainHeightInChunks];
-    std::vector<TowerInfo> towers;
-};
-
-void from_json(nlohmann::json const& j, Map& v)
-{
-    j.at("heights").get_to(v.heights);
-    j.at("towers").get_to(v.towers);
-}
 
 std::size_t coordToIndex(int x, int y) { return x + y * terrainWidthInChunks; }
 
@@ -164,7 +141,35 @@ Vector3f getNormalOfTriangleForPosition(
 
 } // namespace
 
-Terrain::Terrain(std::string const& mapFilename) { parseMapFromFilename(mapFilename); }
+void to_json(nlohmann::json& j, Chunk const& v) { j = v.height; }
+
+void from_json(nlohmann::json const& j, Chunk& v) { j.get_to(v.height); }
+
+jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y)
+{
+    if (!posToCoord(pos, x, y)) {
+        return {};
+    }
+    return jt::Vector2f { static_cast<float>(
+                              x * terrainChunkSizeInPixel + terrainChunkSizeInPixelHalf),
+        static_cast<float>(y * terrainChunkSizeInPixel + terrainChunkSizeInPixelHalf) };
+}
+
+Terrain::Terrain(std::string const& mapFilename)
+{
+    from_json(nlohmann::json::parse(std::ifstream { mapFilename }));
+}
+
+void Terrain::from_json(nlohmann::json const& j)
+{
+    j.at(jk::mapName).get_to(m_name);
+    setChunks(j.at(jk::mapHeights).get<Grid>());
+}
+
+void Terrain::setOnUpdate(UpdateCallback&& cb) const
+{
+    m_updateCallback = std::forward<UpdateCallback>(cb);
+}
 
 Chunk const& Terrain::getChunk(int x, int y) const
 {
@@ -186,17 +191,6 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     auto const vp = v - np;
     auto const slope = vp.angleDeg(v) * (v.x < 0 || v.y < 0 ? -1 : 1);
     return slope;
-}
-
-jt::Vector2f Terrain::getMappedFieldPosition(jt::Vector2f const& pos, int& x, int& y)
-{
-    if (!posToCoord(pos, x, y)) {
-        return {};
-    }
-    jt::Vector2f bla { static_cast<float>(
-                           x * terrainChunkSizeInPixel + terrainChunkSizeInPixelHalf),
-        static_cast<float>(y * terrainChunkSizeInPixel + terrainChunkSizeInPixelHalf) };
-    return bla;
 }
 
 float Terrain::getFieldHeight(jt::Vector2f const& pos) const
@@ -221,15 +215,12 @@ float Terrain::getFieldHeight(jt::Vector2f const& pos) const
     return (posCenter3d - pos).dot(normal) / Vector3f { 0, 0, 1 }.dot(normal);
 }
 
-void Terrain::parseMapFromFilename(std::string const& fileName)
+void Terrain::setChunks(Grid const& grid)
 {
-    // std::cerr << "loading: " << fileName << ::std::endl;
-    std::ifstream fileStream { fileName };
-    auto const map = nlohmann::json::parse(fileStream).get<Map>();
     for (unsigned short y { 0 }; y < terrainHeightInChunks; ++y) {
         for (unsigned short x { 0 }; x < terrainWidthInChunks; ++x) {
             auto const height
-                = jt::MathHelper::clamp(map.heights[coordToIndex(x, y)], 0.0f, terrainHeightMax);
+                = jt::MathHelper::clamp(grid[coordToIndex(x, y)].height, 0.0f, terrainHeightMax);
             auto& chunk = m_chunks[coordToIndex(x, y)]
                 = { x, y, height, height, { height, height, height, height } };
             // adjust height offsets while we load up the chunks
@@ -300,4 +291,15 @@ void Terrain::parseMapFromFilename(std::string const& fileName)
             }
         }
     }
+
+    // notify TerrainRenderer
+    if (m_updateCallback) {
+        m_updateCallback();
+    }
+}
+
+void to_json(nlohmann::json& j, Terrain const& v)
+{
+    j[jk::mapName] = v.getName();
+    j[jk::mapHeights] = v.getChunks();
 }

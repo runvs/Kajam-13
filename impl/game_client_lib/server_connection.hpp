@@ -6,12 +6,14 @@
 #include <client_placement_data.hpp>
 #include <game_object.hpp>
 #include <log/logger_interface.hpp>
+#include <nlohmann.hpp>
 #include <object_properties.hpp>
 #include <simulation_result_data.hpp>
 #include <unit_info_collection.hpp>
 #include <upgrade_unit_data.hpp>
 #include <vector.hpp>
 #include <atomic>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -19,10 +21,14 @@
 
 class ServerConnection : public jt::GameObject {
 public:
+    using ServerInfoCallback = std::function<void(nlohmann::json const& j)>;
+
     explicit ServerConnection(jt::LoggerInterface& logger);
     ~ServerConnection();
     void setConnection(std::shared_ptr<ClientNetworkConnection> connection);
     std::shared_ptr<ClientNetworkConnection> getConnection();
+
+    void setOnServerInfo(ServerInfoCallback&& cb);
 
     void readyRound(ClientPlacementData const& data);
     void unitUpgrade(UpgradeUnitData const& data);
@@ -45,6 +51,7 @@ private:
     std::mutex m_dataMutex;
     SimulationResultDataForAllFrames m_simulationResults;
 
+    ServerInfoCallback m_serverInfoCallback;
     std::vector<UnitInfo> m_unitInfo;
 
     void doUpdate(float const elapsed) override;
@@ -52,7 +59,7 @@ private:
     void handleMessage(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
     void handleMessagePlayerIdResponse(std::string const& messageContent);
     void handleMessageSimulationResult(std::string const& messageContent);
-    void handleMessageAllPlayersConnected();
+    void handleMessageAllPlayersConnected(nlohmann::json const& j);
     void discard(std::string const& messageContent);
 };
 

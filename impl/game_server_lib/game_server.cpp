@@ -287,16 +287,21 @@ void GameServer::startRoundSimulation()
     m_gameSimulation->performSimulation(sender);
     m_round++;
 }
+
 int GameServer::getNumberOfConnectedPlayers() const
 {
     return static_cast<int>(m_playerData.size() + m_botData.size());
 }
+
 void GameServer::checkForAllPlayersConnected()
 {
     // inform all players that the requested number of Players is reached
     if (getNumberOfConnectedPlayers() == 2) {
+        m_gameSimulation->rollNewMap();
         Message ret;
         ret.type = MessageType::AllPlayersConnected;
+        nlohmann::json const j { { jk::map, m_gameSimulation->getTerrain() } };
+        ret.data = j.dump();
         m_connection.sendMessageToAll(ret);
         m_matchHasStarted = true;
     }

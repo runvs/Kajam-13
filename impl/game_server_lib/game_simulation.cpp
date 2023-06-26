@@ -4,6 +4,7 @@
 #include <math_helper.hpp>
 #include <network_data/arrow_info.hpp>
 #include <network_data/explosion_info.hpp>
+#include <random/random.hpp>
 #include <simulation_object_interface.hpp>
 #include <simulation_result_data.hpp>
 #include <units/server_unit.hpp>
@@ -11,12 +12,32 @@
 #include <memory>
 #include <string>
 
+namespace {
+
+std::string getRandomMapName()
+{
+    // clang-format off
+    char const* mapList[] {
+        "assets/maps/map_de_dust_2.json",
+        "assets/maps/map_over_the_hills.json",
+        "assets/maps/map_plains.json",
+        "assets/maps/map_valley_of_death.json"
+    };
+    // clang-format on
+    jt::Random::useTimeAsRandomSeed();
+    return mapList[jt::Random::getInt(0, (sizeof(mapList) / sizeof(char const*)) - 1)];
+}
+
+} // namespace
+
 GameSimulation::GameSimulation(jt::LoggerInterface& logger, UnitInfoCollection& unitInfos)
     : m_logger { logger }
     , m_unitInfos { unitInfos }
     , m_world { std::make_shared<Terrain>() }
 {
 }
+
+void GameSimulation::rollNewMap() { m_world = std::make_shared<Terrain>(getRandomMapName()); }
 
 void GameSimulation::prepareSimulationForNewRound()
 {
@@ -215,7 +236,7 @@ void GameSimulation::handleArrows(
             }
         }
     }
-    (void)std::erase_if(m_arrows, [](auto const& arrow) { return arrow.age > arrow.totalTime; });
+    std::erase_if(m_arrows, [](auto const& arrow) { return arrow.age > arrow.totalTime; });
 }
 
 void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
@@ -229,7 +250,7 @@ void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
         }
     }
 
-    (void)std::erase_if(m_arrowsToBeSpawned, [](auto const& kvp) { return kvp.first <= 0; });
+    std::erase_if(m_arrowsToBeSpawned, [](auto const& kvp) { return kvp.first <= 0; });
 }
 
 void GameSimulation::handleScheduledAttacks(float timePerUpdate)
@@ -252,8 +273,7 @@ void GameSimulation::handleScheduledAttacks(float timePerUpdate)
         }
     }
 
-    (void)std::erase_if(
-        m_scheduledCloseCombatAttacks, [](auto const& kvp) { return kvp.first <= 0; });
+    std::erase_if(m_scheduledCloseCombatAttacks, [](auto const& kvp) { return kvp.first <= 0; });
 }
 
 std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
@@ -345,12 +365,14 @@ void GameSimulation::clear()
     m_simulationObjects.clear();
     m_unitUpgrades.clear();
     m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
+    m_world = std::make_shared<Terrain>();
 }
 
 void GameSimulation::addUnitUpgrade(const UpgradeUnitData& upg)
 {
     m_unitUpgrades.emplace_back(upg);
 }
+
 void GameSimulation::scheduleAttack(CloseCombatInfo const& info, float delay)
 {
     m_scheduledCloseCombatAttacks.push_back(std::make_pair(delay, info));

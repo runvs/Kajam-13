@@ -66,6 +66,10 @@ constexpr auto upgCost = "upgCost";
 constexpr auto upgAdd = "add";
 constexpr auto upgFactor = "factor";
 
+constexpr auto map = "map";
+constexpr auto mapName = "name";
+constexpr auto mapHeights = "heights";
+
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

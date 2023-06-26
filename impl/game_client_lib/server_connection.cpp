@@ -37,6 +37,11 @@ void ServerConnection::setConnection(std::shared_ptr<ClientNetworkConnection> co
 
 std::shared_ptr<ClientNetworkConnection> ServerConnection::getConnection() { return m_connection; }
 
+void ServerConnection::setOnServerInfo(ServerInfoCallback&& cb)
+{
+    m_serverInfoCallback = std::forward<ServerInfoCallback>(cb);
+}
+
 void ServerConnection::doUpdate(const float /*elapsed*/)
 {
     if (!m_connection) {
@@ -74,7 +79,7 @@ void ServerConnection::handleMessage(
     if (m.type == MessageType::PlayerIdResponse) {
         handleMessagePlayerIdResponse(messageContent);
     } else if (m.type == MessageType::AllPlayersConnected) {
-        handleMessageAllPlayersConnected();
+        handleMessageAllPlayersConnected(nlohmann::json::parse(m.data));
     } else if (m.type == MessageType::SimulationResult) {
         handleMessageSimulationResult(messageContent);
     } else {
@@ -106,7 +111,13 @@ void ServerConnection::handleMessagePlayerIdResponse(std::string const& messageC
         { "network", "ServerConnection", "units" });
 }
 
-void ServerConnection::handleMessageAllPlayersConnected() { m_allPlayersConnected.store(true); }
+void ServerConnection::handleMessageAllPlayersConnected(nlohmann::json const& j)
+{
+    if (m_serverInfoCallback) {
+        m_serverInfoCallback(j);
+    }
+    m_allPlayersConnected.store(true);
+}
 
 void ServerConnection::discard(std::string const& messageContent)
 {
@@ -124,6 +135,7 @@ void ServerConnection::handleMessageSimulationResult(std::string const& messageC
         + std::to_string(m_simulationResults.allFrames.size()) + ")");
     m_dataReady = true;
 }
+
 bool ServerConnection::isRoundDataReady() const { return m_dataReady; }
 
 SimulationResultDataForAllFrames ServerConnection::getRoundData()

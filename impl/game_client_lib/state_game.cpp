@@ -9,6 +9,7 @@
 #include <graphics/drawable_interface.hpp>
 #include <input/keyboard/keyboard_defines.hpp>
 #include <internal_state/internal_state_manager.hpp>
+#include <json_keys.hpp>
 #include <message.hpp>
 #include <object_group.hpp>
 #include <particle_system.hpp>
@@ -29,8 +30,8 @@
 void StateGame::onCreate()
 {
     getGame()->gfx().createZLayer(GP::ZLayerUI());
-    m_world = std::make_shared<Terrain>();
-    m_terrainRenderer = std::make_shared<TerrainRenderer>(*m_world);
+    m_terrain = std::make_shared<Terrain>();
+    m_terrainRenderer = std::make_shared<TerrainRenderer>(*m_terrain);
     add(m_terrainRenderer);
 
     m_internalStateManager = std::make_shared<InternalStateManager>();
@@ -50,6 +51,7 @@ void StateGame::onCreate()
         m_connection->sendMessage(m);
     }
     m_serverConnection = std::make_shared<ServerConnection>(getGame()->logger());
+    m_serverConnection->setOnServerInfo([this](auto const& j) { updateServerInfo(j); });
     m_serverConnection->setConnection(m_connection);
     add(m_serverConnection);
     if (m_addBotAsPlayerOne) {
@@ -74,7 +76,7 @@ void StateGame::onCreate()
               for (auto i = 0; i != count; ++i) {
                   for (auto x = 0; x != 10; ++x) {
                       auto const tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize());
-                      auto const tmpHeight = m_world->getFieldHeight(tmpPos);
+                      auto const tmpHeight = m_terrain->getFieldHeight(tmpPos);
                       if (tmpHeight >= lowerbound && tmpHeight <= upperbound) {
                           auto c = std::make_shared<typename decltype(CritterT)::element_type>();
                           c->setPosition(tmpPos);
@@ -225,7 +227,7 @@ void StateGame::transitionWaitForPlayersToSelectStartingUnits()
         getGame()->logger(), m_serverConnection->getUnitInfo());
 
     m_placementManager = std::make_shared<PlacementManager>(
-        m_world, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
+        m_terrain, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     add(m_placementManager);
 }
 
@@ -335,6 +337,8 @@ void StateGame::drawArrows() const
         m_arrowShape->draw(renderTarget());
     }
 }
+
+void StateGame::updateServerInfo(nlohmann::json const& j) { m_terrain->from_json(j.at(jk::map)); }
 
 void StateGame::endGame()
 {

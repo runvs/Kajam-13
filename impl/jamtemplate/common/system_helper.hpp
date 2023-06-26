@@ -49,7 +49,7 @@ void remove_intersection(ContainerT& a, ContainerT const& b)
         uniqueAs.cend() };
 
     st.insert(b.begin(), b.end());
-    (void)std::erase_if(a, [&st](auto const& k) { return st.count(k) > 1; });
+    std::erase_if(a, [&st](auto const& k) { return st.count(k) > 1; });
 }
 
 /// Helper function to remove duplicates for containers of elements that can not be ordered

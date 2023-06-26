@@ -84,7 +84,7 @@ void drawTerrainGrid(sf::RenderTexture& texture)
 
 struct TerrainRenderer::Private {
     bool drawGrid {};
-    sf::RenderTexture texture {};
+    std::unique_ptr<sf::RenderTexture> texture {};
     std::unique_ptr<jt::Sprite> sprite {};
     sf::RenderTexture textureGrid {};
     std::unique_ptr<jt::Sprite> spriteGrid {};
@@ -94,11 +94,38 @@ TerrainRenderer::TerrainRenderer(Terrain const& t)
     : m { std::make_shared<TerrainRenderer::Private>() }
     , m_terrain { t }
 {
+    m_terrain.setOnUpdate([this]() { m_dirty = true; });
 }
 
 void TerrainRenderer::setDrawGrid(bool v) { m->drawGrid = v; }
 
 void TerrainRenderer::doCreate()
+{
+    // sprite with rendered terrain texture to display
+    m->sprite = std::make_unique<jt::Sprite>();
+    m->sprite->setIgnoreCamMovement(true);
+    m->sprite->setPosition(jt::Vector2f(0.0f, 0.0f));
+
+    // draw terrain grid texture
+    bool result = m->textureGrid.create(static_cast<unsigned int>(GP::GetScreenSize().x),
+        static_cast<unsigned int>(GP::GetScreenSize().y));
+    // TODO check error
+    (void)result;
+    m->textureGrid.clear(sf::Color::Transparent);
+    drawTerrainGrid(m->textureGrid);
+    m->textureGrid.display();
+
+    // sprite for grid texture
+    m->spriteGrid = std::make_unique<jt::Sprite>();
+    m->spriteGrid->setIgnoreCamMovement(true);
+    m->spriteGrid->setPosition(jt::Vector2f(0.0f, 0.0f));
+    m->spriteGrid->fromTexture(m->textureGrid.getTexture());
+    m->spriteGrid->update(0.0f);
+
+    updateFromTerrain();
+}
+
+void TerrainRenderer::updateFromTerrain()
 {
     // create chunk to vertex map
     std::array<sf::VertexArray, terrainWidthInChunks * terrainHeightInChunks> grid;
@@ -189,46 +216,37 @@ void TerrainRenderer::doCreate()
         }
     }
 
+    auto texture = std::make_unique<sf::RenderTexture>();
+
     // draw terrain texture from vertices
-    bool result { m->texture.create(static_cast<unsigned int>(GP::GetScreenSize().x),
+    bool result { texture->create(static_cast<unsigned int>(GP::GetScreenSize().x),
         static_cast<unsigned int>(GP::GetScreenSize().y)) };
     // TODO check error
     (void)result;
-    m->texture.clear(sf::Color::Black);
-    // m->texture.setSmooth(true);
+    texture->clear(sf::Color::Black);
+    // texture.setSmooth(true);
     for (auto const& e : grid) {
-        m->texture.draw(e);
+        texture->draw(e);
     }
     for (auto const& e : gridDecals) {
-        m->texture.draw(e);
+        texture->draw(e);
     }
-    m->texture.display();
+    texture->display();
 
-    // sprite with rendered terrain texture to display
-    m->sprite = std::make_unique<jt::Sprite>();
-    m->sprite->setIgnoreCamMovement(true);
-    m->sprite->setPosition(jt::Vector2f(0.0f, 0.0f));
-    m->sprite->fromTexture(m->texture.getTexture());
+    m->sprite->fromTexture(texture->getTexture());
     m->sprite->update(0.0f);
 
-    // draw terrain grid texture
-    result = m->textureGrid.create(static_cast<unsigned int>(GP::GetScreenSize().x),
-        static_cast<unsigned int>(GP::GetScreenSize().y));
-    // TODO check error
-    (void)result;
-    m->textureGrid.clear(sf::Color::Transparent);
-    drawTerrainGrid(m->textureGrid);
-    m->textureGrid.display();
-
-    // sprite for grid texture
-    m->spriteGrid = std::make_unique<jt::Sprite>();
-    m->spriteGrid->setIgnoreCamMovement(true);
-    m->spriteGrid->setPosition(jt::Vector2f(0.0f, 0.0f));
-    m->spriteGrid->fromTexture(m->textureGrid.getTexture());
-    m->spriteGrid->update(0.0f);
+    m->texture = std::move(texture);
 }
 
-void TerrainRenderer::doUpdate(float const elapsed) { m->sprite->update(elapsed); }
+void TerrainRenderer::doUpdate(float const elapsed)
+{
+    if (m_dirty) {
+        m_dirty = false;
+        updateFromTerrain();
+    }
+    m->sprite->update(elapsed);
+}
 
 void TerrainRenderer::doDraw() const
 {
