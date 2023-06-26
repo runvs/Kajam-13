@@ -111,7 +111,7 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
 
 } // namespace
 
-void PlaceUnits::update(StateGame& state, float /*elapsed*/)
+void PlaceUnits::update(StateGame& state, float elapsed)
 {
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
         for (auto& u : *state.getUnits()) {
@@ -146,28 +146,21 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         }
     }
 
-    for (auto& u : *state.getUnits()) {
-        auto unit = u.lock();
-        if (!unit) {
-            continue;
+    auto const doHighlight = [this, &state](auto& units) {
+        for (auto& u : units) {
+            auto unit = u.lock();
+            if (!unit) {
+                continue;
+            }
+            if (!m_selectedUnitType.empty() && (unit->getInfo().type == m_selectedUnitType)) {
+                unit->setHighlight(true);
+            } else {
+                unit->setHighlight(false);
+            }
         }
-        if (!m_selectedUnitType.empty() && (unit->getInfo().type == m_selectedUnitType)) {
-            unit->setHighlight(true);
-        } else {
-            unit->setHighlight(false);
-        }
-    }
-    for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
-        auto unit = u.lock();
-        if (!unit) {
-            continue;
-        }
-        if (!m_selectedUnitType.empty() && (unit->getInfo().type == m_selectedUnitType)) {
-            unit->setHighlight(true);
-        } else {
-            unit->setHighlight(false);
-        }
-    }
+    };
+    doHighlight(*state.getUnits());
+    doHighlight(*state.getPlacementManager()->getPlacedUnits());
 
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         m_selectedUnit = nullptr;
@@ -175,22 +168,19 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         m_selectedUnitType.clear();
     }
 
+    if (!m_rangeIndicator) {
+        m_rangeIndicator = std::make_shared<sf::CircleShape>(16.0f);
+        m_rangeIndicator->setFillColor({ 0, 160, 0, 40 });
+        m_rangeIndicator->setOutlineColor({ 0, 160, 0, 255 });
+        m_rangeIndicator->setOutlineThickness(1.0f);
+        m_rangeIndicator->setPointCount(m_rangeIndicator->getPointCount() * 2);
+    }
+
     CommonFunctions::updateCritters(state);
 }
 
 void PlaceUnits::draw(StateGame& state)
 {
-    for (auto& u : *state.getUnits()) {
-        if (showUnitTooltip(u, *state.getPlacementManager())) {
-            break;
-        }
-    }
-    for (auto& u : *state.getPlacementManager()->getPlacedUnits()) {
-        if (showUnitTooltip(u, *state.getPlacementManager())) {
-            break;
-        }
-    }
-
     state.getPlacementManager()->draw();
 
     if (!m_imageEndPlacement) {
@@ -220,4 +210,25 @@ void PlaceUnits::draw(StateGame& state)
     } else if (m_selectedPlacedUnit) {
         drawUnitUpgrade(m_selectedPlacedUnit, state);
     }
+
+    auto const checkTooltip = [this, &state](auto& units) {
+        for (auto& u : units) {
+            if (showUnitTooltip(u, *state.getPlacementManager())) {
+                auto const unit = u.lock();
+                auto const unitInfo = getUnitInfoWithLevelAndUpgrades(unit->getInfo(),
+                    unit->getLevel(),
+                    state.getPlacementManager()->getBoughtUpgradesForUnit(unit->getInfo().type));
+                auto const radius = unitInfo.ai.range * terrainChunkSizeInPixel;
+                m_rangeIndicator->setRadius(radius);
+                m_rangeIndicator->setPosition(
+                    unit->getPosition().x - radius + terrainChunkSizeInPixelHalf,
+                    unit->getPosition().y - radius + terrainChunkSizeInPixelHalf);
+                sf::RenderStates states { sf::BlendAdd };
+                state.renderTarget()->get(0)->draw(*m_rangeIndicator, states);
+                break;
+            }
+        }
+    };
+    checkTooltip(*state.getUnits());
+    checkTooltip(*state.getPlacementManager()->getPlacedUnits());
 }
