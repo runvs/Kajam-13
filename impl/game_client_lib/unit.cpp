@@ -1,7 +1,8 @@
 #include "unit.hpp"
-#include "audio/sound/sound_group.hpp"
 #include <animation.hpp>
+#include <audio/sound/sound_group.hpp>
 #include <color/color.hpp>
+#include <common_functions.hpp>
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -109,13 +110,8 @@ void Unit::updateState(UnitServerToClientData const& props)
         m_newAnimName = props.unitAnim.value();
     }
 
-    if (props.unitWalkingRight) {
-        m_anim->setOffset(GP::UnitAnimationOffset());
-        m_anim->setScale(jt::Vector2f { 1.0f, 1.0f });
-    } else {
-        m_anim->setScale(jt::Vector2f { -1.0f, 1.0f });
-        m_anim->setOffset(GP::UnitAnimationOffset() + jt::Vector2f { 32.0f, 0.0f });
-    }
+    turnUnitIntoDirection(m_anim, props.unitWalkingRight);
+
     if (props.level != 1) {
 
         m_level = props.level;

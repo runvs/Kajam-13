@@ -1,6 +1,6 @@
 #include "placed_unit.hpp"
 #include <color/color.hpp>
-#include <drawable_helpers.hpp>
+#include <common_functions.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
@@ -23,7 +23,11 @@ void PlacedUnit::doCreate()
     m_anim->setOffset(GP::UnitAnimationOffset());
 }
 
-void PlacedUnit::doUpdate(const float elapsed) { m_anim->update(elapsed); }
+void PlacedUnit::doUpdate(const float elapsed)
+{
+    turnUnitIntoDirection(m_anim, m_playerID == 0);
+    m_anim->update(elapsed);
+}
 
 void PlacedUnit::doDraw() const { m_anim->draw(renderTarget()); }
 

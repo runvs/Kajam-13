@@ -11,17 +11,12 @@
 #include <log/license_info.hpp>
 #include <math_helper.hpp>
 #include <screeneffects/vignette.hpp>
-#include <shape.hpp>
-#include <sprite.hpp>
 #include <state_game.hpp>
 #include <state_manager/state_manager_transition_fade_to_black.hpp>
 #include <text.hpp>
 #include <tweens/tween_alpha.hpp>
 #include <tweens/tween_color.hpp>
 #include <tweens/tween_position.hpp>
-#include <tweens/tween_scale.hpp>
-#include <algorithm>
-#include <iostream>
 
 void StateMenu::onCreate()
 {
