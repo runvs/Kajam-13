@@ -37,6 +37,10 @@ void StateMenu::onCreate()
         getGame()->logger(), std::make_shared<CompressorImpl>());
     m_connector = std::make_shared<ServerConnector>(m_compressor);
     add(m_connector);
+
+    auto bgm = getGame()->audio().addPermanentSound("bgm_main", "assets/sfx/main_theme.mp3");
+    bgm->setLoop(true);
+    bgm->play();
 }
 
 void StateMenu::onEnter()
