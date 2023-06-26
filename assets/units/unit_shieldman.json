@@ -1,15 +1,15 @@
 {
   "type": "shieldman",
   "description": "Tanky unit with a strong shield. Rather slow.",
-  "expRequiredForLevelUp": 100,
+  "expRequiredForLevelUp": 120,
   "expGainWhenKilled": 100,
   "hitpoints": 250.0,
   "damage": 15.0,
-  "attackTimerMax": 1.5,
+  "attackTimerMax": 2.25,
   "movementSpeed": 12.0,
   "colliderRadius": 6.0,
   "cost": 150,
-  "unlockCost": 50,
+  "unlockCost": 100,
   "ai": {
     "type": 0,
     "range": -1.0
