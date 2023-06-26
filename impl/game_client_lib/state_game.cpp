@@ -30,7 +30,7 @@
 void StateGame::onCreate()
 {
     getGame()->gfx().createZLayer(GP::ZLayerUI());
-    m_terrain = std::make_shared<Terrain>();
+    m_terrain = std::make_shared<Terrain>("assets/maps/map_load.json");
     m_terrainRenderer = std::make_shared<TerrainRenderer>(*m_terrain);
     add(m_terrainRenderer);
 
