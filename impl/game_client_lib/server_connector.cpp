@@ -30,7 +30,6 @@ void ServerConnector::doDraw() const
 
         auto const state = std::make_shared<StateGame>();
         state->setConnection(getConnection(), m_addBotAsPlayerZero, m_addBotAsPlayerOne);
-
         getGame()->stateManager().switchState(state);
     }
     ImGui::End();

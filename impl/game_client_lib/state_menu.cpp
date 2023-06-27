@@ -33,9 +33,18 @@ void StateMenu::onCreate()
     m_connector = std::make_shared<ServerConnector>(m_compressor);
     add(m_connector);
 
-    auto bgm = getGame()->audio().addPermanentSound("bgm_main", "assets/sfx/main_theme.mp3");
-    bgm->setLoop(true);
-    bgm->play();
+    auto bgmMenu = getGame()->audio().getPermanentSound("bgm_menu");
+    if (bgmMenu == nullptr) {
+        bgmMenu = getGame()->audio().addPermanentSound("bgm_menu", "assets/sfx/menu.ogg");
+    }
+    bgmMenu->setLoop(true);
+    bgmMenu->play();
+    getGame()->audio().fades().volumeFade(bgmMenu, 0.5f, bgmMenu->getVolume(), 1.0f);
+
+    auto bgm_main = getGame()->audio().getPermanentSound("bgm_main");
+    if (bgm_main) {
+        getGame()->audio().fades().volumeFade(bgm_main, 0.5f, bgm_main->getVolume(), 0.0f);
+    }
 }
 
 void StateMenu::onEnter()

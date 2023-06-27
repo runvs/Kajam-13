@@ -132,6 +132,19 @@ void StateGame::onCreate()
     m_textPlayerOneHp->setTextAlign(jt::Text::TextAlign::RIGHT);
     m_textPlayerOneHp->setPosition({ GP::GetScreenSize().x - 4, 0 });
     m_textPlayerOneHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { -1, 1 });
+
+    auto bgm = getGame()->audio().getPermanentSound("bgm_main");
+    if (!bgm) {
+        bgm = getGame()->audio().addPermanentSound("bgm_main", "assets/sfx/main_theme.ogg");
+    }
+    bgm->setLoop(true);
+    bgm->play();
+    getGame()->audio().fades().volumeFade(bgm, 0.5f, bgm->getVolume(), 1.0f);
+
+    auto bgm_menu = getGame()->audio().getPermanentSound("bgm_menu");
+    if (bgm_menu) {
+        getGame()->audio().fades().volumeFade(bgm_menu, 0.5f, bgm_menu->getVolume(), 0.0f);
+    }
 }
 
 void StateGame::onEnter() { }
