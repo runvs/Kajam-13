@@ -42,9 +42,9 @@
       "name": "sharp swords",
       "iconPath": "assets/images/upgrades/fast_attack_melee.png",
       "upgCost": 200,
-      "movementSpeed": {
+      "damage": {
         "add": 0.0,
-        "factor": 1.0
+        "factor": 0.5
       }
     }
   ]
