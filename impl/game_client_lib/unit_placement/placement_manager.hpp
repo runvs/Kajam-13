@@ -14,6 +14,7 @@
 #include <unit_info.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
+#include <unit_placement/upgrade_manager.hpp>
 #include <array>
 #include <map>
 #include <memory>
@@ -40,10 +41,8 @@ public:
 
     void buyUnit(std::string const& type);
 
-    void buyUpgrade(std::string const& unitType, const std::string& upgrade) const;
-    std::vector<UpgradeInfo>& getPossibleUpgradesForUnit(std::string const& unitType) const;
-    std::vector<UpgradeInfo>& getBoughtUpgradesForUnit(std::string const& unitType) const;
-    std::vector<std::string> getBoughtUpgradeNamesForUnit(std::string const& unitType) const;
+    std::shared_ptr<UpgradeManager> upgrades();
+    std::shared_ptr<UpgradeManager> upgrades() const;
 
     void flashForUpgrade(std::string const& unitType);
 
@@ -72,11 +71,11 @@ private:
     std::shared_ptr<jt::SoundInterface> m_sfxPlaceUnit { nullptr };
     std::shared_ptr<jt::SoundInterface> m_sfxBuyUpgrade { nullptr };
 
-    mutable std::vector<std::string> m_unlockedTypes;
-    mutable std::map<std::string, std::vector<UpgradeInfo>> m_possibleUpgrades;
-    mutable std::map<std::string, std::vector<UpgradeInfo>> m_boughtUpgrades;
+    mutable std::vector<std::string> m_unlockedTypes {};
 
-    mutable std::map<std::string, int> m_boughtUnits;
+    mutable std::shared_ptr<UpgradeManager> m_upgrades { nullptr };
+
+    mutable std::map<std::string, int> m_boughtUnits {};
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

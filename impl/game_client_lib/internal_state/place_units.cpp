@@ -19,8 +19,10 @@ bool showUnitTooltip(T& u, PlacementManager const& pm)
     if (!lockedUnit || !lockedUnit->isMouseOver()) {
         return false;
     }
-    auto const unitInfo = getUnitInfoWithLevelAndUpgrades(lockedUnit->getInfo(),
-        lockedUnit->getLevel(), pm.getBoughtUpgradesForUnit(lockedUnit->getInfo().type));
+    auto const unitInfo
+        = getUnitInfoWithLevelAndUpgrades(lockedUnit->getInfo(), lockedUnit->getLevel(),
+            pm.upgrades()->getBoughtUpgradesForUnit(
+                lockedUnit->getPlayerID(), lockedUnit->getInfo().type));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
     ImGui::BeginTooltip();
@@ -52,7 +54,8 @@ bool showUnitTooltip(T& u, PlacementManager const& pm)
         ImGui::PopStyleColor();
         ImGui::EndTable();
     }
-    auto& upgrades = pm.getBoughtUpgradesForUnit((*lockedUnit).getInfo().type);
+    auto& upgrades = pm.upgrades()->getBoughtUpgradesForUnit(
+        lockedUnit->getPlayerID(), lockedUnit->getInfo().type);
     if (!upgrades.empty()) {
         for (auto& upg : upgrades) {
             if (!upg.icon) {
@@ -75,7 +78,8 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
 {
     auto const unitType = selectedUnit->getInfo().type;
     ImGui::Begin(("Unit upgrades (" + unitType + ")").c_str());
-    for (auto& upg : state.getPlacementManager()->getPossibleUpgradesForUnit(unitType)) {
+    for (auto& upg : state.getPlacementManager()->upgrades()->getPossibleUpgradesForUnit(
+             selectedUnit->getPlayerID(), unitType)) {
         if (upg.name.empty()) {
             continue;
         }
@@ -102,7 +106,8 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
             state.getServerConnection()->unitUpgrade(data);
             state.flashUnitsForUpgrade(selectedUnit->getInfo().type);
 
-            state.getPlacementManager()->buyUpgrade(selectedUnit->getInfo().type, upg.name);
+            state.getPlacementManager()->upgrades()->buyUpgrade(
+                selectedUnit->getPlayerID(), selectedUnit->getInfo().type, upg.name);
         }
         ImGui::EndDisabled();
     }
@@ -146,10 +151,13 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         }
     }
 
-    auto const doHighlight = [this, &state](auto& units) {
+    auto const doHighlight = [this, pid = state.getServerConnection()->getPlayerId()](auto& units) {
         for (auto& u : units) {
             auto unit = u.lock();
             if (!unit) {
+                continue;
+            }
+            if (unit->getPlayerID() != pid) {
                 continue;
             }
             if (!m_selectedUnitType.empty() && (unit->getInfo().type == m_selectedUnitType)) {
@@ -215,9 +223,10 @@ void PlaceUnits::draw(StateGame& state)
         for (auto& u : units) {
             if (showUnitTooltip(u, *state.getPlacementManager())) {
                 auto const unit = u.lock();
-                auto const unitInfo = getUnitInfoWithLevelAndUpgrades(unit->getInfo(),
-                    unit->getLevel(),
-                    state.getPlacementManager()->getBoughtUpgradesForUnit(unit->getInfo().type));
+                auto const unitInfo
+                    = getUnitInfoWithLevelAndUpgrades(unit->getInfo(), unit->getLevel(),
+                        state.getPlacementManager()->upgrades()->getBoughtUpgradesForUnit(
+                            unit->getPlayerID(), unit->getInfo().type));
                 auto const radius = unitInfo.ai.range * terrainChunkSizeInPixel;
                 m_rangeIndicator->setRadius(radius);
                 m_rangeIndicator->setPosition(

@@ -1,4 +1,5 @@
 #include "placement_manager.hpp"
+#include "upgrade_manager.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -10,6 +11,7 @@
 #include <unit_info_collection.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <imgui.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -22,12 +24,7 @@ PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
     m_playerId = playerId;
     m_playerIdDispatcher = playerIdDispatcher;
 
-    // Build list of possible upgrades
-    for (auto const& u : m_unitInfo->getUnits()) {
-        for (auto const& upg : u.possibleUpgrades) {
-            m_possibleUpgrades[u.type].push_back(upg);
-        }
-    }
+    m_upgrades = std::make_shared<UpgradeManager>(unitInfo);
 }
 
 void PlacementManager::doCreate()
@@ -223,36 +220,16 @@ void PlacementManager::unlockType(const std::string& type) const
     m_unlockedTypes.push_back(type);
 }
 
-void PlacementManager::buyUpgrade(std::string const& unitType, const std::string& upgrade) const
-{
-    auto& vec = m_possibleUpgrades.at(unitType);
-    auto const& upg = m_unitInfo->getUpgradeForUnit(unitType, upgrade);
-    m_boughtUpgrades[unitType].push_back(upg);
-    std::erase_if(vec, [&](auto const& v) { return v.name == upgrade; });
-    m_sfxBuyUpgrade->play();
-}
+// void PlacementManager::buyUpgrade(std::string const& unitType, const std::string& upgrade) const
+//{
+//     m_sfxBuyUpgrade->play();
+// }
 
-std::vector<UpgradeInfo>& PlacementManager::getPossibleUpgradesForUnit(
-    std::string const& unitType) const
-{
-    return m_possibleUpgrades.at(unitType);
-}
-
-std::vector<UpgradeInfo>& PlacementManager::getBoughtUpgradesForUnit(
-    const std::string& unitType) const
-{
-    return m_boughtUpgrades[unitType];
-}
-
-std::vector<std::string> PlacementManager::getBoughtUpgradeNamesForUnit(
-    const std::string& unitType) const
-{
-    std::vector<std::string> names;
-    for (auto const& upg : m_boughtUpgrades[unitType]) {
-        names.push_back(upg.name);
-    }
-    return names;
-}
+// std::vector<UpgradeInfo>& PlacementManager::getBoughtUpgradesForUnit(
+//     const std::string& unitType) const
+//{
+//     return m_boughtUpgradesPlayer0[unitType];
+// }
 
 void PlacementManager::flashForUpgrade(std::string const& unitType)
 {
@@ -275,3 +252,5 @@ void PlacementManager::buyUnit(const std::string& type)
         m_unitInfo->multiplyPriceForUnitBy(type, 1.1f);
     }
 }
+std::shared_ptr<UpgradeManager> PlacementManager::upgrades() { return m_upgrades; }
+std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_upgrades; }
