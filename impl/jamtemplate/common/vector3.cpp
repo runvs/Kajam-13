@@ -9,13 +9,6 @@ jt::Vector3f::Vector3f(float x, float y, float z)
 {
 }
 
-jt::Vector3f::Vector3f(jt::Vector2f const& v)
-    : x { v.x }
-    , y { v.y }
-    , z {}
-{
-}
-
 jt::Vector3f::Vector3f(jt::Vector2f const& v, float z)
     : x { v.x }
     , y { v.y }

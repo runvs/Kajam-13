@@ -13,8 +13,7 @@ struct Vector3f {
     Vector3f() = default;
 
     Vector3f(float x, float y, float z);
-    Vector3f(jt::Vector2f const& v);
-    Vector3f(jt::Vector2f const& v, float z);
+    Vector3f(jt::Vector2f const& v, float z = 0.0f);
 
     Vector3f operator+(Vector3f const& v) const;
     Vector3f operator-(Vector3f const& v) const;
