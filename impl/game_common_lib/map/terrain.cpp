@@ -1,4 +1,3 @@
-#define _USE_MATH_DEFINES
 #include "terrain.hpp"
 #include <json_keys.hpp>
 #include <math_helper.hpp>
