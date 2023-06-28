@@ -74,6 +74,14 @@ UpgradeInfo const& UnitInfoCollection::getUpgradeForUnit(
     }
     throw std::invalid_argument { "No upgrade " + upgradeName + " for unit: " + unitType };
 }
+void UnitInfoCollection::multiplyPriceForUnitBy(const std::string& type, float factor)
+{
+    for (auto& u : m_infos) {
+        if (u.type == type) {
+            u.cost *= factor;
+        }
+    }
+}
 
 void to_json(nlohmann::json& j, UnitInfoCollection& p)
 {

@@ -186,6 +186,8 @@ void PlacementManager::placeUnit()
         m_tweens.add(tw);
 
         m_availableFunds -= info.cost;
+
+        buyUnit(info.type);
     }
 }
 
@@ -260,5 +262,17 @@ void PlacementManager::flashForUpgrade(std::string const& unitType)
         if (unit && unit->getInfo().type == unitType) {
             unit->flash();
         }
+    }
+}
+void PlacementManager::buyUnit(const std::string& type)
+{
+    if (m_boughtUnits.count(type) == 0) {
+        m_boughtUnits[type] = 0;
+    }
+    m_boughtUnits.at(type)++;
+
+    if (m_boughtUnits.at(type) >= 3) {
+        m_boughtUnits.at(type) -= 3;
+        m_unitInfo->multiplyPriceForUnitBy(type, 1.1f);
     }
 }

@@ -13,6 +13,7 @@ public:
         std::string const& infoFilename = "assets/units/all_units.json");
     UnitInfoCollection(jt::LoggerInterface& logger, std::vector<UnitInfo> infos);
     UnitInfo const& getInfoForType(std::string const& type) const;
+    void multiplyPriceForUnitBy(const std::string& type, float factor);
     std::vector<std::string> getTypes() const;
 
     std::vector<UnitInfo>& getUnits();

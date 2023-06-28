@@ -38,6 +38,8 @@ public:
 
     void unlockType(std::string const& type) const;
 
+    void buyUnit(std::string const& type);
+
     void buyUpgrade(std::string const& unitType, const std::string& upgrade) const;
     std::vector<UpgradeInfo>& getPossibleUpgradesForUnit(std::string const& unitType) const;
     std::vector<UpgradeInfo>& getBoughtUpgradesForUnit(std::string const& unitType) const;
@@ -73,6 +75,8 @@ private:
     mutable std::vector<std::string> m_unlockedTypes;
     mutable std::map<std::string, std::vector<UpgradeInfo>> m_possibleUpgrades;
     mutable std::map<std::string, std::vector<UpgradeInfo>> m_boughtUpgrades;
+
+    mutable std::map<std::string, int> m_boughtUnits;
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;
