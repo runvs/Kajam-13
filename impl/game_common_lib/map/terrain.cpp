@@ -2,6 +2,7 @@
 #include "terrain.hpp"
 #include <json_keys.hpp>
 #include <math_helper.hpp>
+#include <vector3.hpp>
 #include <cmath>
 #include <fstream>
 
@@ -16,70 +17,8 @@ bool posToCoord(jt::Vector2f const& pos, int& x, int& y)
     return ((x >= 0) && (x < terrainWidthInChunks) && (y >= 0) && (y < terrainHeightInChunks));
 }
 
-struct Vector3f {
-    float x, y, z;
-
-    Vector3f() = default;
-
-    Vector3f(float x, float y, float z)
-        : x { x }
-        , y { y }
-        , z { z }
-    {
-    }
-
-    Vector3f(jt::Vector2f const& v)
-        : x { v.x }
-        , y { v.y }
-        , z {}
-    {
-    }
-
-    Vector3f(jt::Vector2f const& v, float z)
-        : x { v.x }
-        , y { v.y }
-        , z { z }
-    {
-    }
-
-    Vector3f operator+(Vector3f const& v) const { return { x + v.x, y + v.y, z + v.z }; }
-    Vector3f operator-(Vector3f const& v) const { return { x - v.x, y - v.y, z - v.z }; }
-    Vector3f operator*(float const v) const { return { x * v, y * v, z * v }; }
-
-    float determinant() const { return x * x + y * y + z * z; }
-    float length() const { return std::sqrt(determinant()); }
-
-    Vector3f normalized() const
-    {
-        auto const len = length();
-        if (len != 0.0f) {
-            return { x / len, y / len, z / len };
-        }
-        return {};
-    }
-
-    float dot(Vector3f const& v) const { return x * v.x + y * v.y + z * v.z; }
-
-    Vector3f crossProduct(Vector3f const& v) const
-    {
-        return { y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x };
-    }
-
-    float angleRad(Vector3f const& v) const
-    {
-        return acosf(dot(v) / std::sqrt(determinant() * v.determinant()));
-    }
-
-    float angleDeg(Vector3f const& v) const
-    {
-        return static_cast<float>(angleRad(v) * 180.0f / M_PI);
-    }
-
-    bool isZero() const { return x == 0 && y == 0 && z == 0; }
-};
-
 template <typename T>
-Vector3f getNormalOfTriangleForPosition(
+jt::Vector3f getNormalOfTriangleForPosition(
     T const& chunks, jt::Vector2f const& pos, bool const convertHeight)
 {
     int posX, posY;
@@ -103,13 +42,13 @@ Vector3f getNormalOfTriangleForPosition(
     };
 
     // use field center as origin for vector calculations, e.g. top left corner is [-8;-8]
-    Vector3f const c { 0, 0, convertHeightToZ(posHeight) };
+    jt::Vector3f const c { 0, 0, convertHeightToZ(posHeight) };
     auto const minXY = -terrainChunkSizeInPixelHalf;
     auto const maxXY = terrainChunkSizeInPixelHalf - 1; // TODO check whether pixel 16 is an issue
-    Vector3f const tl { minXY, minXY, convertHeightToZ(chunk.heightCorners[0]) };
-    Vector3f const tr { maxXY, minXY, convertHeightToZ(chunk.heightCorners[1]) };
-    Vector3f const bl { minXY, maxXY, convertHeightToZ(chunk.heightCorners[2]) };
-    Vector3f const br { maxXY, maxXY, convertHeightToZ(chunk.heightCorners[3]) };
+    jt::Vector3f const tl { minXY, minXY, convertHeightToZ(chunk.heightCorners[0]) };
+    jt::Vector3f const tr { maxXY, minXY, convertHeightToZ(chunk.heightCorners[1]) };
+    jt::Vector3f const bl { minXY, maxXY, convertHeightToZ(chunk.heightCorners[2]) };
+    jt::Vector3f const br { maxXY, maxXY, convertHeightToZ(chunk.heightCorners[3]) };
 
     // determine which triangle the position is in and calculate normal vector for it
     int offX = static_cast<int>(pos.x) % terrainChunkSizeInPixel;
@@ -179,11 +118,11 @@ float Terrain::getChunkHeight(int x, int y) const { return getChunk(x, y).height
 
 float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const
 {
-    Vector3f const normal { getNormalOfTriangleForPosition(m_chunks, pos, true) };
+    jt::Vector3f const normal { getNormalOfTriangleForPosition(m_chunks, pos, true) };
     if (normal.isZero() || (normal.x == 0 && normal.y == 0)) {
         return 0.0f;
     }
-    auto const v = Vector3f { dir };
+    auto const v = jt::Vector3f { dir };
     auto const np = normal * v.dot(normal);
     auto const vp = v - np;
     auto const slope = vp.angleDeg(v) * (v.x < 0 || v.y < 0 ? -1 : 1);
@@ -208,8 +147,8 @@ float Terrain::getFieldHeight(jt::Vector2f const& pos) const
 
     // plane defined by posCenter3d and normal
     // (poscenter - pos) * normal / (0,0,1) * normal
-    Vector3f const posCenter3d { posCenter, posHeight };
-    return (posCenter3d - pos).dot(normal) / Vector3f { 0, 0, 1 }.dot(normal);
+    jt::Vector3f const posCenter3d { posCenter, posHeight };
+    return (posCenter3d - pos).dot(normal) / jt::Vector3f { 0, 0, 1 }.dot(normal);
 }
 
 void Terrain::setChunks(Grid const& grid)

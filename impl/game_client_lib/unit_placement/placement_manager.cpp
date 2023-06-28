@@ -145,7 +145,7 @@ void PlacementManager::placeUnit()
         }
 
         int posX, posY;
-        auto const fieldPos = m_world->getMappedFieldPosition(
+        auto fieldPos = m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
         static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
             AreaType::AREA_FLANK_BOT };
