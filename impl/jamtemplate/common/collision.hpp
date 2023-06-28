@@ -36,9 +36,9 @@ it freely, subject to the following restrictions:
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#include "math_helper.hpp"
-#include "rect.hpp"
-#include "vector.hpp"
+#include <math_helper.hpp>
+#include <rect.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 namespace jt {

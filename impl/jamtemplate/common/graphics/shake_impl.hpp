@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_SHAKE_IMPL_HPP
 #define JAMTEMPLATE_SHAKE_IMPL_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

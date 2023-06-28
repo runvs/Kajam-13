@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_RECT_HPP
 
 #include <object_properties.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <map>
 #include <string>
 

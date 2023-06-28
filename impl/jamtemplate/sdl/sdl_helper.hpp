@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_SDLHELPER_HPP
 #define JAMTEMPLATE_SDLHELPER_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <SDL2/SDL.h>
 #include <cstddef>
 

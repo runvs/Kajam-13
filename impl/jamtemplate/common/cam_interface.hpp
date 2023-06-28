@@ -1,7 +1,7 @@
 ﻿#ifndef JAMTEMPLATE_CAMINTERFACE_HPP
 #define JAMTEMPLATE_CAMINTERFACE_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

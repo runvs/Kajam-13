@@ -2,8 +2,7 @@
 #define JAMTEMPLATE_GAMEPAD_INPUT_LIB_HPP
 
 #include <input/gamepad/gamepad_defines.hpp>
-#include <input/keyboard/keyboard_defines.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

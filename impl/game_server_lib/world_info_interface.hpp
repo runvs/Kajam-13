@@ -4,7 +4,7 @@
 #include <close_combat_info.hpp>
 #include <network_data/arrow_info.hpp>
 #include <simulation_object_interface.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 class SimulationObjectInterface;

@@ -7,7 +7,7 @@
 #include <graphics/rotation_impl.hpp>
 #include <graphics/shadow_impl.hpp>
 #include <graphics/shake_impl.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 namespace jt {

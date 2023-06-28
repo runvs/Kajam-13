@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_EXPLOSION_INFO_HPP
 
 #include <nlohmann.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 struct ExplosionInfo {
     jt::Vector2f position { 0.0f, 0.0f };

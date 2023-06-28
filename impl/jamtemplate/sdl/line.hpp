@@ -3,7 +3,7 @@
 
 #include <drawable_impl_sdl.hpp>
 #include <render_target.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 class Line : public DrawableImplSdl {

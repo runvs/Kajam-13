@@ -17,6 +17,7 @@
 #include <unit_server_round_start_data.hpp>
 #include <units/server_unit.hpp>
 #include <upgrade_unit_data.hpp>
+#include <vector2.hpp>
 #include <world_info_interface.hpp>
 #include <map>
 #include <memory>

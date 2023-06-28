@@ -1,12 +1,9 @@
 #define _USE_MATH_DEFINES
-#include <cmath>
-
 #include "terrain.hpp"
 #include <json_keys.hpp>
 #include <math_helper.hpp>
-#include <vector.hpp>
+#include <cmath>
 #include <fstream>
-#include <vector>
 
 namespace {
 

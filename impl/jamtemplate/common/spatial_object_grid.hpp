@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_SPATIAL_OBJECT_GRID_HPP
 #define JAMTEMPLATE_SPATIAL_OBJECT_GRID_HPP
 
-#include "vector.hpp"
 #include <game_object.hpp>
 #include <system_helper.hpp>
+#include <vector2.hpp>
 #include <map>
 #include <memory>
 #include <vector>

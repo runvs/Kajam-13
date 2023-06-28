@@ -5,11 +5,9 @@
 #include <math_helper.hpp>
 #include <network_data/arrow_info.hpp>
 #include <network_data/explosion_info.hpp>
-#include <random/random.hpp>
 #include <simulation_object_interface.hpp>
 #include <simulation_result_data.hpp>
 #include <units/server_unit.hpp>
-#include <vector.hpp>
 #include <memory>
 #include <string>
 

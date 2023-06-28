@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_CLOUDS_HPP
 
 #include <game_object.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

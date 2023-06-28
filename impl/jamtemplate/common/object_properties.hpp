@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_OBJECT_PROPERTIES_HPP
 
 #include <nlohmann.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <map>
 #include <string>
 

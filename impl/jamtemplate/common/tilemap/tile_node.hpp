@@ -4,7 +4,7 @@
 
 #include <graphics/drawable_interface.hpp>
 #include <pathfinder/node_interface.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 namespace jt {

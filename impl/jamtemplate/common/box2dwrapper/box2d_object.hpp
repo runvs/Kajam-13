@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_BOX2DOBJECT_HPP
 
 #include <box2dwrapper/box2d_world_interface.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 class b2Body;

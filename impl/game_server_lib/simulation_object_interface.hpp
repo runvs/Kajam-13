@@ -6,7 +6,7 @@
 #include <object_properties.hpp>
 #include <unit_info.hpp>
 #include <unit_server_round_start_data.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 class WorldInfoInterface;
 

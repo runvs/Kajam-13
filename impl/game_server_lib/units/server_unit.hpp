@@ -9,7 +9,7 @@
 #include <unit_info.hpp>
 #include <units/ai/ai_interface.hpp>
 #include <upgrade_unit_data.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 #include <string>
 #include <vector>

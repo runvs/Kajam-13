@@ -111,7 +111,7 @@ void drawUnitUpgrade(T& selectedUnit, StateGame& state)
 
 } // namespace
 
-void PlaceUnits::update(StateGame& state, float elapsed)
+void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 {
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
         for (auto& u : *state.getUnits()) {

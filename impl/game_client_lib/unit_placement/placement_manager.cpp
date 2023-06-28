@@ -9,7 +9,6 @@
 #include <object_group.hpp>
 #include <unit_info_collection.hpp>
 #include <unit_placement/placed_unit.hpp>
-#include <vector.hpp>
 #include <imgui.h>
 #include <string>
 #include <vector>
@@ -146,8 +145,8 @@ void PlacementManager::placeUnit()
         }
 
         int posX, posY;
-        jt::Vector2f fieldPos { m_world->getMappedFieldPosition(
-            getGame()->input().mouse()->getMousePositionWorld(), posX, posY) };
+        auto const fieldPos = m_world->getMappedFieldPosition(
+            getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
         static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
             AreaType::AREA_FLANK_BOT };
         bool inValidArea { false };

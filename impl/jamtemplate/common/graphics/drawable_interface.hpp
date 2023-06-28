@@ -4,7 +4,7 @@
 #include <color/color.hpp>
 #include <graphics/render_target_interface.hpp>
 #include <rect.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 namespace jt {

@@ -24,7 +24,7 @@
 #include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <unit_placement/unit_id_manager.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <cstddef>
 #include <map>
 #include <memory>

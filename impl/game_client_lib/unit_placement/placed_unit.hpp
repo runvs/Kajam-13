@@ -6,7 +6,7 @@
 #include <network_data/unit_client_to_server_data.hpp>
 #include <tweens/tween_base.hpp>
 #include <unit_info.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 
 class PlacedUnit : public jt::GameObject {

@@ -7,7 +7,6 @@
 #include <network_data/unit_client_to_server_data.hpp>
 #include <rect.hpp>
 #include <tweens/tween_position.hpp>
-#include <vector.hpp>
 #include <memory>
 
 PlacedUnit::PlacedUnit(UnitInfo info)

@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_TWEENPOSITION_HPP
 
 #include <tweens/tween_base.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

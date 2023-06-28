@@ -4,7 +4,7 @@
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <conversions.hpp>
 #include <game_object.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <Box2D/Box2D.h>
 #include <memory>
 

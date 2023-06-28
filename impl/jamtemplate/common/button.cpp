@@ -5,8 +5,6 @@
 #include <input/input_manager.hpp>
 #include <sprite.hpp>
 #include <texture_manager_interface.hpp>
-#include <vector.hpp>
-#include <functional>
 #include <memory>
 #include <string>
 

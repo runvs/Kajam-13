@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_TILE_HPP
 #define JAMTEMPLATE_TILE_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

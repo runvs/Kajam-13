@@ -1,4 +1,4 @@
-﻿#include "vector.hpp"
+﻿#include "vector2.hpp"
 #include <ostream>
 
 jt::Vector2f::Vector2f(float x, float y)

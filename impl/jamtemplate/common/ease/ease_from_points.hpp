@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_EASE_FROM_POINTS_HPP
 #define JAMTEMPLATE_EASE_FROM_POINTS_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <deque>
 
 namespace jt {

@@ -1,7 +1,7 @@
 ﻿#ifndef JAMTEMPLATE_CONVERSIONS_HPP
 #define JAMTEMPLATE_CONVERSIONS_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <Box2D/Box2D.h>
 #include <tileson.h>
 

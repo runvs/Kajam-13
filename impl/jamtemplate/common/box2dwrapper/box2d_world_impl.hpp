@@ -3,7 +3,7 @@
 
 #include <box2dwrapper/box2d_contact_manager_interface.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <Box2D/Dynamics/b2World.h>
 #include <memory>
 

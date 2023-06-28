@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_TERRAIN_HPP
 
 #include <nlohmann.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <array>
 #include <functional>
 #include <string>

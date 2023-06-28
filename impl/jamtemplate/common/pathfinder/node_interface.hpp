@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_NODE_INTERFACE_HPP
 #define JAMTEMPLATE_NODE_INTERFACE_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <memory>
 #include <vector>
 

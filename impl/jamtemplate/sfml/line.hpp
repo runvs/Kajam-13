@@ -3,7 +3,7 @@
 
 #include <drawable_impl_sfml.hpp>
 #include <render_target.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 /// Line class

@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_MOUSE_INTERFACE_HPP
 
 #include <input/mouse/mouse_defines.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 

@@ -8,7 +8,6 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <rect.hpp>
-#include <vector.hpp>
 
 Unit::Unit(const UnitInfo& info)
     : m_info { info }

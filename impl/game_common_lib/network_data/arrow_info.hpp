@@ -3,7 +3,7 @@
 
 #include <damage_info.hpp>
 #include <nlohmann.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 
 struct ArrowInfo {
     jt::Vector2f startPos { 0.0f, 0.0f };

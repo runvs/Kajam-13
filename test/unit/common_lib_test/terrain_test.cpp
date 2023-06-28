@@ -1,5 +1,5 @@
-#include "vector.hpp"
 #include <map/terrain.hpp>
+#include <vector2.hpp>
 #include <gtest/gtest.h>
 
 // TODO make a game simulation test case or move interface to Terrain

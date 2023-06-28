@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_VECTOR_FACTORY_HPP
 #define JAMTEMPLATE_VECTOR_FACTORY_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 
 namespace jt {
 struct VectorFactory {

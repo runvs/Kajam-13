@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_MATHHELPER_HPP
 
 #include <rect.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <assert.h>
 #include <string>
 #include <utility>

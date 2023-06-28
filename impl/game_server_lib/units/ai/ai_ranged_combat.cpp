@@ -5,7 +5,6 @@
 #include <network_data/arrow_info.hpp>
 #include <random/random.hpp>
 #include <units/server_unit.hpp>
-#include <vector.hpp>
 #include <world_info_interface.hpp>
 
 void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)

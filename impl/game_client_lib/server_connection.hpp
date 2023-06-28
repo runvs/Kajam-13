@@ -11,7 +11,6 @@
 #include <simulation_result_data.hpp>
 #include <unit_info_collection.hpp>
 #include <upgrade_unit_data.hpp>
-#include <vector.hpp>
 #include <atomic>
 #include <functional>
 #include <memory>

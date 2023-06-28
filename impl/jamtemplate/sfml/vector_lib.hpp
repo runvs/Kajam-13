@@ -1,7 +1,7 @@
 ﻿#ifndef JAMTEMPLATE_VECTOR_LIB_HPP
 #define JAMTEMPLATE_VECTOR_LIB_HPP
 
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <SFML/System/Vector2.hpp>
 
 namespace jt {

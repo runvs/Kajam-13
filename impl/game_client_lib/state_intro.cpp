@@ -5,7 +5,6 @@
 #include <state_menu.hpp>
 #include <tweens/tween_alpha.hpp>
 #include <tweens/tween_position.hpp>
-#include <vector.hpp>
 
 void StateIntro::onCreate()
 {

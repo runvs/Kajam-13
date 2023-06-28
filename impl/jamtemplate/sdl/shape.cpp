@@ -2,7 +2,6 @@
 #include <rect.hpp>
 #include <render_target.hpp>
 #include <sdl_helper.hpp>
-#include <vector.hpp>
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <memory>

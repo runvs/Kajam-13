@@ -2,7 +2,7 @@
 #define JAMTEMPLATE_BUTTON_HPP
 
 #include <game_object.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 #include <functional>
 #include <memory>
 #include <vector>

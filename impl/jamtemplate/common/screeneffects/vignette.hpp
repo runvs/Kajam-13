@@ -3,7 +3,7 @@
 
 #include <color/color.hpp>
 #include <game_object.hpp>
-#include <vector.hpp>
+#include <vector2.hpp>
 namespace jt {
 
 class Sprite;

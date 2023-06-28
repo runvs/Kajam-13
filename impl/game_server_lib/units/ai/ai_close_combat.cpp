@@ -4,7 +4,6 @@
 #include <math_helper.hpp>
 #include <random/random.hpp>
 #include <units/server_unit.hpp>
-#include <vector.hpp>
 #include <world_info_interface.hpp>
 
 void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)
