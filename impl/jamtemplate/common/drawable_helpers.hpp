@@ -26,15 +26,17 @@ std::shared_ptr<jt::Shape> createShapeRect(
 /// Create a rectangular shape
 /// \param rect the rect of the shape (position and size)
 /// \param col the color of the shape
+/// \param textureManager texture manager
 /// \return shared pointer to shape
 std::shared_ptr<jt::Shape> createShapeRect(
     const jt::Rectf& rect, jt::Color const& col, jt::TextureManagerInterface& textureManager);
 
+/// Create a filled circular shape
 ///
-/// \param radius
-/// \param col
-/// \param textureManager
-/// \return
+/// \param radius radius
+/// \param col color
+/// \param textureManager texture manager
+/// \return shared pointer to shape
 std::shared_ptr<jt::Shape> createShapeCircle(
     float radius, jt::Color const& col, jt::TextureManagerInterface& textureManager);
 
@@ -43,12 +45,19 @@ std::shared_ptr<jt::Shape> createShapeCircle(
 /// \param text the string displayed in the text
 /// \param fontSize how big are the letters in the text
 /// \param col the color of the text
-/// \param font_path path to the ttf file (e.g. "assets/font.ttf")
+/// \param font_path path to the ttf or otf file (e.g. "assets/font.ttf")
 /// \return shared pointer to text
 std::shared_ptr<jt::Text> createText(std::weak_ptr<jt::RenderTargetLayer> renderTarget,
     std::string const& text, unsigned int fontSize, jt::Color const& col = jt::colors::White,
     std::string const& font_path = "assets/font.ttf");
 
+/// Create a Text
+/// \param renderTarget shared pointer to rendertarget
+/// \param text string displayed in the text
+/// \param fontSize how big are the letters in the text
+/// \param col color of the text
+/// \param font_path path to the ttf or otf file (e.g. "assets/font.ttf")
+/// \return shared pointer to text
 std::shared_ptr<jt::Text> createText(std::shared_ptr<jt::RenderTargetInterface> renderTarget,
     std::string const& text, unsigned int fontSize, jt::Color const& col = jt::colors::White,
     std::string const& font_path = "assets/font.ttf");
