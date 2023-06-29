@@ -15,7 +15,7 @@ public:
     GP() = delete;
 
     static std::string GameName() { return "Medibellum"; }
-    static std::string AuthorName() { return "Dr.Laguna & Semitalis"; }
+    static std::string AuthorName() { return "Adkiem & Dr.Laguna & Semitalis"; }
     static std::string JamName() { return "Kajam-13"; }
     static std::string JamDate() { return "2023-06"; }
     static std::string ExplanationText() { return ""; }
