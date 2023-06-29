@@ -74,13 +74,13 @@ void StateGame::onCreate()
     m_critters = std::make_shared<jt::ObjectGroup<Critter>>();
 
     auto const placeCritterFn
-        = [this](auto CritterT, float lowerbound, float upperbound, int count) {
+        = [this]<typename CritterT>(float lowerbound, float upperbound, int count) {
               for (auto i = 0; i != count; ++i) {
                   for (auto x = 0; x != 10; ++x) {
                       auto const tmpPos = jt::Random::getRandomPointIn(GP::GetScreenSize());
                       auto const tmpHeight = m_terrain->getFieldHeight(tmpPos);
                       if (tmpHeight >= lowerbound && tmpHeight <= upperbound) {
-                          auto c = std::make_shared<typename decltype(CritterT)::element_type>();
+                          auto c = std::make_shared<CritterT>();
                           c->setPosition(tmpPos);
                           add(c);
                           m_critters->push_back(c);
@@ -90,9 +90,9 @@ void StateGame::onCreate()
               }
           };
 
-    placeCritterFn(std::shared_ptr<Bird> { nullptr }, 0.0f, 4.4f, jt::Random::getInt(5, 10));
-    placeCritterFn(std::shared_ptr<Bunny> { nullptr }, 1.0f, 2.4f, jt::Random::getInt(5, 10));
-    placeCritterFn(std::shared_ptr<Deer> { nullptr }, 1.0f, 2.4f, jt::Random::getInt(2, 6));
+    placeCritterFn.template operator()<Bird>(0.0f, 4.4f, jt::Random::getInt(5, 10));
+    placeCritterFn.template operator()<Bunny>(1.0f, 2.4f, jt::Random::getInt(5, 10));
+    placeCritterFn.template operator()<Deer>(1.0f, 2.4f, jt::Random::getInt(2, 6));
 
     m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
         [this]() {
