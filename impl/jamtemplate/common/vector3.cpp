@@ -1,6 +1,6 @@
 #include "vector3.hpp"
+#include <math_helper.hpp>
 #include <cmath>
-#include <numbers>
 
 jt::Vector3f::Vector3f(float x, float y, float z)
     : x { x }
@@ -55,7 +55,7 @@ float jt::Vector3f::angleRad(Vector3f const& v) const
 
 float jt::Vector3f::angleDeg(Vector3f const& v) const
 {
-    return static_cast<float>(angleRad(v) * 180.0f / std::numbers::pi_v<float>);
+    return static_cast<float>(jt::MathHelper::rad2deg(angleRad(v)));
 }
 
 bool jt::Vector3f::isZero() const { return x == 0 && y == 0 && z == 0; }

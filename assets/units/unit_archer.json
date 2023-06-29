@@ -6,7 +6,7 @@
   "hitpoints": 20.0,
   "damage": 15.0,
   "attackTimerMax": 2.7,
-  "movementSpeed": 14.0,
+  "movementSpeed": 10.0,
   "colliderRadius": 6.0,
   "cost": 100,
   "unlockCost": 50,
