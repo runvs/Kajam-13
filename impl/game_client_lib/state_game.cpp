@@ -1,4 +1,5 @@
 ﻿#include "state_game.hpp"
+#include "network_data/select_unit_info.hpp"
 #include <color/color.hpp>
 #include <critters/bird.hpp>
 #include <critters/bunny.hpp>
@@ -255,6 +256,8 @@ void StateGame::transitionWaitForPlayersToSelectStartingUnits()
     m_placementManager = std::make_shared<PlacementManager>(
         m_terrain, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
     add(m_placementManager);
+
+    m_startingUnits = m_serverConnection->getStartingUnits();
 }
 
 void StateGame::transitionWaitForSimulationResultsToPlayback()
@@ -425,3 +428,5 @@ void StateGame::flashUnitsForUpgrade(const std::string& unitType)
     }
     m_placementManager->flashForUpgrade(unitType);
 }
+
+std::shared_ptr<SelectUnitInfoCollection> StateGame::getStartingUnits() { return m_startingUnits; }

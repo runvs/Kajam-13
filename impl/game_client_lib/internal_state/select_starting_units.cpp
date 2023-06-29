@@ -1,52 +1,17 @@
 #include "select_starting_units.hpp"
+#include <network_data/select_unit_info.hpp>
 #include <state_game.hpp>
 #include <imgui.h>
 #include <string>
-
-namespace {
-// TODO move to separate file
-struct SelectUnitInfo {
-    std::string unit1;
-    std::string unit2;
-    int initialGold;
-    std::string effect { "No Benefit" };
-};
-} // namespace
 
 void SelectStartingUnits::update(StateGame& /*state*/, float /*elapsed*/) { }
 void SelectStartingUnits::draw(StateGame& state)
 {
     ImGui::Begin("Select Starting Units");
 
-    std::vector<SelectUnitInfo> options;
-    // TODO move to json files for parsing and easy configurability
-    {
-        SelectUnitInfo option;
-        option.unit1 = "peasant";
-        option.unit2 = "cannon";
-        option.initialGold = 135;
-        options.push_back(option);
-    }
-
-    {
-        SelectUnitInfo option;
-        option.unit1 = "archer";
-        option.unit2 = "swordman";
-        option.initialGold = 175;
-        options.push_back(option);
-    }
-
-    {
-        SelectUnitInfo option;
-        option.unit1 = "shieldman";
-        option.unit2 = "swordman";
-        option.initialGold = 175;
-        options.push_back(option);
-    }
-
     if (ImGui::BeginTable("Startout Options", 5)) {
         int i = 0;
-        for (auto const& opt : options) {
+        for (auto const& opt : state.getStartingUnits()->m_selectUnitInfos) {
             i++;
             ImGui::TableNextRow();
             ImGui::TableNextColumn();

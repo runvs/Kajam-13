@@ -14,12 +14,13 @@
 #include <shape.hpp>
 #include <text.hpp>
 #include <unit_info.hpp>
+#include <unit_interface.hpp>
 #include <vector2.hpp>
 #include <memory>
 #include <string>
 #include <vector>
 
-class Unit : public jt::GameObject {
+class Unit : public jt::GameObject, public UnitInterface {
 public:
     explicit Unit(UnitInfo const& info);
 
@@ -32,21 +33,21 @@ public:
     jt::Vector2f getOffset() const;
 
     int getUnitID() const;
-    int getPlayerID() const;
+    int getPlayerID() const override;
     void setIDs(int uid, int pid);
 
-    int getLevel() const;
+    int getLevel() const override;
 
     bool isUnitAlive() const;
 
-    bool isMouseOver() const;
+    bool isMouseOver() const override;
 
-    UnitInfo const& getInfo() const;
+    UnitInfo const& getInfo() const override;
 
     void resetForNewRound();
-    void flash();
+    void flash() override;
 
-    void setHighlight(bool v);
+    void setHighlight(bool v) override;
 
 private:
     UnitInfo m_info;

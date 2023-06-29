@@ -4,6 +4,7 @@
 #include <asio/ip/tcp.hpp>
 #include <game_simulation.hpp>
 #include <log/logger_interface.hpp>
+#include <network_data/select_unit_info.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
 #include <unit_info_collection.hpp>
@@ -37,9 +38,9 @@ private:
 
     std::atomic_bool m_allPlayersReady { false };
     std::atomic_bool m_simulationStarted { false };
-    std::atomic_bool m_simulationReady { false };
 
     UnitInfoCollection m_unitInfos;
+    std::unique_ptr<SelectUnitInfoCollection> m_startingUnits { nullptr };
     std::unique_ptr<GameSimulation> m_gameSimulation { nullptr };
 
     int getNumberOfConnectedPlayers() const;

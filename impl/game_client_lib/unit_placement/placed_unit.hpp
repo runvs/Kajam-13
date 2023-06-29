@@ -6,10 +6,11 @@
 #include <network_data/unit_client_to_server_data.hpp>
 #include <tweens/tween_base.hpp>
 #include <unit_info.hpp>
+#include <unit_interface.hpp>
 #include <vector2.hpp>
 #include <memory>
 
-class PlacedUnit : public jt::GameObject {
+class PlacedUnit : public jt::GameObject, public UnitInterface {
 public:
     explicit PlacedUnit(UnitInfo info);
     UnitClientToServerData saveState() const;
@@ -20,18 +21,15 @@ public:
     void setOffset(jt::Vector2f const& offset);
     jt::Vector2f getOffset() const;
 
-    bool isMouseOver() const;
-    UnitInfo const& getInfo() const;
+    bool isMouseOver() const override;
+    UnitInfo const& getInfo() const override;
 
     std::shared_ptr<jt::Tween> createInitialTween();
 
-    int getLevel() const;
-
-    int getPlayerID() const;
-
-    void flash();
-
-    void setHighlight(bool v);
+    int getLevel() const override;
+    int getPlayerID() const override;
+    void flash() override;
+    void setHighlight(bool v) override;
 
 private:
     UnitInfo m_info;

@@ -1,6 +1,7 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
+#include "network_data/select_unit_info.hpp"
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
 #include <critters/critter.hpp>
@@ -69,6 +70,8 @@ public:
     int getRound();
     void flashUnitsForUpgrade(std::string const& unitType);
 
+    std::shared_ptr<SelectUnitInfoCollection> getStartingUnits();
+
 private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
     std::shared_ptr<ServerConnection> m_serverConnection { nullptr };
@@ -116,6 +119,8 @@ private:
 
     // at end of round
     float m_playbackOverflowTime = 2.5f;
+
+    std::shared_ptr<SelectUnitInfoCollection> m_startingUnits;
 
     void onCreate() override;
     void onEnter() override;

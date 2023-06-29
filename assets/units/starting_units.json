@@ -1,0 +1,22 @@
+{
+  "startingUnits": [
+    {
+      "unit1": "peasant",
+      "unit2": "cannon",
+      "startingFunds": 135,
+      "effect": "No Effect"
+    },
+    {
+      "unit1": "archer",
+      "unit2": "swordman",
+      "startingFunds": 175,
+      "effect": "No Effect"
+    },
+    {
+      "unit1": "horseman",
+      "unit2": "crossbow",
+      "startingFunds": 160,
+      "effect": "No Effect"
+    }
+  ]
+}

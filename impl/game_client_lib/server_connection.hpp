@@ -1,6 +1,8 @@
 #ifndef JAMTEMPLATE_SERVER_CONNECTION_HPP
 #define JAMTEMPLATE_SERVER_CONNECTION_HPP
 
+#include "internal_state/select_starting_units.hpp"
+#include "network_data/select_unit_info.hpp"
 #include <asio/ip/tcp.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
@@ -38,6 +40,7 @@ public:
 
     int getPlayerId() const;
     std::vector<UnitInfo> getUnitInfo() const;
+    std::shared_ptr<SelectUnitInfoCollection> getStartingUnits() const;
 
 private:
     jt::LoggerInterface& m_logger;
@@ -52,6 +55,7 @@ private:
 
     ServerInfoCallback m_serverInfoCallback;
     std::vector<UnitInfo> m_unitInfo;
+    std::shared_ptr<SelectUnitInfoCollection> m_startUnits { nullptr };
 
     void doUpdate(float const elapsed) override;
 

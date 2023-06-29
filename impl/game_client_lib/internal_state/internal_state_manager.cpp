@@ -7,6 +7,7 @@
 #include <internal_state/wait_for_all_players.hpp>
 #include <internal_state/wait_for_simulation_results.hpp>
 #include <state_game.hpp>
+#include <unit_placement/placed_unit.hpp>
 #include <memory>
 
 InternalStateManager::InternalStateManager()

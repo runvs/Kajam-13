@@ -1,11 +1,13 @@
 
 #include "server_connection.hpp"
+#include "network_data/select_unit_info.hpp"
 #include <game_properties.hpp>
 #include <json_keys.hpp>
 #include <message.hpp>
 #include <network_properties.hpp>
 #include <simulation_result_data.hpp>
 #include <unit_info.hpp>
+#include <memory>
 #include <stdexcept>
 
 ServerConnection::ServerConnection(jt::LoggerInterface& logger)
@@ -104,6 +106,10 @@ void ServerConnection::handleMessagePlayerIdResponse(std::string const& messageC
 
     nlohmann::json jdata = nlohmann::json::parse(m.data);
     jdata.at(jk::units).get_to(m_unitInfo);
+    if (jdata.count("startingUnits") == 1) {
+        m_startUnits = std::make_shared<SelectUnitInfoCollection>();
+        jdata.at("startingUnits").get_to(*m_startUnits);
+    }
     m_logger.info(
         "Received Player Id: " + std::to_string(m_playerId), { "network", "ServerConnection" });
     m_logger.info(
@@ -152,3 +158,7 @@ int ServerConnection::getPlayerId() const { return m_playerId; }
 bool ServerConnection::areAllPlayersConnected() const { return m_allPlayersConnected; }
 
 std::vector<UnitInfo> ServerConnection::getUnitInfo() const { return m_unitInfo; }
+std::shared_ptr<SelectUnitInfoCollection> ServerConnection::getStartingUnits() const
+{
+    return m_startUnits;
+}

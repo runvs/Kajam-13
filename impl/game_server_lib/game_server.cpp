@@ -11,6 +11,7 @@
 #include <simulation_result_message_sender.hpp>
 #include <system_helper.hpp>
 #include <upgrade_unit_data.hpp>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -24,6 +25,11 @@ GameServer::GameServer(jt::LoggerInterface& logger, CompressorInterface& compres
     , m_unitInfos { m_logger }
     , m_gameSimulation { std::make_unique<GameSimulation>(m_logger, m_unitInfos) }
 {
+    m_startingUnits = std::make_unique<SelectUnitInfoCollection>();
+
+    std::ifstream infile { "assets/units/starting_units.json" };
+    *m_startingUnits = nlohmann::json::parse(infile);
+    m_logger.info("Parsed starting units file");
     m_connection.setHandleIncomingMessageCallback(
         [this](auto const& messageContent, auto endpoint) {
             handleMessage(messageContent, endpoint);
@@ -187,7 +193,8 @@ void GameServer::handleMessageInitialPing(
         Message ret;
         ret.type = MessageType::PlayerIdResponse;
         ret.playerId = newPlayerId;
-        nlohmann::json j = nlohmann::json { { jk::units, m_unitInfos.getUnits() } };
+        nlohmann::json j = nlohmann::json { { jk::units, m_unitInfos.getUnits() },
+            { "startingUnits", *m_startingUnits } };
         ret.data = j.dump();
         m_connection.sendMessageToOne(ret, endpoint);
     }
