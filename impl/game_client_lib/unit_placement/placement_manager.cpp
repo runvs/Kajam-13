@@ -249,7 +249,7 @@ void PlacementManager::buyUnit(const std::string& type)
 
     if (m_boughtUnits.at(type) >= 3) {
         m_boughtUnits.at(type) -= 3;
-        m_unitInfo->multiplyPriceForUnitBy(type, 1.1f);
+        m_unitInfo->multiplyPriceForUnitBy(type, 1.08f);
     }
 }
 std::shared_ptr<UpgradeManager> PlacementManager::upgrades() { return m_upgrades; }
