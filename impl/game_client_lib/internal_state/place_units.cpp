@@ -9,6 +9,7 @@
 #include <rect.hpp>
 #include <sprite.hpp>
 #include <state_game.hpp>
+#include <system_helper.hpp>
 #include <unit_interface.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <vector2.hpp>
