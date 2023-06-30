@@ -21,9 +21,12 @@ void EndLose::draw(StateGame& state)
         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
         | ImGuiWindowFlags_NoScrollWithMouse };
     ImGui::SetNextWindowPos(
-        { GP::GetWindowSize().x / 2 - 206, GP::GetWindowSize().y / 2 - 160 }, ImGuiCond_Always);
-    ImGui::SetNextWindowSize({ 412, 0 }, ImGuiCond_Always);
+        { GP::GetWindowSize().x / 2 - 204, GP::GetWindowSize().y / 2 - 150 }, ImGuiCond_Always);
+    ImGui::SetNextWindowSize({ 408, 300 }, ImGuiCond_Always);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
     ImGui::Begin("Game Over", nullptr, window_flags);
+    ImGui::PopStyleVar(2);
 
     ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
                      m_imageDefeat->getSFSprite().getTexture()->getNativeHandle()),
