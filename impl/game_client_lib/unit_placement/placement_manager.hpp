@@ -63,8 +63,8 @@ private:
     UnitIdManager m_unitIdManager;
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
     std::shared_ptr<jt::Shape> m_blockedUnitPlacementAreas[3];
-    sf::RenderTexture m_fieldHighlightTexture {};
-    std::shared_ptr<jt::Shape> m_fieldHighlight {};
+    std::shared_ptr<jt::Shape> m_fieldHighlight { nullptr };
+    std::map<std::string, std::shared_ptr<jt::Sprite>> m_imageUnits {};
     int m_playerId;
 
     mutable std::string m_activeUnitType = "";

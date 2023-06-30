@@ -15,6 +15,19 @@
 #include <string>
 #include <vector>
 
+namespace {
+
+auto const TextAlignedRight = [](auto const& s) {
+    auto posX
+        = (ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(s.c_str()).x);
+    if (posX > ImGui::GetCursorPosX())
+        ImGui::SetCursorPosX(posX);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetStyle().ItemSpacing.y / 2);
+    ImGui::Text(s.c_str());
+};
+
+} // namespace
+
 PlacementManager::PlacementManager(std::shared_ptr<Terrain> world, int playerId,
     std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
     std::shared_ptr<UnitInfoCollection> unitInfo)
@@ -57,6 +70,13 @@ void PlacementManager::doCreate()
         jt::Color { 0, 200, 0, 66 }, textureManager());
     m_fieldHighlight->setIgnoreCamMovement(true);
     m_fieldHighlight->setPosition({ -9999, -9999 });
+
+    for (auto const& u : m_unitInfo->getTypes()) {
+        m_imageUnits[u] = std::make_shared<jt::Sprite>(
+            "assets/units/" + u + ".png", jt::Recti { 0, 0, 32, 32 }, textureManager());
+        m_imageUnits[u]->setIgnoreCamMovement(true);
+        m_imageUnits[u]->setPosition({ -9999, -9999 });
+    }
 }
 
 void PlacementManager::doUpdate(const float elapsed)
@@ -75,10 +95,24 @@ void PlacementManager::doUpdate(const float elapsed)
     if (isValidField(fieldPos, posX, posY)) {
         m_fieldHighlight->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
             fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
+        if (!m_activeUnitType.empty()) {
+            m_imageUnits[m_activeUnitType]->setOffset({ GP::UnitAnimationOffset().x,
+                GP::UnitAnimationOffset().y
+                    + m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf - 1)
+                        * -terrainHeightScalingFactor });
+            m_imageUnits[m_activeUnitType]->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
+                fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
+        }
     } else {
         m_fieldHighlight->setPosition({ -9999, -9999 });
+        if (!m_activeUnitType.empty()) {
+            m_imageUnits[m_activeUnitType]->setPosition({ -9999, -9999 });
+        }
     }
     m_fieldHighlight->update(elapsed);
+    if (!m_activeUnitType.empty()) {
+        m_imageUnits[m_activeUnitType]->update(elapsed);
+    }
 }
 
 void PlacementManager::doDraw() const
@@ -94,14 +128,11 @@ void PlacementManager::doDraw() const
     }
 
     m_fieldHighlight->draw(renderTarget());
+    if (!m_activeUnitType.empty()) {
+        m_imageUnits.at(m_activeUnitType)->draw(renderTarget());
+    }
 
     if (m_unitInfo) {
-        ImGui::Begin("unit placement");
-
-        ImGui::Text("Gold: %i", m_availableFunds);
-
-        ImGui::Separator();
-        ImGui::Text("Unlock");
         auto unlockedTypes = m_unlockedTypes;
         auto allTypes = m_unitInfo->getTypes();
         std::sort(unlockedTypes.begin(), unlockedTypes.end());
@@ -110,33 +141,66 @@ void PlacementManager::doDraw() const
         std::set_difference(allTypes.begin(), allTypes.end(), unlockedTypes.begin(),
             unlockedTypes.end(), std::back_inserter(purchaseTypes));
 
+        ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
+            | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize };
+        ImGui::Begin("Unit placement", nullptr, window_flags);
+        ImGui::Text("Gold: %i", m_availableFunds);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0.5 });
+
+        ImGui::Separator();
+        ImGui::Text("Unlock");
+        ImGui::BeginTable("UnitTable", 2);
+        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
         for (auto const& t : purchaseTypes) {
             auto const& u = m_unitInfo->getInfoForType(t);
             bool const canUnlock = (m_availableFunds >= u.unlockCost);
+
+            ImGui::TableNextColumn();
+            TextAlignedRight(std::to_string(u.unlockCost));
+
+            ImGui::TableNextColumn();
             ImGui::BeginDisabled(!canUnlock);
-            std::string const buttonString = u.type + " (" + std::to_string(u.unlockCost) + ")";
-            if (ImGui::Button(buttonString.c_str())) {
+            if (ImGui::Button(u.type.c_str(), { -1, 0 })) {
                 unlockType(t);
                 m_availableFunds -= u.unlockCost;
             }
             ImGui::EndDisabled();
         }
+        ImGui::EndTable();
 
         ImGui::Separator();
         ImGui::Text("Hire");
+        ImGui::BeginTable("UnitTable", 2);
+        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
         for (auto const& t : unlockedTypes) {
             auto const& u = m_unitInfo->getInfoForType(t);
-            std::string const buttonString = u.type + " (" + std::to_string(u.cost) + ")";
             bool const canBuy = (m_availableFunds >= u.cost);
+
+            ImGui::TableNextColumn();
+            TextAlignedRight(std::to_string(u.cost));
+
+            ImGui::TableNextColumn();
             ImGui::BeginDisabled(!canBuy);
-
-            if (ImGui::Button(buttonString.c_str())) {
-                getGame()->logger().debug("select: " + u.type);
-                m_activeUnitType = u.type;
+            if (m_activeUnitType == u.type) {
+                auto const colorSelected = IM_COL32(0, 120, 00, 255);
+                ImGui::PushStyleColor(ImGuiCol_Button, colorSelected);
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colorSelected);
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, colorSelected);
+                ImGui::Button(u.type.c_str(), { 80, 0 });
+                ImGui::PopStyleColor(3);
+            } else {
+                if (ImGui::Button(u.type.c_str(), { 80, 0 })) {
+                    getGame()->logger().debug("select: " + u.type);
+                    m_activeUnitType = u.type;
+                }
             }
-
             ImGui::EndDisabled();
         }
+        ImGui::EndTable();
+
+        ImGui::PopStyleVar();
+
         ImGui::End();
     }
 }
@@ -181,7 +245,7 @@ void PlacementManager::placeUnit()
         unit->create();
 
         unit->setOffset({ 0,
-            m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf)
+            m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf - 1)
                 * -terrainHeightScalingFactor });
         fieldPos -= terrainChunkSizeInPixelHalf; // offset position to top left corner of field
         unit->setPosition(fieldPos);
