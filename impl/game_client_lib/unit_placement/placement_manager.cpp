@@ -76,6 +76,9 @@ void PlacementManager::doCreate()
             "assets/units/" + u + ".png", jt::Recti { 0, 0, 32, 32 }, textureManager());
         m_imageUnits[u]->setIgnoreCamMovement(true);
         m_imageUnits[u]->setPosition({ -9999, -9999 });
+        if (m_playerId != 0) {
+            m_imageUnits[u]->setScale({ -1, 1 });
+        }
     }
 }
 
@@ -96,10 +99,11 @@ void PlacementManager::doUpdate(const float elapsed)
         m_fieldHighlight->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
             fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
         if (!m_activeUnitType.empty()) {
-            m_imageUnits[m_activeUnitType]->setOffset({ GP::UnitAnimationOffset().x,
-                GP::UnitAnimationOffset().y
-                    + m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf - 1)
-                        * -terrainHeightScalingFactor });
+            m_imageUnits[m_activeUnitType]->setOffset(
+                { GP::UnitAnimationOffset().x + (m_playerId != 0 ? 32 : 0),
+                    GP::UnitAnimationOffset().y
+                        + m_world->getFieldHeight(fieldPos + terrainChunkSizeInPixelHalf - 1)
+                            * -terrainHeightScalingFactor });
             m_imageUnits[m_activeUnitType]->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
                 fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
         }
