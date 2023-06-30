@@ -312,8 +312,12 @@ void StateGame::onDraw() const
     ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
         | ImGuiWindowFlags_NoScrollWithMouse };
-    ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 32, 32 }, ImGuiCond_Always);
+    ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 23, 38 }, ImGuiCond_Always);
+    ImGui::SetNextWindowSize({ 46, 64 }, ImGuiCond_Always);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
     ImGui::Begin("State", nullptr, window_flags);
+    ImGui::PopStyleVar(2);
     if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {
         ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
                          m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle()),

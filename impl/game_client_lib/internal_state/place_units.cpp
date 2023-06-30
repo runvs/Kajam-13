@@ -18,24 +18,23 @@
 
 void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 {
-    static auto const selectUnit = [this, &state](auto units) {
-        for (auto& u : *units) {
-            auto unit = u.lock();
-            if (!unit) {
-                continue;
-            }
-            if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
-                continue;
-            }
-            if (unit->isMouseOver()) {
-                m_unitInterfaceSelected = unit;
-                m_selectedUnitType = unit->getInfo().type;
-                break;
-            }
-        }
-    };
-
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
+        auto const selectUnit = [this, &state](auto units) {
+            for (auto& u : *units) {
+                auto unit = u.lock();
+                if (!unit) {
+                    continue;
+                }
+                if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
+                    continue;
+                }
+                if (unit->isMouseOver()) {
+                    m_unitInterfaceSelected = unit;
+                    m_selectedUnitType = unit->getInfo().type;
+                    break;
+                }
+            }
+        };
         selectUnit(state.getUnits());
         selectUnit(state.getPlacementManager()->getPlacedUnits());
     }
@@ -86,12 +85,12 @@ void PlaceUnits::draw(StateGame& state)
     ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
         | ImGuiWindowFlags_NoScrollWithMouse };
-    auto const windowPadding
-        = ImGui::GetStyle().WindowPadding.x + ImGui::GetStyle().WindowBorderSize;
-    ImGui::SetNextWindowPos(
-        { GP::GetWindowSize().x / 2 - 100 - windowPadding / 2, 100 }, ImGuiCond_Always);
-    ImGui::SetNextWindowSize({ 196 + windowPadding, 26 }, ImGuiCond_Always);
+    ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 98, 106 }, ImGuiCond_Always);
+    ImGui::SetNextWindowSize({ 196, 26 }, ImGuiCond_Always);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
     ImGui::Begin("End Placement", nullptr, window_flags);
+    ImGui::PopStyleVar(2);
     ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(212, 180, 134, 120));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(0, 0, 0, 0));

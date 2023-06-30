@@ -10,7 +10,7 @@
       "ranged"
     ]
   },
-  "attackTimerMax": 5.0,
+  "attackTimerMax": 5.5,
   "movementSpeed": 7.0,
   "colliderRadius": 6.0,
   "cost": 150,
