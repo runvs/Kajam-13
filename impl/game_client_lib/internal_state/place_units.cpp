@@ -18,24 +18,23 @@
 
 void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 {
-    static auto const selectUnit = [this, &state](auto units) {
-        for (auto& u : *units) {
-            auto unit = u.lock();
-            if (!unit) {
-                continue;
-            }
-            if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
-                continue;
-            }
-            if (unit->isMouseOver()) {
-                m_unitInterfaceSelected = unit;
-                m_selectedUnitType = unit->getInfo().type;
-                break;
-            }
-        }
-    };
-
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
+        auto const selectUnit = [this, &state](auto units) {
+            for (auto& u : *units) {
+                auto unit = u.lock();
+                if (!unit) {
+                    continue;
+                }
+                if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
+                    continue;
+                }
+                if (unit->isMouseOver()) {
+                    m_unitInterfaceSelected = unit;
+                    m_selectedUnitType = unit->getInfo().type;
+                    break;
+                }
+            }
+        };
         selectUnit(state.getUnits());
         selectUnit(state.getPlacementManager()->getPlacedUnits());
     }
