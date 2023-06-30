@@ -94,7 +94,8 @@ void PlaceUnits::draw(StateGame& state)
     ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(212, 180, 134, 120));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(0, 0, 0, 0));
-    if (ImGui::ImageButton(m_imageEndPlacement->getSFSprite().getTexture()->getNativeHandle(),
+    if (ImGui::ImageButton(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                               m_imageEndPlacement->getSFSprite().getTexture()->getNativeHandle()),
             { 196, 26 }, { 0, 0 }, { 1, 1 }, 0)) {
         state.getStateManager()->switchToState(InternalState::WaitForSimulationResults, state);
     }
@@ -176,7 +177,8 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
             upg.icon = std::make_shared<jt::Sprite>(
                 upg.iconPath, jt ::Recti { 0, 0, 64, 64 }, state.getGame()->gfx().textureManager());
         }
-        ImGui::Image(upg.icon->getSFSprite().getTexture()->getNativeHandle(),
+        ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                         upg.icon->getSFSprite().getTexture()->getNativeHandle()),
             ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
         ImGui::SameLine(0, -1);
         ImGui::Text("%s", upg.name.c_str());
@@ -206,7 +208,8 @@ void PlaceUnits::drawUnitUpgradeWindow(
             upg.icon = std::make_shared<jt::Sprite>(upg.iconPath, jt ::Recti { 0, 0, 256, 256 },
                 state.getGame()->gfx().textureManager());
         }
-        ImGui::Image(upg.icon->getSFSprite().getTexture()->getNativeHandle(),
+        ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                         upg.icon->getSFSprite().getTexture()->getNativeHandle()),
             ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
         ImGui::SameLine(0, -1);
         if (ImGui::Button(str.c_str())) {
