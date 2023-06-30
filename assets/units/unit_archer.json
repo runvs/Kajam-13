@@ -4,7 +4,12 @@
   "expRequiredForLevelUp": 80,
   "expGainWhenKilled": 30,
   "hitpoints": 20.0,
-  "damage": 15.0,
+  "damage": {
+    "damage": 15.0,
+    "damageTypes": [
+      "ranged"
+    ]
+  },
   "attackTimerMax": 2.7,
   "movementSpeed": 10.0,
   "colliderRadius": 6.0,
@@ -14,7 +19,7 @@
     "type": 1,
     "range": 9.0,
     "arrowHeight": 48.0,
-    "arrowSpeed": 90.0
+    "arrowSpeed": 110.0
   },
   "animations": [
     {

@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 #define JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 
-#include <damage_info.hpp>
+#include <network_data/damage_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 #include <object_properties.hpp>
 #include <unit_info.hpp>

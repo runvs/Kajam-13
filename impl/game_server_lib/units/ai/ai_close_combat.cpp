@@ -36,11 +36,9 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
                 = unit->getUnitInfoFull().attackTimerMax + jt::Random::getFloat(0.0f, 0.1f);
 
             unit->setAnim("attack");
-            DamageInfo d;
-            d.damage = unit->getUnitInfoFull().damage;
 
-            CloseCombatInfo cci { unit, target.get(), d };
-            float attackDelay = 0.4f;
+            CloseCombatInfo cci { unit, target.get(), unit->getUnitInfoFull().damage };
+            float const attackDelay = 0.4f;
             // TODO adjust depending on unit type/animation
             world.scheduleAttack(cci, attackDelay);
         }

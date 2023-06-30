@@ -1,8 +1,8 @@
 #include "server_unit.hpp"
-#include <damage_info.hpp>
 #include <game_properties.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
+#include <network_data/damage_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 #include <unit_info.hpp>
 #include <units/ai/ai_cannon.hpp>

@@ -1,8 +1,8 @@
 #include "ai_cannon.hpp"
-#include <damage_info.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <network_data/arrow_info.hpp>
+#include <network_data/damage_info.hpp>
 #include <random/random.hpp>
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
@@ -50,7 +50,7 @@ void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world
                 arrowInfo.startPos += jt::Vector2f { 2.0f, 3.0f };
             }
 
-            arrowInfo.damage = DamageInfo { unit->getUnitInfoFull().damage };
+            arrowInfo.damage = unit->getUnitInfoFull().damage;
             arrowInfo.currentPos = unit->getPosition();
             arrowInfo.totalTime = dist / unit->getUnitInfoFull().ai.arrowSpeed;
             auto const heightScaling = jt::MathHelper::clamp(dist / attackRange, 0.05f, 1.0f);

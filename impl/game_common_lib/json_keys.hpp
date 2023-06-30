@@ -70,6 +70,7 @@ constexpr auto map = "map";
 constexpr auto mapName = "name";
 constexpr auto mapHeights = "heights";
 
+constexpr auto damageTypes = "damageTypes";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

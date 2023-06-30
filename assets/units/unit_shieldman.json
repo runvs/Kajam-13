@@ -4,9 +4,11 @@
   "expRequiredForLevelUp": 120,
   "expGainWhenKilled": 100,
   "hitpoints": 250.0,
-  "damage": 15.0,
+  "damage": {
+    "damage": 15.0
+  },
   "attackTimerMax": 2.25,
-  "movementSpeed": 12.0,
+  "movementSpeed": 10.0,
   "colliderRadius": 6.0,
   "cost": 150,
   "unlockCost": 100,

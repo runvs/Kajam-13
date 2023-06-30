@@ -153,7 +153,7 @@ void applyUpgradeFloat(float& value, const UpgradeValue& upg)
 void applyUpgrade(UnitInfo& info, const UpgradeInfo& upg)
 {
     applyUpgradeFloat(info.hitpointsMax, upg.hitpoints);
-    applyUpgradeFloat(info.damage, upg.damage);
+    applyUpgradeFloat(info.damage.damage, upg.damage);
     applyUpgradeInt(info.cost, upg.cost);
     applyUpgradeFloat(info.attackTimerMax, upg.attackSpeed);
     applyUpgradeFloat(info.movementSpeed, upg.movementSpeed);
@@ -166,7 +166,7 @@ UnitInfo getUnitInfoWithLevelAndUpgrades(
     UnitInfo info = baseInfo;
 
     info.hitpointsMax = baseInfo.hitpointsMax * level;
-    info.damage = baseInfo.damage * level;
+    info.damage.damage = baseInfo.damage.damage * level;
 
     info.cost = baseInfo.cost * level;
 

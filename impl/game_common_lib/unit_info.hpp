@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_UNIT_INFO_HPP
 #define JAMTEMPLATE_UNIT_INFO_HPP
 
+#include <network_data/damage_info.hpp>
 #include <nlohmann.hpp>
 #include <sprite.hpp>
 #include <memory>
@@ -55,8 +56,7 @@ struct UnitInfo {
 
     float hitpointsMax { 0.0f };
 
-    // TODO use damage struct
-    float damage { 0.0f };
+    DamageInfo damage { 0.0f, {} };
 
     float attackTimerMax { 0.0f };
     float movementSpeed { 0.0f };

@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_CLOSE_COMBAT_INFO_HPP
 #define JAMTEMPLATE_CLOSE_COMBAT_INFO_HPP
 
-#include <damage_info.hpp>
+#include <network_data/damage_info.hpp>
 #include <simulation_object_interface.hpp>
 #include <units/server_unit.hpp>
 

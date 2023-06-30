@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_ARROW_INFO_HPP
 #define JAMTEMPLATE_ARROW_INFO_HPP
 
-#include <damage_info.hpp>
+#include <network_data/damage_info.hpp>
 #include <nlohmann.hpp>
 #include <vector2.hpp>
 
@@ -9,7 +9,7 @@ struct ArrowInfo {
     jt::Vector2f startPos { 0.0f, 0.0f };
     jt::Vector2f endPos { 0.0f, 0.0f };
     jt::Vector2f currentPos { 0.0f, 0.0f };
-    DamageInfo damage { 0.0f };
+    DamageInfo damage { 0.0f, {} };
     float age { 0.0f };
     float totalTime { 0.0f };
     int targetPlayerId { -1 };

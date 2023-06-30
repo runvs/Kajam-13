@@ -1,10 +1,12 @@
 {
   "type": "swordman",
   "description": "well armed fighter with decent armor.",
-  "expRequiredForLevelUp": 100,
+  "expRequiredForLevelUp": 90,
   "expGainWhenKilled": 30,
   "hitpoints": 90.0,
-  "damage": 8.0,
+  "damage": {
+    "damage": 8.0
+  },
   "attackTimerMax": 1.0,
   "movementSpeed": 18.0,
   "colliderRadius": 6.0,
