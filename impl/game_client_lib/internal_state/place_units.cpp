@@ -5,10 +5,10 @@
 #include <input/mouse/mouse_defines.hpp>
 #include <internal_state/common_functions.hpp>
 #include <internal_state/internal_state_manager.hpp>
+#include <network_data/unit_info.hpp>
 #include <rect.hpp>
 #include <sprite.hpp>
 #include <state_game.hpp>
-#include <unit_info.hpp>
 #include <unit_interface.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <vector2.hpp>

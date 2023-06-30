@@ -1,5 +1,6 @@
 ﻿#include "state_game.hpp"
 #include "network_data/select_unit_info.hpp"
+#include <network_data/unit_info_collection.hpp>
 #include <color/color.hpp>
 #include <critters/bird.hpp>
 #include <critters/bunny.hpp>
@@ -22,7 +23,6 @@
 #include <simulation_result_data.hpp>
 #include <state_menu.hpp>
 #include <tweens/tween_alpha.hpp>
-#include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <vector2.hpp>
 #include <imgui.h>

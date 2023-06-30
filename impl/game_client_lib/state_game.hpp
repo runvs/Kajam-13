@@ -10,6 +10,8 @@
 #include <internal_state/internal_state_interface.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <map/terrain.hpp>
+#include <network_data/unit_info.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <nlohmann.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
@@ -21,8 +23,6 @@
 #include <terrain_renderer.hpp>
 #include <text.hpp>
 #include <unit.hpp>
-#include <unit_info.hpp>
-#include <unit_info_collection.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <vector2.hpp>

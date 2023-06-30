@@ -4,9 +4,9 @@
 #include <game_properties.hpp>
 #include <json_keys.hpp>
 #include <message.hpp>
+#include <network_data/unit_info.hpp>
 #include <network_properties.hpp>
 #include <simulation_result_data.hpp>
-#include <unit_info.hpp>
 #include <memory>
 #include <stdexcept>
 

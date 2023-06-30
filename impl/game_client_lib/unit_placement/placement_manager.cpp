@@ -1,4 +1,5 @@
 #include "placement_manager.hpp"
+#include <network_data/unit_info_collection.hpp>
 #include "upgrade_manager.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
@@ -8,7 +9,6 @@
 #include <math_helper.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
 #include <object_group.hpp>
-#include <unit_info_collection.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <imgui.h>
 #include <memory>

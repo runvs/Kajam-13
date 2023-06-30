@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_UNIT_INFO_COLLECTION_HPP
 #define JAMTEMPLATE_UNIT_INFO_COLLECTION_HPP
 
-#include <log/logger_interface.hpp>
+#include "log/logger_interface.hpp"
+#include "unit_info.hpp"
 #include <nlohmann.hpp>
-#include <unit_info.hpp>
 #include <string>
 #include <vector>
 

@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_UNIT_INTERFACE_HPP
 #define JAMTEMPLATE_UNIT_INTERFACE_HPP
 
-#include <unit_info.hpp>
+#include <network_data/unit_info.hpp>
 
 class UnitInterface {
 public:

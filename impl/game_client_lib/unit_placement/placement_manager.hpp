@@ -6,13 +6,13 @@
 #include <game_object_collection.hpp>
 #include <map/terrain.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <network_data/unit_info.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
 #include <player_id_dispatcher.hpp>
 #include <shape.hpp>
 #include <tween_collection.hpp>
-#include <unit_info.hpp>
-#include <unit_info_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <unit_placement/upgrade_manager.hpp>
 #include <array>

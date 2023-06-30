@@ -4,8 +4,8 @@
 #include <animation.hpp>
 #include <game_object.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <network_data/unit_info.hpp>
 #include <tweens/tween_base.hpp>
-#include <unit_info.hpp>
 #include <unit_interface.hpp>
 #include <vector2.hpp>
 #include <memory>

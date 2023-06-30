@@ -1,9 +1,9 @@
 #ifndef JAMTEMPLATE_UNIT_INFO_HPP
 #define JAMTEMPLATE_UNIT_INFO_HPP
 
-#include <network_data/damage_info.hpp>
+#include "damage_info.hpp"
+#include "sprite.hpp"
 #include <nlohmann.hpp>
-#include <sprite.hpp>
 #include <memory>
 #include <string>
 #include <vector>

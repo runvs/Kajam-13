@@ -5,9 +5,9 @@
 #include <game_simulation.hpp>
 #include <log/logger_interface.hpp>
 #include <network_data/select_unit_info.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
-#include <unit_info_collection.hpp>
 #include <upgrade_unit_data.hpp>
 #include <atomic>
 #include <map>

@@ -2,9 +2,9 @@
 #define JAMTEMPLATE_SIMULATION_OBJECT_INTERFACE_HPP
 
 #include <network_data/damage_info.hpp>
+#include <network_data/unit_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 #include <object_properties.hpp>
-#include <unit_info.hpp>
 #include <unit_server_round_start_data.hpp>
 #include <vector2.hpp>
 

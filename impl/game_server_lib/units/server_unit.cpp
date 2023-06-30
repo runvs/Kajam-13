@@ -3,8 +3,8 @@
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <network_data/damage_info.hpp>
+#include <network_data/unit_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
-#include <unit_info.hpp>
 #include <units/ai/ai_cannon.hpp>
 #include <units/ai/ai_close_combat.hpp>
 #include <units/ai/ai_ranged_combat.hpp>

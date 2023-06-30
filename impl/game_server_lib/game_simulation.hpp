@@ -1,6 +1,7 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
+#include <network_data/unit_info_collection.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <close_combat_info.hpp>
 #include <game_properties.hpp>
@@ -13,7 +14,6 @@
 #include <server_network_connection.hpp>
 #include <simulation_object_interface.hpp>
 #include <simulation_result_message_sender.hpp>
-#include <unit_info_collection.hpp>
 #include <unit_server_round_start_data.hpp>
 #include <units/server_unit.hpp>
 #include <upgrade_unit_data.hpp>

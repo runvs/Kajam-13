@@ -3,6 +3,7 @@
 
 #include "internal_state/select_starting_units.hpp"
 #include "network_data/select_unit_info.hpp"
+#include <network_data/unit_info_collection.hpp>
 #include <asio/ip/tcp.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
@@ -11,7 +12,6 @@
 #include <nlohmann.hpp>
 #include <object_properties.hpp>
 #include <simulation_result_data.hpp>
-#include <unit_info_collection.hpp>
 #include <upgrade_unit_data.hpp>
 #include <atomic>
 #include <functional>

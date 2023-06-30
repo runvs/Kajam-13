@@ -4,9 +4,9 @@
 
 #include <box2dwrapper/box2d_object.hpp>
 #include <log/logger_interface.hpp>
+#include <network_data/unit_info.hpp>
 #include <object_properties.hpp>
 #include <simulation_object_interface.hpp>
-#include <unit_info.hpp>
 #include <units/ai/ai_interface.hpp>
 #include <upgrade_unit_data.hpp>
 #include <vector2.hpp>

@@ -8,12 +8,12 @@
 #include <bar.hpp>
 #include <counted_object.hpp>
 #include <game_object.hpp>
+#include <network_data/unit_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
 #include <nlohmann.hpp>
 #include <object_properties.hpp>
 #include <shape.hpp>
 #include <text.hpp>
-#include <unit_info.hpp>
 #include <unit_interface.hpp>
 #include <vector2.hpp>
 #include <memory>

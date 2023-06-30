@@ -1,7 +1,7 @@
 #ifndef JAMTEMPLATE_UPGRADE_MANAGER_HPP
 #define JAMTEMPLATE_UPGRADE_MANAGER_HPP
 
-#include <unit_info_collection.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <map>
 #include <string>
 

@@ -1,8 +1,8 @@
 #ifndef JAMTEMPLATE_UPGRADE_UNIT_DATA_HPP
 #define JAMTEMPLATE_UPGRADE_UNIT_DATA_HPP
 
+#include <network_data/unit_info.hpp>
 #include <nlohmann.hpp>
-#include <unit_info.hpp>
 #include <string>
 
 struct UpgradeUnitData {
