@@ -38,12 +38,15 @@ constexpr auto animations = "animations";
 constexpr auto files = "files";
 
 constexpr auto unitType = "type";
+constexpr auto aitype = "type";
 constexpr auto description = "description";
 constexpr auto unitAnim = "unitNewAnim";
 constexpr auto unitWalkingRight = "wr";
 
 constexpr auto damage = "damage";
 constexpr auto arrows = "arrows";
+constexpr auto arrowSpeed = "arrowSpeed";
+constexpr auto arrowHeight = "arrowHeight";
 
 constexpr auto range = "range";
 
@@ -54,7 +57,6 @@ constexpr auto cost = "cost";
 constexpr auto unlockCost = "unlockCost";
 constexpr auto unitUpgrades = "unitUpgrades";
 
-constexpr auto experience = "exp";
 constexpr auto experienceForLevelUp = "expRequiredForLevelUp";
 constexpr auto experienceGainWhenKilled = "expGainWhenKilled";
 constexpr auto level = "level";
@@ -71,6 +73,7 @@ constexpr auto mapName = "name";
 constexpr auto mapHeights = "heights";
 
 constexpr auto damageTypes = "damageTypes";
+constexpr auto filename = "jsonfilename";
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

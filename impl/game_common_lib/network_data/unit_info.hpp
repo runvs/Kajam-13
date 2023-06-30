@@ -1,49 +1,14 @@
 #ifndef JAMTEMPLATE_UNIT_INFO_HPP
 #define JAMTEMPLATE_UNIT_INFO_HPP
 
-#include "damage_info.hpp"
-#include "sprite.hpp"
+#include <network_data/ai_info.hpp>
+#include <network_data/animation_info.hpp>
+#include <network_data/damage_info.hpp>
+#include <network_data/upgrade_info.hpp>
 #include <nlohmann.hpp>
 #include <memory>
 #include <string>
 #include <vector>
-
-struct AnimationInfo {
-    std::string jsonfilename { "" };
-};
-
-void to_json(nlohmann::json& j, const AnimationInfo& p);
-void from_json(const nlohmann::json& j, AnimationInfo& p);
-
-struct AiInfo {
-    enum AiType { CLOSE_COMBAT, RANGED_COMBAT, CANNON };
-    AiType type;
-    float range { -1.0f };
-    float arrowHeight { 0.0f };
-    float arrowSpeed { 0.0f };
-};
-
-void to_json(nlohmann::json& j, const AiInfo& p);
-void from_json(const nlohmann::json& j, AiInfo& p);
-
-struct UpgradeValue {
-    float factor { 0.0f };
-    float add { 0.0f };
-};
-
-struct UpgradeInfo {
-    std::string name;
-    std::string iconPath;
-    std::shared_ptr<jt::Sprite> icon { nullptr };
-    int upgradeCost { 0 };
-
-    UpgradeValue damage;
-    UpgradeValue attackSpeed;
-    UpgradeValue movementSpeed;
-    UpgradeValue range;
-    UpgradeValue hitpoints;
-    UpgradeValue cost;
-};
 
 /// Storage for initial values for units
 struct UnitInfo {
@@ -70,12 +35,6 @@ struct UnitInfo {
     AiInfo ai;
     std::vector<UpgradeInfo> possibleUpgrades {};
 };
-
-void to_json(nlohmann::json& j, const UpgradeInfo& p);
-void from_json(const nlohmann::json& j, UpgradeInfo& p);
-
-void to_json(nlohmann::json& j, const UpgradeValue& p);
-void from_json(const nlohmann::json& j, UpgradeValue& p);
 
 void to_json(nlohmann::json& j, const UnitInfo& p);
 void from_json(const nlohmann::json& j, UnitInfo& p);

@@ -157,7 +157,7 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
         ImGui::Text("DMG");
         ImGui::TableNextColumn();
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
-        ImGui::Text("%.2f", unitInfo.damage);
+        ImGui::Text("%.2f", unitInfo.damage.damage);
         ImGui::PopStyleColor();
         ImGui::TableNextColumn();
         ImGui::Text("ATS");
