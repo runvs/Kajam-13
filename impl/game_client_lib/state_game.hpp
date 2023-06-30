@@ -53,6 +53,7 @@ public:
 
     std::shared_ptr<InternalStateManager> getStateManager();
     std::shared_ptr<ServerConnection> getServerConnection();
+    std::shared_ptr<Terrain> getTerrain();
     std::shared_ptr<TerrainRenderer> getTerrainRenderer();
     std::shared_ptr<PlacementManager> getPlacementManager();
     std::shared_ptr<UnitInfoCollection> getUnitInfo();

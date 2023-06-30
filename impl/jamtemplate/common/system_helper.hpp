@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_SYSTEMHELPER_HPP
 
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <random>
@@ -116,6 +117,16 @@ Iter select_randomly(Iter start, Iter end)
     static std::mt19937 gen(rd());
     return select_randomly(start, end, gen);
 }
+
+/// Convert native handle type to ImGui::ImTextureId
+/// \tparam NativeHandleT The native handle type
+/// \param nativeHandle The native handle provided by SFML/SDL
+/// \return ImTextureID handle
+template <typename ImTextureIdT, typename NativeHandleT>
+ImTextureIdT nativeHandleToImTextureId(NativeHandleT const nativeHandle)
+{
+    return reinterpret_cast<ImTextureIdT>(static_cast<std::uintptr_t>(nativeHandle));
+};
 
 } // namespace SystemHelper
 } // namespace jt

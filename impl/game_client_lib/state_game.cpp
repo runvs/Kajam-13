@@ -1,6 +1,5 @@
 ﻿#include "state_game.hpp"
 #include "network_data/select_unit_info.hpp"
-#include <network_data/unit_info_collection.hpp>
 #include <color/color.hpp>
 #include <critters/bird.hpp>
 #include <critters/bunny.hpp>
@@ -13,6 +12,7 @@
 #include <internal_state/internal_state_manager.hpp>
 #include <json_keys.hpp>
 #include <message.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <object_group.hpp>
 #include <particle_system.hpp>
 #include <player_id_dispatcher.hpp>
@@ -22,6 +22,7 @@
 #include <shape.hpp>
 #include <simulation_result_data.hpp>
 #include <state_menu.hpp>
+#include <system_helper.hpp>
 #include <tweens/tween_alpha.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <vector2.hpp>
@@ -314,7 +315,8 @@ void StateGame::onDraw() const
     ImGui::SetNextWindowPos({ GP::GetWindowSize().x / 2 - 32, 32 }, ImGuiCond_Always);
     ImGui::Begin("State", nullptr, window_flags);
     if (m_internalStateManager->getActiveStateE() == InternalState::WaitForAllPlayers) {
-        ImGui::Image(m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle(),
+        ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                         m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle()),
             { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
         if (ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
@@ -323,7 +325,8 @@ void StateGame::onDraw() const
         }
     } else if (m_internalStateManager->getActiveStateE()
         == InternalState::WaitForSimulationResults) {
-        ImGui::Image(m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle(),
+        ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                         m_stateIconWaiting->getSFSprite().getTexture()->getNativeHandle()),
             { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
         if (ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
@@ -331,7 +334,8 @@ void StateGame::onDraw() const
             ImGui::EndTooltip();
         }
     } else if (m_internalStateManager->getActiveStateE() == InternalState::PlaceUnits) {
-        ImGui::Image(m_stateIconPlacing->getSFSprite().getTexture()->getNativeHandle(),
+        ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                         m_stateIconPlacing->getSFSprite().getTexture()->getNativeHandle()),
             { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
         if (ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
@@ -339,7 +343,8 @@ void StateGame::onDraw() const
             ImGui::EndTooltip();
         }
     } else if (m_internalStateManager->getActiveStateE() == InternalState::Playback) {
-        ImGui::Image(m_stateIconFighting->getSFSprite().getTexture()->getNativeHandle(),
+        ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                         m_stateIconFighting->getSFSprite().getTexture()->getNativeHandle()),
             { 46.0f, 64.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f });
         if (ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
@@ -409,6 +414,7 @@ std::shared_ptr<InternalStateManager> StateGame::getStateManager()
     return m_internalStateManager;
 }
 std::shared_ptr<ServerConnection> StateGame::getServerConnection() { return m_serverConnection; }
+std::shared_ptr<Terrain> StateGame::getTerrain() { return m_terrain; }
 std::shared_ptr<TerrainRenderer> StateGame::getTerrainRenderer() { return m_terrainRenderer; }
 std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_placementManager; }
 std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }

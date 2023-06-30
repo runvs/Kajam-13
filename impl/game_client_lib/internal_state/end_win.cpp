@@ -2,6 +2,7 @@
 #include <game_interface.hpp>
 #include <state_game.hpp>
 #include <state_menu.hpp>
+#include <system_helper.hpp>
 #include <imgui.h>
 
 void EndWin::update(StateGame& /*state*/, float /*elapsed*/) { }
@@ -24,7 +25,9 @@ void EndWin::draw(StateGame& state)
     ImGui::SetNextWindowSize({ 412, 0 }, ImGuiCond_Always);
     ImGui::Begin("Game Over", nullptr, window_flags);
 
-    ImGui::Image(m_imageVictory->getSFSprite().getTexture()->getNativeHandle(), { 408.0f, 272.0f });
+    ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                     m_imageVictory->getSFSprite().getTexture()->getNativeHandle()),
+        { 408.0f, 272.0f });
     if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip();
         ImGui::Text("Victory");
@@ -35,7 +38,8 @@ void EndWin::draw(StateGame& state)
     ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(212, 180, 134, 120));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(0, 0, 0, 0));
-    if (ImGui::ImageButton(m_imageBackToMenu->getSFSprite().getTexture()->getNativeHandle(),
+    if (ImGui::ImageButton(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
+                               m_imageBackToMenu->getSFSprite().getTexture()->getNativeHandle()),
             { 196, 26 }, { 0, 0 }, { 1, 1 }, 0)) {
         state.getGame()->stateManager().switchState(std::make_shared<StateMenu>());
     }
