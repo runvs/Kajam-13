@@ -1,6 +1,4 @@
 #include "placement_manager.hpp"
-#include <network_data/unit_info_collection.hpp>
-#include "upgrade_manager.hpp"
 #include <drawable_helpers.hpp>
 #include <game_interface.hpp>
 #include <game_properties.hpp>
@@ -8,8 +6,10 @@
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <object_group.hpp>
 #include <unit_placement/placed_unit.hpp>
+#include <unit_placement/upgrade_manager.hpp>
 #include <imgui.h>
 #include <memory>
 #include <string>
@@ -51,6 +51,12 @@ void PlacementManager::doCreate()
     m_sfxPlaceUnit->setVolume(0.7f);
     m_sfxBuyUpgrade = getGame()->audio().addTemporarySound("assets/sfx/powerup.wav");
     m_sfxBuyUpgrade->setVolume(0.7f);
+
+    m_fieldHighlight = jt::dh::createShapeRect(
+        { 0, 0, terrainChunkSizeInPixel - 1, terrainChunkSizeInPixel - 1 },
+        jt::Color { 0, 200, 0, 66 }, textureManager());
+    m_fieldHighlight->setIgnoreCamMovement(true);
+    m_fieldHighlight->setPosition({ -9999, -9999 });
 }
 
 void PlacementManager::doUpdate(const float elapsed)
@@ -62,6 +68,17 @@ void PlacementManager::doUpdate(const float elapsed)
     for (auto& area : m_blockedUnitPlacementAreas) {
         area->update(elapsed);
     }
+
+    int posX, posY;
+    auto fieldPos = m_world->getMappedFieldPosition(
+        getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
+    if (isValidField(fieldPos, posX, posY)) {
+        m_fieldHighlight->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
+            fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
+    } else {
+        m_fieldHighlight->setPosition({ -9999, -9999 });
+    }
+    m_fieldHighlight->update(elapsed);
 }
 
 void PlacementManager::doDraw() const
@@ -75,6 +92,8 @@ void PlacementManager::doDraw() const
     for (auto& area : m_blockedUnitPlacementAreas) {
         area->draw(renderTarget());
     }
+
+    m_fieldHighlight->draw(renderTarget());
 
     if (m_unitInfo) {
         ImGui::Begin("unit placement");
@@ -144,17 +163,9 @@ void PlacementManager::placeUnit()
         int posX, posY;
         auto fieldPos = m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
-        static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
-            AreaType::AREA_FLANK_BOT };
-        bool inValidArea { false };
-        for (auto& area : areas) {
-            if (jt::MathHelper::checkIsIn(getUnitPlacementArea(m_playerId, area), fieldPos)) {
-                inValidArea = true;
-                break;
-            }
-        }
-        if (!inValidArea || fieldInUse(posX, posY)) {
-            // TODO Show some visual representation or play a sound that placing a unit here is not
+        if (!isValidField(fieldPos, posX, posY)) {
+            // TODO Show some visual representation or play a sound that placing a unit here is
+            // not
             getGame()->logger().info(
                 "tried to place unit in invalid position", { "PlacementManager" });
             // possible.
@@ -185,6 +196,20 @@ void PlacementManager::placeUnit()
 
         buyUnit(info.type);
     }
+}
+
+bool PlacementManager::isValidField(jt::Vector2f const& pos, int const x, int const y)
+{
+    static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
+        AreaType::AREA_FLANK_BOT };
+    bool inValidArea { false };
+    for (auto& area : areas) {
+        if (jt::MathHelper::checkIsIn(getUnitPlacementArea(m_playerId, area), pos)) {
+            inValidArea = true;
+            break;
+        }
+    }
+    return inValidArea && !fieldInUse(x, y);
 }
 
 bool& PlacementManager::fieldInUse(int const x, int const y)
@@ -220,17 +245,6 @@ void PlacementManager::unlockType(const std::string& type) const
     m_unlockedTypes.push_back(type);
 }
 
-// void PlacementManager::buyUpgrade(std::string const& unitType, const std::string& upgrade) const
-//{
-//     m_sfxBuyUpgrade->play();
-// }
-
-// std::vector<UpgradeInfo>& PlacementManager::getBoughtUpgradesForUnit(
-//     const std::string& unitType) const
-//{
-//     return m_boughtUpgradesPlayer0[unitType];
-// }
-
 void PlacementManager::flashForUpgrade(std::string const& unitType)
 {
     for (auto& u : *m_placedUnits) {
@@ -240,6 +254,7 @@ void PlacementManager::flashForUpgrade(std::string const& unitType)
         }
     }
 }
+
 void PlacementManager::buyUnit(const std::string& type)
 {
     if (m_boughtUnits.count(type) == 0) {
@@ -252,5 +267,5 @@ void PlacementManager::buyUnit(const std::string& type)
         m_unitInfo->multiplyPriceForUnitBy(type, 1.08f);
     }
 }
-std::shared_ptr<UpgradeManager> PlacementManager::upgrades() { return m_upgrades; }
+
 std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_upgrades; }
