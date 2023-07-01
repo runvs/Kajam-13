@@ -3,13 +3,13 @@
 
 #include <object_properties.hpp>
 #include <server_network_connection.hpp>
-#include <simulation_result_data.hpp>
+#include <simulation_result_sender_interface.hpp>
 
-class SimulationResultMessageSender {
+class SimulationResultMessageSender : public SimulationResultSenderInterface {
 public:
     explicit SimulationResultMessageSender(ServerNetworkConnection& connection);
 
-    void sendSimulationResults(SimulationResultDataForAllFrames const& data);
+    void sendSimulationResults(SimulationResultDataForAllFrames const& data) override;
 
 private:
     ServerNetworkConnection& m_connection;
