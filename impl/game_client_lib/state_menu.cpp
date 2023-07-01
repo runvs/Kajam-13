@@ -69,7 +69,6 @@ void StateMenu::createShapes()
 void StateMenu::createMenuText()
 {
     createTextTitle();
-    createTextStart();
     createTextExplanation();
     createTextCredits();
 }
@@ -105,15 +104,6 @@ void StateMenu::createTextCredits()
     m_textVersion->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 1, 1 });
 }
 
-void StateMenu::createTextStart()
-{
-    auto const half_width = GP::GetScreenSize().x / 2.0f;
-    m_textStart = jt::dh::createText(
-        renderTarget(), "Press Space to start the game", 24U, GP::PaletteFontFront());
-    m_textStart->setPosition({ half_width, 150 });
-    m_textStart->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 3, 3 });
-}
-
 void StateMenu::createTextTitle()
 {
     float half_width = GP::GetScreenSize().x / 2;
@@ -127,43 +117,6 @@ void StateMenu::createTweens()
     createTweenOverlayAlpha();
     createTweenTitleAlpha();
     createTweenCreditsPosition();
-    createTweenExplanation();
-}
-
-void StateMenu::createInstructionTweenColor1()
-{
-    auto tc = jt::TweenColor::create(
-        m_textStart, 0.5f, GP::PaletteFontFront(), GP::PalleteFrontHighlight());
-    tc->addCompleteCallback([this]() { createInstructionTweenColor2(); });
-    tc->setAgePercentConversion([](float age) {
-        return jt::Lerp::cubic(0.0f, 1.0f, jt::MathHelper::clamp(age, 0.0f, 1.0f));
-    });
-    add(tc);
-}
-
-void StateMenu::createInstructionTweenColor2()
-{
-    auto tc = jt::TweenColor::create(
-        m_textStart, 0.45f, GP::PalleteFrontHighlight(), GP::PaletteFontFront());
-    tc->setAgePercentConversion([](float age) {
-        return jt::Lerp::cubic(0.0f, 1.0f, jt::MathHelper::clamp(age, 0.0f, 1.0f));
-    });
-    tc->setStartDelay(0.2f);
-    tc->addCompleteCallback([this]() { createInstructionTweenColor1(); });
-    add(tc);
-}
-
-void StateMenu::createTweenExplanation()
-{
-    auto s2 = m_textStart->getPosition() + jt::Vector2f { -1000, 0 };
-    auto e2 = m_textStart->getPosition();
-
-    auto tween = jt::TweenPosition::create(m_textStart, 0.5f, s2, e2);
-    tween->setStartDelay(0.3f);
-    tween->setSkipFrames();
-
-    tween->addCompleteCallback([this]() { createInstructionTweenColor1(); });
-    add(tween);
 }
 
 void StateMenu::createTweenTitleAlpha()
@@ -207,7 +160,6 @@ void StateMenu::updateDrawables(const float& elapsed)
 {
     m_background->update(elapsed);
     m_textTitle->update(elapsed);
-    m_textStart->update(elapsed);
     m_textExplanation->update(elapsed);
     m_textCredits->update(elapsed);
     m_textVersion->update(elapsed);
@@ -220,7 +172,6 @@ void StateMenu::onDraw() const
     m_background->draw(renderTarget());
 
     m_textTitle->draw(renderTarget());
-    m_textStart->draw(renderTarget());
     m_textExplanation->draw(renderTarget());
     m_textCredits->draw(renderTarget());
     m_textVersion->draw(renderTarget());

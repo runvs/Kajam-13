@@ -127,12 +127,12 @@ void StateGame::onCreate()
     m_textPlayerZeroHp = jt::dh::createText(renderTarget(),
         std::to_string(GP::InitialPlayerHP()).c_str(), 22, GP::ColorPlayer0(), "assets/font.ttf");
     m_textPlayerZeroHp->setTextAlign(jt::Text::TextAlign::LEFT);
-    m_textPlayerZeroHp->setPosition({ 4, 0 });
+    m_textPlayerZeroHp->setPosition({ 8, 0 });
     m_textPlayerZeroHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 1, 1 });
     m_textPlayerOneHp = jt::dh::createText(renderTarget(),
         std::to_string(GP::InitialPlayerHP()).c_str(), 22, GP::ColorPlayer1(), "assets/font.ttf");
     m_textPlayerOneHp->setTextAlign(jt::Text::TextAlign::RIGHT);
-    m_textPlayerOneHp->setPosition({ GP::GetScreenSize().x - 4, 0 });
+    m_textPlayerOneHp->setPosition({ GP::GetScreenSize().x - 10, 0 });
     m_textPlayerOneHp->setShadow(GP::PaletteFontShadow(), jt::Vector2f { -1, 1 });
 
     auto bgm = getGame()->audio().getPermanentSound("bgm_main");

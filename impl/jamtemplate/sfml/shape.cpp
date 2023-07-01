@@ -13,7 +13,9 @@ void jt::Shape::makeRect(jt::Vector2f size, jt::TextureManagerInterface& /*unuse
 
 void jt::Shape::makeCircle(float radius, jt::TextureManagerInterface& /*unused*/)
 {
-    m_shape = std::make_shared<sf::CircleShape>(radius);
+    auto circle = std::make_shared<sf::CircleShape>(radius);
+    circle->setPointCount(circle->getPointCount() * 2);
+    m_shape = circle;
     m_flashShape = std::make_shared<sf::CircleShape>(radius);
 }
 
