@@ -11,6 +11,8 @@ public:
     virtual void flash() = 0;
     virtual void setHighlight(bool v) = 0;
     virtual int getLevel() const = 0;
+    virtual int getExp() const = 0;
+    virtual int getExpForLevelUp() const = 0;
     virtual int getPlayerID() const = 0;
 };
 

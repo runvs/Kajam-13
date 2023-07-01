@@ -3,6 +3,7 @@
 
 void to_json(nlohmann::json& j, const UpgradeInfo& p)
 {
+    // TODO Do not write optional data
     j = nlohmann::json {
         // clang-format off
         { jk::upgName, p.name },
@@ -13,7 +14,8 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
         { jk::range, p.range },
         { jk::hpInitial, p.hitpoints },
         { jk::cost, p.cost },
-        { jk::upgCost, p.upgradeCost }
+        { jk::upgCost, p.upgradeCost },
+        { jk::armor, p.armor }
         // clang-format on
     };
 }
@@ -40,5 +42,8 @@ void from_json(const nlohmann::json& j, UpgradeInfo& p)
     }
     if (j.count(jk::cost) == 1) {
         j.at(jk::cost).get_to(p.cost);
+    }
+    if (j.count(jk::armor) == 1) {
+        j.at(jk::armor).get_to(p.armor);
     }
 }

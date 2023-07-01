@@ -2,7 +2,7 @@
   "type": "shieldman",
   "description": "Tanky unit with a strong shield. Rather slow.",
   "expRequiredForLevelUp": 120,
-  "expGainWhenKilled": 100,
+  "expGainWhenKilled": 90,
   "hitpoints": 250.0,
   "damage": {
     "damage": 15.0
@@ -39,6 +39,14 @@
         "add": 4.0,
         "factor": 0.0
       }
+    },
+    {
+      "name": "splash damage reduction",
+      "iconPath": "assets/images/upgrades/heavy_armor.png",
+      "upgCost": 100,
+      "armor": [
+        "NoSplashDamage"
+      ]
     }
   ]
 }

@@ -10,7 +10,7 @@
       "ranged"
     ]
   },
-  "attackTimerMax": 2.7,
+  "attackTimerMax": 2.75,
   "movementSpeed": 10.0,
   "colliderRadius": 6.0,
   "cost": 100,
@@ -41,7 +41,7 @@
       "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 150,
       "attackTimerMax": {
-        "add": -0.7,
+        "add": -0.75,
         "factor": 0.0
       }
     }

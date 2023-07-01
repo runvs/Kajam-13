@@ -6,6 +6,7 @@
 #include <sprite.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 struct UpgradeInfo {
     std::string name;
@@ -19,6 +20,7 @@ struct UpgradeInfo {
     UpgradeValue range;
     UpgradeValue hitpoints;
     UpgradeValue cost;
+    std::vector<std::string> armor;
 };
 
 void to_json(nlohmann::json& j, const UpgradeInfo& p);

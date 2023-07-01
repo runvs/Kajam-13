@@ -128,6 +128,7 @@ void Unit::updateState(UnitServerToClientData const& props)
             m_levelText->setText(std::to_string(m_level));
         }
     }
+    m_exp = props.experience;
 }
 
 void Unit::playAnimation()
@@ -211,3 +212,9 @@ void Unit::resetForNewRound()
 void Unit::flash() { m_anim->flash(0.4f, jt::colors::Green); }
 
 void Unit::setHighlight(bool v) { m_glowActive = v; }
+int Unit::getExp() const { return m_exp; }
+int Unit::getExpForLevelUp() const
+{
+    auto info = getUnitInfoWithLevelAndUpgrades(m_info, m_level, {});
+    return info.experienceRequiredForLevelUp;
+}

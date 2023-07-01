@@ -140,7 +140,8 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
     ImGui::BeginTooltip();
-    ImGui::Text("%s", unitInfo.type.c_str());
+    std::string const title = unitInfo.type + " (lv. " + std::to_string(unit->getLevel()) + ")";
+    ImGui::Text("%s", title.c_str());
     if (ImGui::BeginTable("ttUnitInfo", 4)) {
         ImGui::TableNextColumn();
         ImGui::Text("HP");
@@ -165,6 +166,18 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
         ImGui::TableNextColumn();
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 55, 0, 255));
         ImGui::Text("%.2f", unitInfo.attackTimerMax);
+        ImGui::PopStyleColor();
+        ImGui::TableNextColumn();
+        ImGui::Text("EXP");
+        ImGui::TableNextColumn();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+        ImGui::Text("%i", unit->getExp());
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::Text("/");
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+        ImGui::SameLine();
+        ImGui::Text("%i", unit->getExpForLevelUp());
         ImGui::PopStyleColor();
         ImGui::EndTable();
     }

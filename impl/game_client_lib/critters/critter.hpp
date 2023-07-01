@@ -20,7 +20,7 @@ public:
 
     void setClosestUnitPosition(jt::Vector2f const& unitPos);
 
-    void resetOnRoundStart();
+    void resetForNewRound();
 
     jt::Vector2f getPosition() const;
     bool isMoving() const;

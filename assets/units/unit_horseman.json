@@ -23,7 +23,7 @@
   ],
   "upgrades": [
     {
-      "name": "carrot of agility",
+      "name": "Carrot of agility",
       "iconPath": "assets/images/upgrades/carrot_of_agility.png",
       "upgCost": 200,
       "movementSpeed": {
@@ -34,6 +34,14 @@
         "add": 0.0,
         "factor": -0.2
       }
+    },
+    {
+      "name": "ranged resistance",
+      "iconPath": "assets/images/upgrades/heavy_armor.png",
+      "upgCost": 100,
+      "armor": [
+        "25%RangedDamage"
+      ]
     }
   ]
 }

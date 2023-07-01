@@ -45,7 +45,7 @@ void Critter::doDraw() const { m_animation->draw(renderTarget()); }
 
 void Critter::setPosition(jt::Vector2f const& pos) { m_initialPos = pos; }
 
-void Critter::resetOnRoundStart()
+void Critter::resetForNewRound()
 {
     m_animation->setPosition(m_initialPos);
 

@@ -9,7 +9,9 @@ struct UnitServerToClientData {
     int unitID { 0 };
     int playerID { 0 };
     std::string unitType { "" };
+
     int level { 1 };
+    int experience { 0 };
 
     float positionX { 0.0f };
     float positionY { 0.0f };
