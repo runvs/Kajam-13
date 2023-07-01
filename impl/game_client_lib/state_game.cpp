@@ -1,6 +1,4 @@
 ﻿#include "state_game.hpp"
-#include "math_helper.hpp"
-#include "network_data/select_unit_info.hpp"
 #include <color/color.hpp>
 #include <critters/bird.hpp>
 #include <critters/bunny.hpp>
@@ -12,7 +10,9 @@
 #include <input/keyboard/keyboard_defines.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <json_keys.hpp>
+#include <math_helper.hpp>
 #include <message.hpp>
+#include <network_data/select_unit_info.hpp>
 #include <network_data/unit_info_collection.hpp>
 #include <object_group.hpp>
 #include <particle_system.hpp>
