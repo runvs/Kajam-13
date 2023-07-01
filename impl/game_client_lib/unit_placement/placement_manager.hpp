@@ -15,6 +15,7 @@
 #include <tween_collection.hpp>
 #include <unit_placement/unit_id_manager.hpp>
 #include <unit_placement/upgrade_manager.hpp>
+#include <vector2.hpp>
 #include <array>
 #include <map>
 #include <memory>
@@ -28,6 +29,7 @@ public:
     PlacementManager(std::shared_ptr<Terrain> world, int playerId,
         std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
+
     std::vector<UnitClientToServerData> getPlacedUnitDataForRoundStart() const;
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnits() const;
     void clearPlacedUnits();
@@ -41,7 +43,6 @@ public:
 
     void buyUnit(std::string const& type);
 
-    std::shared_ptr<UpgradeManager> upgrades();
     std::shared_ptr<UpgradeManager> upgrades() const;
 
     void flashForUpgrade(std::string const& unitType);
@@ -62,6 +63,8 @@ private:
     UnitIdManager m_unitIdManager;
     std::weak_ptr<PlayerIdDispatcher> m_playerIdDispatcher;
     std::shared_ptr<jt::Shape> m_blockedUnitPlacementAreas[3];
+    std::shared_ptr<jt::Shape> m_fieldHighlight { nullptr };
+    std::map<std::string, std::shared_ptr<jt::Sprite>> m_imageUnits {};
     int m_playerId;
 
     mutable std::string m_activeUnitType = "";
@@ -83,6 +86,7 @@ private:
 
     void placeUnit();
 
+    bool isValidField(jt::Vector2f const& pos, int const x, int const y);
     bool& fieldInUse(int const x, int const y);
 };
 

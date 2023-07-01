@@ -24,7 +24,6 @@ private:
     std::shared_ptr<jt::Shape> m_background;
 
     std::shared_ptr<jt::Text> m_textTitle;
-    std::shared_ptr<jt::Text> m_textStart;
     std::shared_ptr<jt::Text> m_textExplanation;
     std::shared_ptr<jt::Text> m_textCredits;
     std::shared_ptr<jt::Text> m_textVersion;
@@ -51,23 +50,15 @@ private:
 
     void createTextCredits();
 
-    void createTextStart();
-
     void createTextTitle();
 
     void createTweens();
-
-    void createInstructionTweenColor1();
-
-    void createInstructionTweenColor2();
 
     void createTweenTitleAlpha();
 
     void createTweenOverlayAlpha();
 
     void createTweenCreditsPosition();
-
-    void createTweenExplanation();
 
     void onUpdate(float const elapsed) override;
 

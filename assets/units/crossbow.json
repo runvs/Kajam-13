@@ -1,5 +1,5 @@
 { "frames": {
-   "crossbowman 0.aseprite": {
+   "crossbow 0.aseprite": {
     "frame": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -7,7 +7,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 1.aseprite": {
+   "crossbow 1.aseprite": {
     "frame": { "x": 32, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -15,7 +15,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 2.aseprite": {
+   "crossbow 2.aseprite": {
     "frame": { "x": 64, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -23,7 +23,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 3.aseprite": {
+   "crossbow 3.aseprite": {
     "frame": { "x": 96, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -31,7 +31,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 4.aseprite": {
+   "crossbow 4.aseprite": {
     "frame": { "x": 128, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -39,7 +39,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 5.aseprite": {
+   "crossbow 5.aseprite": {
     "frame": { "x": 160, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -47,7 +47,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 6.aseprite": {
+   "crossbow 6.aseprite": {
     "frame": { "x": 192, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -55,7 +55,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 7.aseprite": {
+   "crossbow 7.aseprite": {
     "frame": { "x": 224, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -63,7 +63,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 8.aseprite": {
+   "crossbow 8.aseprite": {
     "frame": { "x": 256, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -71,7 +71,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 9.aseprite": {
+   "crossbow 9.aseprite": {
     "frame": { "x": 288, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -79,7 +79,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 10.aseprite": {
+   "crossbow 10.aseprite": {
     "frame": { "x": 320, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -87,7 +87,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 11.aseprite": {
+   "crossbow 11.aseprite": {
     "frame": { "x": 352, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -95,7 +95,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 50
    },
-   "crossbowman 12.aseprite": {
+   "crossbow 12.aseprite": {
     "frame": { "x": 384, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -103,7 +103,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 13.aseprite": {
+   "crossbow 13.aseprite": {
     "frame": { "x": 416, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -111,7 +111,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 14.aseprite": {
+   "crossbow 14.aseprite": {
     "frame": { "x": 448, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -119,7 +119,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 15.aseprite": {
+   "crossbow 15.aseprite": {
     "frame": { "x": 480, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -127,7 +127,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 16.aseprite": {
+   "crossbow 16.aseprite": {
     "frame": { "x": 512, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -135,7 +135,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 17.aseprite": {
+   "crossbow 17.aseprite": {
     "frame": { "x": 544, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -143,7 +143,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 500
    },
-   "crossbowman 18.aseprite": {
+   "crossbow 18.aseprite": {
     "frame": { "x": 576, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -151,7 +151,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 10
    },
-   "crossbowman 19.aseprite": {
+   "crossbow 19.aseprite": {
     "frame": { "x": 608, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -159,7 +159,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 20.aseprite": {
+   "crossbow 20.aseprite": {
     "frame": { "x": 640, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -167,7 +167,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 21.aseprite": {
+   "crossbow 21.aseprite": {
     "frame": { "x": 672, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -175,7 +175,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 22.aseprite": {
+   "crossbow 22.aseprite": {
     "frame": { "x": 704, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -183,7 +183,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 500
    },
-   "crossbowman 23.aseprite": {
+   "crossbow 23.aseprite": {
     "frame": { "x": 736, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -191,7 +191,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 24.aseprite": {
+   "crossbow 24.aseprite": {
     "frame": { "x": 768, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -199,7 +199,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 25.aseprite": {
+   "crossbow 25.aseprite": {
     "frame": { "x": 800, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -207,7 +207,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 26.aseprite": {
+   "crossbow 26.aseprite": {
     "frame": { "x": 832, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -215,7 +215,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 27.aseprite": {
+   "crossbow 27.aseprite": {
     "frame": { "x": 864, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -223,7 +223,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 500
    },
-   "crossbowman 28.aseprite": {
+   "crossbow 28.aseprite": {
     "frame": { "x": 896, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -231,7 +231,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 29.aseprite": {
+   "crossbow 29.aseprite": {
     "frame": { "x": 928, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -239,7 +239,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 30.aseprite": {
+   "crossbow 30.aseprite": {
     "frame": { "x": 960, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -247,7 +247,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 31.aseprite": {
+   "crossbow 31.aseprite": {
     "frame": { "x": 992, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -255,7 +255,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 32.aseprite": {
+   "crossbow 32.aseprite": {
     "frame": { "x": 1024, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -263,7 +263,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 33.aseprite": {
+   "crossbow 33.aseprite": {
     "frame": { "x": 1056, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -271,7 +271,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 500
    },
-   "crossbowman 34.aseprite": {
+   "crossbow 34.aseprite": {
     "frame": { "x": 1088, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -279,7 +279,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 35.aseprite": {
+   "crossbow 35.aseprite": {
     "frame": { "x": 1120, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -287,7 +287,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "crossbowman 36.aseprite": {
+   "crossbow 36.aseprite": {
     "frame": { "x": 1152, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -295,7 +295,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "crossbowman 37.aseprite": {
+   "crossbow 37.aseprite": {
     "frame": { "x": 1184, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -307,7 +307,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.3-rc4-x64",
-  "image": "crossbowman.png",
+  "image": "crossbow.png",
   "format": "RGBA8888",
   "size": { "w": 1216, "h": 32 },
   "scale": "1",

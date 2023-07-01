@@ -64,6 +64,10 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
     }
 
     // TODO move into create function
+    if (!m_imageEndPlacement) {
+        m_imageEndPlacement = std::make_shared<jt::Sprite>("assets/images/menus/end_placement.png",
+            jt::Recti { 0, 0, 483, 64 }, state.getGame()->gfx().textureManager());
+    }
     if (!m_rangeIndicator) {
         m_rangeIndicator = jt::dh::createShapeCircle(
             64, jt::Color { 0u, 160u, 0u, 40u }, state.textureManager());
@@ -76,11 +80,6 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 void PlaceUnits::draw(StateGame& state)
 {
     state.getPlacementManager()->draw();
-
-    if (!m_imageEndPlacement) {
-        m_imageEndPlacement = std::make_shared<jt::Sprite>("assets/images/menus/end_placement.png",
-            jt::Recti { 0, 0, 483, 64 }, state.getGame()->gfx().textureManager());
-    }
 
     ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
@@ -243,6 +242,7 @@ void PlaceUnits::drawUnitUpgradeWindow(
     }
     ImGui::End();
 }
+
 void PlaceUnits::drawRangeIndicator(StateGame& state)
 {
     auto const checkTooltip = [this, &state](auto& units) {
