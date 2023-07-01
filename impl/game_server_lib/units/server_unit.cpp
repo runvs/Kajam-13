@@ -54,9 +54,7 @@ UnitServerToClientData ServerUnit::saveState() const
     data.playerID = m_playerID;
     data.unitType = info.type;
 
-    // TODO think about adding exp
-    //    props.experience = m_experience;
-    //    props.experienceForLevelUp = m_infoBase.experienceRequiredForLevelUp;
+    data.experience = info.experienceRequiredForLevelUp - m_experience;
     data.level = m_level;
 
     data.positionX = m_pos.x;
@@ -84,11 +82,8 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
     m_unitID = props->unitClientToServerData.unitID;
     m_playerID = props->unitClientToServerData.playerID;
 
-    if (props->level == 1) {
-        m_level = props->level;
-    } else {
-        m_level = 1;
-    }
+    m_level = props->level;
+
     m_pos = jt::Vector2f { props->unitClientToServerData.positionX,
         props->unitClientToServerData.positionY };
     m_physicsObject->setPosition(m_pos);
@@ -102,9 +97,10 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
 
     auto const info = getUnitInfoWithLevelAndUpgrades(m_infoBase, m_level, m_upgrades);
     m_hp = info.hitpointsMax;
-
-    m_logger.info("load exp with value: " + std::to_string(m_experience));
-    ;
+    m_logger.info("Load Unit with Level: " + std::to_string(m_level) + "( "
+            + std::to_string(m_experience) + " / "
+            + std::to_string(info.experienceRequiredForLevelUp) + " )",
+        { "ServerUnit" });
 }
 
 void ServerUnit::levelUnitUp()
@@ -114,9 +110,9 @@ void ServerUnit::levelUnitUp()
         m_logger.warning("Not enough experience to upgrade unit", { "ServerUnit" });
         return;
     }
-    m_logger.info("upgrade unit to level: " + std::to_string(m_level), { "ServerUnit" });
 
     m_level++;
+    m_logger.info("upgrade unit to level: " + std::to_string(m_level), { "ServerUnit" });
     m_roundStartObjectProperties->level = m_level;
     m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
 }
@@ -169,8 +165,32 @@ int ServerUnit::getUnitID() const { return m_unitID; }
 
 void ServerUnit::takeDamage(const DamageInfo& damage)
 {
-    // TODO take armor into account
-    m_hp -= damage.damage;
+    auto const info = getUnitInfoFull();
+    float damageValue = damage.damage;
+    if (std::count(info.armor.types.begin(), info.armor.types.end(), "25%RangedDamage") != 0) {
+        if (std::count(damage.damageTypes.begin(), damage.damageTypes.end(), "ranged") != 0) {
+            damageValue *= 0.25f;
+        }
+    }
+    if (std::count(info.armor.types.begin(), info.armor.types.end(), "NoSplashDamage") != 0) {
+        if (std::count(damage.damageTypes.begin(), damage.damageTypes.end(), "splash") != 0) {
+            damageValue = 0.0f;
+        }
+    }
+    std::string armorTypes = "";
+    for (auto const& av : info.armor.types) {
+        armorTypes += av + ", ";
+    }
+    std::string damageTypes = "";
+    for (auto const& dt : damage.damageTypes) {
+        damageTypes += dt + ", ";
+    }
+    m_logger.debug("unit [" + armorTypes + "] take damage [" + damageTypes + "] ("
+        + std::to_string(damage.damage) + ":" + std::to_string(damageValue) + ")");
+    m_logger.debug("initialHp: " + std::to_string(m_hp)
+        + ", after Damage Hp: " + std::to_string(m_hp - damageValue));
+    m_hp -= damageValue;
+
     if (m_hp > 0) {
         setAnim("damage");
 

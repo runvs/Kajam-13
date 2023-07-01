@@ -25,6 +25,9 @@ void to_json(nlohmann::json& j, const UnitServerToClientData& d)
     if (d.level != 1) {
         j[jk::level] = d.level;
     }
+    if (d.experience != 0) {
+        j[jk::experience] = d.experience;
+    }
     if (d.unitWalkingRight) {
         j[jk::unitWalkingRight] = true;
     }
@@ -48,6 +51,9 @@ void from_json(const nlohmann::json& j, UnitServerToClientData& d)
     j.at(jk::hpMax).get_to(d.hpMax);
     d.hpMax /= NetworkProperties::floatPrecision();
     d.unitWalkingRight = j.value(jk::unitWalkingRight, false);
+    if (j.count(jk::experience) == 1) {
+        j.at(jk::experience).get_to(d.experience);
+    }
     if (j.count(jk::unitAnim) == 1) {
         std::string anim;
         j.at(jk::unitAnim).get_to(anim);

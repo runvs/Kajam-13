@@ -59,6 +59,7 @@ constexpr auto unitUpgrades = "unitUpgrades";
 
 constexpr auto experienceForLevelUp = "expRequiredForLevelUp";
 constexpr auto experienceGainWhenKilled = "expGainWhenKilled";
+constexpr auto experience = "exp";
 constexpr auto level = "level";
 
 constexpr auto upgrades = "upgrades";
@@ -73,7 +74,12 @@ constexpr auto mapName = "name";
 constexpr auto mapHeights = "heights";
 
 constexpr auto damageTypes = "damageTypes";
+
+constexpr auto armor = "armor";
+constexpr auto armorType = "armorTypes";
+
 constexpr auto filename = "jsonfilename";
+
 } // namespace jk
 
 #endif // JAMTEMPLATE_JSON_KEYS_HPP

@@ -1,5 +1,4 @@
 ﻿#include "state_game.hpp"
-#include "network_data/select_unit_info.hpp"
 #include <color/color.hpp>
 #include <critters/bird.hpp>
 #include <critters/bunny.hpp>
@@ -11,7 +10,9 @@
 #include <input/keyboard/keyboard_defines.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <json_keys.hpp>
+#include <math_helper.hpp>
 #include <message.hpp>
+#include <network_data/select_unit_info.hpp>
 #include <network_data/unit_info_collection.hpp>
 #include <object_group.hpp>
 #include <particle_system.hpp>
@@ -177,10 +178,8 @@ void StateGame::playbackSimulation(float elapsed)
         auto const maxTicks = m_simulationResultsForAllFrames.allFrames.size();
         auto const maxTime = GP::TimePerSimulationUpdate() * maxTicks;
         auto const percentage = (maxTicks - m_tickId) * 1.0f / maxTicks;
-        std::ostringstream out;
-        out.precision(1);
-        out << std::fixed << (percentage * maxTime);
-        m_textTimeIndicator->setText(std::move(out).str());
+        m_textTimeIndicator->setText(
+            jt::MathHelper::floatToStringWithXDigits((percentage * maxTime), 1));
         if (m_tickId < m_simulationResultsForAllFrames.allFrames.size() - 1) {
             m_tickId++;
             auto const& propertiesForAllUnitsForThisFrame
@@ -405,12 +404,21 @@ void StateGame::setConnection(
 
 void StateGame::resetAllUnits()
 {
-    auto propertiesForAllUnitsForThisTick = m_simulationResultsForAllFrames.allFrames.at(0);
-    for (auto& props : propertiesForAllUnitsForThisTick.m_units) {
-        props.unitAnim = "idle";
-        props.hpCurrent = props.hpMax;
+    auto propertiesForAllUnitsForInitialTick = m_simulationResultsForAllFrames.allFrames.front();
+    auto propertiesForAllUnitsForFinalTick = m_simulationResultsForAllFrames.allFrames.back();
+    if (propertiesForAllUnitsForInitialTick.m_units.size()
+        != propertiesForAllUnitsForFinalTick.m_units.size()) {
+        getGame()->logger().warning(
+            "Unit size does not match for first and last tick of simulation", { "StateGame" });
     }
-    playbackOneFrame(propertiesForAllUnitsForThisTick);
+    for (auto idx = 0u; idx != propertiesForAllUnitsForInitialTick.m_units.size(); ++idx) {
+        propertiesForAllUnitsForInitialTick.m_units[idx].unitAnim = "idle";
+        propertiesForAllUnitsForInitialTick.m_units[idx].hpCurrent
+            = propertiesForAllUnitsForInitialTick.m_units[idx].hpMax;
+        propertiesForAllUnitsForInitialTick.m_units[idx].experience
+            = propertiesForAllUnitsForFinalTick.m_units[idx].experience;
+    }
+    playbackOneFrame(propertiesForAllUnitsForInitialTick);
 }
 
 std::shared_ptr<InternalStateManager> StateGame::getStateManager()

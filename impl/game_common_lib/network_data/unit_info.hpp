@@ -3,6 +3,7 @@
 
 #include <network_data/ai_info.hpp>
 #include <network_data/animation_info.hpp>
+#include <network_data/armor_info.hpp>
 #include <network_data/damage_info.hpp>
 #include <network_data/upgrade_info.hpp>
 #include <nlohmann.hpp>
@@ -22,6 +23,7 @@ struct UnitInfo {
     float hitpointsMax { 0.0f };
 
     DamageInfo damage { 0.0f, {} };
+    ArmorInfo armor {};
 
     float attackTimerMax { 0.0f };
     float movementSpeed { 0.0f };
@@ -36,8 +38,8 @@ struct UnitInfo {
     std::vector<UpgradeInfo> possibleUpgrades {};
 };
 
-void to_json(nlohmann::json& j, const UnitInfo& p);
-void from_json(const nlohmann::json& j, UnitInfo& p);
+void to_json(nlohmann::json& j, const UnitInfo& data);
+void from_json(const nlohmann::json& j, UnitInfo& data);
 
 void applyUpgrade(UnitInfo& info, UpgradeInfo const& upg);
 

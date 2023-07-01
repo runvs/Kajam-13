@@ -1,7 +1,6 @@
 #ifndef JAMTEMPLATE_GAME_SIMULATION_HPP
 #define JAMTEMPLATE_GAME_SIMULATION_HPP
 
-#include <network_data/unit_info_collection.hpp>
 #include <box2dwrapper/box2d_world_interface.hpp>
 #include <close_combat_info.hpp>
 #include <game_properties.hpp>
@@ -9,11 +8,12 @@
 #include <map/terrain.hpp>
 #include <network_data/arrow_info.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <network_data/unit_info_collection.hpp>
 #include <object_properties.hpp>
 #include <player_info.hpp>
 #include <server_network_connection.hpp>
 #include <simulation_object_interface.hpp>
-#include <simulation_result_message_sender.hpp>
+#include <simulation_result_sender_interface.hpp>
 #include <unit_server_round_start_data.hpp>
 #include <units/server_unit.hpp>
 #include <upgrade_unit_data.hpp>
@@ -34,7 +34,7 @@ public:
     void addUnit(UnitClientToServerData const& unitData);
     void addUnitUpgrade(UpgradeUnitData const& upg);
 
-    void performSimulation(SimulationResultMessageSender& sender);
+    void performSimulation(SimulationResultSenderInterface& sender);
 
     // TODO think about using an optional here, as there might not be a valid target.
     // TODO otherwise, just return the passed in position?

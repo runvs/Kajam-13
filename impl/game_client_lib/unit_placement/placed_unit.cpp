@@ -104,3 +104,5 @@ int PlacedUnit::getPlayerID() const { return m_playerID; }
 void PlacedUnit::flash() { m_anim->flash(0.4f, jt::colors::Green); }
 
 void PlacedUnit::setHighlight(bool v) { m_glowActive = v; }
+int PlacedUnit::getExp() const { return 0; }
+int PlacedUnit::getExpForLevelUp() const { return m_info.experienceRequiredForLevelUp; }

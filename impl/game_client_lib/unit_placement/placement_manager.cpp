@@ -23,7 +23,7 @@ auto const TextAlignedRight = [](auto const& s) {
     if (posX > ImGui::GetCursorPosX())
         ImGui::SetCursorPosX(posX);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + ImGui::GetStyle().ItemSpacing.y / 2);
-    ImGui::Text(s.c_str());
+    ImGui::Text("%s", s.c_str());
 };
 
 } // namespace

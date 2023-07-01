@@ -1,61 +1,65 @@
 #include "unit_info.hpp"
 #include <json_keys.hpp>
 
-void to_json(nlohmann::json& j, UnitInfo const& p)
+void to_json(nlohmann::json& j, UnitInfo const& data)
 {
     j = nlohmann::json {
         // clang-format off
-        { jk::unitType, p.type },
-        {jk::description, p.description},
+        { jk::unitType, data.type },
+        {jk::description, data.description},
 
-        { jk::experienceForLevelUp, p.experienceRequiredForLevelUp },
-        { jk::experienceGainWhenKilled, p.experienceGainWhenKilled },
+        { jk::experienceForLevelUp, data.experienceRequiredForLevelUp },
+        { jk::experienceGainWhenKilled, data.experienceGainWhenKilled },
 
-        { jk::hpInitial, p.hitpointsMax },
+        { jk::hpInitial, data.hitpointsMax },
 
-        { jk::damage, p.damage },
+        { jk::damage, data.damage },
+        { jk::armor, data.armor },
 
-        { jk::attackTimerMax, p.attackTimerMax },
-        { jk::movementSpeed, p.movementSpeed },
+        { jk::attackTimerMax, data.attackTimerMax },
+        { jk::movementSpeed, data.movementSpeed },
 
-        { jk::colliderRadius, p.colliderRadius },
+        { jk::colliderRadius, data.colliderRadius },
 
-        { jk::cost, p.cost },
-        { jk::unlockCost, p.unlockCost },
+        { jk::cost, data.cost },
+        { jk::unlockCost, data.unlockCost },
 
 
-        { jk::animations, p.animations },
-        { jk::ai, p.ai },
+        { jk::animations, data.animations },
+        { jk::ai, data.ai },
 
-        { jk::upgrades, p.possibleUpgrades}
+        { jk::upgrades, data.possibleUpgrades}
         // clang-format on
     };
 }
 
-void from_json(nlohmann::json const& j, UnitInfo& p)
+void from_json(nlohmann::json const& j, UnitInfo& data)
 {
-    j.at(jk::unitType).get_to(p.type);
-    j.at(jk::description).get_to(p.description);
+    j.at(jk::unitType).get_to(data.type);
+    j.at(jk::description).get_to(data.description);
 
-    j.at(jk::experienceForLevelUp).get_to(p.experienceRequiredForLevelUp);
-    j.at(jk::experienceGainWhenKilled).get_to(p.experienceGainWhenKilled);
+    j.at(jk::experienceForLevelUp).get_to(data.experienceRequiredForLevelUp);
+    j.at(jk::experienceGainWhenKilled).get_to(data.experienceGainWhenKilled);
 
-    j.at(jk::hpInitial).get_to(p.hitpointsMax);
+    j.at(jk::hpInitial).get_to(data.hitpointsMax);
 
-    j.at(jk::damage).get_to(p.damage);
+    j.at(jk::damage).get_to(data.damage);
+    if (j.count(jk::armor) == 1) {
+        j.at(jk::armor).get_to(data.armor);
+    }
 
-    j.at(jk::attackTimerMax).get_to(p.attackTimerMax);
-    j.at(jk::movementSpeed).get_to(p.movementSpeed);
+    j.at(jk::attackTimerMax).get_to(data.attackTimerMax);
+    j.at(jk::movementSpeed).get_to(data.movementSpeed);
 
-    j.at(jk::colliderRadius).get_to(p.colliderRadius);
+    j.at(jk::colliderRadius).get_to(data.colliderRadius);
 
-    j.at(jk::cost).get_to(p.cost);
-    j.at(jk::unlockCost).get_to(p.unlockCost);
+    j.at(jk::cost).get_to(data.cost);
+    j.at(jk::unlockCost).get_to(data.unlockCost);
 
-    j.at(jk::ai).get_to(p.ai);
-    j.at(jk::animations).get_to(p.animations);
+    j.at(jk::ai).get_to(data.ai);
+    j.at(jk::animations).get_to(data.animations);
 
-    j.at(jk::upgrades).get_to(p.possibleUpgrades);
+    j.at(jk::upgrades).get_to(data.possibleUpgrades);
 }
 
 namespace {
@@ -78,6 +82,8 @@ void applyUpgrade(UnitInfo& info, const UpgradeInfo& upg)
     applyUpgradeFloat(info.attackTimerMax, upg.attackSpeed);
     applyUpgradeFloat(info.movementSpeed, upg.movementSpeed);
     applyUpgradeFloat(info.ai.range, upg.range);
+
+    info.armor.types.insert(info.armor.types.cbegin(), upg.armor.cbegin(), upg.armor.cend());
 }
 
 UnitInfo getUnitInfoWithLevelAndUpgrades(

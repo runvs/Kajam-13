@@ -2,10 +2,13 @@
   "type": "peasant",
   "description": "weak fighter, not properly armed. Dangerous in masses.",
   "expRequiredForLevelUp": 30,
-  "expGainWhenKilled": 10,
+  "expGainWhenKilled": 20,
   "hitpoints": 25.0,
   "damage": {
-    "damage": 8.0
+    "damage": 8.0,
+    "damageTypes": [
+      "light"
+    ]
   },
   "attackTimerMax": 0.8,
   "movementSpeed": 35.0,
@@ -34,6 +37,14 @@
         "add": 0.0,
         "factor": -0.2
       }
+    },
+    {
+      "name": "ranged resistance",
+      "iconPath": "assets/images/upgrades/heavy_armor.png",
+      "upgCost": 100,
+      "armor": [
+        "25%RangedDamage"
+      ]
     }
   ]
 }

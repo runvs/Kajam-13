@@ -27,6 +27,9 @@ public:
     std::shared_ptr<jt::Tween> createInitialTween();
 
     int getLevel() const override;
+    int getExp() const override;
+    int getExpForLevelUp() const override;
+
     int getPlayerID() const override;
     void flash() override;
     void setHighlight(bool v) override;

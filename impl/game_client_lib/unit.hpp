@@ -37,7 +37,8 @@ public:
     void setIDs(int uid, int pid);
 
     int getLevel() const override;
-
+    int getExp() const override;
+    int getExpForLevelUp() const override;
     bool isUnitAlive() const;
 
     bool isMouseOver() const override;
@@ -77,6 +78,7 @@ private:
     float m_hpMax { 100.0f };
     float m_hp { 100.0f };
     int m_level { 1 };
+    int m_exp { 0 };
     std::vector<std::string> m_boughtUpgrades;
     std::shared_ptr<jt::Bar> m_hpBar;
 

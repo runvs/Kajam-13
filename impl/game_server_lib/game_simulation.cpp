@@ -73,7 +73,7 @@ void GameSimulation::addUnit(UnitClientToServerData const& unitData)
 
 float arrowParabola(float x, float maxHeight) { return -maxHeight * 4 * (x - x * x); }
 
-void GameSimulation::performSimulation(SimulationResultMessageSender& sender)
+void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)
 {
     auto const timePerUpdate = GP::TimePerSimulationUpdate();
     SimulationResultDataForAllFrames allFrames;
