@@ -200,6 +200,24 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
     ImGui::PopStyleVar();
 }
 
+namespace {
+
+auto getWindowPos(auto const mousePosition)
+{
+    jt::Vector2f windowPos { mousePosition * 2.0f };
+    if (mousePosition.x > GP::GetScreenSize().x / 2) {
+        windowPos.x -= 240;
+    }
+    if (mousePosition.y > GP::GetScreenSize().y / 2) {
+        windowPos.y -= 100;
+    } else {
+        windowPos.y += 60;
+    }
+    return windowPos;
+}
+
+} // namespace
+
 void PlaceUnits::drawUnitUpgradeWindow(
     std::shared_ptr<UnitInterface> selectedUnit, StateGame& state)
 {
@@ -209,6 +227,9 @@ void PlaceUnits::drawUnitUpgradeWindow(
     if (possibleUpgrades.empty()) {
         return;
     }
+    auto const winPos = getWindowPos(state.getGame()->input().mouse()->getMousePositionScreen());
+    ImGui::SetNextWindowPos({ winPos.x, winPos.y }, ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize({ 208, 100 }, ImGuiCond_FirstUseEver);
     ImGui::Begin((unitType + " upgrades").c_str());
     for (auto& upg : possibleUpgrades) {
         if (upg.name.empty()) {
