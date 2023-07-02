@@ -254,8 +254,13 @@ void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
     for (auto& kvp : m_arrowsToBeSpawned) {
         kvp.first -= timePerUpdate;
         if (kvp.first <= 0) {
-            // TODO check if shooter was killed already. In this case, do not spawn an
-            // arrow
+            auto const unit = getUnit(kvp.second.shooterPlayerId, kvp.second.shooterUnitId);
+            if (!unit) {
+                continue;
+            }
+            if (!unit->isAlive()) {
+                continue;
+            }
             m_arrows.push_back(kvp.second);
         }
     }
@@ -374,4 +379,13 @@ void GameSimulation::addUnitUpgrade(const UpgradeUnitData& upg)
 void GameSimulation::scheduleAttack(CloseCombatInfo const& info, float delay)
 {
     m_scheduledCloseCombatAttacks.push_back(std::make_pair(delay, info));
+}
+std::shared_ptr<SimulationObjectInterface> GameSimulation::getUnit(int pid, int uid)
+{
+    for (auto const& obj : m_simulationObjects) {
+        if (obj->getPlayerID() == pid && obj->getUnitID() == uid) {
+            return obj;
+        }
+    }
+    return nullptr;
 }

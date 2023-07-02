@@ -71,6 +71,8 @@ private:
     void handleArrowsToBeSpawned(float timePerUpdate);
     void handleArrows(float timePerUpdate, SimulationResultDataForOneFrame& currentFrame);
     bool checkIsLastFrame(unsigned int i);
+
+    std::shared_ptr<SimulationObjectInterface> getUnit(int pid, int uid);
 };
 
 #endif // JAMTEMPLATE_GAME_SIMULATION_HPP
