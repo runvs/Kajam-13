@@ -88,6 +88,9 @@ void PlacementManager::doUpdate(const float elapsed)
     m_placedUnits->update(elapsed);
     m_tweens.update(elapsed);
     placeUnit();
+    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
+        m_activeUnitType = "";
+    }
     for (auto& area : m_blockedUnitPlacementAreas) {
         area->update(elapsed);
     }
@@ -220,7 +223,7 @@ void PlacementManager::placeUnit()
         return;
     }
 
-    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
+    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
         auto playerIdDispatcher = m_playerIdDispatcher.lock();
         if (playerIdDispatcher == nullptr) {
             getGame()->logger().warning(
@@ -263,6 +266,9 @@ void PlacementManager::placeUnit()
         m_availableFunds -= info.cost;
 
         buyUnit(info.type);
+        if (!getGame()->input().keyboard()->pressed(jt::KeyCode::LShift)) {
+            m_activeUnitType = "";
+        }
     }
 }
 

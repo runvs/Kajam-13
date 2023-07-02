@@ -4,7 +4,6 @@
 
 void to_json(nlohmann::json& j, const UpgradeInfo& p)
 {
-    // TODO Do not write optional data
     j = nlohmann::json {
         // clang-format off
         { jk::upgName, p.name },
