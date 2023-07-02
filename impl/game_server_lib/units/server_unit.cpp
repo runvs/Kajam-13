@@ -160,7 +160,7 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
     float damageValue = damage.damage;
     if (std::count(info.armor.types.begin(), info.armor.types.end(), "25%RangedDamage") != 0) {
         if (std::count(damage.damageTypes.begin(), damage.damageTypes.end(), "ranged") != 0) {
-            damageValue *= 0;
+            damageValue *= 0.25f;
         }
     }
     if (std::count(info.armor.types.begin(), info.armor.types.end(), "NoSplashDamage") != 0) {
