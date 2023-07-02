@@ -417,6 +417,8 @@ void StateGame::resetAllUnits()
             = propertiesForAllUnitsForInitialTick.m_units[idx].hpMax;
         propertiesForAllUnitsForInitialTick.m_units[idx].experience
             = propertiesForAllUnitsForFinalTick.m_units[idx].experience;
+        propertiesForAllUnitsForInitialTick.m_units[idx].level
+            = propertiesForAllUnitsForFinalTick.m_units[idx].level;
     }
     playbackOneFrame(propertiesForAllUnitsForInitialTick);
 }

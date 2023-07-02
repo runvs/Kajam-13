@@ -54,7 +54,7 @@ UnitServerToClientData ServerUnit::saveState() const
     data.playerID = m_playerID;
     data.unitType = info.type;
 
-    data.experience = info.experienceRequiredForLevelUp - m_experience;
+    data.experience = m_experience;
     data.level = m_level;
 
     data.positionX = m_pos.x;
@@ -89,11 +89,7 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
     m_physicsObject->setPosition(m_pos);
     m_offset = jt::Vector2f { props->unitClientToServerData.offsetX,
         props->unitClientToServerData.offsetY };
-    if (props->experience == 0) {
-        m_experience = static_cast<int>(m_infoBase.experienceRequiredForLevelUp * sqrt(m_level));
-    } else {
-        m_experience = props->experience;
-    }
+    m_experience = props->experience;
 
     auto const info = getUnitInfoWithLevelAndUpgrades(m_infoBase, m_level, m_upgrades);
     m_hp = info.hitpointsMax;
@@ -106,15 +102,10 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
 void ServerUnit::levelUnitUp()
 {
     m_logger.debug("Level up", { "ServerUnit" });
-    if (m_experience > 0) {
-        m_logger.warning("Not enough experience to upgrade unit", { "ServerUnit" });
-        return;
-    }
-
     m_level++;
     m_logger.info("upgrade unit to level: " + std::to_string(m_level), { "ServerUnit" });
     m_roundStartObjectProperties->level = m_level;
-    m_experience = m_infoBase.experienceRequiredForLevelUp * m_level;
+    m_experience = 0;
 }
 
 void ServerUnit::update(float elapsed, WorldInfoInterface& world)
@@ -169,7 +160,7 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
     float damageValue = damage.damage;
     if (std::count(info.armor.types.begin(), info.armor.types.end(), "25%RangedDamage") != 0) {
         if (std::count(damage.damageTypes.begin(), damage.damageTypes.end(), "ranged") != 0) {
-            damageValue *= 0.25f;
+            damageValue *= 0;
         }
     }
     if (std::count(info.armor.types.begin(), info.armor.types.end(), "NoSplashDamage") != 0) {
@@ -209,15 +200,18 @@ UnitInfo ServerUnit::getUnitInfoFull() const
 std::shared_ptr<jt::Box2DObject> ServerUnit::getPhysicsObject() { return m_physicsObject; }
 
 int ServerUnit::getCost() { return m_infoBase.cost; }
+
 void ServerUnit::gainExperience(int exp)
 {
-    m_experience -= exp;
-    if (m_experience <= 0) {
+    m_experience += exp;
+    auto const unitInfo = getUnitInfoFull();
+    if (m_experience >= unitInfo.experienceRequiredForLevelUp) {
         levelUnitUp();
     }
     m_logger.info("gain experience. New exp: " + std::to_string(m_experience));
     m_roundStartObjectProperties->experience = m_experience;
 }
+
 int ServerUnit::getLevel() const { return m_level; }
 
 void ServerUnit::applyUpgrades(const std::vector<UpgradeUnitData>& upgrades)
@@ -233,4 +227,5 @@ void ServerUnit::applyUpgrades(const std::vector<UpgradeUnitData>& upgrades)
         m_upgrades.push_back(upg.upgrade);
     }
 }
+
 void ServerUnit::setAnim(const std::string& newAnimName) { m_newAnim = newAnimName; }
