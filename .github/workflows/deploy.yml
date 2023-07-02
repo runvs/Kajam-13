@@ -33,7 +33,6 @@ jobs:
 
       - name: Copy files
         run: |
-          set -x
           mkdir ${{github.workspace}}/release
           mkdir ${{github.workspace}}/release/release_win
           cp ${{github.workspace}}/build/impl/game_client/Release/*.exe ${{github.workspace}}/release/release_win/
