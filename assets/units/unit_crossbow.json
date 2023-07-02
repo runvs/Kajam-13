@@ -17,7 +17,7 @@
   "unlockCost": 150,
   "ai": {
     "type": 1,
-    "range": 10.0,
+    "range": 9.0,
     "arrowHeight": 0,
     "arrowSpeed": 250.0
   },

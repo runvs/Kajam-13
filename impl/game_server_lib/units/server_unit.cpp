@@ -93,7 +93,7 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
 
     auto const info = getUnitInfoWithLevelAndUpgrades(m_infoBase, m_level, m_upgrades);
     m_hp = info.hitpointsMax;
-    m_logger.info("Load Unit with Level: " + std::to_string(m_level) + "( "
+    m_logger.debug("Load Unit[" + info.type + "] with Level: " + std::to_string(m_level) + "( "
             + std::to_string(m_experience) + " / "
             + std::to_string(info.experienceRequiredForLevelUp) + " )",
         { "ServerUnit" });
