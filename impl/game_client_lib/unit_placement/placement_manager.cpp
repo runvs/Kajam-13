@@ -75,6 +75,7 @@ void PlacementManager::doCreate()
         m_imageUnits[u] = std::make_shared<jt::Sprite>(
             "assets/units/" + u + ".png", jt::Recti { 0, 0, 32, 32 }, textureManager());
         m_imageUnits[u]->setIgnoreCamMovement(true);
+        m_imageUnits[u]->setColor(jt::Color { 50, 50, 50, 100 });
         m_imageUnits[u]->setPosition({ -9999, -9999 });
         if (m_playerId != 0) {
             m_imageUnits[u]->setScale({ -1, 1 });
