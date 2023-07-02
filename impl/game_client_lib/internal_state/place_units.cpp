@@ -204,9 +204,13 @@ void PlaceUnits::drawUnitUpgradeWindow(
     std::shared_ptr<UnitInterface> selectedUnit, StateGame& state)
 {
     auto const unitType = selectedUnit->getInfo().type;
+    auto& possibleUpgrades = state.getPlacementManager()->upgrades()->getPossibleUpgradesForUnit(
+        selectedUnit->getPlayerID(), unitType);
+    if (possibleUpgrades.empty()) {
+        return;
+    }
     ImGui::Begin((unitType + " upgrades").c_str());
-    for (auto& upg : state.getPlacementManager()->upgrades()->getPossibleUpgradesForUnit(
-             selectedUnit->getPlayerID(), unitType)) {
+    for (auto& upg : possibleUpgrades) {
         if (upg.name.empty()) {
             continue;
         }
