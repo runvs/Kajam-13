@@ -35,9 +35,7 @@ public:
     void addUnitUpgrade(UpgradeUnitData const& upg);
 
     void performSimulation(SimulationResultSenderInterface& sender);
-
-    // TODO think about using an optional here, as there might not be a valid target.
-    // TODO otherwise, just return the passed in position?
+    
     std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
         const jt::Vector2f& pos, int playerId) override;
     float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
@@ -67,11 +65,12 @@ private:
     std::vector<std::pair<float, CloseCombatInfo>> m_scheduledCloseCombatAttacks;
     std::map<int, int> m_playerHp { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
-    bool checkIfUnitIsUnique(UnitClientToServerData const& unitData);
     void handleScheduledAttacks(float timePerUpdate);
     void handleArrowsToBeSpawned(float timePerUpdate);
     void handleArrows(float timePerUpdate, SimulationResultDataForOneFrame& currentFrame);
     bool checkIsLastFrame(unsigned int i);
+
+    std::shared_ptr<SimulationObjectInterface> getUnit(int pid, int uid);
 };
 
 #endif // JAMTEMPLATE_GAME_SIMULATION_HPP

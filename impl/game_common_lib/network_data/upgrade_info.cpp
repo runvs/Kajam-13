@@ -1,23 +1,39 @@
 #include "upgrade_info.hpp"
+#include "upgrade_value.hpp"
 #include <json_keys.hpp>
 
 void to_json(nlohmann::json& j, const UpgradeInfo& p)
 {
-    // TODO Do not write optional data
     j = nlohmann::json {
         // clang-format off
         { jk::upgName, p.name },
-        { jk::upgIconPath, p.iconPath },
-        { jk::damage, p.damage },
-        { jk::attackTimerMax, p.attackSpeed },
-        { jk::movementSpeed, p.movementSpeed },
-        { jk::range, p.range },
-        { jk::hpInitial, p.hitpoints },
-        { jk::cost, p.cost },
-        { jk::upgCost, p.upgradeCost },
-        { jk::armor, p.armor }
+        { jk::upgIconPath, p.iconPath }
         // clang-format on
     };
+    if (!isDefault(p.damage)) {
+        j[jk::damage] = p.damage;
+    }
+    if (!isDefault(p.attackSpeed)) {
+        j[jk::attackTimerMax] = p.attackSpeed;
+    }
+    if (!isDefault(p.movementSpeed)) {
+        j[jk::movementSpeed] = p.movementSpeed;
+    }
+    if (!isDefault(p.range)) {
+        j[jk::range] = p.range;
+    }
+    if (!isDefault(p.hitpoints)) {
+        j[jk::hpInitial] = p.hitpoints;
+    }
+    if (!isDefault(p.cost)) {
+        j[jk::cost] = p.cost;
+    }
+    if (p.upgradeCost != 0) {
+        j[jk::upgCost] = p.upgradeCost;
+    }
+    if (!p.armor.empty()) {
+        j[jk::armor] = p.armor;
+    }
 }
 void from_json(const nlohmann::json& j, UpgradeInfo& p)
 {

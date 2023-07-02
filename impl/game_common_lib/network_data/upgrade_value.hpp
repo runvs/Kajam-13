@@ -8,6 +8,8 @@ struct UpgradeValue {
     float add { 0.0f };
 };
 
+bool isDefault(UpgradeValue const& upg);
+
 void to_json(nlohmann::json& j, const UpgradeValue& p);
 void from_json(const nlohmann::json& j, UpgradeValue& p);
 

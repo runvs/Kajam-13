@@ -1,5 +1,6 @@
 #include "game_simulation.hpp"
 #include "system_helper.hpp"
+#include "validity_checker.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
@@ -61,10 +62,16 @@ void GameSimulation::prepareSimulationForNewRound()
 
 void GameSimulation::addUnit(UnitClientToServerData const& unitData)
 {
-    // TODO sanity check validity of placement
-    if (!checkIfUnitIsUnique(unitData)) {
+    if (!ValidityChecker::checkIfUnitIDsAreUnique(m_unitInformationForRoundStart, unitData)) {
+        m_logger.warning("Adding a unit that is already present in the game simulation");
         return;
     }
+
+    if (!ValidityChecker::checkIfUnitPlacementIsValid(unitData)) {
+        m_logger.warning("Adding a unit in an invalid place");
+        return;
+    }
+
     UnitServerRoundStartData roundStartData;
     roundStartData.unitClientToServerData = unitData;
 
@@ -247,8 +254,13 @@ void GameSimulation::handleArrowsToBeSpawned(float timePerUpdate)
     for (auto& kvp : m_arrowsToBeSpawned) {
         kvp.first -= timePerUpdate;
         if (kvp.first <= 0) {
-            // TODO check if shooter was killed already. In this case, do not spawn an
-            // arrow
+            auto const unit = getUnit(kvp.second.shooterPlayerId, kvp.second.shooterUnitId);
+            if (!unit) {
+                continue;
+            }
+            if (!unit->isAlive()) {
+                continue;
+            }
             m_arrows.push_back(kvp.second);
         }
     }
@@ -342,18 +354,6 @@ float GameSimulation::getTerrainMappedFieldHeight(jt::Vector2f const& pos)
     return m_world->getFieldHeight(pos);
 }
 
-bool GameSimulation::checkIfUnitIsUnique(UnitClientToServerData const& newUnitData)
-{
-    for (auto const& unitData : m_unitInformationForRoundStart) {
-        if (unitData.unitClientToServerData.unitID == newUnitData.unitID
-            && unitData.unitClientToServerData.playerID == newUnitData.playerID) {
-            m_logger.warning("Adding a unit that is already present in the game simulation");
-            return false;
-        }
-    }
-    return true;
-}
-
 void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo, float delay)
 {
     m_arrowsToBeSpawned.push_back(std::make_pair(delay, arrowInfo));
@@ -379,4 +379,13 @@ void GameSimulation::addUnitUpgrade(const UpgradeUnitData& upg)
 void GameSimulation::scheduleAttack(CloseCombatInfo const& info, float delay)
 {
     m_scheduledCloseCombatAttacks.push_back(std::make_pair(delay, info));
+}
+std::shared_ptr<SimulationObjectInterface> GameSimulation::getUnit(int pid, int uid)
+{
+    for (auto const& obj : m_simulationObjects) {
+        if (obj->getPlayerID() == pid && obj->getUnitID() == uid) {
+            return obj;
+        }
+    }
+    return nullptr;
 }
