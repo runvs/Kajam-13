@@ -67,7 +67,6 @@ private:
     std::vector<std::pair<float, CloseCombatInfo>> m_scheduledCloseCombatAttacks;
     std::map<int, int> m_playerHp { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
-    bool checkIfUnitIsUnique(UnitClientToServerData const& unitData);
     void handleScheduledAttacks(float timePerUpdate);
     void handleArrowsToBeSpawned(float timePerUpdate);
     void handleArrows(float timePerUpdate, SimulationResultDataForOneFrame& currentFrame);

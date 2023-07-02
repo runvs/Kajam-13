@@ -1,5 +1,6 @@
 #include "game_simulation.hpp"
 #include "system_helper.hpp"
+#include "validity_checker.hpp"
 #include <box2dwrapper/box2d_world_impl.hpp>
 #include <game_properties.hpp>
 #include <math_helper.hpp>
@@ -61,10 +62,16 @@ void GameSimulation::prepareSimulationForNewRound()
 
 void GameSimulation::addUnit(UnitClientToServerData const& unitData)
 {
-    // TODO sanity check validity of placement
-    if (!checkIfUnitIsUnique(unitData)) {
+    if (!ValidityChecker::checkIfUnitIDsAreUnique(m_unitInformationForRoundStart, unitData)) {
+        m_logger.warning("Adding a unit that is already present in the game simulation");
         return;
     }
+
+    if (!ValidityChecker::checkIfUnitPlacementIsValid(unitData)) {
+        m_logger.warning("Adding a unit in an invalid place");
+        return;
+    }
+
     UnitServerRoundStartData roundStartData;
     roundStartData.unitClientToServerData = unitData;
 
@@ -340,18 +347,6 @@ jt::Vector2f GameSimulation::getTerrainMappedFieldPosition(jt::Vector2f const& p
 float GameSimulation::getTerrainMappedFieldHeight(jt::Vector2f const& pos)
 {
     return m_world->getFieldHeight(pos);
-}
-
-bool GameSimulation::checkIfUnitIsUnique(UnitClientToServerData const& newUnitData)
-{
-    for (auto const& unitData : m_unitInformationForRoundStart) {
-        if (unitData.unitClientToServerData.unitID == newUnitData.unitID
-            && unitData.unitClientToServerData.playerID == newUnitData.playerID) {
-            m_logger.warning("Adding a unit that is already present in the game simulation");
-            return false;
-        }
-    }
-    return true;
 }
 
 void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo, float delay)
