@@ -18,7 +18,8 @@ bool ValidityChecker::checkIfUnitPlacementIsValid(UnitClientToServerData const& 
 {
     if (newUnitData.positionX < 0) {
         return false;
-    } else if (newUnitData.positionX >= terrainWidthInChunks * terrainChunkSizeInPixel) {
+    }
+    if (newUnitData.positionX >= terrainWidthInChunks * terrainChunkSizeInPixel) {
         return false;
     }
 
