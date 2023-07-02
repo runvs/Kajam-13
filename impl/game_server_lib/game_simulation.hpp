@@ -35,9 +35,7 @@ public:
     void addUnitUpgrade(UpgradeUnitData const& upg);
 
     void performSimulation(SimulationResultSenderInterface& sender);
-
-    // TODO think about using an optional here, as there might not be a valid target.
-    // TODO otherwise, just return the passed in position?
+    
     std::weak_ptr<SimulationObjectInterface> getClosestTargetTo(
         const jt::Vector2f& pos, int playerId) override;
     float getLocalSpeedFactorAt(jt::Vector2f const& pos, jt::Vector2f const& dir) override;
