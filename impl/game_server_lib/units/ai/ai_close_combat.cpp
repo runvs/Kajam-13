@@ -27,8 +27,8 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
     auto const speedFactor = world.getLocalSpeedFactorAt(unit->getPosition(), dir);
     float speed = unit->getUnitInfoFull().movementSpeed * speedFactor;
     auto const attackRange
-        = (unit->getUnitInfoFull().colliderRadius * target->getUnitInfoFull().colliderRadius) / 2.0f
-        + 1.0f;
+        = (unit->getUnitInfoFull().colliderRadius + target->getUnitInfoFull().colliderRadius)
+        + 2.0f;
     if (dist < attackRange) {
         speed = 0;
         if (m_attackTimer <= 0) {

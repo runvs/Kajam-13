@@ -174,7 +174,7 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
     }
     if (std::count(info.armor.types.begin(), info.armor.types.end(), "NoSplashDamage") != 0) {
         if (std::count(damage.damageTypes.begin(), damage.damageTypes.end(), "splash") != 0) {
-            damageValue = 0.0f;
+            damageValue *= 0.08f;
         }
     }
     std::string armorTypes = "";

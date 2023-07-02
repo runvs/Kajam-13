@@ -224,7 +224,8 @@ void PlacementManager::placeUnit()
         return;
     }
 
-    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
+    if (getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)
+        && getGame()->gfx().window().shouldProcessMouse()) {
         auto playerIdDispatcher = m_playerIdDispatcher.lock();
         if (playerIdDispatcher == nullptr) {
             getGame()->logger().warning(
