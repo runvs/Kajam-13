@@ -1,12 +1,13 @@
-#include "compression/compressor_impl.hpp"
-#include "log/logger_null.hpp"
-#include "network_data/unit_client_to_server_data.hpp"
-#include "network_data/unit_info_collection.hpp"
-#include "random/random.hpp"
-#include "receive_buffer.hpp"
-#include "simulation_result_sender_interface.hpp"
-#include "system_helper.hpp"
+#include <compression/compressor_impl.hpp>
 #include <game_simulation.hpp>
+#include <log/logger_null.hpp>
+#include <map/terrain.hpp>
+#include <network_data/unit_client_to_server_data.hpp>
+#include <network_data/unit_info_collection.hpp>
+#include <random/random.hpp>
+#include <receive_buffer.hpp>
+#include <simulation_result_sender_interface.hpp>
+#include <system_helper.hpp>
 #include <gtest/gtest.h>
 
 class NetworkMessageCollector : public SimulationResultSenderInterface {
@@ -50,8 +51,8 @@ TEST(NetworkDataSizeTest, OneHundretArchers)
         data.unitType = "archer";
         data.playerID = jt::Random::getInt(0, 1);
         data.unitID = i;
-        data.positionX = (i / 5) * 32;
-        data.positionY = (i % 5) * 32;
+        data.positionX = (i % terrainWidthInChunks) * terrainChunkSizeInPixel;
+        data.positionY = (i / terrainWidthInChunks) * terrainChunkSizeInPixel;
         gs.addUnit(data);
     }
 
@@ -81,8 +82,8 @@ TEST(NetworkDataSizeTest, TwoHundretRandomUnits)
         data.unitType = *jt::SystemHelper::select_randomly(types.cbegin(), types.cend());
         data.playerID = jt::Random::getInt(0, 1);
         data.unitID = i;
-        data.positionX = (i / 5) * 32;
-        data.positionY = (i % 5) * 32;
+        data.positionX = (i % terrainWidthInChunks) * terrainChunkSizeInPixel;
+        data.positionY = (i / terrainWidthInChunks) * terrainChunkSizeInPixel;
         gs.addUnit(data);
     }
 
