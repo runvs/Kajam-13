@@ -8,9 +8,6 @@
 
 struct ClientPlacementData {
     std::vector<UnitClientToServerData> m_units;
-    // TODO replace by dedicated class as well
-    // TODO check if needed at all, as upgrades are send via a dedicated message
-    std::vector<ObjectProperties> m_unitUpgrades;
 };
 
 void to_json(nlohmann::json& j, const ClientPlacementData& data);
