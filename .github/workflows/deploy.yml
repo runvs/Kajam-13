@@ -38,6 +38,8 @@ jobs:
           cp ${{github.workspace}}/build/impl/game_client/Release/*.exe ${{github.workspace}}/release/release_win/
           cp ${{github.workspace}}/build/impl/game_server/Release/*.exe ${{github.workspace}}/release/release_win/
           cp -r ${{github.workspace}}/build/impl/game_client/Release/assets ${{github.workspace}}/release/release_win/
+          
+          ls ${{github.workspace}}/release/release_win/
 
       - name: Create Archive
         uses: thedoctor0/zip-release@0.6.2
@@ -47,9 +49,9 @@ jobs:
           filename: 'release_win.zip'
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.13
         with:
-          files: ${{github.workspace}}/release/release_win.zip
+          files: ${{github.workspace}}\release\release_win.zip
 
   LinuxSFML:
     runs-on: ubuntu-latest
