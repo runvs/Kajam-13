@@ -3,15 +3,12 @@
 
 #include <network_data/upgrade_value.hpp>
 #include <nlohmann.hpp>
-#include <sprite.hpp>
-#include <memory>
 #include <string>
 #include <vector>
 
 struct UpgradeInfo {
     std::string name;
     std::string iconPath;
-    std::shared_ptr<jt::Sprite> icon { nullptr };
     int upgradeCost { 0 };
 
     UpgradeValue damage;

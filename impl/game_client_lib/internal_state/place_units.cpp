@@ -134,8 +134,9 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
         return;
     }
     auto const unitInfo = getUnitInfoWithLevelAndUpgrades(unit->getInfo(), unit->getLevel(),
-        state.getPlacementManager()->upgrades()->getBoughtUpgradesForUnit(
-            unit->getPlayerID(), unit->getInfo().type));
+        convertUpgradeInfoClientVectorToUpgradeInfoVector(
+            state.getPlacementManager()->upgrades()->getBoughtUpgradesForUnit(
+                unit->getPlayerID(), unit->getInfo().type)));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.0f);
     ImGui::BeginTooltip();
@@ -186,14 +187,14 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
     for (auto& upg : upgrades) {
         //  TODO load icon on create, not during update
         if (!upg.icon) {
-            upg.icon = std::make_shared<jt::Sprite>(
-                upg.iconPath, jt ::Recti { 0, 0, 64, 64 }, state.getGame()->gfx().textureManager());
+            upg.icon = std::make_shared<jt::Sprite>(upg.info.iconPath, jt ::Recti { 0, 0, 64, 64 },
+                state.getGame()->gfx().textureManager());
         }
         ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
                          upg.icon->getSFSprite().getTexture()->getNativeHandle()),
             ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
         ImGui::SameLine(0, -1);
-        ImGui::Text("%s", upg.name.c_str());
+        ImGui::Text("%s", upg.info.name.c_str());
     }
 
     ImGui::EndTooltip();
@@ -232,36 +233,36 @@ void PlaceUnits::drawUnitUpgradeWindow(
     ImGui::SetNextWindowSize({ 208, 100 }, ImGuiCond_FirstUseEver);
     ImGui::Begin((unitType + " upgrades").c_str());
     for (auto& upg : possibleUpgrades) {
-        if (upg.name.empty()) {
+        if (upg.info.name.empty()) {
             continue;
         }
-        auto const cost = upg.upgradeCost;
-        auto const str = upg.name + " (" + std::to_string(cost) + ")";
+        auto const cost = upg.info.upgradeCost;
+        auto const str = upg.info.name + " (" + std::to_string(cost) + ")";
 
         const auto canAffordUpgrade = state.getPlacementManager()->getFunds() < cost;
         ImGui::BeginDisabled(canAffordUpgrade);
         // TODO avoid loading icons in draw
         if (!upg.icon) {
-            upg.icon = std::make_shared<jt::Sprite>(upg.iconPath, jt ::Recti { 0, 0, 256, 256 },
-                state.getGame()->gfx().textureManager());
+            upg.icon = std::make_shared<jt::Sprite>(upg.info.iconPath,
+                jt ::Recti { 0, 0, 256, 256 }, state.getGame()->gfx().textureManager());
         }
         ImGui::Image(jt::SystemHelper::nativeHandleToImTextureId<ImTextureID>(
                          upg.icon->getSFSprite().getTexture()->getNativeHandle()),
             ImVec2 { 16.0f, 16.0f }, ImVec2 { 0.0f, 0.0f }, ImVec2 { 1.0f, 1.0f });
         ImGui::SameLine(0, -1);
         if (ImGui::Button(str.c_str())) {
-            state.getGame()->logger().info("clicked upgrade: " + upg.name);
+            state.getGame()->logger().info("clicked upgrade: " + upg.info.name);
             state.getPlacementManager()->addFunds(-cost);
 
             UpgradeUnitData data;
-            data.upgrade = upg;
+            data.upgrade = upg.info;
             data.unityType = selectedUnit->getInfo().type;
             data.playerID = selectedUnit->getPlayerID();
             state.getServerConnection()->unitUpgrade(data);
             state.flashUnitsForUpgrade(selectedUnit->getInfo().type);
 
             state.getPlacementManager()->upgrades()->buyUpgrade(
-                selectedUnit->getPlayerID(), selectedUnit->getInfo().type, upg.name);
+                selectedUnit->getPlayerID(), selectedUnit->getInfo().type, upg.info.name);
         }
         ImGui::EndDisabled();
     }
@@ -279,8 +280,9 @@ void PlaceUnits::drawRangeIndicator(StateGame& state)
             if (unit->isMouseOver()) {
                 auto const unitInfo
                     = getUnitInfoWithLevelAndUpgrades(unit->getInfo(), unit->getLevel(),
-                        state.getPlacementManager()->upgrades()->getBoughtUpgradesForUnit(
-                            unit->getPlayerID(), unit->getInfo().type));
+                        convertUpgradeInfoClientVectorToUpgradeInfoVector(
+                            state.getPlacementManager()->upgrades()->getBoughtUpgradesForUnit(
+                                unit->getPlayerID(), unit->getInfo().type)));
                 if (unitInfo.ai.type == AiInfo::AiType::CLOSE_COMBAT) {
                     continue;
                 }
