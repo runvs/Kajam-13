@@ -2,6 +2,7 @@
 #define JAMTEMPLATE_UPGRADE_MANAGER_HPP
 
 #include <network_data/unit_info_collection.hpp>
+#include <upgrade_info_client.hpp>
 #include <map>
 #include <string>
 
@@ -10,16 +11,16 @@ public:
     explicit UpgradeManager(std::shared_ptr<UnitInfoCollection> unitInfo);
 
     void buyUpgrade(int playerID, std::string const& unitType, const std::string& upgrade) const;
-    std::vector<UpgradeInfo>& getPossibleUpgradesForUnit(
+    std::vector<UpgradeInfoClient>& getPossibleUpgradesForUnit(
         int playerID, std::string const& unitType) const;
-    std::vector<UpgradeInfo>& getBoughtUpgradesForUnit(
+    std::vector<UpgradeInfoClient>& getBoughtUpgradesForUnit(
         int playerID, std::string const& unitType) const;
 
 private:
     std::shared_ptr<UnitInfoCollection> m_unitInfoCollection;
 
-    mutable std::map<int, std::map<std::string, std::vector<UpgradeInfo>>> m_possibleUpgrades;
-    mutable std::map<int, std::map<std::string, std::vector<UpgradeInfo>>> m_boughtUpgrades;
+    mutable std::map<int, std::map<std::string, std::vector<UpgradeInfoClient>>> m_possibleUpgrades;
+    mutable std::map<int, std::map<std::string, std::vector<UpgradeInfoClient>>> m_boughtUpgrades;
 };
 
 #endif // JAMTEMPLATE_UPGRADE_MANAGER_HPP
