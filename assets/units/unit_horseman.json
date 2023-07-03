@@ -8,7 +8,7 @@
     "damage": 20.0
   },
   "attackTimerMax": 2.0,
-  "movementSpeed": 50.0,
+  "movementSpeed": 45.0,
   "colliderRadius": 7.0,
   "cost": 80,
   "unlockCost": 50,
