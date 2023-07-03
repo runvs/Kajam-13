@@ -35,9 +35,9 @@ jobs:
         run: |
           mkdir ${{github.workspace}}/release
           mkdir ${{github.workspace}}/release/release_win
-          cp ${{github.workspace}}/build/impl/game_client/Release/*.exe ${{github.workspace}}/release/release_win/
-          cp ${{github.workspace}}/build/impl/game_server/Release/*.exe ${{github.workspace}}/release/release_win/
-          cp -r ${{github.workspace}}/build/impl/game_client/Release/assets ${{github.workspace}}/release/release_win/
+          cp ${{github.workspace}}/build/impl/game_client/*.exe ${{github.workspace}}/release/release_win/
+          cp ${{github.workspace}}/build/impl/game_server/*.exe ${{github.workspace}}/release/release_win/
+          cp -r ${{github.workspace}}/build/impl/game_client/assets ${{github.workspace}}/release/release_win/
           
           ls ${{github.workspace}}/release/release_win/
 
