@@ -1,6 +1,6 @@
 {
   "type": "shieldman",
-  "description": "Tanky unit with a strong shield. Rather slow.",
+  "description": "tanky unit with a strong shield. Rather slow.",
   "expRequiredForLevelUp": 120,
   "expGainWhenKilled": 90,
   "hitpoints": 250.0,

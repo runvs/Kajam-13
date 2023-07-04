@@ -32,8 +32,11 @@ jt::Palette GP::getPalette()
 }
 
 std::size_t GP::MaxNumberOfStepsPerRound() { return 8000; }
+
 jt::Vector2f GP::UnitAnimationOffset() { return jt::Vector2f { -9.0f, -16.0f }; }
+
 int GP::InitialPlayerHP() { return 4000; }
+
 int GP::ZLayerUI() { return 100; }
 
 std::map<std::string, int> GP::animationPriorities()
@@ -48,3 +51,35 @@ std::map<std::string, int> GP::animationPriorities()
         // clang-format on
     };
 }
+
+float GP::UnitExperienceForLevelUpExponent() { return 0.85f; }
+
+std::string GP::GameName() { return "Medibellum"; }
+
+std::string GP::AuthorName() { return "Adkiem & Dr.Laguna & Semitalis"; }
+
+std::string GP::JamName() { return "Kajam-13"; }
+
+std::string GP::JamDate() { return "2023-06"; }
+
+std::string GP::ExplanationText() { return ""; }
+
+jt::Vector2f GP::GetWindowSize() { return jt::Vector2f { 1024, 800 }; }
+
+float GP::GetZoom() { return 2.0f; }
+
+jt::Vector2f GP::GetScreenSize() { return GetWindowSize() * (1.0f / GetZoom()); }
+
+jt::Color GP::PaletteBackground() { return GP::getPalette().getColor(5); }
+
+jt::Color GP::PaletteFontFront() { return GP::getPalette().getColor(0); }
+
+jt::Color GP::PaletteFontShadow() { return jt::Color { 50, 50, 50, 100 }; }
+
+jt::Color GP::PaletteFontCredits() { return GP::getPalette().getColor(2); }
+
+jt::Color GP::ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4"); }
+
+jt::Color GP::ColorPlayer1() { return jt::ColorFactory::fromHexString("#f57979"); }
+
+float GP::TimePerSimulationUpdate() { return 0.005f; }
