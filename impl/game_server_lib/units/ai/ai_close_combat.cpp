@@ -6,6 +6,8 @@
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
 
+AiCloseCombat::AiCloseCombat() { m_attackTimer = jt::Random::getFloat(0.3f, 0.6f); }
+
 void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)
 {
     m_attackTimer -= elapsed;
