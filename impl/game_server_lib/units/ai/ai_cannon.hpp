@@ -5,10 +5,11 @@
 
 class AiCannon : public AiInterface {
 public:
+    AiCannon();
     void update(float elapsed, ServerUnit* unit, WorldInfoInterface& world) override;
 
 private:
-    float m_attackTimer { 0.0f };
+    float m_attackTimer;
 };
 
 #endif // JAMTEMPLATE_AI_CANNON_HPP

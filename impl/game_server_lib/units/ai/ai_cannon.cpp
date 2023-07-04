@@ -2,10 +2,11 @@
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <network_data/arrow_info.hpp>
-#include <network_data/damage_info.hpp>
 #include <random/random.hpp>
 #include <units/server_unit.hpp>
 #include <world_info_interface.hpp>
+
+AiCannon::AiCannon() { m_attackTimer = jt::Random::getFloat(0.6f, 0.8f); }
 
 void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)
 {
@@ -37,7 +38,7 @@ void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world
         if (m_attackTimer <= 0) {
             unit->setAnim("attack");
             m_attackTimer
-                = unit->getUnitInfoFull().attackTimerMax + jt::Random::getFloat(0.0f, 0.1f);
+                = unit->getUnitInfoFull().attackTimerMax + jt::Random::getFloat(0.0f, 0.2f);
 
             ArrowInfo arrowInfo;
             arrowInfo.targetPlayerId = target->getPlayerID();
