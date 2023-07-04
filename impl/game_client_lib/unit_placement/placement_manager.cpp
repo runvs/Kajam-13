@@ -173,6 +173,10 @@ void PlacementManager::doDraw() const
                 unlockType(t);
                 m_availableFunds -= u.unlockCost;
             }
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                std::string const str = u.description + " Cost: " + std::to_string(u.cost);
+                ImGui::SetTooltip("%s", str.c_str());
+            }
             ImGui::EndDisabled();
         }
         ImGui::EndTable();
@@ -201,6 +205,9 @@ void PlacementManager::doDraw() const
                 if (ImGui::Button(u.type.c_str(), { 80, 0 })) {
                     getGame()->logger().debug("select: " + u.type);
                     m_activeUnitType = u.type;
+                }
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                    ImGui::SetTooltip("%s", u.description.c_str());
                 }
             }
             ImGui::EndDisabled();

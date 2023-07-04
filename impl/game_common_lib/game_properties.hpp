@@ -14,35 +14,46 @@ class GP {
 public:
     GP() = delete;
 
-    static std::string GameName() { return "Medibellum"; }
-    static std::string AuthorName() { return "Adkiem & Dr.Laguna & Semitalis"; }
-    static std::string JamName() { return "Kajam-13"; }
-    static std::string JamDate() { return "2023-06"; }
-    static std::string ExplanationText() { return ""; }
+    static std::string GameName();
 
-    static jt::Vector2f GetWindowSize() { return jt::Vector2f { 1024, 800 }; }
-    static float GetZoom() { return 2.0f; }
-    static jt::Vector2f GetScreenSize() { return GetWindowSize() * (1.0f / GetZoom()); }
+    static std::string AuthorName();
 
-    static jt::Color PaletteBackground() { return GP::getPalette().getColor(5); }
-    static jt::Color PaletteFontFront() { return GP::getPalette().getColor(0); }
-    static jt::Color PalleteFrontHighlight() { return GP::getPalette().getColor(1); }
-    static jt::Color PaletteFontShadow() { return jt::Color { 50, 50, 50, 100 }; }
-    static jt::Color PaletteFontCredits() { return GP::getPalette().getColor(2); }
+    static std::string JamName();
 
-    static jt::Color ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4"); }
-    static jt::Color ColorPlayer1() { return jt::ColorFactory::fromHexString("#f57979"); }
+    static std::string JamDate();
+
+    static std::string ExplanationText();
+
+    static jt::Vector2f GetWindowSize();
+
+    static float GetZoom();
+
+    static jt::Vector2f GetScreenSize();
+
+    static jt::Color PaletteBackground();
+
+    static jt::Color PaletteFontFront();
+
+    static jt::Color PaletteFontShadow();
+
+    static jt::Color PaletteFontCredits();
+
+    static jt::Color ColorPlayer0();
+
+    static jt::Color ColorPlayer1();
 
     static jt::Palette getPalette();
 
     static std::size_t MaxNumberOfStepsPerRound();
-    static float TimePerSimulationUpdate() { return 0.005f; }
+
+    static float TimePerSimulationUpdate();
 
     static jt::Vector2f UnitAnimationOffset();
     static int InitialPlayerHP();
 
     static int ZLayerUI();
     static std::map<std::string, int> animationPriorities();
+    static float UnitExperienceForLevelUpExponent();
 };
 
 #endif
