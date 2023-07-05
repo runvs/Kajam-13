@@ -52,7 +52,7 @@ std::map<std::string, int> GP::animationPriorities()
     };
 }
 
-float GP::UnitExperienceForLevelUpExponent() { return 0.85f; }
+float GP::UnitExperienceForLevelUpExponent() { return 0.875f; }
 
 std::string GP::GameName() { return "Medibellum"; }
 
