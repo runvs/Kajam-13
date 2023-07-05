@@ -173,34 +173,34 @@ void GameSimulation::handleArrows(
                 if (!target->isAlive()) {
                     continue;
                 }
+                if (target->getPlayerID() != arrow.targetPlayerId) {
+                    continue;
+                }
 
-                if (target->getPlayerID() == arrow.targetPlayerId) {
-                    auto const difTargetArrow
-                        = target->getPosition() - arrow.currentPos + jt::Vector2f { 4.0f, 4.0f };
-                    auto const dist = jt::MathHelper::length(difTargetArrow);
+                jt::Vector2f const offfsetToUnitCenter { 8.0f, 12.0f };
+                auto const difTargetArrow = target->getPosition() + target->getOffset()
+                    + offfsetToUnitCenter - arrow.currentPos;
+                auto const dist = jt::MathHelper::length(difTargetArrow);
 
-                    if (dist <= 16) {
-
-                        target->takeDamage(arrow.damage);
-                        if (!target->isAlive()) {
-                            // kill
-                            m_logger.verbose("arrow kill", { "GameSimulation" });
-                            auto const exp = target->getUnitInfoFull().experienceGainWhenKilled;
-                            for (auto& u : m_simulationObjects) {
-                                bool const correctUId = u->getUnitID() == arrow.shooterUnitId;
-                                bool const correctPId = u->getPlayerID() == arrow.shooterPlayerId;
-                                if (correctPId && correctUId) {
-                                    u->gainExperience(exp);
-                                    m_logger.verbose(
-                                        "gain exp from arrow kill: " + std::to_string(exp),
-                                        { "GameSimulation" });
-                                    break;
-                                }
+                if (dist <= 16) {
+                    target->takeDamage(arrow.damage);
+                    if (!target->isAlive()) {
+                        // kill
+                        m_logger.verbose("arrow kill", { "GameSimulation" });
+                        auto const exp = target->getUnitInfoFull().experienceGainWhenKilled;
+                        for (auto& u : m_simulationObjects) {
+                            bool const correctUId = u->getUnitID() == arrow.shooterUnitId;
+                            bool const correctPId = u->getPlayerID() == arrow.shooterPlayerId;
+                            if (correctPId && correctUId) {
+                                u->gainExperience(exp);
+                                m_logger.verbose("gain exp from arrow kill: " + std::to_string(exp),
+                                    { "GameSimulation" });
+                                break;
                             }
                         }
-                        arrow.age = 999999;
-                        break;
                     }
+                    arrow.age = 999999;
+                    break;
                 }
             }
         } else {
@@ -380,6 +380,7 @@ void GameSimulation::scheduleAttack(CloseCombatInfo const& info, float delay)
 {
     m_scheduledCloseCombatAttacks.push_back(std::make_pair(delay, info));
 }
+
 std::shared_ptr<SimulationObjectInterface> GameSimulation::getUnit(int pid, int uid)
 {
     for (auto const& obj : m_simulationObjects) {
