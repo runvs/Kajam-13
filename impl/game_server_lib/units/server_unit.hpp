@@ -20,7 +20,6 @@ public:
         std::shared_ptr<jt::Box2DWorldInterface> world);
 
     void update(float elapsed, WorldInfoInterface& world) override;
-
     UnitServerToClientData saveState() const override;
 
     void setRoundStartState(UnitServerRoundStartData* props) override;
@@ -29,18 +28,14 @@ public:
 
     void levelUnitUp() override;
 
-    void setUnitID(int unitID);
-
     void setPosition(jt::Vector2f const& pos);
-
     jt::Vector2f getPosition() const override;
 
     void setOffset(jt::Vector2f const& offset);
-
     jt::Vector2f getOffset() const override;
 
     int getPlayerID() const override;
-
+    void setUnitID(int unitID);
     int getUnitID() const override;
 
     void takeDamage(const DamageInfo& damage) override;
@@ -57,6 +52,8 @@ public:
     int getLevel() const override;
 
     void setAnim(std::string const& newAnimName);
+
+    void setCurrentSlope(float slope);
 
 private:
     jt::LoggerInterface& m_logger;
@@ -83,6 +80,7 @@ private:
     int m_experience {};
 
     mutable std::string m_newAnim { "" };
+    float m_slope { 0 };
 };
 
 #endif // JAMTEMPLATE_SERVER_UNIT_HPP

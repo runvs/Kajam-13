@@ -1,5 +1,6 @@
 #include "ai_close_combat.hpp"
 #include <close_combat_info.hpp>
+#include <game_properties.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <random/random.hpp>
@@ -26,7 +27,8 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
     auto dir = target->getPosition() - unit->getPosition();
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
-    auto const speedFactor = world.getLocalSpeedFactorAt(unit->getPosition(), dir);
+    auto const speedFactor
+        = convertSlopeToSpeedFactor(world.getLocalSlope(unit->getPosition(), dir));
     float speed = unit->getUnitInfoFull().movementSpeed * speedFactor;
     auto const attackRange
         = (unit->getUnitInfoFull().colliderRadius + target->getUnitInfoFull().colliderRadius)
