@@ -1,5 +1,7 @@
 #include "unit_info.hpp"
+#include <game_properties.hpp>
 #include <json_keys.hpp>
+#include <cmath>
 
 void to_json(nlohmann::json& j, UnitInfo const& data)
 {
@@ -67,6 +69,7 @@ void applyUpgradeInt(int& value, const UpgradeValue& upg)
 {
     value = static_cast<int>(value * (1.0f + upg.factor) + upg.add);
 }
+
 void applyUpgradeFloat(float& value, const UpgradeValue& upg)
 {
     value = value * (1.0f + upg.factor) + upg.add;
@@ -97,8 +100,8 @@ UnitInfo getUnitInfoWithLevelAndUpgrades(
     info.cost = baseInfo.cost * level;
 
     info.experienceGainWhenKilled = baseInfo.experienceGainWhenKilled * level;
-    info.experienceRequiredForLevelUp
-        = static_cast<int>(baseInfo.experienceRequiredForLevelUp * sqrt(level));
+    info.experienceRequiredForLevelUp = static_cast<int>(baseInfo.experienceRequiredForLevelUp
+        * std::pow(level, GP::UnitExperienceForLevelUpExponent()));
 
     for (auto const& upg : upgrades) {
         applyUpgrade(info, upg);
