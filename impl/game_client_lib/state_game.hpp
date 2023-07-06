@@ -60,7 +60,6 @@ public:
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
     std::shared_ptr<jt::ObjectGroup<Critter>> getCritters();
 
-    // TODO move to InternalStateManager
     void transitionWaitForPlayersToSelectStartingUnits();
     void transitionWaitForSimulationResultsToPlayback();
     void transitionPlaybackToPlaceUnits();

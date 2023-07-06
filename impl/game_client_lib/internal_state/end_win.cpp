@@ -6,6 +6,7 @@
 #include <imgui.h>
 
 void EndWin::update(StateGame& /*state*/, float /*elapsed*/) { }
+
 void EndWin::draw(StateGame& state)
 {
     if (!m_imageVictory) {
@@ -48,6 +49,4 @@ void EndWin::draw(StateGame& state)
     }
     ImGui::PopStyleColor(3);
     ImGui::End();
-
-    // TODO add some particle effects
 }

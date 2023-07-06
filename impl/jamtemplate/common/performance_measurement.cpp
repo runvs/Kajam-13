@@ -1,4 +1,5 @@
 #include "performance_measurement.hpp"
+#include <functional>
 
 float jt::getDurationInSecondsSince(std::chrono::time_point<std::chrono::system_clock> const& since)
 {
@@ -7,11 +8,9 @@ float jt::getDurationInSecondsSince(std::chrono::time_point<std::chrono::system_
         / 1000.0f;
 }
 
-/// TODO change to template F&& f
 float jt::measureTime(std::function<void(void)> const& f)
 {
     auto const start = std::chrono::system_clock::now();
-    /// TODO use invoke
-    f();
+    std::invoke(f);
     return jt::getDurationInSecondsSince(start);
 }

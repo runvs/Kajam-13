@@ -63,7 +63,6 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
         m_selectedUnitType.clear();
     }
 
-    // TODO move into create function
     if (!m_imageEndPlacement) {
         m_imageEndPlacement = std::make_shared<jt::Sprite>("assets/images/menus/end_placement.png",
             jt::Recti { 0, 0, 483, 64 }, state.getGame()->gfx().textureManager());
@@ -185,7 +184,6 @@ void PlaceUnits::drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, 
         unit->getPlayerID(), unit->getInfo().type);
 
     for (auto& upg : upgrades) {
-        //  TODO load icon on create, not during update
         if (!upg.icon) {
             upg.icon = std::make_shared<jt::Sprite>(upg.info.iconPath, jt ::Recti { 0, 0, 64, 64 },
                 state.getGame()->gfx().textureManager());
@@ -241,7 +239,6 @@ void PlaceUnits::drawUnitUpgradeWindow(
 
         const auto canAffordUpgrade = state.getPlacementManager()->getFunds() < cost;
         ImGui::BeginDisabled(canAffordUpgrade);
-        // TODO avoid loading icons in draw
         if (!upg.icon) {
             upg.icon = std::make_shared<jt::Sprite>(upg.info.iconPath,
                 jt ::Recti { 0, 0, 256, 256 }, state.getGame()->gfx().textureManager());
