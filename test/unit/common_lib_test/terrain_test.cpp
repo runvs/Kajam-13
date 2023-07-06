@@ -250,24 +250,24 @@ TEST_CASE("Slope on edge of steady surface is non zero", "[]")
         // clang-format off
 
         // left edge
-//        std::make_pair(jt::Vector2f { 3, 12 },jt::Vector2f { 1.0f, 0.0f }),
-//        std::make_pair(jt::Vector2f { 3, 13 },jt::Vector2f { 1.0f, 0.0f }),
-//        std::make_pair(jt::Vector2f { 3, 14 },jt::Vector2f { 1.0f, 0.0f }),
-//
-//        // right edge
-//        std::make_pair(jt::Vector2f { 9, 12 },jt::Vector2f { -1.0f, 0.0f }),
-//        std::make_pair(jt::Vector2f { 9, 13 },jt::Vector2f { -1.0f, 0.0f }),
-//        std::make_pair(jt::Vector2f { 9, 14 },jt::Vector2f { -1.0f, 0.0f }),
-//
-//         top edge
-//        std::make_pair(jt::Vector2f { 5, 10 },jt::Vector2f { 0.0f, 1.0f }),
-//        std::make_pair(jt::Vector2f { 6, 10 },jt::Vector2f { 0.0f, 1.0f }),
-//        std::make_pair(jt::Vector2f { 7, 10 },jt::Vector2f { 0.0f, 1.0f })
-//
-//        // bottom edge
-        std::make_pair(jt::Vector2f { 5, 16 },jt::Vector2f { 0.0f, -1.0f })
-//        std::make_pair(jt::Vector2f { 6, 16 },jt::Vector2f { 0.0f, -1.0f }),
-//        std::make_pair(jt::Vector2f { 7, 16 },jt::Vector2f { 0.0f, -1.0f })
+        std::make_pair(jt::Vector2f { 3, 12 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 3, 13 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 3, 14 },jt::Vector2f { 1.0f, 0.0f }),
+
+        // right edge
+        std::make_pair(jt::Vector2f { 9, 12 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 9, 13 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 9, 14 },jt::Vector2f { -1.0f, 0.0f }),
+
+        // top edge
+        std::make_pair(jt::Vector2f { 5, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 6, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 7, 10 },jt::Vector2f { 0.0f, 1.0f }),
+
+        // bottom edge
+        std::make_pair(jt::Vector2f { 5, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 6, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 7, 16 },jt::Vector2f { 0.0f, -1.0f })
 
         // clang-format on
     );

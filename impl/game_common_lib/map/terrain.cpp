@@ -206,7 +206,6 @@ void Terrain::setChunks(Grid const& grid)
                     chunk.heightCorners[0] = left.heightCorners[1];
                     chunk.heightCorners[2] = left.heightCorners[3];
                 } else if (left.heightCenter < chunk.heightCenter) {
-                    chunk.heightCenter = left.height + (chunk.height - left.height) / 2;
                     left.heightCorners[1] = chunk.heightCorners[0];
                     left.heightCorners[3] = chunk.heightCorners[2];
                 }
