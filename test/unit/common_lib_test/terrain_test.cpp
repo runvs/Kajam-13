@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
 #include <map/terrain.hpp>
+#include <math_helper.hpp>
 #include <vector2.hpp>
 
 #if false
@@ -242,7 +243,7 @@ TEST_CASE("Slope on steady surface is Zero on level zero", "[Terrain Test]")
     }
 }
 
-TEST_CASE("Slope on edge of steady surface is non zero", "[]")
+TEST_CASE("Slope on edge of steady surface with height 1 is 0 degree or 45 degree ", "[]")
 {
     static Terrain t("assets/maps/map_test.json");
 
@@ -272,139 +273,116 @@ TEST_CASE("Slope on edge of steady surface is non zero", "[]")
         // clang-format on
     );
 
-    auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
-            + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
-        edgePositionWithDirection.second);
+    SECTION("Upward Slope is +45deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            edgePositionWithDirection.second);
 
-    REQUIRE(slope == Approx(45.0f).epsilon(0.10));
+        REQUIRE(slope == Approx(45.0f).epsilon(0.04));
+    }
+    SECTION("Downward Slope is -45deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            -1.0f * edgePositionWithDirection.second);
+
+        REQUIRE(slope == Approx(-45.0f).epsilon(0.04));
+    }
+    SECTION("Parallel CCW is 0deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            jt::MathHelper::rotateBy(edgePositionWithDirection.second, 90));
+
+        REQUIRE(std::abs(slope) <= 3.0f);
+    }
+
+    SECTION("Parallel CW is 0deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            jt::MathHelper::rotateBy(edgePositionWithDirection.second, -90));
+
+        REQUIRE(std::abs(slope) <= 3.0f);
+    }
+}
+
+TEST_CASE("Slope on edge of steady surface with height 3 is 0 degree or 71,5 degree ", "[]")
+{
+    static Terrain t("assets/maps/map_test.json");
+
+    auto const edgePositionWithDirection = GENERATE(
+        // clang-format off
+
+        // left edge
+        std::make_pair(jt::Vector2f { 16, 11 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 16, 12 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 16, 13 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 16, 14 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 16, 15 },jt::Vector2f { 1.0f, 0.0f }),
+
+        // right edge
+        std::make_pair(jt::Vector2f { 22, 11 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 22, 12 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 22, 13 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 22, 14 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 22, 15 },jt::Vector2f { -1.0f, 0.0f }),
+
+        // top edge
+        std::make_pair(jt::Vector2f { 17, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 18, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 19, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 20, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 21, 10 },jt::Vector2f { 0.0f, 1.0f }),
+
+        // bottom edge
+        std::make_pair(jt::Vector2f { 17, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 18, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 19, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 20, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 21, 16 },jt::Vector2f { 0.0f, -1.0f })
+
+        // clang-format on
+    );
+
+    SECTION("Upward Slope is +71.5deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            edgePositionWithDirection.second);
+
+        REQUIRE(slope == Approx(71.5f).epsilon(0.04));
+    }
+    SECTION("Downward Slope is -71.5deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            -1.0f * edgePositionWithDirection.second);
+
+        REQUIRE(slope == Approx(-71.5f).epsilon(0.04));
+    }
+    SECTION("Parallel CCW is 0deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            jt::MathHelper::rotateBy(edgePositionWithDirection.second, 90));
+
+        REQUIRE(std::abs(slope) <= 5.0f);
+    }
+
+    SECTION("Parallel CW is 0deg")
+    {
+        auto const slope = t.getSlopeAt(edgePositionWithDirection.first * terrainChunkSizeInPixel
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            jt::MathHelper::rotateBy(edgePositionWithDirection.second, -90));
+
+        REQUIRE(std::abs(slope) <= 5.0f);
+    }
 }
 
 #if false
 
-
-class TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture
-    : public testing::TestWithParam<std::tuple<jt::Vector2f, jt::Vector2f>> { };
-
-TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, UpwardSlopeIsOne)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dir = std::get<1>(GetParam());
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_NEAR(t.getSlopeAt(pos, dir), 45.0f, 2.5f);
-}
-
-TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, DownwardSlopeIsMinusOne)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dir = -1.0f * std::get<1>(GetParam());
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_NEAR(t.getSlopeAt(pos, dir), -45.0f, 2.5f);
-}
-
-TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, OrthogonalCWToSlopeIsZero)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dirParam = std::get<1>(GetParam());
-    auto const dir = jt::Vector2f { dirParam.y, -dirParam.x };
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), 0.0f);
-}
-
-TEST_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture, OrthogonalCCWToSlopeIsZero)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dirParam = std::get<1>(GetParam());
-    auto const dir = jt::Vector2f { -dirParam.y, dirParam.x };
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), 0.0f);
-}
-
-INSTANTIATE_TEST_SUITE_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTest,
-    TerrainSlopeOnEdgeOnLevelOneParametrizedTestFixture,
-    ::testing::Values(
-        // clang-format off
-
-
-        // clang-format on
-        ));
-
-class TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture
-    : public testing::TestWithParam<std::tuple<jt::Vector2f, jt::Vector2f>> { };
-
-TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, UpwardSlopeIsThree)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dir = std::get<1>(GetParam());
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_NEAR(t.getSlopeAt(pos, dir), 71.0f, 2.5f);
-}
-
-TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, DownwardSlopeIsMinusThree)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dir = -1.0f * std::get<1>(GetParam());
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_NEAR(t.getSlopeAt(pos, dir), -71.0f, 2.5f);
-}
-
-TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, OrthogonalCWToSlopeIsZero)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dirParam = std::get<1>(GetParam());
-    auto const dir = jt::Vector2f { dirParam.y, -dirParam.x };
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), 0.0f);
-}
-
-TEST_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture, OrthogonalCCWToSlopeIsZero)
-{
-    auto const pos = std::get<0>(GetParam()) * 16.0f;
-    auto const dirParam = std::get<1>(GetParam());
-    auto const dir = jt::Vector2f { -dirParam.y, dirParam.x };
-    Terrain t("assets/maps/map_test.json");
-    ASSERT_EQ(t.getSlopeAt(pos, dir), 0.0f);
-}
-
-INSTANTIATE_TEST_SUITE_P(TerrainSlopeOnEdgeOnLevelThreeParametrizedTest,
-    TerrainSlopeOnEdgeOnLevelThreeParametrizedTestFixture,
-    ::testing::Values(
-        // clang-format off
-
-// left edge
-std::make_tuple(jt::Vector2f { 16, 11 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 16, 12 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 16, 13 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 16, 14 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 16, 15 },jt::Vector2f { 1.0f, 0.0f }),
-
-// right edge
-std::make_tuple(jt::Vector2f { 22, 11 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 22, 12 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 22, 13 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 22, 14 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 22, 15 },jt::Vector2f { -1.0f, 0.0f }),
-
-// top edge
-std::make_tuple(jt::Vector2f { 17, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 18, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 19, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 20, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 21, 10 },jt::Vector2f { 0.0f, 1.0f }),
-
-// bottom edge
-std::make_tuple(jt::Vector2f { 17, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 18, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 19, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 20, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 21, 16 },jt::Vector2f { 0.0f, -1.0f }),
-
-// vertex
-std::make_tuple(jt::Vector2f { 16, 10 },jt::Vector2f { 1.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 16, 16 },jt::Vector2f { 1.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 22, 10 },jt::Vector2f { -1.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 22, 16 },jt::Vector2f { -1.0f, -1.0f })
-        // clang-format on
-        ));
 
 class TerrainSlopeOnHillOnLevelOneParametrizedTestFixture
     : public testing::TestWithParam<std::tuple<jt::Vector2f, jt::Vector2f, float>> { };

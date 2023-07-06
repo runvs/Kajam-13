@@ -117,12 +117,8 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     if (normal.isZero() || (normal.x == 0 && normal.y == 0)) {
         return 0.0f;
     }
-    auto const v = jt::Vector3f { dir };
-    auto const dotproduct = v.dot(normal);
-    auto const np = normal * dotproduct;
-    auto const vp = v - np;
-    auto const slope = vp.angleDeg(v) * (v.z < 0 ? -1 : 1);
-    return slope;
+    auto const d3v = jt::Vector3f { dir };
+    return d3v.angleDeg(normal) - 90.0f;
 }
 
 float Terrain::getFieldHeight(jt::Vector2f const& pos) const
