@@ -22,7 +22,6 @@ void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface&
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
 
-    // TODO account for actual height difference to target
     auto const attackRange = unit->getUnitInfoFull().ai.range * terrainChunkSizeInPixel
         + world.getTerrainMappedFieldHeight(unit->getPosition()) * 10.0f;
     if (dist > attackRange) {

@@ -48,7 +48,6 @@ void GameServer::update(float elapsed)
             auto botDataCopy = m_botData;
             lock.unlock();
 
-            // TODO only pass in playerID of bot
             performAI(botDataCopy);
 
             startRoundSimulation();
@@ -64,7 +63,6 @@ void GameServer::update(float elapsed)
     }
 }
 
-// TODO move out into separate AI class
 void GameServer::performAI(std::map<int, PlayerInfo>& botDataCopy) const
 {
     if (!botDataCopy.empty()) {
@@ -146,7 +144,6 @@ void GameServer::handleMessage(
     }
 
     lock.unlock();
-    // TODO avoid double/triple parsing
     if (m.type == MessageType::InitialPing) {
         handleMessageInitialPing(messageContent, endpoint);
     } else if (m.type == MessageType::AddBot) {

@@ -19,6 +19,7 @@
 #include <array>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -74,7 +75,7 @@ private:
     std::shared_ptr<jt::SoundInterface> m_sfxPlaceUnit { nullptr };
     std::shared_ptr<jt::SoundInterface> m_sfxBuyUpgrade { nullptr };
 
-    mutable std::vector<std::string> m_unlockedTypes {};
+    mutable std::set<std::string> m_unlockedTypes {};
 
     mutable std::shared_ptr<UpgradeManager> m_upgrades { nullptr };
 

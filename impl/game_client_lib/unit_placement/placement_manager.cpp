@@ -143,7 +143,6 @@ void PlacementManager::doDraw() const
     if (m_unitInfo) {
         auto unlockedTypes = m_unlockedTypes;
         auto allTypes = m_unitInfo->getTypes();
-        std::sort(unlockedTypes.begin(), unlockedTypes.end());
         std::sort(allTypes.begin(), allTypes.end());
         std::vector<std::string> purchaseTypes;
         std::set_difference(allTypes.begin(), allTypes.end(), unlockedTypes.begin(),
@@ -244,11 +243,8 @@ void PlacementManager::placeUnit()
         auto fieldPos = m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
         if (!isValidField(fieldPos, posX, posY)) {
-            // TODO Show some visual representation or play a sound that placing a unit here is
-            // not
             getGame()->logger().info(
                 "tried to place unit in invalid position", { "PlacementManager" });
-            // possible.
             return;
         }
 
@@ -322,11 +318,7 @@ void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
 
 int PlacementManager::getFunds() const { return m_availableFunds; }
 
-void PlacementManager::unlockType(const std::string& type) const
-{
-    // TODO check for duplicates
-    m_unlockedTypes.push_back(type);
-}
+void PlacementManager::unlockType(const std::string& type) const { m_unlockedTypes.insert(type); }
 
 void PlacementManager::flashForUpgrade(std::string const& unitType)
 {
