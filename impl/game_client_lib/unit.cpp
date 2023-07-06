@@ -62,6 +62,7 @@ void Unit::doUpdate(float const elapsed)
         animationSpeedFactor = convertSlopeToSpeedFactor(m_slope);
     }
     m_anim->update(elapsed * animationSpeedFactor);
+    m_levelText->setText(jt::MathHelper::floatToStringWithXDigits(m_slope, 2));
     m_levelText->setPosition(m_anim->getPosition() + jt::Vector2f { -4.0f, -6.0f });
     m_levelText->update(elapsed);
 

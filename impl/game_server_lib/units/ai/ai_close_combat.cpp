@@ -27,8 +27,9 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
     auto dir = target->getPosition() - unit->getPosition();
     auto const dist = jt::MathHelper::length(dir);
     jt::MathHelper::normalizeMe(dir);
-    auto const speedFactor
-        = convertSlopeToSpeedFactor(world.getLocalSlope(unit->getPosition(), dir));
+    auto const slope = world.getLocalSlope(unit->getPosition(), dir);
+    unit->setCurrentSlope(slope);
+    auto const speedFactor = convertSlopeToSpeedFactor(slope);
     float speed = unit->getUnitInfoFull().movementSpeed * speedFactor;
     auto const attackRange
         = (unit->getUnitInfoFull().colliderRadius + target->getUnitInfoFull().colliderRadius)
