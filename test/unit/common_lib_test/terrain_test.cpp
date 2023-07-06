@@ -242,7 +242,50 @@ TEST_CASE("Slope on steady surface is Zero on level zero", "[Terrain Test]")
     }
 }
 
-TEST_CASE("Slope on steady surface is zero", "[]") { Terrain t("assets/maps/map_test.json"); }
+TEST_CASE("Slope on edge of steady surface is non zero", "[]")
+{
+    static Terrain t("assets/maps/map_test.json");
+
+    auto const edgePositionWithDirection = GENERATE(
+        // clang-format off
+
+        // left edge
+        std::make_pair(jt::Vector2f { 3, 11 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 3, 12 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 3, 13 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 3, 14 },jt::Vector2f { 1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 3, 15 },jt::Vector2f { 1.0f, 0.0f }),
+
+        // right edge
+        std::make_pair(jt::Vector2f { 9, 11 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 9, 12 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 9, 13 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 9, 14 },jt::Vector2f { -1.0f, 0.0f }),
+        std::make_pair(jt::Vector2f { 9, 15 },jt::Vector2f { -1.0f, 0.0f }),
+
+        // top edge
+        std::make_pair(jt::Vector2f { 4, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 5, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 6, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 7, 10 },jt::Vector2f { 0.0f, 1.0f }),
+        std::make_pair(jt::Vector2f { 8, 10 },jt::Vector2f { 0.0f, 1.0f }),
+
+        // bottom edge
+        std::make_pair(jt::Vector2f { 4, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 5, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 6, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 7, 16 },jt::Vector2f { 0.0f, -1.0f }),
+        std::make_pair(jt::Vector2f { 8, 16 },jt::Vector2f { 0.0f, -1.0f })
+
+        // clang-format on
+    );
+
+    REQUIRE(
+        t.getSlopeAt(edgePositionWithDirection.first
+                + jt::Vector2f { terrainChunkSizeInPixelHalf - 1, terrainChunkSizeInPixelHalf - 1 },
+            edgePositionWithDirection.second)
+        == Approx(45.0f));
+}
 
 #if false
 
@@ -289,33 +332,6 @@ INSTANTIATE_TEST_SUITE_P(TerrainSlopeOnEdgeOnLevelOneParametrizedTest,
     ::testing::Values(
         // clang-format off
 
-// left edge
-std::make_tuple(jt::Vector2f { 3, 11 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 3, 12 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 3, 13 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 3, 14 },jt::Vector2f { 1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 3, 15 },jt::Vector2f { 1.0f, 0.0f }),
-
-// right edge
-std::make_tuple(jt::Vector2f { 9, 11 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 9, 12 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 9, 13 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 9, 14 },jt::Vector2f { -1.0f, 0.0f }),
-std::make_tuple(jt::Vector2f { 9, 15 },jt::Vector2f { -1.0f, 0.0f }),
-
-// top edge
-std::make_tuple(jt::Vector2f { 4, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 5, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 6, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 7, 10 },jt::Vector2f { 0.0f, 1.0f }),
-std::make_tuple(jt::Vector2f { 8, 10 },jt::Vector2f { 0.0f, 1.0f }),
-
-// bottom edge
-std::make_tuple(jt::Vector2f { 4, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 5, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 6, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 7, 16 },jt::Vector2f { 0.0f, -1.0f }),
-std::make_tuple(jt::Vector2f { 8, 16 },jt::Vector2f { 0.0f, -1.0f })
 
         // clang-format on
         ));

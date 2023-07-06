@@ -117,7 +117,7 @@ float Terrain::getChunkHeight(int x, int y) const { return getChunk(x, y).height
 
 float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) const
 {
-    jt::Vector3f const normal { getNormalOfTriangleForPosition(m_chunks, pos, true) };
+    jt::Vector3f const normal { getNormalOfTriangleForPosition(m_chunks, pos, false) };
     if (normal.isZero() || (normal.x == 0 && normal.y == 0)) {
         return 0.0f;
     }
