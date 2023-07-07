@@ -6,6 +6,7 @@
 #include <imgui.h>
 
 void EndLose::update(StateGame& /*state*/, float /*elapsed*/) { }
+
 void EndLose::draw(StateGame& state)
 {
     if (!m_imageDefeat) {
@@ -48,6 +49,4 @@ void EndLose::draw(StateGame& state)
     }
     ImGui::PopStyleColor(3);
     ImGui::End();
-
-    // TODO add some particle effects
 }

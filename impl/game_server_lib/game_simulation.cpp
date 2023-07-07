@@ -294,8 +294,6 @@ void GameSimulation::handleScheduledAttacks(float timePerUpdate)
 std::weak_ptr<SimulationObjectInterface> GameSimulation::getClosestTargetTo(
     const jt::Vector2f& pos, int playerId)
 {
-    // TODO using a SpatialObjectGrid might be useful here?
-
     float minDistance = 999999999.9f;
     std::shared_ptr<SimulationObjectInterface> target { nullptr };
     for (auto const& obj : m_simulationObjects) {

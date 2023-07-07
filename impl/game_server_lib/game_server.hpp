@@ -27,9 +27,8 @@ private:
     CompressorInterface& m_compressor;
     ServerNetworkConnection m_connection;
 
-    // TODO allow spectators?
     std::mutex m_mutex;
-    // TODO create a separate class to encapsulate common behavior
+
     std::map<int, PlayerInfo> m_playerData;
     std::map<int, PlayerInfo> m_botData;
     bool m_matchHasStarted { false };
