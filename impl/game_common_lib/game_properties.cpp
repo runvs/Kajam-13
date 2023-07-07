@@ -87,7 +87,7 @@ float GP::TimePerSimulationUpdate() { return 0.005f; }
 float convertSlopeToSpeedFactor(float slope)
 {
     if (slope > 0) {
-        if (slope > 75.0f) {
+        if (slope > 78.0f) {
             return 0.3f;
         } else if (slope > 75.0f) {
             return 0.4f;
@@ -100,7 +100,7 @@ float convertSlopeToSpeedFactor(float slope)
     } else if (slope == 0) {
         return 1.0f;
     } else {
-        if (slope < -75.0f) {
+        if (slope < -78.0f) {
             return 1.6f;
         } else if (slope < -75.0f) {
             return 1.5f;
