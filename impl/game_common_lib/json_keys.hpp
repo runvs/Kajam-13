@@ -79,6 +79,7 @@ constexpr auto armor = "armor";
 constexpr auto armorType = "armorTypes";
 
 constexpr auto filename = "jsonfilename";
+constexpr auto slope = "slope";
 
 } // namespace jk
 

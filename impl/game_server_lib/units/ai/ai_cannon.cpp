@@ -1,4 +1,5 @@
 #include "ai_cannon.hpp"
+#include <game_properties.hpp>
 #include <map/terrain.hpp>
 #include <math_helper.hpp>
 #include <network_data/arrow_info.hpp>
@@ -28,7 +29,9 @@ void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world
         unit->setOffset(jt::Vector2f { 0.0f,
             -world.getTerrainMappedFieldHeight(unit->getPosition() + terrainChunkSizeInPixelHalf)
                 * terrainHeightScalingFactor });
-        auto const speedFactor = world.getLocalSpeedFactorAt(unit->getPosition(), dir);
+        auto const slope = world.getLocalSlope(unit->getPosition(), dir);
+        unit->setCurrentSlope(slope);
+        auto const speedFactor = convertSlopeToSpeedFactor(slope);
         float const speed = unit->getUnitInfoFull().movementSpeed * speedFactor;
         unit->getPhysicsObject()->setVelocity(dir * speed);
         unit->setAnim("walk");

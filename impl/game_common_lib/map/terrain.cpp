@@ -31,11 +31,7 @@ jt::Vector3f getNormalOfTriangleForPosition(
     // value that can be used for an actual slope calculation when doing vector arithmetics
     auto const convertHeightToZ = [&](auto const v) {
         if (convertHeight) {
-            // conversion formula to map values of [0;terrainHeightMax] to degrees as follows:
-            // 0: 0 | 0.5: 14.0362 | 1: 26.565 | 1.5: 36.8699 | 2: 45 | 3: 56.3099 | 4: 63.4349 |
-            // 5: 68.19
-            return static_cast<float>(
-                v * 0.25 * terrainChunkSizeInPixel * 2 /*shift to center factor*/);
+            return static_cast<float>(v * terrainChunkSizeInPixel);
         }
         return v;
     };
@@ -44,10 +40,10 @@ jt::Vector3f getNormalOfTriangleForPosition(
     jt::Vector3f const c { 0, 0, convertHeightToZ(posHeight) };
     auto const minXY = -terrainChunkSizeInPixelHalf;
     auto const maxXY = terrainChunkSizeInPixelHalf - 1; // TODO check whether pixel 16 is an issue
-    jt::Vector3f const tl { minXY, minXY, convertHeightToZ(chunk.heightCorners[0]) };
-    jt::Vector3f const tr { maxXY, minXY, convertHeightToZ(chunk.heightCorners[1]) };
-    jt::Vector3f const bl { minXY, maxXY, convertHeightToZ(chunk.heightCorners[2]) };
-    jt::Vector3f const br { maxXY, maxXY, convertHeightToZ(chunk.heightCorners[3]) };
+    auto const tl = jt::Vector3f { minXY, minXY, convertHeightToZ(chunk.heightCorners[0]) };
+    auto const tr = jt::Vector3f { maxXY, minXY, convertHeightToZ(chunk.heightCorners[1]) };
+    auto const bl = jt::Vector3f { minXY, maxXY, convertHeightToZ(chunk.heightCorners[2]) };
+    auto const br = jt::Vector3f { maxXY, maxXY, convertHeightToZ(chunk.heightCorners[3]) };
 
     // determine which triangle the position is in and calculate normal vector for it
     int offX = static_cast<int>(pos.x) % terrainChunkSizeInPixel;
@@ -121,11 +117,8 @@ float Terrain::getSlopeAt(jt::Vector2f const& pos, jt::Vector2f const& dir) cons
     if (normal.isZero() || (normal.x == 0 && normal.y == 0)) {
         return 0.0f;
     }
-    auto const v = jt::Vector3f { dir };
-    auto const np = normal * v.dot(normal);
-    auto const vp = v - np;
-    auto const slope = vp.angleDeg(v) * (v.x < 0 || v.y < 0 ? -1 : 1);
-    return slope;
+    auto const d3v = jt::Vector3f { dir };
+    return d3v.angleDeg(normal) - 90.0f;
 }
 
 float Terrain::getFieldHeight(jt::Vector2f const& pos) const
@@ -209,7 +202,6 @@ void Terrain::setChunks(Grid const& grid)
                     chunk.heightCorners[0] = left.heightCorners[1];
                     chunk.heightCorners[2] = left.heightCorners[3];
                 } else if (left.heightCenter < chunk.heightCenter) {
-                    chunk.heightCenter = left.height + (chunk.height - left.height) / 2;
                     left.heightCorners[1] = chunk.heightCorners[0];
                     left.heightCorners[3] = chunk.heightCorners[2];
                 }

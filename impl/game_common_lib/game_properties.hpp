@@ -56,4 +56,6 @@ public:
     static float UnitExperienceForLevelUpExponent();
 };
 
+float convertSlopeToSpeedFactor(float slope);
+
 #endif

@@ -10,11 +10,12 @@ else ()
     target_compile_options(common_lib_tests PRIVATE "-Wextra")
 endif ()
 
+FetchContent_GetProperties(catch2)
+target_include_directories(common_lib_tests PUBLIC ${catch2_SOURCE_DIR}/include)
 
 target_include_directories(common_lib_tests PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(common_lib_tests
-        gtest
-        gmock_main
+        Catch2::Catch2
         game_common_lib
         )
 
