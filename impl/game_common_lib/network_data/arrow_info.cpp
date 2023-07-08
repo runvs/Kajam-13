@@ -8,7 +8,8 @@ void to_json(nlohmann::json& j, const ArrowInfo& data)
     j = nlohmann::json {
         // clang-format off
         { jk::positionX, static_cast<int>(data.currentPos.x * NetworkProperties::floatPrecision()) },
-        { jk::positionY, static_cast<int>(data.currentPos.y * NetworkProperties::floatPrecision()) }
+        { jk::positionY, static_cast<int>(data.currentPos.y * NetworkProperties::floatPrecision()) },
+        { jk::arrowHeight,  static_cast<int>(data.currentHeight * NetworkProperties::floatPrecision())}
         // clang-format on
     };
 
@@ -21,8 +22,12 @@ void from_json(const nlohmann::json& j, ArrowInfo& data)
 {
     j.at(jk::positionX).get_to(data.currentPos.x);
     data.currentPos.x /= NetworkProperties::floatPrecision();
+
     j.at(jk::positionY).get_to(data.currentPos.y);
     data.currentPos.y /= NetworkProperties::floatPrecision();
+
+    j.at(jk::arrowHeight).get_to(data.currentHeight);
+    data.currentHeight /= NetworkProperties::floatPrecision();
 
     if (j.count(jk::scale)) {
         j.at(jk::scale).get_to(data.arrowScale);

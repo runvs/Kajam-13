@@ -159,13 +159,13 @@ void GameSimulation::handleArrows(
 {
     for (auto& arrow : m_arrows) {
         arrow.age += timePerUpdate;
-        float timePercent = arrow.age / arrow.totalTime;
-        if (timePercent >= 1) {
-            timePercent = 1;
-        }
+        float const timePercent = jt::MathHelper::clamp(arrow.age / arrow.totalTime, 0.0f, 1.0f);
+
         auto const dif = arrow.endPos - arrow.startPos;
-        arrow.currentPos = arrow.startPos + dif * timePercent
-            + jt::Vector2f { 0.0f, arrowParabola(timePercent, arrow.maxHeight) };
+        auto const currentArrowHeight = arrowParabola(timePercent, arrow.maxHeight);
+        arrow.currentHeight = currentArrowHeight;
+        arrow.currentPos
+            = arrow.startPos + dif * timePercent + jt::Vector2f { 0.0f, currentArrowHeight };
 
         if (arrow.splashRadius <= 0) {
             // check for single collision arrow - targets
@@ -333,6 +333,12 @@ float GameSimulation::getTerrainMappedFieldHeight(jt::Vector2f const& pos)
 void GameSimulation::spawnArrow(ArrowInfo const& arrowInfo, float delay)
 {
     m_arrowsToBeSpawned.push_back(std::make_pair(delay, arrowInfo));
+    std::string const str = std::string { "Spawn " }
+        + (arrowInfo.splashRadius == 0.0f ? "Arrow" : "Cannonball")
+        + " from [uid: " + std::to_string(arrowInfo.shooterUnitId)
+        + ", pid: " + std::to_string(arrowInfo.shooterPlayerId)
+        + "] to target [pid: " + std::to_string(arrowInfo.targetPlayerId) + "]";
+    m_logger.debug(str, { "GameSimulation", "Arrow" });
 }
 
 void GameSimulation::clear()
