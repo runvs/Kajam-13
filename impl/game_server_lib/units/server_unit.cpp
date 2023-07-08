@@ -71,6 +71,7 @@ UnitServerToClientData ServerUnit::saveState() const
         data.unitAnim = m_newAnim;
         m_newAnim = "";
     }
+    data.slope = m_slope;
     return data;
 }
 
@@ -229,3 +230,5 @@ void ServerUnit::applyUpgrades(const std::vector<UpgradeUnitData>& upgrades)
 }
 
 void ServerUnit::setAnim(const std::string& newAnimName) { m_newAnim = newAnimName; }
+
+void ServerUnit::setCurrentSlope(float slope) { m_slope = slope; }

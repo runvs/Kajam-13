@@ -13,8 +13,8 @@ constexpr auto const chunkSizeHalf = chunkSize / 2.0f;
 
 sf::Color const colorStone { 100, 100, 100 };
 
-// clang-format off
 sf::Color const colorMap[] {
+    // clang-format off
     // dirt layer
     { 89, 60, 47 },
     // grassy layer
@@ -23,8 +23,8 @@ sf::Color const colorMap[] {
     { 80, 80, 80 }, { 120, 120, 120 },
     // mountain layer
     { 160, 160, 160 }, { 200, 200, 200 }
+    // clang-format on
 };
-// clang-format on
 
 float getTerrainHeight(int y, float height)
 {
@@ -107,10 +107,8 @@ void TerrainRenderer::doCreate()
     m->sprite->setPosition(jt::Vector2f(0.0f, 0.0f));
 
     // draw terrain grid texture
-    bool result = m->textureGrid.create(static_cast<unsigned int>(GP::GetScreenSize().x),
+    (void)m->textureGrid.create(static_cast<unsigned int>(GP::GetScreenSize().x),
         static_cast<unsigned int>(GP::GetScreenSize().y));
-    // TODO check error
-    (void)result;
     m->textureGrid.clear(sf::Color::Transparent);
     drawTerrainGrid(m->textureGrid);
     m->textureGrid.display();
@@ -219,12 +217,9 @@ void TerrainRenderer::updateFromTerrain()
     auto texture = std::make_unique<sf::RenderTexture>();
 
     // draw terrain texture from vertices
-    bool result { texture->create(static_cast<unsigned int>(GP::GetScreenSize().x),
-        static_cast<unsigned int>(GP::GetScreenSize().y)) };
-    // TODO check error
-    (void)result;
+    (void)texture->create(static_cast<unsigned int>(GP::GetScreenSize().x),
+        static_cast<unsigned int>(GP::GetScreenSize().y));
     texture->clear(sf::Color::Black);
-    // texture.setSmooth(true);
     for (auto const& e : grid) {
         texture->draw(e);
     }

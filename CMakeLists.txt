@@ -8,7 +8,6 @@ include(config/cmake/helpers.cmake)
 include(config/cmake/cache_variables.cmake)
 
 set(SFML_STATIC_LIBRARIES TRUE)
-set(BUILD_SHARED_LIBS OFF)
 
 ## Other variables and compiler setup I
 #####################################################
@@ -36,6 +35,17 @@ if (JT_ENABLE_WEB)
 elseif (MSVC)
 elseif (NOT CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++fs")
+endif ()
+
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
+    # mac
+    set(BUILD_SHARED_LIBS ON)
+    set(SFML_BUILD_FRAMEWORKS ON)
+else ()
+    # not mac
+    set(BUILD_SHARED_LIBS OFF)
+    set(SFML_BUILD_FRAMEWORKS OFF)
 endif ()
 
 ## set include for mac homebrew

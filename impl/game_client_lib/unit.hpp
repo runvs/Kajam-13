@@ -24,7 +24,7 @@ class Unit : public jt::GameObject, public UnitInterface {
 public:
     explicit Unit(UnitInfo const& info);
 
-    void updateState(UnitServerToClientData const& props);
+    void updateState(UnitServerToClientData const& data);
 
     void setPosition(jt::Vector2f const& pos);
     jt::Vector2f getPosition() const;
@@ -81,6 +81,7 @@ private:
     int m_exp { 0 };
     std::vector<std::string> m_boughtUpgrades;
     std::shared_ptr<jt::Bar> m_hpBar;
+    float m_slope { 0.0f };
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

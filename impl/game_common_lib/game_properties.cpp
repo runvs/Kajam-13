@@ -83,3 +83,32 @@ jt::Color GP::ColorPlayer0() { return jt::ColorFactory::fromHexString("#5d7cd4")
 jt::Color GP::ColorPlayer1() { return jt::ColorFactory::fromHexString("#f57979"); }
 
 float GP::TimePerSimulationUpdate() { return 0.005f; }
+
+float convertSlopeToSpeedFactor(float slope)
+{
+    if (slope > 0) {
+        if (slope > 78.0f) {
+            return 0.3f;
+        } else if (slope > 75.0f) {
+            return 0.4f;
+        } else if (slope > 71.0f) {
+            return 0.5f;
+        } else if (slope > 60.0f) {
+            return 0.6f;
+        }
+        return 0.7f;
+    } else if (slope == 0) {
+        return 1.0f;
+    } else {
+        if (slope < -78.0f) {
+            return 1.6f;
+        } else if (slope < -75.0f) {
+            return 1.5f;
+        } else if (slope < -71.0f) {
+            return 1.4f;
+        } else if (slope < -60.0f) {
+            return 1.3f;
+        }
+        return 1.2f;
+    }
+}

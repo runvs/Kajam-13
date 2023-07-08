@@ -7,7 +7,6 @@
 
 namespace jt {
 
-// TODO This class should implement an interface.
 class SoundFadeManager : public jt::SoundFadeManagerInterface {
 public:
     void volumeFade(std::weak_ptr<SoundInterface> sound, float durationInSeconds, float startVolume,

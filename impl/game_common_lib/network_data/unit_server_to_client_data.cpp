@@ -31,7 +31,11 @@ void to_json(nlohmann::json& j, const UnitServerToClientData& d)
     if (d.unitWalkingRight) {
         j[jk::unitWalkingRight] = true;
     }
+    if (d.slope != 0.0f) {
+        j[jk::slope] = d.slope;
+    }
 }
+
 void from_json(const nlohmann::json& j, UnitServerToClientData& d)
 {
     j.at(jk::unitID).get_to(d.unitID);
@@ -58,5 +62,8 @@ void from_json(const nlohmann::json& j, UnitServerToClientData& d)
         std::string anim;
         j.at(jk::unitAnim).get_to(anim);
         d.unitAnim = anim;
+    }
+    if (j.count(jk::slope) == 1) {
+        j.at(jk::slope).get_to(d.slope);
     }
 }

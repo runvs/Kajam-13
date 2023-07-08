@@ -57,7 +57,11 @@ void Unit::doUpdate(float const elapsed)
 {
     m_glow->setPosition(m_anim->getPosition());
     m_glow->update(elapsed);
-    m_anim->update(elapsed);
+    auto animationSpeedFactor = 1.0f;
+    if (m_anim->getCurrentAnimationName() == "walk") {
+        animationSpeedFactor = convertSlopeToSpeedFactor(m_slope);
+    }
+    m_anim->update(elapsed * animationSpeedFactor);
     m_levelText->setPosition(m_anim->getPosition() + jt::Vector2f { -4.0f, -6.0f });
     m_levelText->update(elapsed);
 
@@ -99,36 +103,37 @@ void Unit::doDraw() const
     }
 }
 
-void Unit::updateState(UnitServerToClientData const& props)
+void Unit::updateState(UnitServerToClientData const& data)
 {
-    if (props.unitID != m_unitID) {
+    if (data.unitID != m_unitID) {
         getGame()->logger().error(
             "updateState called with invalid unit id", { "Unit", "updateState" });
         return;
     }
-    setOffset({ props.offsetX, props.offsetY });
-    setPosition({ props.positionX, props.positionY });
-    if (props.playerID == 0) {
+    setOffset({ data.offsetX, data.offsetY });
+    setPosition({ data.positionX, data.positionY });
+    if (data.playerID == 0) {
         m_anim->setColor(GP::ColorPlayer0());
     } else {
         m_anim->setColor(GP::ColorPlayer1());
     }
-    m_hp = props.hpCurrent;
+    m_hp = data.hpCurrent;
 
-    if (props.unitAnim.has_value()) {
-        m_newAnimName = props.unitAnim.value();
+    if (data.unitAnim.has_value()) {
+        m_newAnimName = data.unitAnim.value();
     }
 
-    turnUnitIntoDirection(m_anim, props.unitWalkingRight);
+    turnUnitIntoDirection(m_anim, data.unitWalkingRight);
 
-    if (props.level != 1) {
+    if (data.level != 1) {
 
-        m_level = props.level;
+        m_level = data.level;
         if (m_level != 1) {
             m_levelText->setText(std::to_string(m_level));
         }
     }
-    m_exp = props.experience;
+    m_exp = data.experience;
+    m_slope = data.slope;
 }
 
 void Unit::playAnimation()
@@ -193,6 +198,7 @@ void Unit::setIDs(int uid, int pid)
 int Unit::getPlayerID() const { return m_playerID; }
 
 bool Unit::isUnitAlive() const { return m_hp > 0; }
+
 bool Unit::isMouseOver() const
 {
     auto const mp = getGame()->input().mouse()->getMousePositionWorld();
@@ -200,6 +206,7 @@ bool Unit::isMouseOver() const
 
     return jt::MathHelper::checkIsIn(rect, mp);
 }
+
 UnitInfo const& Unit::getInfo() const { return m_info; }
 
 int Unit::getLevel() const { return m_level; }
@@ -209,10 +216,13 @@ void Unit::resetForNewRound()
     m_anim->play("idle", 0, true);
     m_animTimeUntilBackToIdle = -1.0f;
 }
+
 void Unit::flash() { m_anim->flash(0.4f, jt::colors::Green); }
 
 void Unit::setHighlight(bool v) { m_glowActive = v; }
+
 int Unit::getExp() const { return m_exp; }
+
 int Unit::getExpForLevelUp() const
 {
     auto info = getUnitInfoWithLevelAndUpgrades(m_info, m_level, {});

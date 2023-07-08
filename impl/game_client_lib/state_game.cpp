@@ -29,7 +29,6 @@
 #include <vector2.hpp>
 #include <imgui.h>
 #include <memory>
-#include <ostream>
 
 void StateGame::onCreate()
 {
@@ -427,14 +426,23 @@ std::shared_ptr<InternalStateManager> StateGame::getStateManager()
 {
     return m_internalStateManager;
 }
+
 std::shared_ptr<ServerConnection> StateGame::getServerConnection() { return m_serverConnection; }
+
 std::shared_ptr<Terrain> StateGame::getTerrain() { return m_terrain; }
+
 std::shared_ptr<TerrainRenderer> StateGame::getTerrainRenderer() { return m_terrainRenderer; }
+
 std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_placementManager; }
+
 std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }
+
 int StateGame::getRound() { return m_round; }
+
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
+
 std::shared_ptr<jt::ObjectGroup<Critter>> StateGame::getCritters() { return m_critters; }
+
 void StateGame::flashUnitsForUpgrade(const std::string& unitType)
 {
     for (auto& u : *m_units) {

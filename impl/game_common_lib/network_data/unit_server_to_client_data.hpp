@@ -24,6 +24,7 @@ struct UnitServerToClientData {
     bool unitWalkingRight { false };
 
     std::optional<std::string> unitAnim {};
+    float slope { 0.0f };
 };
 
 void to_json(nlohmann::json& j, const UnitServerToClientData& d);
