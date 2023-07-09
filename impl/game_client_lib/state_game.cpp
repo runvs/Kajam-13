@@ -371,6 +371,10 @@ void StateGame::drawArrows() const
 {
     for (auto const& a : m_simulationResultsForAllFrames.allFrames.at(m_tickId).m_arrows) {
         m_arrowShape->setPosition(a.currentPos);
+        m_arrowShape->setShadow(jt::Color { 40, 40, 40, 255 },
+            jt::Vector2f { 0.0f,
+                -a.currentHeight
+                    + m_terrain->getFieldHeight(a.currentPos) * terrainHeightScalingFactor });
         m_arrowShape->update(0.0f);
         m_arrowShape->setScale(jt::Vector2f { a.arrowScale, a.arrowScale });
         m_arrowShape->draw(renderTarget());

@@ -14,6 +14,7 @@ struct ArrowInfo {
     float totalTime { 0.0f };
     int targetPlayerId { -1 };
     float maxHeight { 32.0f };
+    float currentHeight { 0.0f };
     int shooterPlayerId { -1 };
     int shooterUnitId { 0 };
     float splashRadius { 0.0f };
