@@ -2,7 +2,6 @@
 #include <asio/connect.hpp>
 #include <asio/executor_work_guard.hpp>
 #include <asio/read.hpp>
-#include <game_properties.hpp>
 #include <log/logger_interface.hpp>
 #include <message.hpp>
 #include <network_helpers.hpp>
@@ -12,7 +11,6 @@
 #include <memory>
 #include <mutex>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <thread>
 
@@ -30,14 +28,21 @@ ClientNetworkConnection::ClientNetworkConnection(std::string const& ip, std::uin
 
 ClientNetworkConnection::~ClientNetworkConnection()
 {
-    m_logger.debug(
-        "ClientNetworkConnection destructor called", { "network", "ClientNetworkConnection" });
-    m_logger.verbose("close socket", { "network", "ClientNetworkConnection" });
-    m_socket->close();
-    m_logger.verbose("stop thread", { "stop thread", "ClientNetworkConnection" });
-    stopThread();
-    m_logger.verbose("reset socket pointer", { "network", "ClientNetworkConnection" });
-    m_socket.reset();
+    try {
+        m_logger.debug(
+            "ClientNetworkConnection destructor called", { "network", "ClientNetworkConnection" });
+
+        m_logger.debug("stop thread", { "stop thread", "ClientNetworkConnection" });
+        stopThread();
+
+        m_logger.debug("close socket", { "network", "ClientNetworkConnection" });
+        m_socket->close();
+
+        m_logger.debug("reset socket pointer", { "network", "ClientNetworkConnection" });
+        m_socket.reset();
+    } catch (std::exception const& e) {
+        m_logger.fatal(e.what());
+    }
 }
 
 void ClientNetworkConnection::establishConnection()
@@ -62,7 +67,7 @@ void ClientNetworkConnection::startProcessing()
 {
     m_logger.debug("start thread to process async tasks", { "network", "ClientNetworkConnection" });
     m_thread = std::thread { [this]() {
-        auto work_guard = asio::make_work_guard(m_IOContext);
+        auto const work_guard = asio::make_work_guard(m_IOContext);
         m_IOContext.run();
     } };
     // start listening for messages
@@ -70,10 +75,6 @@ void ClientNetworkConnection::startProcessing()
         awaitNextMessage();
     }
 }
-
-namespace {
-
-} // namespace
 
 void ClientNetworkConnection::handleReceive(
     asio::error_code const& error, std::size_t bytes_transferred)

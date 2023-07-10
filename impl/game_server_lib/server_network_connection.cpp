@@ -62,13 +62,24 @@ void ServerNetworkConnection::startProcessing()
 
 ServerNetworkConnection::~ServerNetworkConnection()
 {
-    m_IOContext.stop();
-    for (auto& s : m_sockets) {
-        s->close();
-    }
-    m_thread.join();
+    try {
+        m_logger.debug(
+            "ServerNetworkConnection destructor called", { "network", "ServerNetworkConnection" });
 
-    m_sockets.clear();
+        m_logger.debug("stop thread", { "stop thread", "ServerNetworkConnection" });
+        m_IOContext.stop();
+        m_thread.join();
+
+        m_logger.debug("close sockets", { "network", "ServerNetworkConnection" });
+        for (auto& s : m_sockets) {
+            s->close();
+        }
+
+        m_logger.debug("clear socket pointers", { "network", "ServerNetworkConnection" });
+        m_sockets.clear();
+    } catch (std::exception const& e) {
+        m_logger.fatal(e.what());
+    }
 }
 
 void ServerNetworkConnection::setHandleIncomingMessageCallback(

@@ -7,6 +7,9 @@
 void NetworkHelpers::freeSendString(
     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
 {
+    if (!socket.is_open()) {
+        logger.error("socket closed", { "NetworkHelpers", "freeSendString" });
+    }
     asio::error_code error;
 
     // write size information of string with fixed length
@@ -37,6 +40,9 @@ void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_
         logger.error(ss.str(), { "network", "error" });
         socket.close();
         return;
+    }
+    if (!socket.is_open()) {
+        logger.error("socket closed", { "NetworkHelpers", "freeHandleReceive" });
     }
 
     auto const bytesToRead = std::stoul(std::string(buffer.size.cbegin(), buffer.size.cend()));
