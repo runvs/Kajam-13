@@ -5,6 +5,7 @@
 #include <json_keys.hpp>
 #include <message.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
+#include <network_helpers.hpp>
 #include <network_properties.hpp>
 #include <nlohmann.hpp>
 #include <player_info.hpp>
@@ -115,26 +116,25 @@ void GameServer::handleMessage(
     m_logger.debug(
         "handleMessage message content: '" + messageContent + "'", { "network", "GameServer" });
 
-    Message m = nlohmann::json::parse(messageContent);
-    auto const playerId = m.playerId;
+    Message const message = nlohmann::json::parse(messageContent);
+    auto const playerId = message.playerId;
     std::unique_lock<std::mutex> lock { m_mutex };
     // check if player id is known
     if (m_playerData.count(playerId) == 1) {
         auto const& expectedEndpoint = m_playerData[playerId].endpoint;
         // check if endpoint matches known player ID
-        if (expectedEndpoint.address() != endpoint.address()
-            || expectedEndpoint.port() != endpoint.port()) {
+        if (!NetworkHelpers::endpointsMatch(expectedEndpoint, endpoint)) {
             m_logger.warning(
                 "playerId " + std::to_string(playerId) + " does not match registered endpoint",
                 { "network", "GameServer" });
             // Discard message silently
-            if (m.type != MessageType::InitialPing && m.type != MessageType::AddBot) {
+            if (message.type != MessageType::InitialPing && message.type != MessageType::AddBot) {
                 return;
             }
         }
     }
 
-    if (m.type != MessageType::InitialPing && m.type != MessageType::AddBot) {
+    if (message.type != MessageType::InitialPing && message.type != MessageType::AddBot) {
         if (m_playerData.count(playerId) == 0) {
             m_logger.warning("message received for playerId " + std::to_string(playerId)
                     + " which is not in list of players '" + messageContent + "'",
@@ -144,16 +144,20 @@ void GameServer::handleMessage(
     }
 
     lock.unlock();
-    if (m.type == MessageType::InitialPing) {
-        handleMessageInitialPing(messageContent, endpoint);
-    } else if (m.type == MessageType::AddBot) {
+    if (message.type == MessageType::InitialPing) {
+        handleMessageInitialPing(endpoint);
+    } else if (message.type == MessageType::AddBot) {
         handleMessageAddBot();
-    } else if (m.type == MessageType::RoundReady) {
-        handleMessageRoundReady(messageContent, endpoint);
-    } else if (m.type == MessageType::UnitUpgrade) {
-        handleMessageUnitUpgrade(m);
+    } else if (message.type == MessageType::RoundReady) {
+        handleMessageRoundReady(message);
+    } else if (message.type == MessageType::UnitUpgrade) {
+        handleMessageUnitUpgrade(message);
     } else {
-        discard(messageContent, endpoint);
+        m_logger.warning("discard message of type '"
+                + std::to_string(static_cast<int>(message.type)) + "' with content '"
+                + messageContent + "'",
+            { "GameServer" });
+        return;
     }
 }
 
@@ -166,8 +170,7 @@ void GameServer::handleMessageInitialPing(
 
     std::unique_lock<std::mutex> lock { m_mutex };
     for (auto& kvp : m_playerData) {
-        if (kvp.second.endpoint.address() == endpoint.address()
-            && kvp.second.endpoint.port() == endpoint.port()) {
+        if (NetworkHelpers::endpointsMatch(kvp.second.endpoint, endpoint)) {
             m_logger.warning(
                 "player address already registered, not adding the connection a second time",
                 { "network", "GameServer" });
@@ -217,24 +220,21 @@ void GameServer::handleMessageAddBot()
     checkForAllPlayersConnected();
 }
 
-void GameServer::handleMessageRoundReady(
-    std::string const& messageContent, const asio::ip::tcp::endpoint& endpoint)
+void GameServer::handleMessageRoundReady(Message const& message)
 {
-    m_logger.info("Round Ready received from " + endpoint.address().to_string() + ":"
-            + std::to_string(endpoint.port()),
+    m_logger.info("Round Ready received from player " + std::to_string(message.playerId),
         { "network", "GameServer" });
 
     if (!m_matchHasStarted) {
-        m_logger.warning("round ready data received although game has not started",
-            { "network", "game_server" });
+        m_logger.warning(
+            "round ready data received although game has not started", { "GameServer" });
+        return;
     }
 
-    Message const m = nlohmann::json::parse(messageContent);
-
-    auto const playerId = m.playerId;
+    auto const playerId = message.playerId;
     std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
-    m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(m.data);
+    m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(message.data);
     for (auto const& props : m_playerData[playerId].roundEndPlacementData.m_units) {
         // add new unity to game simulation
         m_gameSimulation->addUnit(props);
@@ -249,34 +249,30 @@ void GameServer::handleMessageRoundReady(
     lock.unlock();
 
     if (allReady) {
-        m_logger.info("all players ready");
+        m_logger.info("All players ready", { "GameServer" });
         m_allPlayersReady.store(true);
     }
 }
 
-void GameServer::handleMessageUnitUpgrade(Message const& m)
+void GameServer::handleMessageUnitUpgrade(Message const& message)
 {
-    m_logger.info("Unit upgrade received", { "network", "GameServer" });
+    m_logger.info("Unit upgrade received from player " + std::to_string(message.playerId),
+        { "network", "GameServer" });
 
     if (!m_matchHasStarted) {
-        m_logger.warning("unit upgrade data received although game has not started",
-            { "network", "game_server" });
+        m_logger.warning("Unit Upgrade data received although game has not started",
+            { "network", "GameServer" });
     }
-    if (m.type != MessageType::UnitUpgrade) {
+    if (message.type != MessageType::UnitUpgrade) {
         m_logger.warning(
-            "unit upgrade called with message of incorrect type", { "network", "game_server" });
+            "Unit Upgrade called with message of incorrect type", { "network", "GameServer" });
         return;
     }
-    nlohmann::json j = nlohmann::json::parse(m.data);
+    nlohmann::json const j = nlohmann::json::parse(message.data);
 
-    UpgradeUnitData data = j;
+    UpgradeUnitData const data = j;
+    std::lock_guard<std::mutex> const lock { m_mutex };
     m_gameSimulation->addUnitUpgrade(data);
-}
-
-void GameServer::discard(
-    std::string const& messageContent, asio::ip::tcp::endpoint const& /*endpoint*/)
-{
-    m_logger.warning("discard message '" + messageContent + "'", { "network", "GameServer" });
 }
 
 void GameServer::startRoundSimulation()

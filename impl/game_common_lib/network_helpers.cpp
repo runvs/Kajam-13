@@ -71,3 +71,9 @@ void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_
     auto const str = ss.str();
     handlerFunction(str);
 }
+
+bool NetworkHelpers::endpointsMatch(
+    asio::ip::tcp::endpoint const& ep1, asio::ip::tcp::endpoint const& ep2)
+{
+    return ep1.address() == ep2.address() && ep1.port() == ep2.port();
+}
