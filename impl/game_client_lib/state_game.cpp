@@ -25,6 +25,7 @@
 #include <state_menu.hpp>
 #include <system_helper.hpp>
 #include <tweens/tween_alpha.hpp>
+#include <tweens/tween_position.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <vector2.hpp>
 #include <imgui.h>
@@ -95,7 +96,7 @@ void StateGame::onCreate()
     placeCritterFn.template operator()<Bunny>(1.0f, 2.4f, jt::Random::getInt(5, 10));
     placeCritterFn.template operator()<Deer>(1.0f, 2.4f, jt::Random::getInt(2, 6));
 
-    m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
+    m_explosionParticles = jt::ParticleSystem<jt::Shape, 150>::createPS(
         [this]() {
             std::shared_ptr<jt::Shape> shape
                 = jt::dh::createShapeCircle(4, jt::colors::White, textureManager());
@@ -220,6 +221,37 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
         getGame()->gfx().camera().shake(0.5f, 5);
         m_explosionParticles->fire(20, expl.position);
     }
+
+    for (auto const& shield : currentFrame.m_shields) {
+
+        auto const ids = std::make_pair(shield.playerID, shield.unitID);
+        if (m_shieldParticles.count(ids) == 0) {
+            m_shieldParticles[ids] = jt::ParticleSystem<jt::Shape, 40>::createPS(
+                [this]() {
+                    std::shared_ptr<jt::Shape> shape = jt::dh::createShapeRect(
+                        jt::Vector2f { 2.0f, 2.0f }, jt::colors::White, textureManager());
+                    shape->setPosition(jt::Vector2f { -5000.0f, -5000.0f });
+                    return shape;
+                },
+                [this, radius = shield.radius, hp = shield.hpCurrent](auto shape, auto const& pos) {
+                    auto const startPos = jt::Random::getRandomPointOnCircle(radius) + pos;
+                    shape->setPosition(startPos);
+                    auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
+                    add(tw);
+                    auto twp = jt::TweenPosition::create(shape, 0.3f, startPos, pos);
+                    twp->setStartDelay(0.2f);
+                    add(twp);
+                });
+
+            add(m_shieldParticles[ids]);
+        }
+
+        if (shield.hpCurrent <= 0) {
+            continue;
+        }
+        m_shieldParticles.at(ids)->fire(2, shield.pos);
+        m_shieldParticles.at(ids)->update(0.0f);
+    }
 }
 
 std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::string& type)
@@ -303,7 +335,9 @@ void StateGame::onDraw() const
     m_internalStateManager->getActiveState()->draw(const_cast<StateGame&>(*this));
 
     m_explosionParticles->draw();
-
+    for (auto const& kvp : m_shieldParticles) {
+        kvp.second->draw();
+    }
     m_clouds->draw();
     m_vignette->draw();
 

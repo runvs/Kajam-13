@@ -3,6 +3,7 @@
 
 #include <close_combat_info.hpp>
 #include <network_data/arrow_info.hpp>
+#include <network_data/shield_info.hpp>
 #include <simulation_object_interface.hpp>
 #include <vector2.hpp>
 #include <memory>
@@ -20,6 +21,8 @@ public:
     virtual float getTerrainMappedFieldHeight(jt::Vector2f const& pos) = 0;
     virtual void spawnArrow(ArrowInfo const& arrowInfo, float delay) = 0;
     virtual void scheduleAttack(CloseCombatInfo const& info, float delay) = 0;
+
+    virtual void spawnShield(ShieldInfo const& shieldInfo) = 0;
 };
 
 #endif // JAMTEMPLATE_WORLD_INFO_INTERFACE_HPP

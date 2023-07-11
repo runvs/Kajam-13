@@ -8,9 +8,9 @@
 #include <units/ai/ai_cannon.hpp>
 #include <units/ai/ai_close_combat.hpp>
 #include <units/ai/ai_ranged_combat.hpp>
+#include <units/ai/ai_shieldmage.hpp>
 #include <world_info_interface.hpp>
 #include <Box2D/Dynamics/b2Body.h>
-#include <cmath>
 #include <memory>
 #include <string>
 
@@ -26,6 +26,8 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
         m_ai = std::make_unique<AiRangedCombat>();
     } else if (m_infoBase.ai.type == AiInfo::CANNON) {
         m_ai = std::make_unique<AiCannon>();
+    } else if (m_infoBase.ai.type == AiInfo::SHIELDMAGE) {
+        m_ai = std::make_unique<AiShieldmage>();
     } else {
         m_logger.error("Create a unit with unknown ai type: " + std::to_string(m_infoBase.ai.type),
             { "ServerUnit", "Ai" });

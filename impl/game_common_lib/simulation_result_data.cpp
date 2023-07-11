@@ -16,6 +16,9 @@ void to_json(nlohmann::json& j, const SimulationResultDataForOneFrame& data)
     if (!data.m_explosions.empty()) {
         j[jk::explosions] = data.m_explosions;
     }
+    if (!data.m_shields.empty()) {
+        j[jk::shields] = data.m_shields;
+    }
 }
 
 void from_json(const nlohmann::json& j, SimulationResultDataForOneFrame& data)
@@ -29,8 +32,11 @@ void from_json(const nlohmann::json& j, SimulationResultDataForOneFrame& data)
     if (j.count(jk::playerHp) == 1) {
         j.at(jk::playerHp).get_to(data.m_playerHP);
     }
-    if (j.count(jk::explosions)) {
+    if (j.count(jk::explosions) == 1) {
         j.at(jk::explosions).get_to(data.m_explosions);
+    }
+    if (j.count(jk::shields) == 1) {
+        j.at(jk::shields).get_to(data.m_shields);
     }
 }
 

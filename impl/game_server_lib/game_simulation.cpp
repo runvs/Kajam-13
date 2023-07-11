@@ -96,6 +96,21 @@ void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)
 
         currentFrame.m_arrows = m_arrows;
 
+        for (auto& shield : m_shields) {
+            for (auto const& obj : m_simulationObjects) {
+                if (obj->getUnitID() != shield.unitID) {
+                    continue;
+                }
+                if (obj->getPlayerID() != shield.playerID) {
+                    continue;
+                }
+                if (!obj->isAlive()) {
+                    shield.hpCurrent = 0.0f;
+                }
+            }
+        }
+        currentFrame.m_shields = m_shields;
+
         for (auto& obj : m_simulationObjects) {
             obj->update(timePerUpdate, *this);
 
@@ -166,6 +181,22 @@ void GameSimulation::handleArrows(
         arrow.currentHeight = currentArrowHeight;
         arrow.currentPos
             = arrow.startPos + dif * timePercent + jt::Vector2f { 0.0f, currentArrowHeight };
+
+        for (auto& shield : m_shields) {
+            if (shield.hpCurrent <= 0) {
+                continue;
+            }
+            if (shield.playerID == arrow.shooterPlayerId) {
+                continue;
+            }
+            auto const dir = arrow.currentPos - shield.pos;
+            auto const dist = jt::MathHelper::lengthSquared(dir);
+            if (dist < shield.radius * shield.radius) {
+                // kill arrow;
+                arrow.age = 999999;
+                shield.hpCurrent -= arrow.damage.damage;
+            }
+        }
 
         if (arrow.splashRadius <= 0) {
             // check for single collision arrow - targets
@@ -349,6 +380,7 @@ void GameSimulation::clear()
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
     m_unitUpgrades.clear();
+    m_shields.clear();
     m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
     m_world = std::make_shared<Terrain>();
 }
@@ -371,4 +403,12 @@ std::shared_ptr<SimulationObjectInterface> GameSimulation::getUnit(int pid, int 
         }
     }
     return nullptr;
+}
+
+Terrain const& GameSimulation::getTerrain() const { return *m_world; }
+
+void GameSimulation::spawnShield(ShieldInfo const& shieldInfo)
+{
+    m_logger.info("shield spawned", { "GameSimulation" });
+    m_shields.push_back(shieldInfo);
 }

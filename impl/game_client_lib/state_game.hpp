@@ -115,7 +115,9 @@ private:
     std::size_t m_tickId { 0 };
     std::map<int, int> m_playerHP { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
-    std::shared_ptr<jt::ParticleSystem<jt::Shape, 50>> m_explosionParticles { nullptr };
+    std::shared_ptr<jt::ParticleSystem<jt::Shape, 150>> m_explosionParticles { nullptr };
+    std::map<std::pair<int, int>, std::shared_ptr<jt::ParticleSystem<jt::Shape, 40>>>
+        m_shieldParticles {};
 
     // at end of round
     float m_playbackOverflowTime = 2.5f;

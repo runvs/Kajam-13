@@ -9,12 +9,13 @@
   },
   "attackTimerMax": 0.0,
   "movementSpeed": 0.0,
-  "colliderRadius": 6.0,
+  "colliderRadius": 1.0,
   "cost": 100,
   "unlockCost": 100,
   "ai": {
     "type": 3,
-    "range": -1.0
+    "shieldHp": 200.0,
+    "range": 48
   },
   "animations": [
     {
