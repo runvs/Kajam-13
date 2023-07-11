@@ -1,0 +1,26 @@
+{
+  "type": "shieldmage",
+  "description": "mage that casts a protective shield",
+  "expRequiredForLevelUp": 100,
+  "expGainWhenKilled": 40,
+  "hitpoints": 10.0,
+  "damage": {
+    "damage": 0.0
+  },
+  "attackTimerMax": 0.0,
+  "movementSpeed": 0.0,
+  "colliderRadius": 6.0,
+  "cost": 100,
+  "unlockCost": 100,
+  "ai": {
+    "type": 3,
+    "range": -1.0
+  },
+  "animations": [
+    {
+      "jsonfilename": "assets/units/shieldmage.json"
+    }
+  ],
+  "upgrades": [
+  ]
+}
