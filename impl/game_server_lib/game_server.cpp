@@ -161,8 +161,7 @@ void GameServer::handleMessage(
     }
 }
 
-void GameServer::handleMessageInitialPing(
-    std::string const& /*messageContent*/, asio::ip::tcp::endpoint const& endpoint)
+void GameServer::handleMessageInitialPing(asio::ip::tcp::endpoint const& endpoint)
 {
     m_logger.info("initial ping received from " + endpoint.address().to_string() + ":"
             + std::to_string(endpoint.port()),
