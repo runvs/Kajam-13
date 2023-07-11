@@ -51,14 +51,10 @@ private:
     // all those functions will be called from the asio thread, synchronization is needed when
     // things should be handled from the main thread
     void handleMessage(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
-    void handleMessageInitialPing(
-        std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
-    void handleMessageRoundReady(
-        std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
+    void handleMessageInitialPing(asio::ip::tcp::endpoint const& endpoint);
+    void handleMessageRoundReady(Message const& message);
     void handleMessageUnitUpgrade(Message const& m);
     void handleMessageAddBot();
-
-    void discard(std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint);
 
     void removePlayerIfConnectionClosed(float elapsed);
     void performAI(std::map<int, PlayerInfo>& botDataCopy) const;

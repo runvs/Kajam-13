@@ -18,6 +18,8 @@ void freeHandleReceive(asio::error_code const& error, std::size_t bytes_transfer
     asio::ip::tcp::socket& socket, ReceiveBuffer& buffer, jt::LoggerInterface& logger,
     std::function<void(std::string const&)> handlerFunction);
 
+bool endpointsMatch(asio::ip::tcp::endpoint const& ep1, asio::ip::tcp::endpoint const& ep2);
+
 }; // namespace NetworkHelpers
 
 #endif // JAMTEMPLATE_NETWORK_HELPERS_HPP
