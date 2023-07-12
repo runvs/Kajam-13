@@ -148,6 +148,8 @@ void PlacementManager::doDraw() const
         std::set_difference(allTypes.begin(), allTypes.end(), unlockedTypes.begin(),
             unlockedTypes.end(), std::back_inserter(purchaseTypes));
 
+        constexpr auto buttonWidth = 106;
+
         ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
             | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize };
         ImGui::Begin("Unit placement", nullptr, window_flags);
@@ -198,10 +200,10 @@ void PlacementManager::doDraw() const
                 ImGui::PushStyleColor(ImGuiCol_Button, colorSelected);
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colorSelected);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, colorSelected);
-                ImGui::Button(u.type.c_str(), { 80, 0 });
+                ImGui::Button(u.type.c_str(), { buttonWidth, 0 });
                 ImGui::PopStyleColor(3);
             } else {
-                if (ImGui::Button(u.type.c_str(), { 80, 0 })) {
+                if (ImGui::Button(u.type.c_str(), { buttonWidth, 0 })) {
                     getGame()->logger().debug("select: " + u.type);
                     m_activeUnitType = u.type;
                 }
