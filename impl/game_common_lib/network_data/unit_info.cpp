@@ -85,6 +85,8 @@ void applyUpgrade(UnitInfo& info, const UpgradeInfo& upg)
     applyUpgradeFloat(info.attackTimerMax, upg.attackSpeed);
     applyUpgradeFloat(info.movementSpeed, upg.movementSpeed);
     applyUpgradeFloat(info.ai.range, upg.range);
+    applyUpgradeFloat(info.ai.range, upg.shieldRange);
+    applyUpgradeFloat(info.ai.shieldHp, upg.shieldHp);
 
     info.armor.types.insert(info.armor.types.cbegin(), upg.armor.cbegin(), upg.armor.cend());
 }

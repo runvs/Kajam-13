@@ -15,7 +15,7 @@
   "ai": {
     "type": 3,
     "shieldHp": 200.0,
-    "range": 3
+    "range": 3.5
   },
   "animations": [
     {
@@ -23,5 +23,23 @@
     }
   ],
   "upgrades": [
+    {
+      "name": "crystal of reach",
+      "iconPath": "assets/images/upgrades/crystal_of_reach.png",
+      "upgCost": 150,
+      "shieldRange": {
+        "add": 1.0,
+        "factor": 0.0
+      }
+    },
+    {
+      "name": "shield of unyielding valor",
+      "iconPath": "assets/images/upgrades/shield_of_unyielding_valor.png",
+      "upgCost": 150,
+      "shieldHp": {
+        "add": 100.0,
+        "factor": 0.0
+      }
+    }
   ]
 }

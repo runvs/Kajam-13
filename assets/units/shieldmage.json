@@ -425,8 +425,8 @@
    }
  },
  "meta": {
-  "app": "http://www.aseprite.org/",
-  "version": "1.3-rc4-x64",
+  "app": "https://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
   "image": "shieldmage.png",
   "format": "RGBA8888",
   "size": { "w": 1696, "h": 32 },

@@ -17,6 +17,8 @@ struct UpgradeInfo {
     UpgradeValue range;
     UpgradeValue hitpoints;
     UpgradeValue cost;
+    UpgradeValue shieldRange;
+    UpgradeValue shieldHp;
     std::vector<std::string> armor;
 };
 

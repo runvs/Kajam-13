@@ -122,6 +122,7 @@ private:
         m_shieldParticles {};
     std::vector<ShieldInfo> m_shields;
     mutable std::shared_ptr<jt::Bar> m_shieldBar { nullptr };
+    float m_currentShieldRadius { 1.0f };
 
     // at end of round
     float m_playbackOverflowTime = 2.5f;

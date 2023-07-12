@@ -244,8 +244,9 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
                     shape->setPosition(jt::Vector2f { -5000.0f, -5000.0f });
                     return shape;
                 },
-                [this, radius = shield.radius, pid = shield.playerID](auto shape, auto const& pos) {
-                    auto const startPos = jt::Random::getRandomPointOnCircle(radius) + pos;
+                [this, pid = shield.playerID](auto shape, auto const& pos) {
+                    auto const startPos
+                        = jt::Random::getRandomPointOnCircle(m_currentShieldRadius) + pos;
                     shape->setPosition(startPos);
 
                     if (jt::Random::getChance()) {
@@ -270,6 +271,7 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
         if (shield.hpCurrent <= 0) {
             continue;
         }
+        m_currentShieldRadius = shield.radius;
         m_shieldParticles.at(ids)->fire(2, shield.pos);
         m_shieldParticles.at(ids)->update(0.0f);
     }
