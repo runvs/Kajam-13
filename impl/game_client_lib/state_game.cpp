@@ -233,9 +233,19 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
                     shape->setPosition(jt::Vector2f { -5000.0f, -5000.0f });
                     return shape;
                 },
-                [this, radius = shield.radius, hp = shield.hpCurrent](auto shape, auto const& pos) {
+                [this, radius = shield.radius, pid = shield.playerID](auto shape, auto const& pos) {
                     auto const startPos = jt::Random::getRandomPointOnCircle(radius) + pos;
                     shape->setPosition(startPos);
+
+                    if (jt::Random::getChance()) {
+                        if (pid == 0) {
+                            shape->setColor(GP::ColorPlayer0());
+                        } else {
+                            shape->setColor(GP::ColorPlayer1());
+                        }
+                    } else {
+                        shape->setColor(jt::colors::White);
+                    }
                     auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
                     add(tw);
                     auto twp = jt::TweenPosition::create(shape, 0.3f, startPos, pos);
