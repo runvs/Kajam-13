@@ -196,6 +196,7 @@ void GameSimulation::handleArrows(
                 arrow.age = 999999;
                 shield.hpCurrent -= arrow.damage.damage;
                 arrow.damage.damage = 0.0f;
+                arrow.splashRadius = 0.0001f;
             }
         }
 
