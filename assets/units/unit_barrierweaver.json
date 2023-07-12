@@ -1,6 +1,6 @@
 {
-  "type": "shieldmage",
-  "description": "mage that casts a protective shield",
+  "type": "barrierweaver",
+  "description": "mage that casts a protective barrier",
   "expRequiredForLevelUp": 100,
   "expGainWhenKilled": 30,
   "hitpoints": 10.0,
@@ -19,7 +19,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/shieldmage.json"
+      "jsonfilename": "assets/units/barrierweaver.json"
     }
   ],
   "upgrades": [
@@ -33,8 +33,8 @@
       }
     },
     {
-      "name": "shield of unyielding valor",
-      "iconPath": "assets/images/upgrades/shield_of_unyielding_valor.png",
+      "name": "barrier of unyielding valor",
+      "iconPath": "assets/images/upgrades/barrier_of_unyielding_valor.png",
       "upgCost": 150,
       "shieldHp": {
         "add": 100.0,

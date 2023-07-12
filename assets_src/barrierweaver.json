@@ -1,5 +1,5 @@
 { "frames": {
-   "shieldmage 0.aseprite": {
+   "barrierweaver 0.aseprite": {
     "frame": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -7,7 +7,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 1.aseprite": {
+   "barrierweaver 1.aseprite": {
     "frame": { "x": 32, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -15,7 +15,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 2.aseprite": {
+   "barrierweaver 2.aseprite": {
     "frame": { "x": 64, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -23,7 +23,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 3.aseprite": {
+   "barrierweaver 3.aseprite": {
     "frame": { "x": 96, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -31,7 +31,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 4.aseprite": {
+   "barrierweaver 4.aseprite": {
     "frame": { "x": 128, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -39,7 +39,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 5.aseprite": {
+   "barrierweaver 5.aseprite": {
     "frame": { "x": 160, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -47,7 +47,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 6.aseprite": {
+   "barrierweaver 6.aseprite": {
     "frame": { "x": 192, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -55,7 +55,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 7.aseprite": {
+   "barrierweaver 7.aseprite": {
     "frame": { "x": 224, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -63,7 +63,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 8.aseprite": {
+   "barrierweaver 8.aseprite": {
     "frame": { "x": 256, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -71,7 +71,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 9.aseprite": {
+   "barrierweaver 9.aseprite": {
     "frame": { "x": 288, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -79,7 +79,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 10.aseprite": {
+   "barrierweaver 10.aseprite": {
     "frame": { "x": 320, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -87,7 +87,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 11.aseprite": {
+   "barrierweaver 11.aseprite": {
     "frame": { "x": 352, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -95,7 +95,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 12.aseprite": {
+   "barrierweaver 12.aseprite": {
     "frame": { "x": 384, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -103,7 +103,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 13.aseprite": {
+   "barrierweaver 13.aseprite": {
     "frame": { "x": 416, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -111,7 +111,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 14.aseprite": {
+   "barrierweaver 14.aseprite": {
     "frame": { "x": 448, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -119,7 +119,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 15.aseprite": {
+   "barrierweaver 15.aseprite": {
     "frame": { "x": 480, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -127,7 +127,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 16.aseprite": {
+   "barrierweaver 16.aseprite": {
     "frame": { "x": 512, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -135,7 +135,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 17.aseprite": {
+   "barrierweaver 17.aseprite": {
     "frame": { "x": 544, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -143,7 +143,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 18.aseprite": {
+   "barrierweaver 18.aseprite": {
     "frame": { "x": 576, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -151,7 +151,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 19.aseprite": {
+   "barrierweaver 19.aseprite": {
     "frame": { "x": 608, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -159,7 +159,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 20.aseprite": {
+   "barrierweaver 20.aseprite": {
     "frame": { "x": 640, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -167,7 +167,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 21.aseprite": {
+   "barrierweaver 21.aseprite": {
     "frame": { "x": 672, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -175,7 +175,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 22.aseprite": {
+   "barrierweaver 22.aseprite": {
     "frame": { "x": 704, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -183,7 +183,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 23.aseprite": {
+   "barrierweaver 23.aseprite": {
     "frame": { "x": 736, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -191,7 +191,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 24.aseprite": {
+   "barrierweaver 24.aseprite": {
     "frame": { "x": 768, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -199,7 +199,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 25.aseprite": {
+   "barrierweaver 25.aseprite": {
     "frame": { "x": 800, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -207,7 +207,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 26.aseprite": {
+   "barrierweaver 26.aseprite": {
     "frame": { "x": 832, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -215,7 +215,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 27.aseprite": {
+   "barrierweaver 27.aseprite": {
     "frame": { "x": 864, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -223,7 +223,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 28.aseprite": {
+   "barrierweaver 28.aseprite": {
     "frame": { "x": 896, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -231,7 +231,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 29.aseprite": {
+   "barrierweaver 29.aseprite": {
     "frame": { "x": 928, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -239,7 +239,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 30.aseprite": {
+   "barrierweaver 30.aseprite": {
     "frame": { "x": 960, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -247,7 +247,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 31.aseprite": {
+   "barrierweaver 31.aseprite": {
     "frame": { "x": 992, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -255,7 +255,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 32.aseprite": {
+   "barrierweaver 32.aseprite": {
     "frame": { "x": 1024, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -263,7 +263,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 33.aseprite": {
+   "barrierweaver 33.aseprite": {
     "frame": { "x": 1056, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -271,7 +271,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 34.aseprite": {
+   "barrierweaver 34.aseprite": {
     "frame": { "x": 1088, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -279,7 +279,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 35.aseprite": {
+   "barrierweaver 35.aseprite": {
     "frame": { "x": 1120, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -287,7 +287,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 36.aseprite": {
+   "barrierweaver 36.aseprite": {
     "frame": { "x": 1152, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -295,7 +295,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 37.aseprite": {
+   "barrierweaver 37.aseprite": {
     "frame": { "x": 1184, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -303,7 +303,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 38.aseprite": {
+   "barrierweaver 38.aseprite": {
     "frame": { "x": 1216, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -311,7 +311,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 39.aseprite": {
+   "barrierweaver 39.aseprite": {
     "frame": { "x": 1248, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -319,7 +319,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 40.aseprite": {
+   "barrierweaver 40.aseprite": {
     "frame": { "x": 1280, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -327,7 +327,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 41.aseprite": {
+   "barrierweaver 41.aseprite": {
     "frame": { "x": 1312, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -335,7 +335,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 42.aseprite": {
+   "barrierweaver 42.aseprite": {
     "frame": { "x": 1344, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -343,7 +343,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 43.aseprite": {
+   "barrierweaver 43.aseprite": {
     "frame": { "x": 1376, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -351,7 +351,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 44.aseprite": {
+   "barrierweaver 44.aseprite": {
     "frame": { "x": 1408, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -359,7 +359,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 200
    },
-   "shieldmage 45.aseprite": {
+   "barrierweaver 45.aseprite": {
     "frame": { "x": 1440, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -367,7 +367,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 46.aseprite": {
+   "barrierweaver 46.aseprite": {
     "frame": { "x": 1472, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -375,7 +375,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 47.aseprite": {
+   "barrierweaver 47.aseprite": {
     "frame": { "x": 1504, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -383,7 +383,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 48.aseprite": {
+   "barrierweaver 48.aseprite": {
     "frame": { "x": 1536, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -391,7 +391,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 49.aseprite": {
+   "barrierweaver 49.aseprite": {
     "frame": { "x": 1568, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -399,7 +399,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 50.aseprite": {
+   "barrierweaver 50.aseprite": {
     "frame": { "x": 1600, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -407,7 +407,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 51.aseprite": {
+   "barrierweaver 51.aseprite": {
     "frame": { "x": 1632, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -415,7 +415,7 @@
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 100
    },
-   "shieldmage 52.aseprite": {
+   "barrierweaver 52.aseprite": {
     "frame": { "x": 1664, "y": 0, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
@@ -427,7 +427,7 @@
  "meta": {
   "app": "https://www.aseprite.org/",
   "version": "1.3-rc2-x64",
-  "image": "shieldmage.png",
+  "image": "barrierweaver.png",
   "format": "RGBA8888",
   "size": { "w": 1696, "h": 32 },
   "scale": "1",
