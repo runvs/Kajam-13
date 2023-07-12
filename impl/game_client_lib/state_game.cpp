@@ -104,7 +104,7 @@ void StateGame::onCreate()
             return shape;
         },
         [this](auto shape, auto const& pos) {
-            shape->setPosition(jt::Random::getRandomPointInCircle(40.0f) + pos);
+            shape->setPosition(pos);
             auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
             add(tw);
         });
@@ -218,8 +218,13 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
     }
 
     for (auto const& expl : currentFrame.m_explosions) {
-        getGame()->gfx().camera().shake(0.5f, 5);
-        m_explosionParticles->fire(20, expl.position);
+        if (expl.radius < 1) {
+            m_explosionParticles->fire(1, expl.position);
+        } else {
+            getGame()->gfx().camera().shake(0.5f, 5);
+            m_explosionParticles->fire(
+                20, expl.position + jt::Random::getRandomPointInCircle(expl.radius));
+        }
     }
 
     for (auto const& shield : currentFrame.m_shields) {
