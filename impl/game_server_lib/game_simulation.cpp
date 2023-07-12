@@ -195,6 +195,7 @@ void GameSimulation::handleArrows(
                 // kill arrow;
                 arrow.age = 999999;
                 shield.hpCurrent -= arrow.damage.damage;
+                arrow.damage.damage = 0.0f;
             }
         }
 
@@ -235,7 +236,7 @@ void GameSimulation::handleArrows(
                 }
             }
         } else {
-            if (arrow.age >= arrow.totalTime && arrow.age != 999999) {
+            if (arrow.age >= arrow.totalTime) {
 
                 ExplosionInfo explosion;
                 explosion.position = arrow.currentPos;
