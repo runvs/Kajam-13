@@ -235,7 +235,7 @@ void GameSimulation::handleArrows(
                 }
             }
         } else {
-            if (arrow.age >= arrow.totalTime) {
+            if (arrow.age >= arrow.totalTime && arrow.age != 999999) {
 
                 ExplosionInfo explosion;
                 explosion.position = arrow.currentPos;
