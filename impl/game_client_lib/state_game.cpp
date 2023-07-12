@@ -148,6 +148,11 @@ void StateGame::onCreate()
     if (bgm_menu) {
         getGame()->audio().fades().volumeFade(bgm_menu, 0.5f, bgm_menu->getVolume(), 0.0f);
     }
+
+    m_shieldBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
+    m_shieldBar->setBackColor(jt::colors::Gray);
+    m_shieldBar->setFrontColor(jt::colors::Blue);
+    m_shieldBar->setZ(GP::ZLayerUI());
 }
 
 void StateGame::onEnter() { }
@@ -227,6 +232,7 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
         }
     }
 
+    m_shields = currentFrame.m_shields;
     for (auto const& shield : currentFrame.m_shields) {
 
         auto const ids = std::make_pair(shield.playerID, shield.unitID);
@@ -352,6 +358,20 @@ void StateGame::onDraw() const
     m_explosionParticles->draw();
     for (auto const& kvp : m_shieldParticles) {
         kvp.second->draw();
+    }
+    for (auto const& shield : m_shields) {
+        if (shield.hpCurrent <= 0) {
+            continue;
+        }
+        if (shield.hpCurrent >= shield.hpMax) {
+            continue;
+        }
+        m_shieldBar->setPosition(shield.pos
+            + jt::Vector2f { -terrainChunkSizeInPixelHalf, -terrainChunkSizeInPixel - 4 });
+        m_shieldBar->setMaxValue(shield.hpMax);
+        m_shieldBar->setCurrentValue(shield.hpCurrent);
+        m_shieldBar->update(0.0f);
+        m_shieldBar->draw(renderTarget());
     }
     m_clouds->draw();
     m_vignette->draw();
