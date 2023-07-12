@@ -44,7 +44,8 @@ void AiRangedCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface&
             ArrowInfo arrowInfo;
             arrowInfo.targetPlayerId = target->getPlayerID();
             // aim a bit lower
-            arrowInfo.endPos = target->getPosition() + jt::Vector2f { 0.0f, 8.0f };
+            arrowInfo.endPos = target->getPosition() + target->getOffset()
+                + jt::Vector2f { terrainChunkSizeInPixelHalf, terrainChunkSizeInPixel };
             arrowInfo.startPos = unit->getPosition() + unit->getOffset();
             if (arrowInfo.endPos.x > arrowInfo.startPos.x) {
                 arrowInfo.startPos += jt::Vector2f { 9.0f, 4.0f };
