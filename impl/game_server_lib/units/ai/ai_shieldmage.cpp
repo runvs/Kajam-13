@@ -14,7 +14,7 @@ void AiShieldmage::update(float elapsed, ServerUnit* unit, WorldInfoInterface& w
             + jt::Vector2f { terrainChunkSizeInPixelHalf, terrainChunkSizeInPixelHalf };
         si.unitID = unit->getUnitID();
         si.playerID = unit->getPlayerID();
-        si.radius = unit->getUnitInfoFull().ai.range;
+        si.radius = unit->getUnitInfoFull().ai.range * terrainChunkSizeInPixel;
         si.hpCurrent = unit->getUnitInfoFull().ai.shieldHp;
         si.hpMax = unit->getUnitInfoFull().ai.shieldHp;
         world.spawnShield(si);

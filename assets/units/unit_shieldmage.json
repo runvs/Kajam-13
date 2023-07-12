@@ -2,7 +2,7 @@
   "type": "shieldmage",
   "description": "mage that casts a protective shield",
   "expRequiredForLevelUp": 100,
-  "expGainWhenKilled": 40,
+  "expGainWhenKilled": 30,
   "hitpoints": 10.0,
   "damage": {
     "damage": 0.0
@@ -15,7 +15,7 @@
   "ai": {
     "type": 3,
     "shieldHp": 200.0,
-    "range": 48
+    "range": 3
   },
   "animations": [
     {
