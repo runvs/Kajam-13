@@ -149,10 +149,10 @@ void StateGame::onCreate()
         getGame()->audio().fades().volumeFade(bgm_menu, 0.5f, bgm_menu->getVolume(), 0.0f);
     }
 
-    m_shieldBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
-    m_shieldBar->setBackColor(jt::colors::Gray);
-    m_shieldBar->setFrontColor(jt::colors::Blue);
-    m_shieldBar->setZ(GP::ZLayerUI());
+    m_barrierBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
+    m_barrierBar->setBackColor(jt::colors::Gray);
+    m_barrierBar->setFrontColor(jt::colors::Blue);
+    m_barrierBar->setZ(GP::ZLayerUI());
 }
 
 void StateGame::onEnter() { }
@@ -232,21 +232,21 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
         }
     }
 
-    m_shields = currentFrame.m_shields;
-    for (auto const& shield : currentFrame.m_shields) {
+    m_barriers = currentFrame.m_barriers;
+    for (auto const& barrier : currentFrame.m_barriers) {
 
-        auto const ids = std::make_pair(shield.playerID, shield.unitID);
-        if (m_shieldParticles.count(ids) == 0) {
-            m_shieldParticles[ids] = jt::ParticleSystem<jt::Shape, 40>::createPS(
+        auto const ids = std::make_pair(barrier.playerID, barrier.unitID);
+        if (m_barrierParticles.count(ids) == 0) {
+            m_barrierParticles[ids] = jt::ParticleSystem<jt::Shape, 40>::createPS(
                 [this]() {
                     std::shared_ptr<jt::Shape> shape = jt::dh::createShapeRect(
                         jt::Vector2f { 2.0f, 2.0f }, jt::colors::White, textureManager());
                     shape->setPosition(jt::Vector2f { -5000.0f, -5000.0f });
                     return shape;
                 },
-                [this, pid = shield.playerID](auto shape, auto const& pos) {
+                [this, pid = barrier.playerID](auto shape, auto const& pos) {
                     auto const startPos
-                        = jt::Random::getRandomPointOnCircle(m_currentShieldRadius) + pos;
+                        = jt::Random::getRandomPointOnCircle(m_currentBarrierRadius) + pos;
                     shape->setPosition(startPos);
 
                     if (jt::Random::getChance()) {
@@ -265,15 +265,15 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
                     add(twp);
                 });
 
-            add(m_shieldParticles[ids]);
+            add(m_barrierParticles[ids]);
         }
 
-        if (shield.hpCurrent <= 0) {
+        if (barrier.hpCurrent <= 0) {
             continue;
         }
-        m_currentShieldRadius = shield.radius;
-        m_shieldParticles.at(ids)->fire(2, shield.pos);
-        m_shieldParticles.at(ids)->update(0.0f);
+        m_currentBarrierRadius = barrier.radius;
+        m_barrierParticles.at(ids)->fire(2, barrier.pos);
+        m_barrierParticles.at(ids)->update(0.0f);
     }
 }
 
@@ -358,22 +358,22 @@ void StateGame::onDraw() const
     m_internalStateManager->getActiveState()->draw(const_cast<StateGame&>(*this));
 
     m_explosionParticles->draw();
-    for (auto const& kvp : m_shieldParticles) {
+    for (auto const& kvp : m_barrierParticles) {
         kvp.second->draw();
     }
-    for (auto const& shield : m_shields) {
-        if (shield.hpCurrent <= 0) {
+    for (auto const& barrier : m_barriers) {
+        if (barrier.hpCurrent <= 0) {
             continue;
         }
-        if (shield.hpCurrent >= shield.hpMax) {
+        if (barrier.hpCurrent >= barrier.hpMax) {
             continue;
         }
-        m_shieldBar->setPosition(shield.pos
+        m_barrierBar->setPosition(barrier.pos
             + jt::Vector2f { -terrainChunkSizeInPixelHalf, -terrainChunkSizeInPixel - 4 });
-        m_shieldBar->setMaxValue(shield.hpMax);
-        m_shieldBar->setCurrentValue(shield.hpCurrent);
-        m_shieldBar->update(0.0f);
-        m_shieldBar->draw(renderTarget());
+        m_barrierBar->setMaxValue(barrier.hpMax);
+        m_barrierBar->setCurrentValue(barrier.hpCurrent);
+        m_barrierBar->update(0.0f);
+        m_barrierBar->draw(renderTarget());
     }
     m_clouds->draw();
     m_vignette->draw();

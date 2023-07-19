@@ -7,7 +7,7 @@
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
 #include <network_data/arrow_info.hpp>
-#include <network_data/shield_info.hpp>
+#include <network_data/barrier_info.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
 #include <network_data/unit_info_collection.hpp>
 #include <object_properties.hpp>
@@ -52,7 +52,7 @@ public:
 
     Terrain const& getTerrain() const;
 
-    void spawnShield(ShieldInfo const& shieldInfo) override;
+    void spawnBarrier(BarrierInfo const& barrierInfo) override;
 
 private:
     jt::LoggerInterface& m_logger;
@@ -63,7 +63,7 @@ private:
     std::vector<UpgradeUnitData> m_unitUpgrades;
 
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
-    std::vector<ShieldInfo> m_shields;
+    std::vector<BarrierInfo> m_barriers;
 
     std::vector<ArrowInfo> m_arrows;
     std::vector<std::pair<float, ArrowInfo>> m_arrowsToBeSpawned;

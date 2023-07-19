@@ -10,8 +10,8 @@
 #include <internal_state/internal_state_interface.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <map/terrain.hpp>
+#include <network_data/barrier_info.hpp>
 #include <network_data/select_unit_info.hpp>
-#include <network_data/shield_info.hpp>
 #include <network_data/unit_info.hpp>
 #include <network_data/unit_info_collection.hpp>
 #include <nlohmann.hpp>
@@ -119,10 +119,10 @@ private:
 
     std::shared_ptr<jt::ParticleSystem<jt::Shape, 150>> m_explosionParticles { nullptr };
     std::map<std::pair<int, int>, std::shared_ptr<jt::ParticleSystem<jt::Shape, 40>>>
-        m_shieldParticles {};
-    std::vector<ShieldInfo> m_shields;
-    mutable std::shared_ptr<jt::Bar> m_shieldBar { nullptr };
-    float m_currentShieldRadius { 1.0f };
+        m_barrierParticles {};
+    std::vector<BarrierInfo> m_barriers;
+    mutable std::shared_ptr<jt::Bar> m_barrierBar { nullptr };
+    float m_currentBarrierRadius { 1.0f };
 
     // at end of round
     float m_playbackOverflowTime = 2.5f;

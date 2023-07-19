@@ -1,7 +1,7 @@
-#include "shield_info.hpp"
+#include "barrier_info.hpp"
 #include <json_keys.hpp>
 
-void to_json(nlohmann::json& j, const ShieldInfo& data)
+void to_json(nlohmann::json& j, const BarrierInfo& data)
 {
     j = nlohmann::json {
 
@@ -18,7 +18,7 @@ void to_json(nlohmann::json& j, const ShieldInfo& data)
     };
 }
 
-void from_json(const nlohmann::json& j, ShieldInfo& data)
+void from_json(const nlohmann::json& j, BarrierInfo& data)
 {
     j.at(jk::positionX).get_to(data.pos.x);
     j.at(jk::positionY).get_to(data.pos.y);

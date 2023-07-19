@@ -96,20 +96,20 @@ void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)
 
         currentFrame.m_arrows = m_arrows;
 
-        for (auto& shield : m_shields) {
+        for (auto& barrier : m_barriers) {
             for (auto const& obj : m_simulationObjects) {
-                if (obj->getUnitID() != shield.unitID) {
+                if (obj->getUnitID() != barrier.unitID) {
                     continue;
                 }
-                if (obj->getPlayerID() != shield.playerID) {
+                if (obj->getPlayerID() != barrier.playerID) {
                     continue;
                 }
                 if (!obj->isAlive()) {
-                    shield.hpCurrent = 0.0f;
+                    barrier.hpCurrent = 0.0f;
                 }
             }
         }
-        currentFrame.m_shields = m_shields;
+        currentFrame.m_barriers = m_barriers;
 
         for (auto& obj : m_simulationObjects) {
             obj->update(timePerUpdate, *this);
@@ -182,19 +182,19 @@ void GameSimulation::handleArrows(
         arrow.currentPos
             = arrow.startPos + dif * timePercent + jt::Vector2f { 0.0f, currentArrowHeight };
 
-        for (auto& shield : m_shields) {
-            if (shield.hpCurrent <= 0) {
+        for (auto& barrier : m_barriers) {
+            if (barrier.hpCurrent <= 0) {
                 continue;
             }
-            if (shield.playerID == arrow.shooterPlayerId) {
+            if (barrier.playerID == arrow.shooterPlayerId) {
                 continue;
             }
-            auto const dir = arrow.currentPos - shield.pos;
+            auto const dir = arrow.currentPos - barrier.pos;
             auto const dist = jt::MathHelper::lengthSquared(dir);
-            if (dist < shield.radius * shield.radius) {
+            if (dist < barrier.radius * barrier.radius) {
                 // kill arrow;
                 arrow.age = 999999;
-                shield.hpCurrent -= arrow.damage.damage;
+                barrier.hpCurrent -= arrow.damage.damage;
                 arrow.damage.damage = 0.0f;
                 arrow.splashRadius = 0.0001f;
             }
@@ -382,7 +382,7 @@ void GameSimulation::clear()
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
     m_unitUpgrades.clear();
-    m_shields.clear();
+    m_barriers.clear();
     m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
     m_world = std::make_shared<Terrain>();
 }
@@ -409,8 +409,8 @@ std::shared_ptr<SimulationObjectInterface> GameSimulation::getUnit(int pid, int 
 
 Terrain const& GameSimulation::getTerrain() const { return *m_world; }
 
-void GameSimulation::spawnShield(ShieldInfo const& shieldInfo)
+void GameSimulation::spawnBarrier(BarrierInfo const& barrierInfo)
 {
-    m_logger.info("shield spawned", { "GameSimulation" });
-    m_shields.push_back(shieldInfo);
+    m_logger.info("barrier spawned", { "GameSimulation" });
+    m_barriers.push_back(barrierInfo);
 }

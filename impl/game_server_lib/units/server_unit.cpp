@@ -5,10 +5,10 @@
 #include <network_data/damage_info.hpp>
 #include <network_data/unit_info.hpp>
 #include <network_data/unit_server_to_client_data.hpp>
+#include <units/ai/ai_barrierweaver.hpp>
 #include <units/ai/ai_cannon.hpp>
 #include <units/ai/ai_close_combat.hpp>
 #include <units/ai/ai_ranged_combat.hpp>
-#include <units/ai/ai_shieldmage.hpp>
 #include <world_info_interface.hpp>
 #include <Box2D/Dynamics/b2Body.h>
 #include <memory>
@@ -26,8 +26,8 @@ ServerUnit::ServerUnit(jt::LoggerInterface& logger, UnitInfo const& info,
         m_ai = std::make_unique<AiRangedCombat>();
     } else if (m_infoBase.ai.type == AiInfo::CANNON) {
         m_ai = std::make_unique<AiCannon>();
-    } else if (m_infoBase.ai.type == AiInfo::SHIELDMAGE) {
-        m_ai = std::make_unique<AiShieldmage>();
+    } else if (m_infoBase.ai.type == AiInfo::BARRIERWEAVER) {
+        m_ai = std::make_unique<AiBarrierWeaver>();
     } else {
         m_logger.error("Create a unit with unknown ai type: " + std::to_string(m_infoBase.ai.type),
             { "ServerUnit", "Ai" });

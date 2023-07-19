@@ -5,7 +5,7 @@ void to_json(nlohmann::json& j, AiInfo const& aiInfo)
 {
     j = nlohmann::json { { jk::aitype, aiInfo.type }, { jk::range, aiInfo.range },
         { jk::arrowHeight, aiInfo.arrowHeight }, { jk::arrowSpeed, aiInfo.arrowSpeed },
-        { jk::shieldHp, aiInfo.shieldHp } };
+        { jk::barrierHp, aiInfo.barrierHp } };
 }
 
 void from_json(nlohmann::json const& j, AiInfo& aiInfo)
@@ -20,7 +20,7 @@ void from_json(nlohmann::json const& j, AiInfo& aiInfo)
     if (j.count(jk::arrowSpeed) == 1) {
         j.at(jk::arrowSpeed).get_to(aiInfo.arrowSpeed);
     }
-    if (j.count(jk::shieldHp) == 1) {
-        j.at(jk::shieldHp).get_to(aiInfo.shieldHp);
+    if (j.count(jk::barrierHp) == 1) {
+        j.at(jk::barrierHp).get_to(aiInfo.barrierHp);
     }
 }

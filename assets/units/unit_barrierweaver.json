@@ -14,7 +14,7 @@
   "unlockCost": 100,
   "ai": {
     "type": 3,
-    "shieldHp": 200.0,
+    "barrierHp": 200.0,
     "range": 3.5
   },
   "animations": [

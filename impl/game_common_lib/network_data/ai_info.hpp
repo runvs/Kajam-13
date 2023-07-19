@@ -4,13 +4,13 @@
 #include <nlohmann.hpp>
 
 struct AiInfo {
-    enum AiType { CLOSE_COMBAT, RANGED_COMBAT, CANNON, SHIELDMAGE };
+    enum AiType { CLOSE_COMBAT, RANGED_COMBAT, CANNON, BARRIERWEAVER };
 
     AiType type;
     float range { -1.0f };
     float arrowHeight { 0.0f };
     float arrowSpeed { 0.0f };
-    float shieldHp { 1.0f };
+    float barrierHp { 1.0f };
 };
 
 void to_json(nlohmann::json& j, const AiInfo& aiInfo);
