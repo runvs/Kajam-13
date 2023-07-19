@@ -169,7 +169,7 @@ void Unit::playAnimation()
         return;
     }
 
-    bool const forceRestart = (newAnimName != "walk");
+    bool const forceRestart = (newAnimName != "walk" && newAnimName != "spell");
 
     m_anim->play(newAnimName, 0, forceRestart);
     m_anim->update(0.0f);

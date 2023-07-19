@@ -44,6 +44,7 @@ std::map<std::string, int> GP::animationPriorities()
     return {
         // clang-format off
             { "idle", 0 },
+            { "spell", 0 },
             { "damage", 1 },
             { "walk", 2 },
             { "attack", 2 },

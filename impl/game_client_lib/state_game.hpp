@@ -1,7 +1,7 @@
 ﻿#ifndef GAME_STATE_GAME_HPP
 #define GAME_STATE_GAME_HPP
 
-#include "network_data/select_unit_info.hpp"
+#include <bar.hpp>
 #include <client_network_connection.hpp>
 #include <client_placement_data.hpp>
 #include <critters/critter.hpp>
@@ -10,6 +10,8 @@
 #include <internal_state/internal_state_interface.hpp>
 #include <internal_state/internal_state_manager.hpp>
 #include <map/terrain.hpp>
+#include <network_data/barrier_info.hpp>
+#include <network_data/select_unit_info.hpp>
 #include <network_data/unit_info.hpp>
 #include <network_data/unit_info_collection.hpp>
 #include <nlohmann.hpp>
@@ -115,7 +117,12 @@ private:
     std::size_t m_tickId { 0 };
     std::map<int, int> m_playerHP { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
 
-    std::shared_ptr<jt::ParticleSystem<jt::Shape, 50>> m_explosionParticles { nullptr };
+    std::shared_ptr<jt::ParticleSystem<jt::Shape, 150>> m_explosionParticles { nullptr };
+    std::map<std::pair<int, int>, std::shared_ptr<jt::ParticleSystem<jt::Shape, 40>>>
+        m_barrierParticles {};
+    std::vector<BarrierInfo> m_barriers;
+    mutable std::shared_ptr<jt::Bar> m_barrierBar { nullptr };
+    float m_currentBarrierRadius { 1.0f };
 
     // at end of round
     float m_playbackOverflowTime = 2.5f;

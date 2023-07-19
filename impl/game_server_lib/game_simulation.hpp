@@ -7,6 +7,7 @@
 #include <log/logger_interface.hpp>
 #include <map/terrain.hpp>
 #include <network_data/arrow_info.hpp>
+#include <network_data/barrier_info.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
 #include <network_data/unit_info_collection.hpp>
 #include <object_properties.hpp>
@@ -23,6 +24,7 @@
 #include <memory>
 #include <mutex>
 #include <utility>
+#include <vector>
 
 class GameSimulation : public WorldInfoInterface {
 public:
@@ -48,7 +50,9 @@ public:
     // clear all units, e.g. when resetting the server
     void clear();
 
-    Terrain const& getTerrain() const { return *m_world; }
+    Terrain const& getTerrain() const;
+
+    void spawnBarrier(BarrierInfo const& barrierInfo) override;
 
 private:
     jt::LoggerInterface& m_logger;
@@ -59,6 +63,7 @@ private:
     std::vector<UpgradeUnitData> m_unitUpgrades;
 
     std::vector<std::shared_ptr<SimulationObjectInterface>> m_simulationObjects;
+    std::vector<BarrierInfo> m_barriers;
 
     std::vector<ArrowInfo> m_arrows;
     std::vector<std::pair<float, ArrowInfo>> m_arrowsToBeSpawned;

@@ -96,6 +96,21 @@ void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)
 
         currentFrame.m_arrows = m_arrows;
 
+        for (auto& barrier : m_barriers) {
+            for (auto const& obj : m_simulationObjects) {
+                if (obj->getUnitID() != barrier.unitID) {
+                    continue;
+                }
+                if (obj->getPlayerID() != barrier.playerID) {
+                    continue;
+                }
+                if (!obj->isAlive()) {
+                    barrier.hpCurrent = 0.0f;
+                }
+            }
+        }
+        currentFrame.m_barriers = m_barriers;
+
         for (auto& obj : m_simulationObjects) {
             obj->update(timePerUpdate, *this);
 
@@ -166,6 +181,24 @@ void GameSimulation::handleArrows(
         arrow.currentHeight = currentArrowHeight;
         arrow.currentPos
             = arrow.startPos + dif * timePercent + jt::Vector2f { 0.0f, currentArrowHeight };
+
+        for (auto& barrier : m_barriers) {
+            if (barrier.hpCurrent <= 0) {
+                continue;
+            }
+            if (barrier.playerID == arrow.shooterPlayerId) {
+                continue;
+            }
+            auto const dir = arrow.currentPos - barrier.pos;
+            auto const dist = jt::MathHelper::lengthSquared(dir);
+            if (dist < barrier.radius * barrier.radius) {
+                // kill arrow;
+                arrow.age = 999999;
+                barrier.hpCurrent -= arrow.damage.damage;
+                arrow.damage.damage = 0.0f;
+                arrow.splashRadius = 0.0001f;
+            }
+        }
 
         if (arrow.splashRadius <= 0) {
             // check for single collision arrow - targets
@@ -349,6 +382,7 @@ void GameSimulation::clear()
     m_unitInformationForRoundStart.clear();
     m_simulationObjects.clear();
     m_unitUpgrades.clear();
+    m_barriers.clear();
     m_playerHp = { { 0, GP::InitialPlayerHP() }, { 1, GP::InitialPlayerHP() } };
     m_world = std::make_shared<Terrain>();
 }
@@ -371,4 +405,12 @@ std::shared_ptr<SimulationObjectInterface> GameSimulation::getUnit(int pid, int 
         }
     }
     return nullptr;
+}
+
+Terrain const& GameSimulation::getTerrain() const { return *m_world; }
+
+void GameSimulation::spawnBarrier(BarrierInfo const& barrierInfo)
+{
+    m_logger.info("barrier spawned", { "GameSimulation" });
+    m_barriers.push_back(barrierInfo);
 }

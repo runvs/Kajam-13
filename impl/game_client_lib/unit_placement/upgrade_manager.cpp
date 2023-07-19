@@ -31,7 +31,7 @@ void UpgradeManager::buyUpgrade(
 std::vector<UpgradeInfoClient>& UpgradeManager::getPossibleUpgradesForUnit(
     int playerID, std::string const& unitType) const
 {
-    return m_possibleUpgrades[playerID].at(unitType);
+    return m_possibleUpgrades[playerID][unitType];
 }
 
 std::vector<UpgradeInfoClient>& UpgradeManager::getBoughtUpgradesForUnit(

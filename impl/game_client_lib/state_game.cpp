@@ -25,6 +25,7 @@
 #include <state_menu.hpp>
 #include <system_helper.hpp>
 #include <tweens/tween_alpha.hpp>
+#include <tweens/tween_position.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <vector2.hpp>
 #include <imgui.h>
@@ -95,7 +96,7 @@ void StateGame::onCreate()
     placeCritterFn.template operator()<Bunny>(1.0f, 2.4f, jt::Random::getInt(5, 10));
     placeCritterFn.template operator()<Deer>(1.0f, 2.4f, jt::Random::getInt(2, 6));
 
-    m_explosionParticles = jt::ParticleSystem<jt::Shape, 50>::createPS(
+    m_explosionParticles = jt::ParticleSystem<jt::Shape, 150>::createPS(
         [this]() {
             std::shared_ptr<jt::Shape> shape
                 = jt::dh::createShapeCircle(4, jt::colors::White, textureManager());
@@ -103,7 +104,8 @@ void StateGame::onCreate()
             return shape;
         },
         [this](auto shape, auto const& pos) {
-            shape->setPosition(jt::Random::getRandomPointInCircle(40.0f) + pos);
+            shape->setPosition(pos);
+            shape->update(0.0f);
             auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
             add(tw);
         });
@@ -147,6 +149,11 @@ void StateGame::onCreate()
     if (bgm_menu) {
         getGame()->audio().fades().volumeFade(bgm_menu, 0.5f, bgm_menu->getVolume(), 0.0f);
     }
+
+    m_barrierBar = std::make_shared<jt::Bar>(16.0f, 4.0f, true, textureManager());
+    m_barrierBar->setBackColor(jt::colors::Gray);
+    m_barrierBar->setFrontColor(jt::colors::Blue);
+    m_barrierBar->setZ(GP::ZLayerUI());
 }
 
 void StateGame::onEnter() { }
@@ -217,8 +224,60 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
     }
 
     for (auto const& expl : currentFrame.m_explosions) {
-        getGame()->gfx().camera().shake(0.5f, 5);
-        m_explosionParticles->fire(20, expl.position);
+        getGame()->logger().error("explosion radius: " + std::to_string(expl.radius));
+        if (expl.radius < 1) {
+            m_explosionParticles->fire(1, expl.position);
+        } else {
+            getGame()->gfx().camera().shake(0.5f, 5);
+            for (auto i = 0u; i != 30u; ++i) {
+                m_explosionParticles->fire(
+                    1, expl.position + jt::Random::getRandomPointInCircle(expl.radius));
+            }
+        }
+    }
+
+    m_barriers = currentFrame.m_barriers;
+    for (auto const& barrier : currentFrame.m_barriers) {
+
+        auto const ids = std::make_pair(barrier.playerID, barrier.unitID);
+        if (m_barrierParticles.count(ids) == 0) {
+            m_barrierParticles[ids] = jt::ParticleSystem<jt::Shape, 40>::createPS(
+                [this]() {
+                    std::shared_ptr<jt::Shape> shape = jt::dh::createShapeRect(
+                        jt::Vector2f { 2.0f, 2.0f }, jt::colors::White, textureManager());
+                    shape->setPosition(jt::Vector2f { -5000.0f, -5000.0f });
+                    return shape;
+                },
+                [this, pid = barrier.playerID](auto shape, auto const& pos) {
+                    auto const startPos
+                        = jt::Random::getRandomPointOnCircle(m_currentBarrierRadius) + pos;
+                    shape->setPosition(startPos);
+
+                    if (jt::Random::getChance()) {
+                        if (pid == 0) {
+                            shape->setColor(GP::ColorPlayer0());
+                        } else {
+                            shape->setColor(GP::ColorPlayer1());
+                        }
+                    } else {
+                        shape->setColor(jt::colors::White);
+                    }
+                    auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
+                    add(tw);
+                    auto twp = jt::TweenPosition::create(shape, 0.3f, startPos, pos);
+                    twp->setStartDelay(0.2f);
+                    add(twp);
+                });
+
+            add(m_barrierParticles[ids]);
+        }
+
+        if (barrier.hpCurrent <= 0) {
+            continue;
+        }
+        m_currentBarrierRadius = barrier.radius;
+        m_barrierParticles.at(ids)->fire(2, barrier.pos);
+        m_barrierParticles.at(ids)->update(0.0f);
     }
 }
 
@@ -303,7 +362,23 @@ void StateGame::onDraw() const
     m_internalStateManager->getActiveState()->draw(const_cast<StateGame&>(*this));
 
     m_explosionParticles->draw();
-
+    for (auto const& kvp : m_barrierParticles) {
+        kvp.second->draw();
+    }
+    for (auto const& barrier : m_barriers) {
+        if (barrier.hpCurrent <= 0) {
+            continue;
+        }
+        if (barrier.hpCurrent >= barrier.hpMax) {
+            continue;
+        }
+        m_barrierBar->setPosition(barrier.pos
+            + jt::Vector2f { -terrainChunkSizeInPixelHalf, -terrainChunkSizeInPixel - 4 });
+        m_barrierBar->setMaxValue(barrier.hpMax);
+        m_barrierBar->setCurrentValue(barrier.hpCurrent);
+        m_barrierBar->update(0.0f);
+        m_barrierBar->draw(renderTarget());
+    }
     m_clouds->draw();
     m_vignette->draw();
 

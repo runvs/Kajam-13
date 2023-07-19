@@ -53,6 +53,10 @@ constexpr auto range = "range";
 constexpr auto playerHp = "playerHp";
 constexpr auto explosions = "explosions";
 
+constexpr auto barriers = "barriers";
+constexpr auto barrierHp = "barrierHp";
+constexpr auto barrierRange = "barrierRange";
+
 constexpr auto cost = "cost";
 constexpr auto unlockCost = "unlockCost";
 constexpr auto unitUpgrades = "unitUpgrades";

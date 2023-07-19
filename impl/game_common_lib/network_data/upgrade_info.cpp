@@ -13,6 +13,12 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
     if (!isDefault(p.damage)) {
         j[jk::damage] = p.damage;
     }
+    if (!isDefault(p.barrierRange)) {
+        j[jk::barrierRange] = p.barrierRange;
+    }
+    if (!isDefault(p.barrierHp)) {
+        j[jk::barrierHp] = p.barrierHp;
+    }
     if (!isDefault(p.attackSpeed)) {
         j[jk::attackTimerMax] = p.attackSpeed;
     }
@@ -35,6 +41,7 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
         j[jk::armor] = p.armor;
     }
 }
+
 void from_json(const nlohmann::json& j, UpgradeInfo& p)
 {
     j.at(jk::upgName).get_to(p.name);
@@ -43,6 +50,12 @@ void from_json(const nlohmann::json& j, UpgradeInfo& p)
 
     if (j.count(jk::damage) == 1) {
         j.at(jk::damage).get_to(p.damage);
+    }
+    if (j.count(jk::barrierRange) == 1) {
+        j.at(jk::barrierRange).get_to(p.barrierRange);
+    }
+    if (j.count(jk::barrierHp) == 1) {
+        j.at(jk::barrierHp).get_to(p.barrierHp);
     }
     if (j.count(jk::attackTimerMax) == 1) {
         j.at(jk::attackTimerMax).get_to(p.attackSpeed);
