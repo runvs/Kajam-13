@@ -105,6 +105,7 @@ void StateGame::onCreate()
         },
         [this](auto shape, auto const& pos) {
             shape->setPosition(pos);
+            shape->update(0.0f);
             auto const tw = jt::TweenAlpha::create(shape, 0.5f, 255, 0);
             add(tw);
         });
@@ -223,12 +224,15 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
     }
 
     for (auto const& expl : currentFrame.m_explosions) {
+        getGame()->logger().error("explosion radius: " + std::to_string(expl.radius));
         if (expl.radius < 1) {
             m_explosionParticles->fire(1, expl.position);
         } else {
             getGame()->gfx().camera().shake(0.5f, 5);
-            m_explosionParticles->fire(
-                20, expl.position + jt::Random::getRandomPointInCircle(expl.radius));
+            for (auto i = 0u; i != 30u; ++i) {
+                m_explosionParticles->fire(
+                    1, expl.position + jt::Random::getRandomPointInCircle(expl.radius));
+            }
         }
     }
 
