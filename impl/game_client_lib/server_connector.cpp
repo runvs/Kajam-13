@@ -46,20 +46,28 @@ void ServerConnector::doDraw() const
 
     ImGui::InputInt("Server Port", &m_serverPort, 1, 1);
     ImGui::InputInt("Client Port", &m_clientPort, 1, 1);
-    ImGui::InputText("IP", &m_ip);
+    if (ImGui::InputText(
+            "IP", &m_ip, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsNoBlank)) {
+        connect();
+    }
     ImGui::Checkbox("Add bot as blue player (left)", &m_addBotAsPlayerZero);
     ImGui::Checkbox("Add bot as red player (right)", &m_addBotAsPlayerOne);
     if (ImGui::Button("connect")) {
-        saveIp(m_ip);
-        m_connection = std::make_shared<ClientNetworkConnection>(
-            m_ip, m_serverPort, m_clientPort, getGame()->logger(), m_compressor);
-        m_connection->establishConnection();
-
-        auto const state = std::make_shared<StateGame>();
-        state->setConnection(getConnection(), m_addBotAsPlayerZero, m_addBotAsPlayerOne);
-        getGame()->stateManager().switchState(state);
+        connect();
     }
     ImGui::End();
+}
+
+void ServerConnector::connect() const
+{
+    saveIp(m_ip);
+    m_connection = std::make_shared<ClientNetworkConnection>(
+        m_ip, m_serverPort, m_clientPort, getGame()->logger(), m_compressor);
+    m_connection->establishConnection();
+
+    auto const state = std::make_shared<StateGame>();
+    state->setConnection(getConnection(), m_addBotAsPlayerZero, m_addBotAsPlayerOne);
+    getGame()->stateManager().switchState(state);
 }
 
 std::shared_ptr<ClientNetworkConnection> ServerConnector::getConnection() const

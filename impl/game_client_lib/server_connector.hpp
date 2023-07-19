@@ -18,6 +18,8 @@ private:
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
+    void connect() const;
+
     std::shared_ptr<CompressorInterface> m_compressor { nullptr };
 
     mutable std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
