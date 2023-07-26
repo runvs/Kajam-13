@@ -85,6 +85,7 @@ void Unit::doUpdate(float const elapsed)
     std::erase_if(m_soundsToPlay, [](auto const& kvp) { return kvp.first <= 0; });
 
     m_hpBar->setCurrentValue(m_hp);
+    m_hpBar->setMaxValue(m_hpMax);
     m_hpBar->setPosition(m_anim->getPosition() + jt::Vector2f { 0.0f, -6.0f });
     m_hpBar->update(elapsed);
 }
@@ -122,6 +123,7 @@ void Unit::updateState(UnitServerToClientData const& data)
         m_anim->flash(0.15f, jt::colors::Red);
     }
     m_hp = data.hpCurrent;
+    m_hpMax = data.hpMax;
 
     if (data.unitAnim.has_value()) {
         m_newAnimName = data.unitAnim.value();
