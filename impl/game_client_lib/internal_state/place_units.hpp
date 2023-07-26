@@ -22,9 +22,6 @@ private:
 
     std::string m_selectedUnitType {};
 
-    void drawUnitTooltips(StateGame& state);
-    void drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, StateGame& state);
-
     void drawRangeIndicator(StateGame& state);
 
     void drawUnitUpgradeWindow(std::shared_ptr<UnitInterface> selectedUnit, StateGame& state);

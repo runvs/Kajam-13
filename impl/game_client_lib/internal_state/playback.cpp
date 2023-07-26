@@ -8,4 +8,8 @@ void Playback::update(StateGame& state, float elapsed)
     CommonFunctions::updateCritters(state);
 }
 
-void Playback::draw(StateGame& state) { state.drawArrows(); }
+void Playback::draw(StateGame& state)
+{
+    state.drawArrows();
+    CommonFunctions::drawUnitTooltips(state);
+}
