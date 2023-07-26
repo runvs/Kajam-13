@@ -6,6 +6,7 @@
 namespace CommonFunctions {
 
 void updateCritters(StateGame& state);
+void drawUnitTooltips(StateGame& state);
 
 } // namespace CommonFunctions
 

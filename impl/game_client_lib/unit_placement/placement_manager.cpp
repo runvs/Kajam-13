@@ -312,7 +312,11 @@ std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& PlacementManager::getPlacedU
     return m_placedUnits;
 }
 
-void PlacementManager::clearPlacedUnits() { m_placedUnitsGO.clear(); }
+void PlacementManager::clearPlacedUnits()
+{
+    m_placedUnitsGO.clear();
+    m_placedUnits->clear();
+}
 
 void PlacementManager::setActive(bool active) { m_isActive = active; }
 

@@ -20,16 +20,26 @@ public:
     using Sptr = std::shared_ptr<ObjectGroup<T>>;
 
     ObjectGroup() = default;
+
     auto begin() { return m_data.begin(); }
+
     auto end() { return m_data.end(); }
+
     auto cbegin() const { return m_data.cbegin(); }
+
     auto cend() const { return m_data.cend(); }
 
     bool empty() const { return m_data.empty(); }
+
     auto size() const { return m_data.size(); }
+
     auto at(std::size_t idx) { return m_data.at(idx); }
+
     void push_back(std::weak_ptr<T> wptr) { m_data.push_back(wptr); }
+
     void emplace_back(std::weak_ptr<T>&& wptr) { m_data.emplace_back(std::move(wptr)); }
+
+    void clear();
 
 private:
     std::vector<std::weak_ptr<T>> m_data {};
@@ -39,6 +49,12 @@ private:
         std::erase_if(m_data, [](auto const& wptr) { return wptr.expired(); });
     }
 };
+
+template <typename T>
+void ObjectGroup<T>::clear()
+{
+    m_data.clear();
+}
 
 template <typename T>
 auto begin(ObjectGroup<T>& obj)

@@ -305,8 +305,10 @@ void GameSimulation::handleScheduledAttacks(float timePerUpdate)
 {
     for (auto& kvp : m_scheduledCloseCombatAttacks) {
         kvp.first -= timePerUpdate;
-        if (!kvp.second.attacker->isAlive()) {
-            continue;
+        if (kvp.first > 0.1f) {
+            if (!kvp.second.attacker->isAlive()) {
+                continue;
+            }
         }
         if (!kvp.second.attacked->isAlive()) {
             continue;

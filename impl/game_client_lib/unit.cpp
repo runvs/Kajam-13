@@ -85,6 +85,7 @@ void Unit::doUpdate(float const elapsed)
     std::erase_if(m_soundsToPlay, [](auto const& kvp) { return kvp.first <= 0; });
 
     m_hpBar->setCurrentValue(m_hp);
+    m_hpBar->setMaxValue(m_hpMax);
     m_hpBar->setPosition(m_anim->getPosition() + jt::Vector2f { 0.0f, -6.0f });
     m_hpBar->update(elapsed);
 }
@@ -117,7 +118,12 @@ void Unit::updateState(UnitServerToClientData const& data)
     } else {
         m_anim->setColor(GP::ColorPlayer1());
     }
+
+    if (data.hpCurrent < m_hp) {
+        m_anim->flash(0.15f, jt::colors::Red);
+    }
     m_hp = data.hpCurrent;
+    m_hpMax = data.hpMax;
 
     if (data.unitAnim.has_value()) {
         m_newAnimName = data.unitAnim.value();
@@ -144,12 +150,19 @@ void Unit::playAnimation()
     auto const newAnimName = m_newAnimName;
     m_newAnimName = "";
 
+    auto const currentAnimationName = m_anim->getCurrentAnimationName();
+    auto const currentPriority = GP::animationPriorities().at(currentAnimationName);
+
+    auto const newPriority = GP::animationPriorities().at(newAnimName);
+    if (newPriority < currentPriority) {
+        return;
+    }
+
     if (newAnimName != "idle") {
         m_animTimeUntilBackToIdle = m_anim->getAnimTotalTime(newAnimName);
     }
-    if (newAnimName == "damage" || newAnimName == "death") {
-        m_anim->flash(0.15f, jt::colors::Red);
-    }
+    bool const forceRestart = (newAnimName != "walk" && newAnimName != "spell");
+
     if (newAnimName == "attack") {
         if (m_info.type == "peasant" || m_info.type == "swordman" || m_info.type == "shieldman"
             || m_info.type == "horseman") {
@@ -160,16 +173,6 @@ void Unit::playAnimation()
             m_soundsToPlay.push_back(std::make_pair(0.81f, m_sfxCrossbow));
         }
     }
-    auto const currentAnimationName = m_anim->getCurrentAnimationName();
-
-    auto const currentPriority = GP::animationPriorities().at(currentAnimationName);
-    auto const newPriority = GP::animationPriorities().at(newAnimName);
-
-    if (newPriority < currentPriority) {
-        return;
-    }
-
-    bool const forceRestart = (newAnimName != "walk" && newAnimName != "spell");
 
     m_anim->play(newAnimName, 0, forceRestart);
     m_anim->update(0.0f);
