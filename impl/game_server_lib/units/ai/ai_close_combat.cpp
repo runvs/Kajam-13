@@ -19,7 +19,6 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
         return;
     }
 
-    // TODO set offset in server unit, not in ai
     unit->setOffset(jt::Vector2f { 0.0f,
         -world.getTerrainMappedFieldHeight(unit->getPosition() + terrainChunkSizeInPixelHalf)
             * terrainHeightScalingFactor });

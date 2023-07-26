@@ -81,6 +81,7 @@ private:
 
     mutable std::string m_newAnim { "" };
     float m_slope { 0 };
+
     void clampPositionToScreen();
 };
 
