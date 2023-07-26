@@ -117,6 +117,10 @@ void Unit::updateState(UnitServerToClientData const& data)
     } else {
         m_anim->setColor(GP::ColorPlayer1());
     }
+
+    if (data.hpCurrent < m_hp) {
+        m_anim->flash(0.15f, jt::colors::Red);
+    }
     m_hp = data.hpCurrent;
 
     if (data.unitAnim.has_value()) {
@@ -146,9 +150,6 @@ void Unit::playAnimation()
 
     if (newAnimName != "idle") {
         m_animTimeUntilBackToIdle = m_anim->getAnimTotalTime(newAnimName);
-    }
-    if (newAnimName == "damage" || newAnimName == "death") {
-        m_anim->flash(0.15f, jt::colors::Red);
     }
     if (newAnimName == "attack") {
         if (m_info.type == "peasant" || m_info.type == "swordman" || m_info.type == "shieldman"

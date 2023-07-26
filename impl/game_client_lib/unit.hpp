@@ -75,8 +75,8 @@ private:
 
     int m_unitID;
     int m_playerID { 0 };
-    float m_hpMax { 100.0f };
-    float m_hp { 100.0f };
+    float m_hpMax { 1.0f };
+    float m_hp { 1.0f };
     int m_level { 1 };
     int m_exp { 0 };
     std::vector<std::string> m_boughtUpgrades;
