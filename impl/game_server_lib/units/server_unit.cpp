@@ -125,6 +125,11 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
     } else if (!m_walkingRight && m_physicsObject->getVelocity().x > 0) {
         m_walkingRight = true;
     }
+    clampPositionToScreen();
+}
+
+void ServerUnit::clampPositionToScreen()
+{
     m_pos = m_physicsObject->getPosition();
     if (m_pos.x <= 0) {
         m_pos.x = 0;
@@ -183,11 +188,11 @@ void ServerUnit::takeDamage(const DamageInfo& damage)
         + std::to_string(damage.damage) + ":" + std::to_string(damageValue) + ")");
     m_logger.debug("initialHp: " + std::to_string(m_hp)
         + ", after Damage Hp: " + std::to_string(m_hp - damageValue));
+
     m_hp -= damageValue;
 
     if (m_hp > 0) {
         setAnim("damage");
-
     } else {
         setAnim("death");
     }

@@ -148,9 +148,19 @@ void Unit::playAnimation()
     auto const newAnimName = m_newAnimName;
     m_newAnimName = "";
 
+    auto const currentAnimationName = m_anim->getCurrentAnimationName();
+    auto const currentPriority = GP::animationPriorities().at(currentAnimationName);
+
+    auto const newPriority = GP::animationPriorities().at(newAnimName);
+    if (newPriority < currentPriority) {
+        return;
+    }
+
     if (newAnimName != "idle") {
         m_animTimeUntilBackToIdle = m_anim->getAnimTotalTime(newAnimName);
     }
+    bool const forceRestart = (newAnimName != "walk" && newAnimName != "spell");
+
     if (newAnimName == "attack") {
         if (m_info.type == "peasant" || m_info.type == "swordman" || m_info.type == "shieldman"
             || m_info.type == "horseman") {
@@ -161,16 +171,6 @@ void Unit::playAnimation()
             m_soundsToPlay.push_back(std::make_pair(0.81f, m_sfxCrossbow));
         }
     }
-    auto const currentAnimationName = m_anim->getCurrentAnimationName();
-
-    auto const currentPriority = GP::animationPriorities().at(currentAnimationName);
-    auto const newPriority = GP::animationPriorities().at(newAnimName);
-
-    if (newPriority < currentPriority) {
-        return;
-    }
-
-    bool const forceRestart = (newAnimName != "walk" && newAnimName != "spell");
 
     m_anim->play(newAnimName, 0, forceRestart);
     m_anim->update(0.0f);

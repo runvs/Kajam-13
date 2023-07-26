@@ -14,12 +14,12 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
     m_attackTimer -= elapsed;
     auto t = world.getClosestTargetTo(unit->getPosition(), unit->getPlayerID());
     auto target = t.lock();
-
     if (!target) {
         unit->getPhysicsObject()->setVelocity(jt::Vector2f { 0.0f, 0.0f });
         return;
     }
 
+    // TODO set offset in server unit, not in ai
     unit->setOffset(jt::Vector2f { 0.0f,
         -world.getTerrainMappedFieldHeight(unit->getPosition() + terrainChunkSizeInPixelHalf)
             * terrainHeightScalingFactor });
@@ -42,7 +42,7 @@ void AiCloseCombat::update(float elapsed, ServerUnit* unit, WorldInfoInterface& 
 
             unit->setAnim("attack");
 
-            CloseCombatInfo cci { unit, target.get(), unit->getUnitInfoFull().damage };
+            CloseCombatInfo const cci { unit, target.get(), unit->getUnitInfoFull().damage };
             float const attackDelay = 0.4f;
             world.scheduleAttack(cci, attackDelay);
         }
