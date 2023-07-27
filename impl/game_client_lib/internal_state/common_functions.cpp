@@ -72,7 +72,15 @@ void drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, StateGame& s
         ImGui::Text("HP");
         ImGui::TableNextColumn();
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
-        ImGui::Text("%d", static_cast<int>(unitInfo.hitpointsMax));
+        auto hpCurrent = static_cast<int>(unit->getCurrentHP());
+        auto const hpMax = static_cast<int>(unitInfo.hitpointsMax);
+        hpCurrent = jt::MathHelper::clamp(hpCurrent, 0, hpMax);
+
+        if (hpCurrent == hpMax) {
+            ImGui::Text("%d", hpMax);
+        } else {
+            ImGui::Text("%d / %d", hpCurrent, hpMax);
+        }
         ImGui::PopStyleColor();
         ImGui::TableNextColumn();
         ImGui::Text("SPD");

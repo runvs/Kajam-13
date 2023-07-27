@@ -231,3 +231,5 @@ int Unit::getExpForLevelUp() const
     auto info = getUnitInfoWithLevelAndUpgrades(m_info, m_level, {});
     return info.experienceRequiredForLevelUp;
 }
+
+float Unit::getCurrentHP() const { return m_hp; }

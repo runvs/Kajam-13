@@ -23,6 +23,7 @@ public:
 
     bool isMouseOver() const override;
     UnitInfo const& getInfo() const override;
+    float getCurrentHP() const override;
 
     std::shared_ptr<jt::Tween> createInitialTween();
 

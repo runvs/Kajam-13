@@ -49,6 +49,7 @@ public:
     void flash() override;
 
     void setHighlight(bool v) override;
+    float getCurrentHP() const override;
 
 private:
     UnitInfo m_info;
