@@ -119,6 +119,9 @@ void ServerUnit::update(float elapsed, WorldInfoInterface& world)
         return;
     }
     m_ai->update(elapsed, this, world);
+    setOffset(jt::Vector2f { 0.0f,
+        -world.getTerrainMappedFieldHeight(getPosition() + terrainChunkSizeInPixelHalf)
+            * terrainHeightScalingFactor });
 
     if (m_walkingRight && m_physicsObject->getVelocity().x < 0) {
         m_walkingRight = false;
