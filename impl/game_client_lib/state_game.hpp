@@ -62,7 +62,6 @@ public:
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
     std::shared_ptr<jt::ObjectGroup<Critter>> getCritters();
 
-    void transitionWaitForPlayersToSelectStartingUnits();
     void transitionWaitForSimulationResultsToPlayback();
     void transitionPlaybackToPlaceUnits();
 
@@ -73,6 +72,11 @@ public:
     void flashUnitsForUpgrade(std::string const& unitType);
 
     std::shared_ptr<SelectUnitInfoCollection> getStartingUnits();
+
+    void setPlayerIdDispatcher(std::shared_ptr<PlayerIdDispatcher> dispatcher);
+    void setUnitInfo(std::shared_ptr<UnitInfoCollection> unitInfo);
+    void setPlacementManager(std::shared_ptr<PlacementManager> manager);
+    void setStartingUnits(std::shared_ptr<SelectUnitInfoCollection> startingUnits);
 
 private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
@@ -90,6 +94,7 @@ private:
     std::shared_ptr<jt::ObjectGroup<Critter>> m_critters { nullptr };
 
     std::shared_ptr<UnitInfoCollection> m_unitInfo { nullptr };
+    std::shared_ptr<SelectUnitInfoCollection> m_startingUnits { nullptr };
 
     std::shared_ptr<InternalStateManager> m_internalStateManager { nullptr };
 
@@ -126,8 +131,6 @@ private:
 
     // at end of round
     float m_playbackOverflowTime = 2.5f;
-
-    std::shared_ptr<SelectUnitInfoCollection> m_startingUnits;
 
     void onCreate() override;
     void onEnter() override;

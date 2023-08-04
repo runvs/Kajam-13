@@ -1,4 +1,5 @@
 #include "internal_state_manager.hpp"
+#include <game_interface.hpp>
 #include <internal_state/end_lose.hpp>
 #include <internal_state/end_win.hpp>
 #include <internal_state/place_units.hpp>
@@ -24,7 +25,20 @@ InternalStateManager::InternalStateManager()
     m_transitions[std::make_pair(
         InternalState::WaitForAllPlayers, InternalState::SelectStartingUnits)]
         = [](StateGame& state) {
-              state.transitionWaitForPlayersToSelectStartingUnits();
+              auto const playerId = state.getServerConnection()->getPlayerId();
+
+              auto const playerIdDispatcher = std::make_shared<PlayerIdDispatcher>(playerId);
+
+              auto const unitInfo = std::make_shared<UnitInfoCollection>(
+                  state.getGame()->logger(), state.getServerConnection()->getUnitInfo());
+
+              state.setPlayerIdDispatcher(playerIdDispatcher);
+              state.setUnitInfo(unitInfo);
+              state.setPlacementManager(std::make_shared<PlacementManager>(
+                  state.getTerrain(), playerId, playerIdDispatcher, unitInfo));
+
+              state.setStartingUnits(state.getServerConnection()->getStartingUnits());
+
               state.getPlacementManager()->setActive(false);
           };
 

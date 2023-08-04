@@ -127,6 +127,8 @@ auto getWindowPos(auto const mousePosition)
 
 } // namespace
 
+void PlaceUnits::create(StateGame& /*state*/) { }
+
 void PlaceUnits::drawUnitUpgradeWindow(
     std::shared_ptr<UnitInterface> selectedUnit, StateGame& state)
 {
