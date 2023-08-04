@@ -6,6 +6,7 @@ class StateGame;
 class InternalStateInterface {
 public:
     virtual ~InternalStateInterface() = default;
+    virtual void create(StateGame& state) = 0;
     virtual void update(StateGame& state, float elapsed) = 0;
     virtual void draw(StateGame& state) = 0;
 };

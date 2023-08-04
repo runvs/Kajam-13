@@ -305,31 +305,19 @@ std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::s
     return newUnit;
 }
 
-void StateGame::transitionWaitForPlayersToSelectStartingUnits()
-{
-    m_playerIdDispatcher = std::make_shared<PlayerIdDispatcher>(m_serverConnection->getPlayerId());
-    m_unitInfo = std::make_shared<UnitInfoCollection>(
-        getGame()->logger(), m_serverConnection->getUnitInfo());
-
-    m_placementManager = std::make_shared<PlacementManager>(
-        m_terrain, m_serverConnection->getPlayerId(), m_playerIdDispatcher, m_unitInfo);
-    add(m_placementManager);
-
-    m_startingUnits = m_serverConnection->getStartingUnits();
-}
-
-void StateGame::transitionWaitForSimulationResultsToPlayback()
+void StateGame::startPlayback()
 {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
 }
 
-void StateGame::transitionPlaybackToPlaceUnits()
+void StateGame::resetSimulation()
 {
     m_tickId = 0;
     resetAllUnits();
     m_round++;
     m_textRound->setText("Round " + std::to_string(m_round));
+
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
 }
 
@@ -537,3 +525,24 @@ void StateGame::flashUnitsForUpgrade(const std::string& unitType)
 }
 
 std::shared_ptr<SelectUnitInfoCollection> StateGame::getStartingUnits() { return m_startingUnits; }
+
+void StateGame::setPlayerIdDispatcher(std::shared_ptr<PlayerIdDispatcher> dispatcher)
+{
+    m_playerIdDispatcher = dispatcher;
+}
+
+void StateGame::setUnitInfo(std::shared_ptr<UnitInfoCollection> unitInfo) { m_unitInfo = unitInfo; }
+
+void StateGame::setPlacementManager(std::shared_ptr<PlacementManager> manager)
+{
+    if (m_placementManager) {
+        throw std::logic_error { "Placement Manager set a second time. Aborting" };
+    }
+    m_placementManager = manager;
+    add(m_placementManager);
+}
+
+void StateGame::setStartingUnits(std::shared_ptr<SelectUnitInfoCollection> startingUnits)
+{
+    m_startingUnits = startingUnits;
+}

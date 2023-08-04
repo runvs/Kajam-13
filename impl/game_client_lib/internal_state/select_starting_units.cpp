@@ -4,7 +4,10 @@
 #include <imgui.h>
 #include <string>
 
+void SelectStartingUnits::create(StateGame& /*state*/) { }
+
 void SelectStartingUnits::update(StateGame& /*state*/, float /*elapsed*/) { }
+
 void SelectStartingUnits::draw(StateGame& state)
 {
     ImGui::Begin("Select Starting Units");

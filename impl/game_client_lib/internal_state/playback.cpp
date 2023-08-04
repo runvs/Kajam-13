@@ -2,6 +2,8 @@
 #include <internal_state/common_functions.hpp>
 #include <state_game.hpp>
 
+void Playback::create(StateGame& /*state*/) { }
+
 void Playback::update(StateGame& state, float elapsed)
 {
     state.playbackSimulation(elapsed);

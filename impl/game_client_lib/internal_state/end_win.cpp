@@ -5,6 +5,8 @@
 #include <system_helper.hpp>
 #include <imgui.h>
 
+void EndWin::create(StateGame& /*state*/) { }
+
 void EndWin::update(StateGame& /*state*/, float /*elapsed*/) { }
 
 void EndWin::draw(StateGame& state)
