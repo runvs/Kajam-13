@@ -134,9 +134,8 @@ void ServerNetworkConnection::handleMessage(
 
 void ServerNetworkConnection::sendMessageToAll(const Message& m)
 {
-
     nlohmann::json const j = m;
-    auto const str = j.dump();
+    auto const str = m_compressor.compress(j.dump());
 
     for (auto& s : m_sockets) {
         if (!s || !s->is_open()) {
@@ -145,7 +144,7 @@ void ServerNetworkConnection::sendMessageToAll(const Message& m)
             return;
         }
 
-        sendStringTo(m_compressor.compress(str), *s);
+        sendStringTo(str, *s);
     }
 }
 
