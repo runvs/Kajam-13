@@ -1,12 +1,15 @@
 #include "network_helpers.hpp"
 #include <asio/read.hpp>
 #include <asio/write.hpp>
+#include <performance_measurement.hpp>
 #include <iomanip>
 #include <sstream>
 
 void NetworkHelpers::freeSendString(
     std::string const& str, asio::ip::tcp::socket& socket, jt::LoggerInterface& logger)
 {
+    auto const start = std::chrono::system_clock::now();
+
     if (!socket.is_open()) {
         logger.error("socket closed", { "NetworkHelpers", "freeSendString" });
     }
@@ -19,12 +22,14 @@ void NetworkHelpers::freeSendString(
     // Note: keep payload alive
     auto payload_ptr = std::make_shared<std::string>(buffer.str());
     asio::async_write(socket, asio::buffer(*payload_ptr, payload_ptr->size()),
-        [payload_ptr, &logger, &socket](auto const& error, auto size) {
+        [payload_ptr, &logger, &socket, start](auto const& error, auto size) {
+            auto const duration_of_send = jt::getDurationInSecondsSince(start);
             if (error) {
                 logger.error(error.message(), { "network", "freeSendString" });
                 socket.close();
             } else {
-                logger.debug("message sent with size: " + std::to_string(size),
+                logger.debug("message sent with size: " + std::to_string(size) + ", took "
+                        + std::to_string(duration_of_send) + "s",
                     { "network", "freeSendString" });
             }
         });
