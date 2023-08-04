@@ -75,11 +75,12 @@ InternalStateManager::InternalStateManager()
           };
 
     m_transitions[std::make_pair(InternalState::WaitForSimulationResults, InternalState::Playback)]
-        = [](StateGame& state) { state.transitionWaitForSimulationResultsToPlayback(); };
+        = [](StateGame& state) { state.startPlayback(); };
 
     m_transitions[std::make_pair(InternalState::Playback, InternalState::PlaceUnits)]
         = [](StateGame& state) {
-              state.transitionPlaybackToPlaceUnits();
+              state.resetSimulation();
+
               state.getPlacementManager()->setActive(true);
               state.getPlacementManager()->addFunds(40 + 50 * state.getRound());
 

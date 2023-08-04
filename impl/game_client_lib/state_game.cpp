@@ -305,18 +305,19 @@ std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::s
     return newUnit;
 }
 
-void StateGame::transitionWaitForSimulationResultsToPlayback()
+void StateGame::startPlayback()
 {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
 }
 
-void StateGame::transitionPlaybackToPlaceUnits()
+void StateGame::resetSimulation()
 {
     m_tickId = 0;
     resetAllUnits();
     m_round++;
     m_textRound->setText("Round " + std::to_string(m_round));
+
     getGame()->logger().info("finished playing round simulation", { "StateGame" });
 }
 

@@ -62,8 +62,8 @@ public:
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
     std::shared_ptr<jt::ObjectGroup<Critter>> getCritters();
 
-    void transitionWaitForSimulationResultsToPlayback();
-    void transitionPlaybackToPlaceUnits();
+    void startPlayback();
+    void resetSimulation();
 
     void playbackSimulation(float elapsed);
     void drawArrows() const;
