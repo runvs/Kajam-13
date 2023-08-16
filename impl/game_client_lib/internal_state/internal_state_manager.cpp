@@ -1,5 +1,7 @@
 #include "internal_state_manager.hpp"
+#include "math_helper.hpp"
 #include <game_interface.hpp>
+#include <game_properties.hpp>
 #include <internal_state/end_lose.hpp>
 #include <internal_state/end_win.hpp>
 #include <internal_state/place_units.hpp>
@@ -82,7 +84,9 @@ InternalStateManager::InternalStateManager()
               state.resetSimulation();
 
               state.getPlacementManager()->setActive(true);
-              state.getPlacementManager()->addFunds(40 + 50 * state.getRound());
+              auto const fundsForNextRound
+                  = jt::MathHelper::clamp(40 + 50 * state.getRound(), 0, GP::IncomePerRoundMax());
+              state.getPlacementManager()->addFunds(fundsForNextRound);
 
               state.getTerrainRenderer()->setDrawGrid(true);
 

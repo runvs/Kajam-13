@@ -84,7 +84,7 @@ void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)
 {
     auto const timePerUpdate = GP::TimePerSimulationUpdate();
     SimulationResultDataForAllFrames allFrames;
-    for (auto i = 0u; i != GP::MaxNumberOfStepsPerRound(); ++i) {
+    for (auto i = 0u; i != GP::NumberOfStepsPerRoundMax(); ++i) {
         SimulationResultDataForOneFrame currentFrame;
 
         m_b2World->step(timePerUpdate, 10, 10);
@@ -146,7 +146,7 @@ void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)
 
 bool GameSimulation::checkIsLastFrame(unsigned int i)
 {
-    bool isLastFrame = (i == GP::MaxNumberOfStepsPerRound() - 1);
+    bool isLastFrame = (i == GP::NumberOfStepsPerRoundMax() - 1);
     bool playerZeroAlive { false };
     bool playerOneAlive { false };
 

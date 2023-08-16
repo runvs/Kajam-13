@@ -44,7 +44,9 @@ public:
 
     static jt::Palette getPalette();
 
-    static std::size_t MaxNumberOfStepsPerRound();
+    static std::size_t NumberOfStepsPerRoundMax();
+
+    static int IncomePerRoundMax();
 
     static int UnitLevelMax();
 
