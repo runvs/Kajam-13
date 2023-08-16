@@ -150,37 +150,40 @@ void PlacementManager::doDraw() const
 
         constexpr auto buttonWidth = 106;
 
-        ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
-            | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize };
+        ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+            | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse
+            | ImGuiWindowFlags_AlwaysAutoResize };
         ImGui::Begin("Unit placement", nullptr, window_flags);
         ImGui::Text("Gold: %i", m_availableFunds);
 
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0.5 });
 
-        ImGui::Separator();
-        ImGui::Text("Unlock");
-        ImGui::BeginTable("UnitTable", 2);
-        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
-        for (auto const& t : purchaseTypes) {
-            auto const& u = m_unitInfo->getInfoForType(t);
-            bool const canUnlock = (m_availableFunds >= u.unlockCost);
+        if (!purchaseTypes.empty()) {
+            ImGui::Separator();
+            ImGui::Text("Unlock");
+            ImGui::BeginTable("UnitTable", 2);
+            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
+            for (auto const& t : purchaseTypes) {
+                auto const& u = m_unitInfo->getInfoForType(t);
+                bool const canUnlock = (m_availableFunds >= u.unlockCost);
 
-            ImGui::TableNextColumn();
-            TextAlignedRight(std::to_string(u.unlockCost));
+                ImGui::TableNextColumn();
+                TextAlignedRight(std::to_string(u.unlockCost));
 
-            ImGui::TableNextColumn();
-            ImGui::BeginDisabled(!canUnlock);
-            if (ImGui::Button(u.type.c_str(), { -1, 0 })) {
-                unlockType(t);
-                m_availableFunds -= u.unlockCost;
+                ImGui::TableNextColumn();
+                ImGui::BeginDisabled(!canUnlock);
+                if (ImGui::Button(u.type.c_str(), { -1, 0 })) {
+                    unlockType(t);
+                    m_availableFunds -= u.unlockCost;
+                }
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                    std::string const str = u.description + " Cost: " + std::to_string(u.cost);
+                    ImGui::SetTooltip("%s", str.c_str());
+                }
+                ImGui::EndDisabled();
             }
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
-                std::string const str = u.description + " Cost: " + std::to_string(u.cost);
-                ImGui::SetTooltip("%s", str.c_str());
-            }
-            ImGui::EndDisabled();
+            ImGui::EndTable();
         }
-        ImGui::EndTable();
 
         ImGui::Separator();
         ImGui::Text("Hire");
