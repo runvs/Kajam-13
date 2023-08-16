@@ -33,7 +33,7 @@ jt::Palette GP::getPalette()
 
 std::size_t GP::NumberOfStepsPerRoundMax() { return 8000; }
 
-int GP::IncomePerRoundMax() { return 400; }
+int GP::IncomePerRoundMax() { return 440; }
 
 int GP::UnitLevelMax() { return 6; }
 
