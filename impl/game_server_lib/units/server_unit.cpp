@@ -214,6 +214,9 @@ int ServerUnit::getCost() { return m_infoBase.cost; }
 
 void ServerUnit::gainExperience(int exp)
 {
+    if (m_level >= GP::UnitLevelMax()) {
+        return;
+    }
     m_experience += exp;
     auto const unitInfo = getUnitInfoFull();
     if (m_experience >= unitInfo.experienceRequiredForLevelUp) {

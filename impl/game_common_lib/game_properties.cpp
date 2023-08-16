@@ -33,6 +33,8 @@ jt::Palette GP::getPalette()
 
 std::size_t GP::MaxNumberOfStepsPerRound() { return 8000; }
 
+int GP::UnitLevelMax() { return 10; }
+
 jt::Vector2f GP::UnitAnimationOffset() { return jt::Vector2f { -9.0f, -16.0f }; }
 
 int GP::InitialPlayerHP() { return 4000; }

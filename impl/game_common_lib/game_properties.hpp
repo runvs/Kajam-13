@@ -46,6 +46,8 @@ public:
 
     static std::size_t MaxNumberOfStepsPerRound();
 
+    static int UnitLevelMax();
+
     static float TimePerSimulationUpdate();
 
     static jt::Vector2f UnitAnimationOffset();
