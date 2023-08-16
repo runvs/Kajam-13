@@ -11,7 +11,7 @@
     ]
   },
   "attackTimerMax": 1.0,
-  "movementSpeed": 30.0,
+  "movementSpeed": 28.0,
   "colliderRadius": 4.0,
   "cost": 45,
   "unlockCost": 25,
@@ -31,7 +31,7 @@
       "upgCost": 100,
       "movementSpeed": {
         "add": 0.0,
-        "factor": 0.2
+        "factor": 0.15
       },
       "attackTimerMax": {
         "add": 0.0,
