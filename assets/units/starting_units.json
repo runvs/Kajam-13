@@ -3,13 +3,13 @@
     {
       "unit1": "peasant",
       "unit2": "cannon",
-      "startingFunds": 135,
+      "startingFunds": 150,
       "effect": "No Effect"
     },
     {
       "unit1": "archer",
       "unit2": "swordman",
-      "startingFunds": 175,
+      "startingFunds": 200,
       "effect": "No Effect"
     },
     {

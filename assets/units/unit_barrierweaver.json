@@ -14,7 +14,7 @@
   "unlockCost": 100,
   "ai": {
     "type": 3,
-    "barrierHp": 200.0,
+    "barrierHp": 300.0,
     "range": 3.5
   },
   "animations": [
@@ -37,7 +37,7 @@
       "iconPath": "assets/images/upgrades/barrier_of_unyielding_valor.png",
       "upgCost": 150,
       "shieldHp": {
-        "add": 100.0,
+        "add": 150.0,
         "factor": 0.0
       }
     }

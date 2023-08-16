@@ -1,7 +1,7 @@
 {
   "type": "horseman",
   "description": "fast unit with decent but slow attack.",
-  "expRequiredForLevelUp": 80,
+  "expRequiredForLevelUp": 100,
   "expGainWhenKilled": 40,
   "hitpoints": 60.0,
   "damage": {

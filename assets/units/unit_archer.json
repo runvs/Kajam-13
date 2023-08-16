@@ -5,12 +5,12 @@
   "expGainWhenKilled": 30,
   "hitpoints": 20.0,
   "damage": {
-    "damage": 15.0,
+    "damage": 20.0,
     "damageTypes": [
       "ranged"
     ]
   },
-  "attackTimerMax": 2.75,
+  "attackTimerMax": 2.5,
   "movementSpeed": 8.0,
   "colliderRadius": 6.0,
   "cost": 100,
