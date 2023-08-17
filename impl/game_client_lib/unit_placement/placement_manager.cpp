@@ -155,6 +155,8 @@ void PlacementManager::doDraw() const
             | ImGuiWindowFlags_AlwaysAutoResize };
         ImGui::Begin("Unit placement", nullptr, window_flags);
         ImGui::Text("Gold: %i", m_availableFunds);
+        ImGui::Text("Available Unit Unlocks: %i / %i",
+            m_unitUnlocksAvailable - m_unitsUnlockedThisRound, m_unitUnlocksAvailable);
 
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0.5 });
 
@@ -165,7 +167,8 @@ void PlacementManager::doDraw() const
             ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
             for (auto const& t : purchaseTypes) {
                 auto const& u = m_unitInfo->getInfoForType(t);
-                bool const canUnlock = (m_availableFunds >= u.unlockCost);
+                bool const canUnlock = (m_availableFunds >= u.unlockCost)
+                    && (m_unitsUnlockedThisRound < m_unitUnlocksAvailable);
 
                 ImGui::TableNextColumn();
                 TextAlignedRight(std::to_string(u.unlockCost));
@@ -321,13 +324,23 @@ void PlacementManager::clearPlacedUnits()
     m_placedUnits->clear();
 }
 
-void PlacementManager::setActive(bool active) { m_isActive = active; }
+void PlacementManager::setActive(bool active)
+{
+    m_isActive = active;
+    if (active) {
+        m_unitsUnlockedThisRound = 0;
+    }
+}
 
 void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
 
 int PlacementManager::getFunds() const { return m_availableFunds; }
 
-void PlacementManager::unlockType(const std::string& type) const { m_unlockedTypes.insert(type); }
+void PlacementManager::unlockType(const std::string& type) const
+{
+    m_unlockedTypes.insert(type);
+    ++m_unitsUnlockedThisRound;
+}
 
 void PlacementManager::flashForUpgrade(std::string const& unitType)
 {

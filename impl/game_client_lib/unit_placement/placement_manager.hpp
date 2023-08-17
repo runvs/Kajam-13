@@ -81,6 +81,9 @@ private:
 
     mutable std::map<std::string, int> m_boughtUnits {};
 
+    mutable int m_unitsUnlockedThisRound = 0;
+    mutable int m_unitUnlocksAvailable = 1;
+
     void doCreate() override;
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
