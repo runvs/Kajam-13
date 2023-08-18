@@ -223,6 +223,16 @@ void PlacementManager::doDraw() const
 
         ImGui::PopStyleVar();
 
+        ImGui::Separator();
+
+        bool const canTakeCredit = m_creditDebt == 0;
+        ImGui::BeginDisabled(!canTakeCredit);
+        if (ImGui::Button("Take credit (+100 now, -150 next round)")) {
+            addFunds(100);
+            m_creditDebt = 150;
+        }
+        ImGui::EndDisabled();
+
         ImGui::End();
     }
 }
@@ -332,7 +342,7 @@ void PlacementManager::setActive(bool active)
     }
 }
 
-void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
+void PlacementManager::addFunds(int funds) const { m_availableFunds += funds; }
 
 int PlacementManager::getFunds() const { return m_availableFunds; }
 
@@ -366,3 +376,7 @@ void PlacementManager::buyUnit(const std::string& type)
 }
 
 std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_upgrades; }
+
+int PlacementManager::getCreditDebt() const { return m_creditDebt; }
+
+int PlacementManager::resetCreditDebt() { m_creditDebt = 0; }

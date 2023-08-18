@@ -84,9 +84,12 @@ InternalStateManager::InternalStateManager()
               state.resetSimulation();
 
               state.getPlacementManager()->setActive(true);
-              auto const fundsForNextRound
-                  = jt::MathHelper::clamp(40 + 50 * state.getRound(), 0, GP::IncomePerRoundMax());
+              auto const fundsForNextRound = jt::MathHelper::clamp(
+                  50 + 50 * state.getRound() - state.getPlacementManager()->getCreditDebt(), 0,
+                  GP::IncomePerRoundMax());
               state.getPlacementManager()->addFunds(fundsForNextRound);
+
+              state.getPlacementManager()->resetCreditDebt();
 
               state.getTerrainRenderer()->setDrawGrid(true);
 

@@ -37,8 +37,10 @@ public:
 
     void setActive(bool active);
 
-    void addFunds(int funds);
+    void addFunds(int funds) const;
     int getFunds() const;
+    int getCreditDebt() const;
+    int resetCreditDebt();
 
     void unlockType(std::string const& type) const;
 
@@ -71,6 +73,7 @@ private:
     mutable std::string m_activeUnitType = "";
 
     mutable int m_availableFunds { 0 };
+    mutable int m_creditDebt { 0 };
 
     std::shared_ptr<jt::SoundInterface> m_sfxPlaceUnit { nullptr };
     std::shared_ptr<jt::SoundInterface> m_sfxBuyUpgrade { nullptr };
