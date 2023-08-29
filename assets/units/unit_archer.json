@@ -29,15 +29,17 @@
   "upgrades": [
     {
       "name": "range",
+      "description": "increase range by 3 tiles",
       "iconPath": "assets/images/upgrades/range_bow.png",
       "upgCost": 150,
       "range": {
-        "add": 4.0,
+        "add": 3.0,
         "factor": 0.0
       }
     },
     {
       "name": "fast attack",
+      "description": "decrease reload time by 0.75s",
       "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 150,
       "attackTimerMax": {

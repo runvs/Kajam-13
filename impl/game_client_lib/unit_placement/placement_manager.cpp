@@ -141,7 +141,7 @@ void PlacementManager::doDraw() const
     }
 
     if (m_unitInfo) {
-        auto unlockedTypes = m_unlockedTypes;
+        auto const unlockedTypes = m_unlockedTypes;
         auto allTypes = m_unitInfo->getTypes();
         std::sort(allTypes.begin(), allTypes.end());
         std::vector<std::string> purchaseTypes;
@@ -155,40 +155,9 @@ void PlacementManager::doDraw() const
             | ImGuiWindowFlags_AlwaysAutoResize };
         ImGui::Begin("Unit placement", nullptr, window_flags);
         ImGui::Text("Gold: %i", m_availableFunds);
-        ImGui::Text("Available Unit Unlocks: %i / %i",
-            m_unitUnlocksAvailable - m_unitsUnlockedThisRound, m_unitUnlocksAvailable);
-
+        ImGui::Separator();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0.5 });
 
-        if (!purchaseTypes.empty()) {
-            ImGui::Separator();
-            ImGui::Text("Unlock");
-            ImGui::BeginTable("UnitTable", 2);
-            ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
-            for (auto const& t : purchaseTypes) {
-                auto const& u = m_unitInfo->getInfoForType(t);
-                bool const canUnlock = (m_availableFunds >= u.unlockCost)
-                    && (m_unitsUnlockedThisRound < m_unitUnlocksAvailable);
-
-                ImGui::TableNextColumn();
-                TextAlignedRight(std::to_string(u.unlockCost));
-
-                ImGui::TableNextColumn();
-                ImGui::BeginDisabled(!canUnlock);
-                if (ImGui::Button(u.type.c_str(), { -1, 0 })) {
-                    unlockType(t);
-                    m_availableFunds -= u.unlockCost;
-                }
-                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
-                    std::string const str = u.description + " Cost: " + std::to_string(u.cost);
-                    ImGui::SetTooltip("%s", str.c_str());
-                }
-                ImGui::EndDisabled();
-            }
-            ImGui::EndTable();
-        }
-
-        ImGui::Separator();
         ImGui::Text("Hire");
         ImGui::BeginTable("UnitTable", 2);
         ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
@@ -219,6 +188,10 @@ void PlacementManager::doDraw() const
             }
             ImGui::EndDisabled();
         }
+        if (ImGui::Button("+")) {
+            m_showUnlockUnitWindow = true;
+        }
+
         ImGui::EndTable();
 
         ImGui::PopStyleVar();
@@ -234,6 +207,50 @@ void PlacementManager::doDraw() const
         ImGui::EndDisabled();
 
         ImGui::End();
+
+        if (m_showUnlockUnitWindow) {
+            ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse
+                | ImGuiWindowFlags_AlwaysAutoResize };
+            ImGui::Begin("Unlock Units", nullptr, window_flags);
+            ImGui::Text("Gold: %i", m_availableFunds);
+            ImGui::Text("Available Unit Unlocks: %i / %i",
+                m_unitUnlocksAvailable - m_unitsUnlockedThisRound, m_unitUnlocksAvailable);
+            ImGui::Separator();
+            if (!purchaseTypes.empty()) {
+                ImGui::Text("Unlock");
+                ImGui::BeginTable("UnitTable", 2);
+                ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
+                for (auto const& t : purchaseTypes) {
+                    auto const& u = m_unitInfo->getInfoForType(t);
+                    bool const canUnlock = (m_availableFunds >= u.unlockCost)
+                        && (m_unitsUnlockedThisRound < m_unitUnlocksAvailable);
+
+                    ImGui::TableNextColumn();
+                    TextAlignedRight(std::to_string(u.unlockCost));
+
+                    ImGui::TableNextColumn();
+                    ImGui::BeginDisabled(!canUnlock);
+                    if (ImGui::Button(u.type.c_str(), { buttonWidth, 0 })) {
+                        unlockType(t);
+                        m_availableFunds -= u.unlockCost;
+                        m_showUnlockUnitWindow = false;
+                    }
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                        std::string const str = u.description + " Cost: " + std::to_string(u.cost);
+                        ImGui::SetTooltip("%s", str.c_str());
+                    }
+                    ImGui::EndDisabled();
+                }
+                ImGui::EndTable();
+            } else {
+                ImGui::Text("%s", "No more Units to unlock");
+            }
+            if (ImGui::Button("close")) {
+                m_showUnlockUnitWindow = false;
+            }
+            ImGui::End();
+        }
     }
 }
 
@@ -379,4 +396,4 @@ std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_up
 
 int PlacementManager::getCreditDebt() const { return m_creditDebt; }
 
-int PlacementManager::resetCreditDebt() { m_creditDebt = 0; }
+void PlacementManager::resetCreditDebt() { m_creditDebt = 0; }

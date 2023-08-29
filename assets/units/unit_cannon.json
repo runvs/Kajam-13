@@ -30,6 +30,7 @@
   "upgrades": [
     {
       "name": "range",
+      "description": "increase range by 3 tiles",
       "iconPath": "assets/images/upgrades/range_canon.png",
       "upgCost": 125,
       "range": {
@@ -39,24 +40,26 @@
     },
     {
       "name": "fast reload",
+      "description": "decrease reload time by 1s",
       "iconPath": "assets/images/upgrades/fast_reload_canon.png",
       "upgCost": 175,
       "attackTimerMax": {
-        "add": -2.0,
+        "add": -1.0,
         "factor": 0.0
       }
     },
     {
       "name": "heavy attack",
+      "description": "increase damage by 50% but increase reload time by 30%",
       "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 125,
       "attackTimerMax": {
         "add": 0.0,
-        "factor": 0.5
+        "factor": 0.3
       },
       "damage": {
         "add": 0.0,
-        "factor": 0.75
+        "factor": 0.5
       }
     }
   ]

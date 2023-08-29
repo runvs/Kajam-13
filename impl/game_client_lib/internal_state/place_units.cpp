@@ -173,6 +173,9 @@ void PlaceUnits::drawUnitUpgradeWindow(
             state.getPlacementManager()->upgrades()->buyUpgrade(
                 selectedUnit->getPlayerID(), selectedUnit->getInfo().type, upg.info.name);
         }
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+            ImGui::SetTooltip("%s", upg.info.description.c_str());
+        }
         ImGui::EndDisabled();
     }
     ImGui::End();

@@ -40,7 +40,7 @@ public:
     void addFunds(int funds) const;
     int getFunds() const;
     int getCreditDebt() const;
-    int resetCreditDebt();
+    void resetCreditDebt();
 
     void unlockType(std::string const& type) const;
 
@@ -86,6 +86,7 @@ private:
 
     mutable int m_unitsUnlockedThisRound = 0;
     mutable int m_unitUnlocksAvailable = 1;
+    mutable bool m_showUnlockUnitWindow { false };
 
     void doCreate() override;
     void doUpdate(float const elapsed) override;

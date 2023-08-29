@@ -24,6 +24,7 @@
   "upgrades": [
     {
       "name": "carrot of agility",
+      "description": "increase movement speed by 10 and decrease attack timer by 20%",
       "iconPath": "assets/images/upgrades/carrot_of_agility.png",
       "upgCost": 200,
       "movementSpeed": {
@@ -37,6 +38,7 @@
     },
     {
       "name": "ranged resistance",
+      "description": "add 75% damage reduction against ranged attacks",
       "iconPath": "assets/images/upgrades/heavy_armor.png",
       "upgCost": 100,
       "armor": [

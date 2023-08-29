@@ -4,7 +4,7 @@
 #include <vector2.hpp>
 #include <world_info_interface.hpp>
 
-void AiBarrierWeaver::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world)
+void AiBarrierWeaver::update(float /*elapsed*/, ServerUnit* unit, WorldInfoInterface& world)
 {
     if (!m_barrierTriggerd) {
         m_initialPos = unit->getPosition();

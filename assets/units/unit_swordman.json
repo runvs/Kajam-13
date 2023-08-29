@@ -24,6 +24,7 @@
   "upgrades": [
     {
       "name": "fast attack",
+      "description": "decrease attack timer by 20%",
       "iconPath": "assets/images/upgrades/fast_attack_melee.png",
       "upgCost": 125,
       "attackTimerMax": {
@@ -33,6 +34,7 @@
     },
     {
       "name": "boots of swiftness",
+      "description": "increase movement speed by 10",
       "iconPath": "assets/images/upgrades/boots_of_swiftness.png",
       "upgCost": 200,
       "movementSpeed": {
@@ -42,6 +44,7 @@
     },
     {
       "name": "sharp swords",
+      "description": "increase damage by 50%",
       "iconPath": "assets/images/upgrades/fast_attack_melee.png",
       "upgCost": 200,
       "damage": {

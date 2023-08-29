@@ -24,6 +24,7 @@
   "upgrades": [
     {
       "name": "heavy armor",
+      "description": "increase hp by 100",
       "iconPath": "assets/images/upgrades/heavy_armor.png",
       "upgCost": 125,
       "hitpoints": {
@@ -33,6 +34,7 @@
     },
     {
       "name": "boots of swiftness",
+      "description": "increase movement speed by 4",
       "iconPath": "assets/images/upgrades/boots_of_swiftness.png",
       "upgCost": 200,
       "movementSpeed": {
@@ -42,6 +44,7 @@
     },
     {
       "name": "splash damage reduction",
+      "description": "completely ignore splash damage",
       "iconPath": "assets/images/upgrades/heavy_armor.png",
       "upgCost": 100,
       "armor": [
