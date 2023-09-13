@@ -48,6 +48,10 @@ public:
 
     static int IncomePerRoundMax();
 
+    static int IncomeLoserBonus();
+
+    static int RequiredLostRoundsForLoserBonus();
+
     static int UnitLevelMax();
 
     static float TimePerSimulationUpdate();

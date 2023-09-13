@@ -81,7 +81,8 @@ InternalStateManager::InternalStateManager()
         = [](StateGame& state) { state.startPlayback(); };
 
     m_transitions[std::make_pair(InternalState::Playback, InternalState::PlaceUnits)]
-        = [](StateGame& state) {
+        = [numberOfLostRounds = 0, lastPlayerHP = GP::InitialPlayerHP(),
+              lastOtherPlayerHP = GP::InitialPlayerHP()](StateGame& state) mutable {
               state.resetSimulation();
 
               state.getPlacementManager()->setRound(state.getRound());
@@ -90,6 +91,22 @@ InternalStateManager::InternalStateManager()
                   50 + 50 * state.getRound() - state.getPlacementManager()->getCreditDebt(), 0,
                   GP::IncomePerRoundMax());
               state.getPlacementManager()->addFunds(fundsForNextRound);
+
+              // check if additional funds are due
+              auto const& playerHP = state.getPlayerHP();
+              auto const playerId = state.getServerConnection()->getPlayerId();
+              auto const otherPlayerId = playerId == 0 ? 1 : 0;
+              if ((lastPlayerHP != playerHP.at(playerId))
+                  && (lastOtherPlayerHP == playerHP.at(otherPlayerId))) {
+                  numberOfLostRounds++;
+                  if (numberOfLostRounds >= GP::RequiredLostRoundsForLoserBonus()) {
+                      state.getPlacementManager()->addFunds(GP::IncomeLoserBonus());
+                  }
+              } else {
+                  numberOfLostRounds = 0;
+              }
+              lastPlayerHP = playerHP.at(playerId);
+              lastOtherPlayerHP = playerHP.at(otherPlayerId);
 
               state.getPlacementManager()->resetCreditDebt();
 

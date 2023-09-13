@@ -35,6 +35,10 @@ std::size_t GP::NumberOfStepsPerRoundMax() { return 8000; }
 
 int GP::IncomePerRoundMax() { return 440; }
 
+int GP::IncomeLoserBonus() { return 100; }
+
+int GP::RequiredLostRoundsForLoserBonus() { return 3; }
+
 int GP::UnitLevelMax() { return 6; }
 
 jt::Vector2f GP::UnitAnimationOffset() { return jt::Vector2f { -9.0f, -16.0f }; }

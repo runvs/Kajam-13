@@ -506,6 +506,8 @@ std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo
 
 int StateGame::getRound() { return m_round; }
 
+std::map<int, int> const& StateGame::getPlayerHP() const { return m_playerHP; }
+
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
 
 std::shared_ptr<jt::ObjectGroup<Critter>> StateGame::getCritters() { return m_critters; }
