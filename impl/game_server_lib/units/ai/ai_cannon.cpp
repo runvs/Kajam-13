@@ -47,8 +47,10 @@ void AiCannon::update(float elapsed, ServerUnit* unit, WorldInfoInterface& world
             arrowInfo.startPos = unit->getPosition() + unit->getOffset();
             if (arrowInfo.endPos.x > arrowInfo.startPos.x) {
                 arrowInfo.startPos += jt::Vector2f { 9.0f, 4.0f };
+                unit->setWalkingDirection(true);
             } else {
                 arrowInfo.startPos += jt::Vector2f { 2.0f, 3.0f };
+                unit->setWalkingDirection(false);
             }
 
             arrowInfo.damage = unit->getUnitInfoFull().damage;
