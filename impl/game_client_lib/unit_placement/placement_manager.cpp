@@ -188,9 +188,11 @@ void PlacementManager::doDraw() const
             }
             ImGui::EndDisabled();
         }
+        ImGui::BeginDisabled(m_round < 2);
         if (ImGui::Button("+")) {
             m_showUnlockUnitWindow = true;
         }
+        ImGui::EndDisabled();
 
         ImGui::EndTable();
 
@@ -358,6 +360,8 @@ void PlacementManager::setActive(bool active)
         m_unitsUnlockedThisRound = 0;
     }
 }
+
+void PlacementManager::setRound(int round) { m_round = round; }
 
 void PlacementManager::addFunds(int funds) const { m_availableFunds += funds; }
 

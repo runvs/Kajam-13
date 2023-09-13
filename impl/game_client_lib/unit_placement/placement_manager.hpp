@@ -37,6 +37,8 @@ public:
 
     void setActive(bool active);
 
+    void setRound(int round);
+
     void addFunds(int funds) const;
     int getFunds() const;
     int getCreditDebt() const;
@@ -72,6 +74,7 @@ private:
 
     mutable std::string m_activeUnitType = "";
 
+    int m_round { 0 };
     mutable int m_availableFunds { 0 };
     mutable int m_creditDebt { 0 };
 

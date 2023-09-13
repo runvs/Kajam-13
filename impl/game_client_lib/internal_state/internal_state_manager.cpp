@@ -46,6 +46,7 @@ InternalStateManager::InternalStateManager()
 
     m_transitions[std::make_pair(InternalState::SelectStartingUnits, InternalState::PlaceUnits)]
         = [](StateGame& state) {
+              state.getPlacementManager()->setRound(state.getRound());
               state.getPlacementManager()->setActive(true);
               state.getTerrainRenderer()->setDrawGrid(true);
           };
@@ -83,6 +84,7 @@ InternalStateManager::InternalStateManager()
         = [](StateGame& state) {
               state.resetSimulation();
 
+              state.getPlacementManager()->setRound(state.getRound());
               state.getPlacementManager()->setActive(true);
               auto const fundsForNextRound = jt::MathHelper::clamp(
                   50 + 50 * state.getRound() - state.getPlacementManager()->getCreditDebt(), 0,
