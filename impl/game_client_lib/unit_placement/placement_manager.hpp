@@ -31,6 +31,7 @@ public:
         std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
 
+    std::shared_ptr<UnitInfoCollection> getUnitInfoCollection() const;
     std::vector<UnitClientToServerData> getPlacedUnitDataForRoundStart() const;
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnits() const;
     void clearPlacedUnits();
@@ -39,10 +40,13 @@ public:
 
     void setRound(int round);
 
+    bool canUnitBePlacedInField(jt::Vector2f const& pos, int const x, int const y);
+
     void addFunds(int funds) const;
     int getFunds() const;
     int getCreditDebt() const;
     void resetCreditDebt();
+    std::string getActiveUnitType() const;
 
     void unlockType(std::string const& type) const;
 
@@ -97,7 +101,6 @@ private:
 
     void placeUnit();
 
-    bool isValidField(jt::Vector2f const& pos, int const x, int const y);
     bool& fieldInUse(int const x, int const y);
 };
 

@@ -99,7 +99,7 @@ void PlacementManager::doUpdate(const float elapsed)
     int posX, posY;
     auto fieldPos = m_world->getMappedFieldPosition(
         getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
-    if (isValidField(fieldPos, posX, posY)) {
+    if (canUnitBePlacedInField(fieldPos, posX, posY)) {
         m_fieldHighlight->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
             fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
         if (!m_activeUnitType.empty()) {
@@ -279,7 +279,7 @@ void PlacementManager::placeUnit()
         int posX, posY;
         auto fieldPos = m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
-        if (!isValidField(fieldPos, posX, posY)) {
+        if (!canUnitBePlacedInField(fieldPos, posX, posY)) {
             getGame()->logger().info(
                 "tried to place unit in invalid position", { "PlacementManager" });
             return;
@@ -314,7 +314,7 @@ void PlacementManager::placeUnit()
     }
 }
 
-bool PlacementManager::isValidField(jt::Vector2f const& pos, int const x, int const y)
+bool PlacementManager::canUnitBePlacedInField(jt::Vector2f const& pos, int const x, int const y)
 {
     static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
         AreaType::AREA_FLANK_BOT };
@@ -331,6 +331,11 @@ bool PlacementManager::isValidField(jt::Vector2f const& pos, int const x, int co
 bool& PlacementManager::fieldInUse(int const x, int const y)
 {
     return m_placedUnitsMap[x + y * terrainWidthInChunks];
+}
+
+std::shared_ptr<UnitInfoCollection> PlacementManager::getUnitInfoCollection() const
+{
+    return m_unitInfo;
 }
 
 std::vector<UnitClientToServerData> PlacementManager::getPlacedUnitDataForRoundStart() const
@@ -401,3 +406,5 @@ std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_up
 int PlacementManager::getCreditDebt() const { return m_creditDebt; }
 
 void PlacementManager::resetCreditDebt() { m_creditDebt = 0; }
+
+std::string PlacementManager::getActiveUnitType() const { return m_activeUnitType; }

@@ -5,6 +5,7 @@
 #include <input/mouse/mouse_defines.hpp>
 #include <internal_state/common_functions.hpp>
 #include <internal_state/internal_state_manager.hpp>
+#include <map/terrain.hpp>
 #include <network_data/unit_info.hpp>
 #include <rect.hpp>
 #include <sprite.hpp>
@@ -183,7 +184,37 @@ void PlaceUnits::drawUnitUpgradeWindow(
 
 void PlaceUnits::drawRangeIndicator(StateGame& state)
 {
-    auto const checkTooltip = [this, &state](auto& units) {
+    auto const drawRangeIndicator = [this, &state](auto const& unitInfo, auto const& pos) {
+        auto const radius = unitInfo.ai.range * terrainChunkSizeInPixel;
+        auto const scale = radius / 64.0f;
+        m_rangeIndicator->setScale(jt::Vector2f { scale, scale });
+        m_rangeIndicator->setPosition(pos);
+        m_rangeIndicator->update(0.0f);
+        m_rangeIndicator->draw(state.renderTarget());
+    };
+
+    // first check if we have an active type that can be placed and draw a range indicator for it
+    auto const activeUnitType = state.getPlacementManager()->getActiveUnitType();
+    if (!activeUnitType.empty()) {
+        auto const unitInfo
+            = state.getPlacementManager()->getUnitInfoCollection()->getInfoForType(activeUnitType);
+        if (unitInfo.ai.type != AiInfo::AiType::CLOSE_COMBAT) {
+            int posX, posY;
+            auto fieldPos = state.getTerrain()->getMappedFieldPosition(
+                state.getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
+            if (state.getPlacementManager()->canUnitBePlacedInField(fieldPos, posX, posY)) {
+                drawRangeIndicator(unitInfo,
+                    jt::Vector2f { static_cast<float>(posX) * terrainChunkSizeInPixel
+                            + terrainChunkSizeInPixelHalf,
+                        static_cast<float>(posY) * terrainChunkSizeInPixel
+                            + terrainChunkSizeInPixelHalf });
+                // do not show tooltips for already placed units when we have an ongoing placement
+                return;
+            }
+        }
+    }
+
+    auto const checkTooltip = [&state, &drawRangeIndicator](auto& units) {
         for (auto& u : units) {
             auto const unit = u.lock();
             if (!unit) {
@@ -198,14 +229,9 @@ void PlaceUnits::drawRangeIndicator(StateGame& state)
                 if (unitInfo.ai.type == AiInfo::AiType::CLOSE_COMBAT) {
                     continue;
                 }
-                auto const radius = unitInfo.ai.range * terrainChunkSizeInPixel;
-                auto const scale = radius / 64.0f;
-                m_rangeIndicator->setScale(jt::Vector2f { scale, scale });
-                m_rangeIndicator->setPosition(
+                drawRangeIndicator(unitInfo,
                     jt::Vector2f { unit->getPosition().x + terrainChunkSizeInPixelHalf,
                         unit->getPosition().y + terrainChunkSizeInPixelHalf });
-                m_rangeIndicator->update(0.0f);
-                m_rangeIndicator->draw(state.renderTarget());
                 break;
             }
         }
