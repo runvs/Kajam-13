@@ -11,7 +11,7 @@
     ]
   },
   "attackTimerMax": 1.0,
-  "movementSpeed": 30.0,
+  "movementSpeed": 28.0,
   "colliderRadius": 4.0,
   "cost": 45,
   "unlockCost": 25,
@@ -27,11 +27,12 @@
   "upgrades": [
     {
       "name": "rage",
+      "description": "increase movement speed by 15% and decrease attack timer by 20%",
       "iconPath": "assets/images/upgrades/rage.png",
       "upgCost": 100,
       "movementSpeed": {
         "add": 0.0,
-        "factor": 0.2
+        "factor": 0.15
       },
       "attackTimerMax": {
         "add": 0.0,
@@ -40,6 +41,7 @@
     },
     {
       "name": "ranged resistance",
+      "description": "add 75% damage reduction against ranged attacks",
       "iconPath": "assets/images/upgrades/heavy_armor.png",
       "upgCost": 100,
       "armor": [

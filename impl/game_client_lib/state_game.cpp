@@ -122,7 +122,7 @@ void StateGame::onCreate()
     m_textRound->setPosition({ GP::GetScreenSize().x / 2, 0 });
     m_textRound->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
 
-    m_textTimeIndicator = jt::dh::createText(renderTarget(), "30.0", 16);
+    m_textTimeIndicator = jt::dh::createText(renderTarget(), "30.0 / 30.0", 16);
     m_textTimeIndicator->setPosition({ GP::GetScreenSize().x / 2, 48 });
     m_textTimeIndicator->setShadow(GP::PaletteFontShadow(), jt::Vector2f { 0, 1 });
 
@@ -185,7 +185,7 @@ void StateGame::playbackSimulation(float elapsed)
         auto const maxTime = GP::TimePerSimulationUpdate() * maxTicks;
         auto const percentage = (maxTicks - m_tickId) * 1.0f / maxTicks;
         m_textTimeIndicator->setText(
-            jt::MathHelper::floatToStringWithXDigits((percentage * maxTime), 1));
+            jt::MathHelper::floatToStringWithXDigits((percentage * maxTime), 1) + " / 30.0");
         if (m_tickId < m_simulationResultsForAllFrames.allFrames.size() - 1) {
             m_tickId++;
             auto const& propertiesForAllUnitsForThisFrame
@@ -505,6 +505,8 @@ std::shared_ptr<PlacementManager> StateGame::getPlacementManager() { return m_pl
 std::shared_ptr<UnitInfoCollection> StateGame::getUnitInfo() { return m_unitInfo; }
 
 int StateGame::getRound() { return m_round; }
+
+std::map<int, int> const& StateGame::getPlayerHP() const { return m_playerHP; }
 
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
 

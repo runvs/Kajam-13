@@ -85,6 +85,9 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
     m_unitID = props->unitClientToServerData.unitID;
     m_playerID = props->unitClientToServerData.playerID;
 
+    // set default for non-moving units depending on player side
+    m_walkingRight = m_playerID == 0;
+
     m_level = props->level;
 
     m_pos = jt::Vector2f { props->unitClientToServerData.positionX,
@@ -101,6 +104,8 @@ void ServerUnit::setRoundStartState(UnitServerRoundStartData* props)
             + std::to_string(info.experienceRequiredForLevelUp) + " )",
         { "ServerUnit" });
 }
+
+void ServerUnit::setWalkingDirection(bool right) { m_walkingRight = right; }
 
 void ServerUnit::levelUnitUp()
 {
@@ -214,6 +219,9 @@ int ServerUnit::getCost() { return m_infoBase.cost; }
 
 void ServerUnit::gainExperience(int exp)
 {
+    if (m_level >= GP::UnitLevelMax()) {
+        return;
+    }
     m_experience += exp;
     auto const unitInfo = getUnitInfoFull();
     if (m_experience >= unitInfo.experienceRequiredForLevelUp) {

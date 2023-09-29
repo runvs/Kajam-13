@@ -99,7 +99,7 @@ void PlacementManager::doUpdate(const float elapsed)
     int posX, posY;
     auto fieldPos = m_world->getMappedFieldPosition(
         getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
-    if (isValidField(fieldPos, posX, posY)) {
+    if (canUnitBePlacedInField(fieldPos, posX, posY)) {
         m_fieldHighlight->setPosition({ fieldPos.x - terrainChunkSizeInPixelHalf,
             fieldPos.y - terrainChunkSizeInPixelHalf + 1 });
         if (!m_activeUnitType.empty()) {
@@ -141,7 +141,7 @@ void PlacementManager::doDraw() const
     }
 
     if (m_unitInfo) {
-        auto unlockedTypes = m_unlockedTypes;
+        auto const unlockedTypes = m_unlockedTypes;
         auto allTypes = m_unitInfo->getTypes();
         std::sort(allTypes.begin(), allTypes.end());
         std::vector<std::string> purchaseTypes;
@@ -150,39 +150,14 @@ void PlacementManager::doDraw() const
 
         constexpr auto buttonWidth = 106;
 
-        ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar
-            | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_AlwaysAutoResize };
+        ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+            | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse
+            | ImGuiWindowFlags_AlwaysAutoResize };
         ImGui::Begin("Unit placement", nullptr, window_flags);
         ImGui::Text("Gold: %i", m_availableFunds);
-
+        ImGui::Separator();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0.5 });
 
-        ImGui::Separator();
-        ImGui::Text("Unlock");
-        ImGui::BeginTable("UnitTable", 2);
-        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
-        for (auto const& t : purchaseTypes) {
-            auto const& u = m_unitInfo->getInfoForType(t);
-            bool const canUnlock = (m_availableFunds >= u.unlockCost);
-
-            ImGui::TableNextColumn();
-            TextAlignedRight(std::to_string(u.unlockCost));
-
-            ImGui::TableNextColumn();
-            ImGui::BeginDisabled(!canUnlock);
-            if (ImGui::Button(u.type.c_str(), { -1, 0 })) {
-                unlockType(t);
-                m_availableFunds -= u.unlockCost;
-            }
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
-                std::string const str = u.description + " Cost: " + std::to_string(u.cost);
-                ImGui::SetTooltip("%s", str.c_str());
-            }
-            ImGui::EndDisabled();
-        }
-        ImGui::EndTable();
-
-        ImGui::Separator();
         ImGui::Text("Hire");
         ImGui::BeginTable("UnitTable", 2);
         ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
@@ -213,11 +188,71 @@ void PlacementManager::doDraw() const
             }
             ImGui::EndDisabled();
         }
+        ImGui::BeginDisabled(m_round < 2);
+        if (ImGui::Button("+")) {
+            m_showUnlockUnitWindow = true;
+        }
+        ImGui::EndDisabled();
+
         ImGui::EndTable();
 
         ImGui::PopStyleVar();
 
+        ImGui::Separator();
+
+        bool const canTakeCredit = m_creditDebt == 0;
+        ImGui::BeginDisabled(!canTakeCredit);
+        if (ImGui::Button("Take credit (+100 now, -150 next round)")) {
+            addFunds(100);
+            m_creditDebt = 150;
+        }
+        ImGui::EndDisabled();
+
         ImGui::End();
+
+        if (m_showUnlockUnitWindow) {
+            ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse
+                | ImGuiWindowFlags_AlwaysAutoResize };
+            ImGui::Begin("Unlock Units", nullptr, window_flags);
+            ImGui::Text("Gold: %i", m_availableFunds);
+            ImGui::Text("Available Unit Unlocks: %i / %i",
+                m_unitUnlocksAvailable - m_unitsUnlockedThisRound, m_unitUnlocksAvailable);
+            ImGui::Separator();
+            if (!purchaseTypes.empty()) {
+                ImGui::Text("Unlock");
+                ImGui::BeginTable("UnitTable", 2);
+                ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 30);
+                for (auto const& t : purchaseTypes) {
+                    auto const& u = m_unitInfo->getInfoForType(t);
+                    bool const canUnlock = (m_availableFunds >= u.unlockCost)
+                        && (m_unitsUnlockedThisRound < m_unitUnlocksAvailable);
+
+                    ImGui::TableNextColumn();
+                    TextAlignedRight(std::to_string(u.unlockCost));
+
+                    ImGui::TableNextColumn();
+                    ImGui::BeginDisabled(!canUnlock);
+                    if (ImGui::Button(u.type.c_str(), { buttonWidth, 0 })) {
+                        unlockType(t);
+                        m_availableFunds -= u.unlockCost;
+                        m_showUnlockUnitWindow = false;
+                    }
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                        std::string const str = u.description + " Cost: " + std::to_string(u.cost);
+                        ImGui::SetTooltip("%s", str.c_str());
+                    }
+                    ImGui::EndDisabled();
+                }
+                ImGui::EndTable();
+            } else {
+                ImGui::Text("%s", "No more Units to unlock");
+            }
+            if (ImGui::Button("close")) {
+                m_showUnlockUnitWindow = false;
+            }
+            ImGui::End();
+        }
     }
 }
 
@@ -244,7 +279,7 @@ void PlacementManager::placeUnit()
         int posX, posY;
         auto fieldPos = m_world->getMappedFieldPosition(
             getGame()->input().mouse()->getMousePositionWorld(), posX, posY);
-        if (!isValidField(fieldPos, posX, posY)) {
+        if (!canUnitBePlacedInField(fieldPos, posX, posY)) {
             getGame()->logger().info(
                 "tried to place unit in invalid position", { "PlacementManager" });
             return;
@@ -279,7 +314,7 @@ void PlacementManager::placeUnit()
     }
 }
 
-bool PlacementManager::isValidField(jt::Vector2f const& pos, int const x, int const y)
+bool PlacementManager::canUnitBePlacedInField(jt::Vector2f const& pos, int const x, int const y)
 {
     static std::vector<AreaType> areas { AreaType::AREA_MAIN, AreaType::AREA_FLANK_TOP,
         AreaType::AREA_FLANK_BOT };
@@ -296,6 +331,11 @@ bool PlacementManager::isValidField(jt::Vector2f const& pos, int const x, int co
 bool& PlacementManager::fieldInUse(int const x, int const y)
 {
     return m_placedUnitsMap[x + y * terrainWidthInChunks];
+}
+
+std::shared_ptr<UnitInfoCollection> PlacementManager::getUnitInfoCollection() const
+{
+    return m_unitInfo;
 }
 
 std::vector<UnitClientToServerData> PlacementManager::getPlacedUnitDataForRoundStart() const
@@ -318,13 +358,25 @@ void PlacementManager::clearPlacedUnits()
     m_placedUnits->clear();
 }
 
-void PlacementManager::setActive(bool active) { m_isActive = active; }
+void PlacementManager::setActive(bool active)
+{
+    m_isActive = active;
+    if (active) {
+        m_unitsUnlockedThisRound = 0;
+    }
+}
 
-void PlacementManager::addFunds(int funds) { m_availableFunds += funds; }
+void PlacementManager::setRound(int round) { m_round = round; }
+
+void PlacementManager::addFunds(int funds) const { m_availableFunds += funds; }
 
 int PlacementManager::getFunds() const { return m_availableFunds; }
 
-void PlacementManager::unlockType(const std::string& type) const { m_unlockedTypes.insert(type); }
+void PlacementManager::unlockType(const std::string& type) const
+{
+    m_unlockedTypes.insert(type);
+    ++m_unitsUnlockedThisRound;
+}
 
 void PlacementManager::flashForUpgrade(std::string const& unitType)
 {
@@ -350,3 +402,9 @@ void PlacementManager::buyUnit(const std::string& type)
 }
 
 std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_upgrades; }
+
+int PlacementManager::getCreditDebt() const { return m_creditDebt; }
+
+void PlacementManager::resetCreditDebt() { m_creditDebt = 0; }
+
+std::string PlacementManager::getActiveUnitType() const { return m_activeUnitType; }

@@ -9,6 +9,7 @@
 struct UpgradeInfo {
     std::string name;
     std::string iconPath;
+    std::string description;
     int upgradeCost { 0 };
 
     UpgradeValue damage;

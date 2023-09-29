@@ -69,6 +69,7 @@ public:
     void drawArrows() const;
 
     int getRound();
+    std::map<int, int> const& getPlayerHP() const;
     void flashUnitsForUpgrade(std::string const& unitType);
 
     std::shared_ptr<SelectUnitInfoCollection> getStartingUnits();

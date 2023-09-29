@@ -31,14 +31,22 @@ public:
         std::weak_ptr<PlayerIdDispatcher> playerIdDispatcher,
         std::shared_ptr<UnitInfoCollection> unitInfo);
 
+    std::shared_ptr<UnitInfoCollection> getUnitInfoCollection() const;
     std::vector<UnitClientToServerData> getPlacedUnitDataForRoundStart() const;
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> const& getPlacedUnits() const;
     void clearPlacedUnits();
 
     void setActive(bool active);
 
-    void addFunds(int funds);
+    void setRound(int round);
+
+    bool canUnitBePlacedInField(jt::Vector2f const& pos, int const x, int const y);
+
+    void addFunds(int funds) const;
     int getFunds() const;
+    int getCreditDebt() const;
+    void resetCreditDebt();
+    std::string getActiveUnitType() const;
 
     void unlockType(std::string const& type) const;
 
@@ -70,7 +78,9 @@ private:
 
     mutable std::string m_activeUnitType = "";
 
+    int m_round { 0 };
     mutable int m_availableFunds { 0 };
+    mutable int m_creditDebt { 0 };
 
     std::shared_ptr<jt::SoundInterface> m_sfxPlaceUnit { nullptr };
     std::shared_ptr<jt::SoundInterface> m_sfxBuyUpgrade { nullptr };
@@ -81,13 +91,16 @@ private:
 
     mutable std::map<std::string, int> m_boughtUnits {};
 
+    mutable int m_unitsUnlockedThisRound = 0;
+    mutable int m_unitUnlocksAvailable = 1;
+    mutable bool m_showUnlockUnitWindow { false };
+
     void doCreate() override;
     void doUpdate(float const elapsed) override;
     void doDraw() const override;
 
     void placeUnit();
 
-    bool isValidField(jt::Vector2f const& pos, int const x, int const y);
     bool& fieldInUse(int const x, int const y);
 };
 

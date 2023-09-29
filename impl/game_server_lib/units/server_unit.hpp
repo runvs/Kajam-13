@@ -24,6 +24,8 @@ public:
 
     void setRoundStartState(UnitServerRoundStartData* props) override;
 
+    void setWalkingDirection(bool right);
+
     void applyUpgrades(std::vector<UpgradeUnitData> const& upgrades);
 
     void levelUnitUp() override;

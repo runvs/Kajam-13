@@ -5,12 +5,12 @@
   "expGainWhenKilled": 30,
   "hitpoints": 20.0,
   "damage": {
-    "damage": 15.0,
+    "damage": 20.0,
     "damageTypes": [
       "ranged"
     ]
   },
-  "attackTimerMax": 2.75,
+  "attackTimerMax": 2.5,
   "movementSpeed": 8.0,
   "colliderRadius": 6.0,
   "cost": 100,
@@ -29,15 +29,17 @@
   "upgrades": [
     {
       "name": "range",
+      "description": "increase range by 3 tiles",
       "iconPath": "assets/images/upgrades/range_bow.png",
       "upgCost": 150,
       "range": {
-        "add": 4.0,
+        "add": 3.0,
         "factor": 0.0
       }
     },
     {
       "name": "fast attack",
+      "description": "decrease reload time by 0.75s",
       "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 150,
       "attackTimerMax": {

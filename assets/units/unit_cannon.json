@@ -5,20 +5,20 @@
   "expGainWhenKilled": 25,
   "hitpoints": 10.0,
   "damage": {
-    "damage": 25.0,
+    "damage": 35.0,
     "damageTypes": [
       "ranged",
       "splash"
     ]
   },
-  "attackTimerMax": 8.0,
+  "attackTimerMax": 7.0,
   "movementSpeed": 5.0,
   "colliderRadius": 6.0,
   "cost": 150,
   "unlockCost": 150,
   "ai": {
     "type": 2,
-    "range": 11.0,
+    "range": 8.0,
     "arrowHeight": 48.0,
     "arrowSpeed": 70.0
   },
@@ -30,6 +30,7 @@
   "upgrades": [
     {
       "name": "range",
+      "description": "increase range by 3 tiles",
       "iconPath": "assets/images/upgrades/range_canon.png",
       "upgCost": 125,
       "range": {
@@ -39,24 +40,26 @@
     },
     {
       "name": "fast reload",
+      "description": "decrease reload time by 1s",
       "iconPath": "assets/images/upgrades/fast_reload_canon.png",
       "upgCost": 175,
       "attackTimerMax": {
-        "add": -2.0,
+        "add": -1.0,
         "factor": 0.0
       }
     },
     {
       "name": "heavy attack",
+      "description": "increase damage by 50% but increase reload time by 30%",
       "iconPath": "assets/images/upgrades/fast_attack_bow.png",
       "upgCost": 125,
       "attackTimerMax": {
         "add": 0.0,
-        "factor": 0.5
+        "factor": 0.3
       },
       "damage": {
         "add": 0.0,
-        "factor": 0.75
+        "factor": 0.5
       }
     }
   ]

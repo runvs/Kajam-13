@@ -10,7 +10,12 @@ void SelectStartingUnits::update(StateGame& /*state*/, float /*elapsed*/) { }
 
 void SelectStartingUnits::draw(StateGame& state)
 {
-    ImGui::Begin("Select Starting Units");
+    ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+        | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse
+        | ImGuiWindowFlags_AlwaysAutoResize };
+    ImGui::SetNextWindowPos({ 40, GP::GetWindowSize().y / 2 - 100 }, ImGuiCond_Always);
+    ImGui::SetNextWindowSize({ 284, 100 }, ImGuiCond_Always);
+    ImGui::Begin("Select Starting Units", nullptr, window_flags);
 
     if (ImGui::BeginTable("Startout Options", 5)) {
         int i = 0;

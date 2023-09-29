@@ -7,7 +7,10 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
     j = nlohmann::json {
         // clang-format off
         { jk::upgName, p.name },
-        { jk::upgIconPath, p.iconPath }
+        { jk::upgIconPath, p.iconPath },
+        { jk::description, p.description },
+
+        { jk::upgCost, p.upgradeCost}
         // clang-format on
     };
     if (!isDefault(p.damage)) {
@@ -34,9 +37,6 @@ void to_json(nlohmann::json& j, const UpgradeInfo& p)
     if (!isDefault(p.cost)) {
         j[jk::cost] = p.cost;
     }
-    if (p.upgradeCost != 0) {
-        j[jk::upgCost] = p.upgradeCost;
-    }
     if (!p.armor.empty()) {
         j[jk::armor] = p.armor;
     }
@@ -46,6 +46,8 @@ void from_json(const nlohmann::json& j, UpgradeInfo& p)
 {
     j.at(jk::upgName).get_to(p.name);
     j.at(jk::upgIconPath).get_to(p.iconPath);
+    j.at(jk::description).get_to(p.description);
+
     j.at(jk::upgCost).get_to(p.upgradeCost);
 
     if (j.count(jk::damage) == 1) {

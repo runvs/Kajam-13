@@ -5,7 +5,7 @@
   "expGainWhenKilled": 30,
   "hitpoints": 30.0,
   "damage": {
-    "damage": 90.0,
+    "damage": 110.0,
     "damageTypes": [
       "ranged"
     ]
@@ -29,6 +29,7 @@
   "upgrades": [
     {
       "name": "range",
+      "description": "increase range by 3 tiles",
       "iconPath": "assets/images/upgrades/range_crossbow.png",
       "upgCost": 125,
       "range": {
@@ -38,6 +39,7 @@
     },
     {
       "name": "charged shot",
+      "description": "increase damage by 30",
       "iconPath": "assets/images/upgrades/strength_crossbow.png",
       "upgCost": 175,
       "damage": {

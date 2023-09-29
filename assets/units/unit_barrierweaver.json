@@ -14,7 +14,7 @@
   "unlockCost": 100,
   "ai": {
     "type": 3,
-    "barrierHp": 200.0,
+    "barrierHp": 350.0,
     "range": 3.5
   },
   "animations": [
@@ -25,6 +25,7 @@
   "upgrades": [
     {
       "name": "crystal of reach",
+      "description": "increase shield size by 1 tile",
       "iconPath": "assets/images/upgrades/crystal_of_reach.png",
       "upgCost": 150,
       "shieldRange": {
@@ -34,10 +35,11 @@
     },
     {
       "name": "barrier of unyielding valor",
+      "description": "increase barrier hp by 200",
       "iconPath": "assets/images/upgrades/barrier_of_unyielding_valor.png",
       "upgCost": 150,
       "shieldHp": {
-        "add": 100.0,
+        "add": 200.0,
         "factor": 0.0
       }
     }

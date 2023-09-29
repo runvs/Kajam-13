@@ -103,15 +103,15 @@ void drawUnitTooltipForOneUnit(std::shared_ptr<UnitInterface> unit, StateGame& s
         ImGui::TableNextColumn();
         ImGui::Text("EXP");
         ImGui::TableNextColumn();
+
         ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
-        ImGui::Text("%i", unit->getExp());
+        if (unit->getLevel() < GP::UnitLevelMax()) {
+            ImGui::Text("%i / %i", unit->getExp(), unit->getExpForLevelUp());
+        } else {
+            ImGui::Text("Max lv.");
+        }
         ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::Text("/");
-        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
-        ImGui::SameLine();
-        ImGui::Text("%i", unit->getExpForLevelUp());
-        ImGui::PopStyleColor();
+
         ImGui::EndTable();
     }
     auto& upgrades = state.getPlacementManager()->upgrades()->getBoughtUpgradesForUnit(
