@@ -1,32 +1,44 @@
-# JamTemplateCpp
+# Medibellum
 
-[![Build Status](https://github.com/Laguna1989/JamTemplateCpp/actions/workflows/test_verification.yml/badge.svg)](https://github.com/Laguna1989/JamTemplateCpp/actions/workflows/unittests.yml)
-[![codecov](https://codecov.io/github/Laguna1989/JamTemplateCpp/branch/master/graph/badge.svg?token=9XBS3E6UWC)](https://codecov.io/github/Laguna1989/JamTemplateCpp)
+This is Medibellum. It is developed using the [JamTemplateCpp](https://github.com/Laguna1989/JamTemplateCpp).
 
-## About
+## Releases
 
-This is the JamTemplate for kickstarting your gamejam entry. It will compile C++17 code for native (Win, Linux) and
-web (webassembly) games. Internally it uses [SFML](https://www.sfml-dev.org/), [SDL](https://www.libsdl.org/) and
-[OpenALpp](https://github.com/Laguna1989/OpenALpp).
+* All releases can be found on github: [Link](https://github.com/runvs/Kajam-13/releases)
+* There is also this itch.io page: [Link](https://runvs.itch.io/medibellum)
 
-Some games created with this JamTemplate are
+## Game Description
 
-* [Mines of Gloria](https://runvs.io/Games/minesofgloria) (Incremental Clicker Game, Native & Web, ClickerJam Spring
-    2023)
-* [Tworld](https://runvs.io/Games/tworld)(Jump and Run, Native & Web, FrankenGameJam 2022)
-* [Funky Trip](https://runvs.io/Games/funkytrip) (Top Down ARPG, Native & Web, Alakajam 14 2022)
-* [Gemga](https://runvs.io/Games/gemga) (Puzzler, Native & Web, FrankenGameJam 2021)
-* [Quasar Rush](https://runvs.io/Games/quasarrush) (Physics based puzzle game, Native & Web, A Game By Its Cover 2021)
-* [Space Turtles](https://runvs.io/Games/spaceturtles) (Multiplayer SHMUP, Native, MultiplayerKajam 2021)
-* [Tricky Tractor](https://runvs.io/Games/trickytractor) (Puzzler, Native, FrankenGameJam 2020)
-* [Burning Glyphs](https://runvs.io/Games/burningglyphs) (FPS, Web, 7DFPS 2020)
-* [Grounded](https://runvs.io/Games/grounded) (2 Player Couch Battle, Native, FrankenGameJam 2019)
+Introducing "Medibellum," an entertaining 2D pixelart autobattler that packs a punch despite being created in just one
+month for the thrilling 13th Kajam!
 
-and more at [my game portfolio](https://runvs.io/Games).
+In the realm of Medibellum, you find yourself thrust into an ancient conflict between red team and blue team. As a
+valiant strategist, it's your duty to assemble an army of brave warriors and unleash their powerful might upon hordes of
+menacing enemies. But be warned, there are flanks!
 
-## Setup
+The game combines the addictive mechanics of an autobattler with the charm of retro-inspired pixel art. With only a
+month of development time, Medibellum transports you to a nostalgic realm where your heroes come to life.
 
-### Visual Studio
+## How to play solo
+
+* Start game_server
+* Start game_client
+* Make sure that you use your local ip (`127.0.0.1`)
+* Add one bot to the game
+* Press connect
+
+## How to play over network
+
+* Add port forwarding for the machine that runs the server (e.g. on your Fritzbox)
+* Server starts game_server
+* Server checks [his public ip](https://www.whatsmyip.org/)
+* Client(s) start game_client
+* Enter public IP of server
+* Press connect
+
+## Development Setup
+
+### CMake
 
 1. create build directory `build` at root level
 2. open command line (win+r `cmd`)
@@ -38,83 +50,10 @@ and more at [my game portfolio](https://runvs.io/Games).
 
 1. open project folder in clion
 
-### Building for Web
-
-I run it with [WSL2](https://docs.microsoft.com/de-de/windows/wsl/compare-versions), but every system capable of
-running [webassembly](https://webassembly.org/) / [emscripten](https://emscripten.org/) should work.
-
-Preconditions:
-
-* have emscripten set up on your machine: See
-  the [Getting started](https://emscripten.org/docs/getting_started/index.html) page
-
-Setup
-
-1. `emcmake cmake -DJT_ENABLE_WEB=ON ../`
-2. on the first run `emmake make` (do **not** pass `-j`, otherwise emscripten will get stuck with pulling libraries)
-3. on consecutive runs: `emmake make -j`
-3. `http-server .` to start a webserver locally. (needs to be installed separately)
-4. open browser on `http://127.0.0.1:8080/` to test locally
-
 ### Mac
 
-For mac os you have to install cmake and sfml via homebrew: `brew install cmake sfml`
+For building on mac os you have to install cmake and sfml via homebrew: `brew install cmake sfml`
 If you use another package manager or want to install the dependencies yourself, you have to modify the paths
 in `CMakeLists.txt`.
 
-## Deployment
 
-Automatic creation of the files is automated via github actions. If a release is created with semantic versioning (
-e.g. `v1.2.3`), a deployment build is triggered, which builds the game executable for windows, linux, mac and web and
-attaches the zipped files to the release once the build is finished. The archives can directly be uploaded
-on [itch](itch.io), [gamejolt](https://gamejolt.com/) or any other website.
-
-Note: Only the game executable and the `assets` folder is included in the archive. If more files are required, either
-adjust the deployment script (`.github/workflows/deploy.yml`) or place them in the `assets` folder.
-
-## Cmake options
-
-The options can be set to ON or OFF via the cmake commandline or cmake-gui:
-
-* `JT_ENABLE_UNITTESTS` - Enables gtest and the unit tests
-* `JT_ENABLE_DEMOS` - Enables the demos (small example programs which showcase a specific theme)
-* `JT_ENABLE_WEB` - Webbuild
-* `USE_SFML` - If `ON`, SFML will be used, if `OFF`, SDL will be used (SDL works best on linux)
-* `JT_ENABLE_AUDIO_TESTS` - Some of the tests rely on a working audio setup, which seemingly cannot be faked easily.
-  This switch disables those specific tests, in case no audio is available on the respective machine.
-* `JT_ENABLE_CLANG_TIDY` - Enable clang tidy checker
-
-e.g. calling `cmake ../ -DJT_ENABLE_UNITTESTS=ON -DENABLE_DEMOS=ON`
-
-## Code Coverage
-
-Code Coverage is reported via [CodeCov](https://app.codecov.io/gh/Laguna1989/JamTemplateCpp/)
-
-A local run (without the artifacts) can be executed on Windows
-via [OpenCppCoverage](https://github.com/OpenCppCoverage/OpenCppCoverage):
-
-```
-OpenCppCoverage.exe --sources C:\projects\JamTemplateCpp\* --excluded_sources C:\projects\JamTemplateCpp\test\* --excluded_sources C:\projects\JamTemplateCpp\ext\* --excluded_sources C:\projects\JamTemplateCpp\cmake-build-debug\* .\cmake-build-debug\test\unit\jt_test\jt_tests.exe
-```
-
-## Performance benchmark
-
-Please check the performance benchmark [report](https://laguna1989.github.io/JamTemplateCpp/dev/bench/index.html).
-
-## gamejam setup recommended steps
-
-* Use this repo as a template
-* Clone the new repository
-* remove the folders
-    * `test`
-    * `assets/test`
-    * `.github/workflows/` everything except `deploy.yml`
-* Changes in `CMakeLists.txt`:
-    * Set the project name
-    * Remove or comment the line `add_subdirectory(test)`
-* Change js filename in `index.html`
-* Set most cmake variables to `OFF` in `config/cmake/cache_variables.cmake`
-* Import a new palette into `impl/gamelib/game_properties.cpp`, e.g.
-  from [this website](https://lospec.com/palette-list) (
-  save as gpl and paste file content)
-* Change `impl/gamelib/game_properties.hpp` settings as needed (window size, jam, author and date)
