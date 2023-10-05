@@ -155,6 +155,11 @@ void PlacementManager::doDraw() const
             | ImGuiWindowFlags_AlwaysAutoResize };
         ImGui::Begin("Unit placement", nullptr, window_flags);
         ImGui::Text("Gold: %i", m_availableFunds);
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+            ImGui::BeginTooltip();
+            drawGoldStatistics();
+            ImGui::EndTooltip();
+        }
         ImGui::Separator();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0, 0.5 });
 
@@ -203,7 +208,7 @@ void PlacementManager::doDraw() const
         bool const canTakeCredit = m_creditDebt == 0;
         ImGui::BeginDisabled(!canTakeCredit);
         if (ImGui::Button("Take credit (+100 now, -150 next round)")) {
-            addFunds(100);
+            m_availableFunds += 100;
             m_creditDebt = 150;
         }
         ImGui::EndDisabled();
@@ -216,6 +221,11 @@ void PlacementManager::doDraw() const
                 | ImGuiWindowFlags_AlwaysAutoResize };
             ImGui::Begin("Unlock Units", nullptr, window_flags);
             ImGui::Text("Gold: %i", m_availableFunds);
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                ImGui::BeginTooltip();
+                drawGoldStatistics();
+                ImGui::EndTooltip();
+            }
             ImGui::Text("Available Unit Unlocks: %i / %i",
                 m_unitUnlocksAvailable - m_unitsUnlockedThisRound, m_unitUnlocksAvailable);
             ImGui::Separator();
@@ -368,9 +378,27 @@ void PlacementManager::setActive(bool active)
 
 void PlacementManager::setRound(int round) { m_round = round; }
 
-void PlacementManager::addFunds(int funds) const { m_availableFunds += funds; }
+void PlacementManager::addFunds(int funds)
+{
+    m_availableFunds += funds - m_creditDebt;
+    m_fundsGainedInLastRound = funds;
+}
+
+void PlacementManager::addLoserBonus(int bonus)
+{
+    m_availableFunds += bonus;
+    m_looserBonusFromLastRound = bonus;
+}
 
 int PlacementManager::getFunds() const { return m_availableFunds; }
+
+void PlacementManager::spendFunds(int expenses) { m_availableFunds -= expenses; }
+
+void PlacementManager::recordFundsFromLastRound()
+{
+    m_fundsFromLastRound = m_availableFunds;
+    m_looserBonusFromLastRound = 0;
+}
 
 void PlacementManager::unlockType(const std::string& type) const
 {
@@ -403,8 +431,48 @@ void PlacementManager::buyUnit(const std::string& type)
 
 std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_upgrades; }
 
-int PlacementManager::getCreditDebt() const { return m_creditDebt; }
-
-void PlacementManager::resetCreditDebt() { m_creditDebt = 0; }
+void PlacementManager::resetCreditDebt()
+{
+    m_creditDebtFromLastRound = m_creditDebt;
+    m_creditDebt = 0;
+}
 
 std::string PlacementManager::getActiveUnitType() const { return m_activeUnitType; }
+
+void PlacementManager::drawGoldStatistics() const
+{
+    ImGui::Text("Income Statistics");
+    if (ImGui::BeginTable("goldStatistics", 2)) {
+
+        ImGui::TableNextColumn();
+        ImGui::Text("%i", m_fundsFromLastRound);
+        ImGui::TableNextColumn();
+        ImGui::Text("last round");
+
+        ImGui::TableNextColumn();
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+        ImGui::Text("%i", m_fundsGainedInLastRound);
+        ImGui::PopStyleColor();
+        ImGui::TableNextColumn();
+        ImGui::Text("income");
+
+        if (m_creditDebtFromLastRound != 0) {
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+            ImGui::Text("-%i", m_creditDebtFromLastRound);
+            ImGui::PopStyleColor();
+            ImGui::TableNextColumn();
+            ImGui::Text("debt");
+        }
+        if (m_looserBonusFromLastRound != 0) {
+            ImGui::TableNextColumn();
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+            ImGui::Text("%i", m_looserBonusFromLastRound);
+            ImGui::PopStyleColor();
+            ImGui::TableNextColumn();
+            ImGui::Text("looser bonus");
+        }
+        ImGui::EndTable();
+    }
+    ImGui::Text("Gold: %i", m_availableFunds);
+}
