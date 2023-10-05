@@ -162,7 +162,7 @@ void PlaceUnits::drawUnitUpgradeWindow(
         ImGui::SameLine(0, -1);
         if (ImGui::Button(str.c_str())) {
             state.getGame()->logger().info("clicked upgrade: " + upg.info.name);
-            state.getPlacementManager()->addFunds(-cost);
+            state.getPlacementManager()->spendFunds(cost);
 
             UpgradeUnitData data;
             data.upgrade = upg.info;

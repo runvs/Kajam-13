@@ -42,9 +42,11 @@ public:
 
     bool canUnitBePlacedInField(jt::Vector2f const& pos, int const x, int const y);
 
-    void addFunds(int funds) const;
+    void addFunds(int funds);
+    void addLoserBonus(int bonus);
+    void spendFunds(int expenses);
+    void recordFundsFromLastRound();
     int getFunds() const;
-    int getCreditDebt() const;
     void resetCreditDebt();
     std::string getActiveUnitType() const;
 
@@ -81,6 +83,10 @@ private:
     int m_round { 0 };
     mutable int m_availableFunds { 0 };
     mutable int m_creditDebt { 0 };
+    int m_creditDebtFromLastRound { 0 };
+    mutable int m_fundsFromLastRound { 0 };
+    mutable int m_fundsGainedInLastRound { 0 };
+    mutable int m_looserBonusFromLastRound { 0 };
 
     std::shared_ptr<jt::SoundInterface> m_sfxPlaceUnit { nullptr };
     std::shared_ptr<jt::SoundInterface> m_sfxBuyUpgrade { nullptr };
@@ -102,6 +108,8 @@ private:
     void placeUnit();
 
     bool& fieldInUse(int const x, int const y);
+
+    void drawGoldStatistics() const;
 };
 
 #endif // JAMTEMPLATE_PLACEMENT_MANAGER_HPP

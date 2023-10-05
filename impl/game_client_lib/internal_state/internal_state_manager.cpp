@@ -62,6 +62,7 @@ InternalStateManager::InternalStateManager()
 
               state.getPlacementManager()->setActive(false);
               state.getTerrainRenderer()->setDrawGrid(false);
+              state.getPlacementManager()->recordFundsFromLastRound();
 
               for (auto& u : *state.getUnits()) {
                   auto unit = u.lock();
@@ -87,12 +88,13 @@ InternalStateManager::InternalStateManager()
 
               state.getPlacementManager()->setRound(state.getRound());
               state.getPlacementManager()->setActive(true);
-              auto const fundsForNextRound = jt::MathHelper::clamp(
-                  50 + 50 * state.getRound() - state.getPlacementManager()->getCreditDebt(), 0,
-                  GP::IncomePerRoundMax());
+              auto const fundsForNextRound
+                  = jt::MathHelper::clamp(50 + 50 * state.getRound(), 0, GP::IncomePerRoundMax());
               state.getPlacementManager()->addFunds(fundsForNextRound);
 
-              // check if additional funds are due
+              state.getPlacementManager()->resetCreditDebt();
+
+              // check if additional funds are due (looser bonus)
               auto const& playerHP = state.getPlayerHP();
               auto const playerId = state.getServerConnection()->getPlayerId();
               auto const otherPlayerId = playerId == 0 ? 1 : 0;
@@ -100,15 +102,13 @@ InternalStateManager::InternalStateManager()
                   && (lastOtherPlayerHP == playerHP.at(otherPlayerId))) {
                   numberOfLostRounds++;
                   if (numberOfLostRounds >= GP::RequiredLostRoundsForLoserBonus()) {
-                      state.getPlacementManager()->addFunds(GP::IncomeLoserBonus());
+                      state.getPlacementManager()->addLoserBonus(GP::IncomeLoserBonus());
                   }
               } else {
                   numberOfLostRounds = 0;
               }
               lastPlayerHP = playerHP.at(playerId);
               lastOtherPlayerHP = playerHP.at(otherPlayerId);
-
-              state.getPlacementManager()->resetCreditDebt();
 
               state.getTerrainRenderer()->setDrawGrid(true);
 
