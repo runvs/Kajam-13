@@ -213,6 +213,29 @@ void PlacementManager::doDraw() const
         }
         ImGui::EndDisabled();
 
+        ImGui::Separator();
+
+        bool const canUndoLastBuy = !m_placedUnits->empty();
+        ImGui::BeginDisabled(!canUndoLastBuy);
+        if (ImGui::Button("Undo last purchase")) {
+            auto const& unit = m_placedUnits->back().lock();
+            if (!unit) {
+                throw std::logic_error { "invalid unit in placed Units list" };
+            }
+            m_availableFunds += unit->getInfo().cost;
+
+            int posX { 0 };
+            int posY { 0 };
+            (void)m_world->getMappedFieldPosition(unit->getPosition(), posX, posY);
+
+            fieldInUse(posX, posY) = false;
+
+            sellUnit(unit->getInfo().type);
+
+            m_placedUnits->pop_back();
+            m_placedUnitsGO.pop_back();
+        }
+        ImGui::EndDisabled();
         ImGui::End();
 
         if (m_showUnlockUnitWindow) {
@@ -338,7 +361,7 @@ bool PlacementManager::canUnitBePlacedInField(jt::Vector2f const& pos, int const
     return inValidArea && !fieldInUse(x, y);
 }
 
-bool& PlacementManager::fieldInUse(int const x, int const y)
+bool& PlacementManager::fieldInUse(int const x, int const y) const
 {
     return m_placedUnitsMap[x + y * terrainWidthInChunks];
 }
@@ -426,6 +449,20 @@ void PlacementManager::buyUnit(const std::string& type)
     if (m_boughtUnits.at(type) >= 3) {
         m_boughtUnits.at(type) -= 3;
         m_unitInfo->multiplyPriceForUnitBy(type, 1.08f);
+    }
+}
+
+void PlacementManager::sellUnit(const std::string& type) const
+{
+    if (m_boughtUnits.count(type) == 0) {
+        m_boughtUnits[type] = 0;
+        getGame()->logger().warning("Selling unit that was not bought before");
+    }
+    m_boughtUnits.at(type)--;
+
+    if (m_boughtUnits.at(type) <= -1) {
+        m_boughtUnits.at(type) += 3;
+        m_unitInfo->multiplyPriceForUnitBy(type, 1.0f / 1.08f);
     }
 }
 

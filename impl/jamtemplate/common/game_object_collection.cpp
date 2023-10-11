@@ -6,6 +6,7 @@ void jt::GameObjectCollection::clear()
     m_objects.clear();
     m_objectsToAdd.clear();
 }
+
 void jt::GameObjectCollection::add(std::shared_ptr<jt::GameObjectInterface> object)
 {
     m_objectsToAdd.push_back(object);
@@ -38,6 +39,7 @@ void jt::GameObjectCollection::cleanUpObjects()
         return isDead;
     });
 }
+
 void jt::GameObjectCollection::addNewObjects()
 {
     while (!m_objectsToAdd.empty()) {
@@ -49,4 +51,11 @@ void jt::GameObjectCollection::addNewObjects()
 std::size_t jt::GameObjectCollection::size() const
 {
     return m_objectsToAdd.size() + m_objects.size();
+}
+
+void jt::GameObjectCollection::pop_back()
+{
+    if (!m_objects.empty()) {
+        m_objects.back()->kill();
+    }
 }

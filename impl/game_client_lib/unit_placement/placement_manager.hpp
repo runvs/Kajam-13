@@ -53,6 +53,7 @@ public:
     void unlockType(std::string const& type) const;
 
     void buyUnit(std::string const& type);
+    void sellUnit(std::string const& type) const;
 
     std::shared_ptr<UpgradeManager> upgrades() const;
 
@@ -62,12 +63,14 @@ private:
     std::shared_ptr<Terrain> m_world;
     std::shared_ptr<UnitInfoCollection> m_unitInfo;
     bool m_isActive { true };
-    std::array<bool, terrainWidthInChunks * terrainHeightInChunks> m_placedUnitsMap { false };
+    mutable std::array<bool, terrainWidthInChunks * terrainHeightInChunks> m_placedUnitsMap {
+        false
+    };
     // Note: both ObjectGroup and GameObjectCollection is needed:
     // * ObjectGroup is not owning
     // * GaeObjectCollection only stores GameObjects
     std::shared_ptr<jt::ObjectGroup<PlacedUnit>> m_placedUnits;
-    jt::GameObjectCollection m_placedUnitsGO;
+    mutable jt::GameObjectCollection m_placedUnitsGO;
 
     jt::TweenCollection m_tweens;
 
@@ -107,7 +110,7 @@ private:
 
     void placeUnit();
 
-    bool& fieldInUse(int const x, int const y);
+    bool& fieldInUse(int const x, int const y) const;
 
     void drawGoldStatistics() const;
 };

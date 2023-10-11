@@ -39,6 +39,15 @@ public:
 
     void emplace_back(std::weak_ptr<T>&& wptr) { m_data.emplace_back(std::move(wptr)); }
 
+    void pop_back()
+    {
+        if (!m_data.empty()) {
+            m_data.pop_back();
+        }
+    }
+
+    std::weak_ptr<T> back();
+
     void clear();
 
 private:
@@ -49,6 +58,12 @@ private:
         std::erase_if(m_data, [](auto const& wptr) { return wptr.expired(); });
     }
 };
+
+template <typename T>
+std::weak_ptr<T> ObjectGroup<T>::back()
+{
+    return m_data.back();
+}
 
 template <typename T>
 void ObjectGroup<T>::clear()

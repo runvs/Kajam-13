@@ -40,6 +40,7 @@ std::vector<std::string> UnitInfoCollection::getTypes() const { return m_types; 
 std::vector<UnitInfo>& UnitInfoCollection::getUnits() { return m_infos; }
 
 std::vector<UnitInfo> const& UnitInfoCollection::getUnits() const { return m_infos; }
+
 void UnitInfoCollection::parseUnitInfosFromFilename(const std::string& fileName)
 {
     std::vector<std::string> fileNames;
@@ -74,11 +75,13 @@ UpgradeInfo const& UnitInfoCollection::getUpgradeForUnit(
     }
     throw std::invalid_argument { "No upgrade " + upgradeName + " for unit: " + unitType };
 }
+
 void UnitInfoCollection::multiplyPriceForUnitBy(const std::string& type, float factor)
 {
     for (auto& u : m_infos) {
         if (u.type == type) {
-            u.cost *= factor;
+            u.cost = std::round(u.cost * factor);
+            break;
         }
     }
 }
@@ -87,6 +90,7 @@ void to_json(nlohmann::json& j, UnitInfoCollection& p)
 {
     j = nlohmann::json { { jk::units, p.getUnits() } };
 }
+
 void from_json(const nlohmann::json& j, UnitInfoCollection& p)
 {
     j.at(jk::units).get_to(p.getUnits());

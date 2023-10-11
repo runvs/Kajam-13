@@ -26,6 +26,10 @@ public:
     /// \return the number of stored GameObjects
     std::size_t size() const;
 
+    /// Pop the last object
+    /// \return removed object
+    void pop_back();
+
 private:
     /// all objects in the state
     std::vector<std::shared_ptr<jt::GameObjectInterface>> m_objects {};
