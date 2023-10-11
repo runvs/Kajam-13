@@ -234,9 +234,13 @@ void GameServer::handleMessageRoundReady(Message const& message)
     std::unique_lock<std::mutex> lock { m_mutex };
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(message.data);
-    for (auto const& props : m_playerData[playerId].roundEndPlacementData.m_units) {
+    for (auto const& unitData : m_playerData[playerId].roundEndPlacementData.m_units) {
         // add new unity to game simulation
-        m_gameSimulation->addUnit(props);
+        m_gameSimulation->addUnit(unitData);
+    }
+    for (auto const& unitData : m_playerData[playerId].roundEndPlacementData.m_unitsToBeRemoved) {
+        // add new unity to game simulation
+        m_gameSimulation->removeUnit(unitData);
     }
     bool allReady = true;
     for (auto const& kvp : m_playerData) {

@@ -18,6 +18,7 @@ constexpr auto frameID = "fid";
 constexpr auto allFrames = "allFrames";
 
 constexpr auto units = "units";
+constexpr auto unitsRemove = "unitsRemove";
 
 constexpr auto messageType = "type";
 constexpr auto messageData = "data";

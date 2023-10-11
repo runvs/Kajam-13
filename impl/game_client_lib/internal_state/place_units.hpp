@@ -23,6 +23,8 @@ private:
 
     std::string m_selectedUnitType {};
 
+    mutable bool m_deleteUnitOnclick { false };
+
     void drawRangeIndicator(StateGame& state);
 
     void drawUnitUpgradeWindow(std::shared_ptr<UnitInterface> selectedUnit, StateGame& state);

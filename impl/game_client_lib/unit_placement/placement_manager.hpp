@@ -49,15 +49,19 @@ public:
     int getFunds() const;
     void resetCreditDebt();
     std::string getActiveUnitType() const;
+    void resetActiveUnitType() const;
 
     void unlockType(std::string const& type) const;
 
     void buyUnit(std::string const& type);
-    void sellUnit(std::string const& type) const;
+    void sellUnit(UnitInfo const& unitInfo) const;
+    void sellUnitForPreviousRound(UnitInfo const& unitInfo) const;
 
     std::shared_ptr<UpgradeManager> upgrades() const;
 
     void flashForUpgrade(std::string const& unitType);
+
+    bool& fieldInUse(int const x, int const y) const;
 
 private:
     std::shared_ptr<Terrain> m_world;
@@ -109,8 +113,6 @@ private:
     void doDraw() const override;
 
     void placeUnit();
-
-    bool& fieldInUse(int const x, int const y) const;
 
     void drawGoldStatistics() const;
 };
