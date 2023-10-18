@@ -24,7 +24,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/cannon.json"
+      "jsonfilename": "assets/units/cannon.aseprite"
     }
   ],
   "upgrades": [

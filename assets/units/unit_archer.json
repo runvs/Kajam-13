@@ -23,7 +23,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/archer.json"
+      "jsonfilename": "assets/units/archer.aseprite"
     }
   ],
   "upgrades": [

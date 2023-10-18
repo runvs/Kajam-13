@@ -1,4 +1,5 @@
 ﻿#include "animation.hpp"
+#include <aselib/aseprite_data.hpp>
 #include <math_helper.hpp>
 #include <nlohmann.hpp>
 #include <sprite.hpp>
@@ -141,6 +142,42 @@ void jt::Animation::loadFromJson(
     }
 }
 
+void jt::Animation::loadFromAseprite(
+    std::string const& asepriteFileName, jt::TextureManagerInterface& textureManager)
+{
+    aselib::AsepriteData ase { asepriteFileName };
+    if (ase.m_frames[0].m_chunks.m_tag_chunks.empty()) {
+        throw std::invalid_argument { "aseprite file '" + asepriteFileName
+            + "' does not contain any tags/animations" };
+    }
+
+    auto const imageSize
+        = jt::Vector2u { ase.m_header.m_width_in_pixel, ase.m_header.m_height_in_pixel };
+
+    for (auto const& tagChunk : ase.m_frames[0].m_chunks.m_tag_chunks) {
+        for (auto const& tag : tagChunk.m_tags) {
+            auto const animName = tag.m_tag_name;
+            auto const startFrame = tag.m_from_frame;
+            auto const endFrame = tag.m_to_frame;
+            auto const repeat = tag.m_repeat_animation == 0;
+
+            std::vector<unsigned int> frameIDs = jt::MathHelper::numbersBetween(
+                static_cast<unsigned int>(startFrame), static_cast<unsigned int>(endFrame));
+
+            std::vector<float> frame_times;
+            frame_times.resize(frameIDs.size());
+            std::transform(
+                frameIDs.cbegin(), frameIDs.cend(), frame_times.begin(), [&ase](auto const id) {
+                    // aseprite stores the frametime in milliseconds, JT expects it in seconds.
+                    return ase.m_frames.at(id).m_frame_header.m_frame_duration / 1000.0f;
+                });
+
+            add(asepriteFileName, animName, imageSize, frameIDs, frame_times, textureManager);
+            setLooping(animName, repeat);
+        }
+    }
+}
+
 bool jt::Animation::hasAnimation(std::string const& animationName) const
 {
     return (m_frames.count(animationName) != 0);
@@ -186,12 +223,14 @@ jt::Color jt::Animation::getColor() const
 }
 
 void jt::Animation::setPosition(jt::Vector2f const& pos) { m_position = pos; }
+
 jt::Vector2f jt::Animation::getPosition() const { return m_position; }
 
 jt::Rectf jt::Animation::getGlobalBounds() const
 {
     return getCurrentSprite(m_frames, m_currentAnimName, m_currentIdx)->getGlobalBounds();
 }
+
 jt::Rectf jt::Animation::getLocalBounds() const
 {
     return getCurrentSprite(m_frames, m_currentAnimName, m_currentIdx)->getLocalBounds();
@@ -205,6 +244,7 @@ void jt::Animation::setScale(jt::Vector2f const& scale)
         }
     }
 }
+
 jt::Vector2f jt::Animation::getScale() const
 {
     return getCurrentSprite(m_frames, m_currentAnimName, m_currentIdx)->getScale();
@@ -307,6 +347,7 @@ void jt::Animation::doRotate(float rot)
         }
     }
 }
+
 float jt::Animation::getCurrentAnimationSingleFrameTime() const
 {
     return m_time.at(m_currentAnimName).at(m_currentIdx);
@@ -317,7 +358,7 @@ float jt::Animation::getCurrentAnimTotalTime() const
     return getCurrentAnimationSingleFrameTime() * getNumberOfFramesInCurrentAnimation();
 }
 
-float jt::Animation::getAnimTotalTime(const std::string& animName) const
+float jt::Animation::getAnimTotalTime(std::string const& animName) const
 {
     if (m_time.count(animName) == 0) {
         return 0.0f;
@@ -344,6 +385,7 @@ bool jt::Animation::getIsLooping() const
     }
     return m_isLooping.at(m_currentAnimName);
 }
+
 void jt::Animation::setLooping(std::string const& animName, bool isLooping)
 {
     if (!hasAnimation(animName)) {
@@ -351,6 +393,7 @@ void jt::Animation::setLooping(std::string const& animName, bool isLooping)
     }
     m_isLooping[animName] = isLooping;
 }
+
 std::size_t jt::Animation::getCurrentAnimationFrameIndex() const { return m_currentIdx; }
 
 void jt::Animation::setFrameTimes(
@@ -365,5 +408,7 @@ void jt::Animation::setFrameTimes(
     }
     m_time[animationName] = frameTimes;
 }
+
 void jt::Animation::setAnimationSpeedFactor(float factor) { m_animationplaybackSpeed = factor; }
+
 float jt::Animation::getAnimationSpeedFactor() const { return m_animationplaybackSpeed; }
