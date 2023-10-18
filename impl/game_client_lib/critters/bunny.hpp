@@ -6,7 +6,7 @@
 class Bunny : public Critter {
 public:
     Bunny()
-        : Critter { "assets/critters/bunny.json", "walk" }
+        : Critter { "assets/critters/bunny.aseprite", "walk" }
     {
     }
 };

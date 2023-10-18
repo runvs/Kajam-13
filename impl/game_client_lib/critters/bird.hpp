@@ -6,7 +6,7 @@
 class Bird : public Critter {
 public:
     Bird()
-        : Critter { "assets/critters/bird.json", "fly" }
+        : Critter { "assets/critters/bird.aseprite", "fly" }
     {
     }
 };

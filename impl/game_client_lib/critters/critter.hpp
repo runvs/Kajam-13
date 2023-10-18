@@ -26,7 +26,7 @@ public:
     bool isMoving() const;
 
 protected:
-    Critter(std::string const assetName, std::string const movingAnimName);
+    Critter(std::string const& assetName, std::string const& movingAnimName);
 
 private:
     void doCreate() override;
