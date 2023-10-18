@@ -6,7 +6,6 @@
 #include <math_helper.hpp>
 #include <network_data/unit_client_to_server_data.hpp>
 #include <rect.hpp>
-#include <strutils.hpp>
 #include <tweens/tween_position.hpp>
 #include <memory>
 
@@ -18,11 +17,8 @@ PlacedUnit::PlacedUnit(UnitInfo info)
 void PlacedUnit::doCreate()
 {
     m_anim = std::make_shared<jt::Animation>();
-    if (strutil::ends_with(m_info.animations.begin()->jsonfilename, ".aseprite")) {
-        m_anim->loadFromAseprite(m_info.animations.begin()->jsonfilename, textureManager());
-    } else {
-        m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
-    }
+    m_anim->loadFromAseprite(m_info.animations.begin()->jsonfilename, textureManager());
+    
     m_anim->play("idle");
     m_anim->setOffset(GP::UnitAnimationOffset());
 
