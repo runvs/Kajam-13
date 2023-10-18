@@ -111,7 +111,7 @@ void GameServer::removePlayerIfConnectionClosed(float /*elapsed*/)
 }
 
 void GameServer::handleMessage(
-    const std::string& messageContent, const asio::ip::tcp::endpoint& endpoint)
+    std::string const& messageContent, asio::ip::tcp::endpoint const& endpoint)
 {
     m_logger.debug(
         "handleMessage message content: '" + messageContent + "'", { "network", "GameServer" });
@@ -235,11 +235,9 @@ void GameServer::handleMessageRoundReady(Message const& message)
     m_playerData[playerId].roundReady = true;
     m_playerData[playerId].roundEndPlacementData = nlohmann::json::parse(message.data);
     for (auto const& unitData : m_playerData[playerId].roundEndPlacementData.m_units) {
-        // add new unity to game simulation
         m_gameSimulation->addUnit(unitData);
     }
     for (auto const& unitData : m_playerData[playerId].roundEndPlacementData.m_unitsToBeRemoved) {
-        // add new unity to game simulation
         m_gameSimulation->removeUnit(unitData);
     }
     bool allReady = true;

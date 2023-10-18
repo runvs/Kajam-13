@@ -9,7 +9,6 @@
 #include <network_data/unit_info_collection.hpp>
 #include <object_group.hpp>
 #include <unit_placement/placed_unit.hpp>
-#include <unit_placement/placement_manager.hpp>
 #include <unit_placement/upgrade_manager.hpp>
 #include <imgui.h>
 #include <memory>
