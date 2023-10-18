@@ -57,6 +57,7 @@ InternalStateManager::InternalStateManager()
               ClientPlacementData clientEndPlacementData;
               clientEndPlacementData.m_units
                   = state.getPlacementManager()->getPlacedUnitDataForRoundStart();
+              clientEndPlacementData.m_unitsToBeRemoved = state.getUnitsToBeRemovedAndClear();
               state.getServerConnection()->readyRound(clientEndPlacementData);
               state.getPlacementManager()->clearPlacedUnits();
 

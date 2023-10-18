@@ -14,6 +14,7 @@
 #include <network_data/select_unit_info.hpp>
 #include <network_data/unit_info.hpp>
 #include <network_data/unit_info_collection.hpp>
+#include <network_data/unit_remove_client_to_server_data.hpp>
 #include <nlohmann.hpp>
 #include <object_group.hpp>
 #include <object_properties.hpp>
@@ -60,6 +61,7 @@ public:
     std::shared_ptr<PlacementManager> getPlacementManager();
     std::shared_ptr<UnitInfoCollection> getUnitInfo();
     std::shared_ptr<jt::ObjectGroup<Unit>> getUnits();
+    std::vector<UnitRemoveClientToServerData> getUnitsToBeRemovedAndClear();
     std::shared_ptr<jt::ObjectGroup<Critter>> getCritters();
 
     void startPlayback();
@@ -79,6 +81,8 @@ public:
     void setPlacementManager(std::shared_ptr<PlacementManager> manager);
     void setStartingUnits(std::shared_ptr<SelectUnitInfoCollection> startingUnits);
 
+    void removeUnit(int unitId);
+
 private:
     std::shared_ptr<ClientNetworkConnection> m_connection { nullptr };
     std::shared_ptr<ServerConnection> m_serverConnection { nullptr };
@@ -90,6 +94,7 @@ private:
 
     std::shared_ptr<PlacementManager> m_placementManager { nullptr };
     std::shared_ptr<jt::ObjectGroup<Unit>> m_units { nullptr };
+    std::vector<UnitRemoveClientToServerData> m_unitsToBeRemoved {};
     std::shared_ptr<jt::Clouds> m_clouds { nullptr };
 
     std::shared_ptr<jt::ObjectGroup<Critter>> m_critters { nullptr };

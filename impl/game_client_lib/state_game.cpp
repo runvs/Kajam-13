@@ -28,6 +28,7 @@
 #include <tweens/tween_position.hpp>
 #include <unit_placement/placement_manager.hpp>
 #include <vector2.hpp>
+#include <algorithm>
 #include <imgui.h>
 #include <memory>
 
@@ -281,7 +282,7 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
     }
 }
 
-std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::string& type)
+std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, std::string const& type)
 {
     for (auto const& u : *m_units) {
         auto currentUnit = u.lock();
@@ -309,6 +310,7 @@ void StateGame::startPlayback()
 {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
+    m_units->clear();
 }
 
 void StateGame::resetSimulation()
@@ -510,9 +512,16 @@ std::map<int, int> const& StateGame::getPlayerHP() const { return m_playerHP; }
 
 std::shared_ptr<jt::ObjectGroup<Unit>> StateGame::getUnits() { return m_units; }
 
+std::vector<UnitRemoveClientToServerData> StateGame::getUnitsToBeRemovedAndClear()
+{
+    std::vector<UnitRemoveClientToServerData> unitsToBeRemoved {};
+    std::swap(m_unitsToBeRemoved, unitsToBeRemoved);
+    return unitsToBeRemoved;
+}
+
 std::shared_ptr<jt::ObjectGroup<Critter>> StateGame::getCritters() { return m_critters; }
 
-void StateGame::flashUnitsForUpgrade(const std::string& unitType)
+void StateGame::flashUnitsForUpgrade(std::string const& unitType)
 {
     for (auto& u : *m_units) {
         auto unit = u.lock();
@@ -547,4 +556,20 @@ void StateGame::setPlacementManager(std::shared_ptr<PlacementManager> manager)
 void StateGame::setStartingUnits(std::shared_ptr<SelectUnitInfoCollection> startingUnits)
 {
     m_startingUnits = startingUnits;
+}
+
+void StateGame::removeUnit(int unitId)
+{
+    auto const it = std::find_if(m_units->begin(), m_units->end(),
+        [unitId, playerID = m_serverConnection->getPlayerId()](auto const u) {
+            auto const unit = u.lock();
+            if (!unit) {
+                return false;
+            }
+            return (unit->getUnitID() == unitId) && (unit->getPlayerID() == playerID);
+        });
+    if (it != m_units->end()) {
+        m_unitsToBeRemoved.push_back({ unitId, m_serverConnection->getPlayerId() });
+        it->lock()->kill();
+    }
 }

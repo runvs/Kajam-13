@@ -35,6 +35,7 @@ public:
     void prepareSimulationForNewRound();
     void addUnit(UnitClientToServerData const& unitData);
     void addUnitUpgrade(UpgradeUnitData const& upg);
+    void removeUnit(UnitRemoveClientToServerData const& unitData);
 
     void performSimulation(SimulationResultSenderInterface& sender);
 

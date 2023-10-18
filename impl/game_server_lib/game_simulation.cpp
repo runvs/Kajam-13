@@ -78,6 +78,14 @@ void GameSimulation::addUnit(UnitClientToServerData const& unitData)
     m_unitInformationForRoundStart.push_back(roundStartData);
 }
 
+void GameSimulation::removeUnit(UnitRemoveClientToServerData const& unitData)
+{
+    std::erase_if(m_unitInformationForRoundStart, [&](auto const& v) {
+        return (v.unitClientToServerData.unitID == unitData.unitID)
+            && (v.unitClientToServerData.playerID == unitData.playerID);
+    });
+}
+
 float arrowParabola(float x, float maxHeight) { return -maxHeight * 4 * (x - x * x); }
 
 void GameSimulation::performSimulation(SimulationResultSenderInterface& sender)

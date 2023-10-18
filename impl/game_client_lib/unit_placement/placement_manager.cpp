@@ -83,7 +83,7 @@ void PlacementManager::doCreate()
     }
 }
 
-void PlacementManager::doUpdate(const float elapsed)
+void PlacementManager::doUpdate(float const elapsed)
 {
     m_placedUnitsGO.update(elapsed);
     m_placedUnits->update(elapsed);
@@ -222,7 +222,6 @@ void PlacementManager::doDraw() const
             if (!unit) {
                 throw std::logic_error { "invalid unit in placed Units list" };
             }
-            m_availableFunds += unit->getInfo().cost;
 
             int posX { 0 };
             int posY { 0 };
@@ -230,7 +229,7 @@ void PlacementManager::doDraw() const
 
             fieldInUse(posX, posY) = false;
 
-            sellUnit(unit->getInfo().type);
+            sellUnit(unit->getInfo());
 
             m_placedUnits->pop_back();
             m_placedUnitsGO.pop_back();
@@ -423,7 +422,7 @@ void PlacementManager::recordFundsFromLastRound()
     m_looserBonusFromLastRound = 0;
 }
 
-void PlacementManager::unlockType(const std::string& type) const
+void PlacementManager::unlockType(std::string const& type) const
 {
     m_unlockedTypes.insert(type);
     ++m_unitsUnlockedThisRound;
@@ -439,7 +438,7 @@ void PlacementManager::flashForUpgrade(std::string const& unitType)
     }
 }
 
-void PlacementManager::buyUnit(const std::string& type)
+void PlacementManager::buyUnit(std::string const& type)
 {
     if (m_boughtUnits.count(type) == 0) {
         m_boughtUnits[type] = 0;
@@ -452,8 +451,11 @@ void PlacementManager::buyUnit(const std::string& type)
     }
 }
 
-void PlacementManager::sellUnit(const std::string& type) const
+void PlacementManager::sellUnit(UnitInfo const& unitInfo) const
 {
+    m_availableFunds += unitInfo.cost;
+
+    auto const& type = unitInfo.type;
     if (m_boughtUnits.count(type) == 0) {
         m_boughtUnits[type] = 0;
         getGame()->logger().warning("Selling unit that was not bought before");
@@ -466,6 +468,11 @@ void PlacementManager::sellUnit(const std::string& type) const
     }
 }
 
+void PlacementManager::sellUnitForPreviousRound(UnitInfo const& unitInfo) const
+{
+    m_availableFunds += unitInfo.cost;
+}
+
 std::shared_ptr<UpgradeManager> PlacementManager::upgrades() const { return m_upgrades; }
 
 void PlacementManager::resetCreditDebt()
@@ -475,6 +482,8 @@ void PlacementManager::resetCreditDebt()
 }
 
 std::string PlacementManager::getActiveUnitType() const { return m_activeUnitType; }
+
+void PlacementManager::resetActiveUnitType() const { m_activeUnitType.clear(); }
 
 void PlacementManager::drawGoldStatistics() const
 {

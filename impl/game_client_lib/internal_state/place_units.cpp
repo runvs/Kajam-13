@@ -19,25 +19,68 @@
 
 void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 {
+    if (m_deleteUnitOnclick) {
+        if (state.getPlacementManager()->getActiveUnitType() != "") {
+            m_deleteUnitOnclick = false;
+        }
+    }
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBLeft)) {
-        auto const selectUnit = [this, &state](auto units) {
-            for (auto& u : *units) {
-                auto unit = u.lock();
-                if (!unit) {
-                    continue;
-                }
-                if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
-                    continue;
-                }
-                if (unit->isMouseOver()) {
-                    m_unitInterfaceSelected = unit;
-                    m_selectedUnitType = unit->getInfo().type;
-                    break;
+        if (m_deleteUnitOnclick) {
+            auto const& mouse = state.getGame()->input().mouse();
+            if (mouse->justPressed(jt::MouseButtonCode::MBLeft)) {
+                auto mousePos = mouse->getMousePositionWorld();
+                mousePos = { std::round(mousePos.x), std::round(mousePos.y) };
+                int mousePosX { 0 };
+                int mousePosY { 0 };
+                state.getTerrain()->getMappedFieldPosition(mousePos, mousePosX, mousePosY);
+                state.getGame()->logger().warning("sell Click for mouse: "
+                    + std::to_string(mousePosX) + "," + std::to_string(mousePosY) + " "
+                    + std::to_string(mousePos.x) + "," + std::to_string(mousePos.y));
+                for (auto const& u : *state.getUnits()) {
+                    auto const unit = u.lock();
+                    if (!unit) {
+                        continue;
+                    }
+
+                    if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
+                        continue;
+                    }
+
+                    int unitPosX { 0 };
+                    int unitPosY { 0 };
+                    state.getTerrain()->getMappedFieldPosition(
+                        unit->getPosition(), unitPosX, unitPosY);
+                    if ((unitPosX == mousePosX) && (unitPosY == mousePosY)) {
+                        state.removeUnit(unit->getUnitID());
+                        state.getPlacementManager()->fieldInUse(unitPosX, unitPosY) = false;
+                        state.getGame()->logger().warning("removing unit: "
+                            + std::to_string(unitPosX) + "," + std::to_string(unitPosY)
+                            + " ID: " + std::to_string(unit->getUnitID()));
+                        state.getPlacementManager()->sellUnitForPreviousRound(unit->getInfo());
+                        break;
+                    }
                 }
             }
-        };
-        selectUnit(state.getUnits());
-        selectUnit(state.getPlacementManager()->getPlacedUnits());
+        } else {
+            auto const selectUnit = [this, &state](auto units) {
+                for (auto& u : *units) {
+                    auto unit = u.lock();
+                    if (!unit) {
+                        continue;
+                    }
+                    if (unit->getPlayerID() != state.getServerConnection()->getPlayerId()) {
+                        continue;
+                    }
+                    if (unit->isMouseOver()) {
+                        m_unitInterfaceSelected = unit;
+                        m_selectedUnitType = unit->getInfo().type;
+                        break;
+                    }
+                }
+            };
+            selectUnit(state.getUnits());
+            selectUnit(state.getPlacementManager()->getPlacedUnits());
+        }
     }
 
     auto const doHighlight = [this, pid = state.getServerConnection()->getPlayerId()](auto& units) {
@@ -62,6 +105,7 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
     if (state.getGame()->input().mouse()->justPressed(jt::MouseButtonCode::MBRight)) {
         m_unitInterfaceSelected = nullptr;
         m_selectedUnitType.clear();
+        m_deleteUnitOnclick = false;
     }
 
     if (!m_imageEndPlacement) {
@@ -80,6 +124,25 @@ void PlaceUnits::update(StateGame& state, float /*elapsed*/)
 void PlaceUnits::draw(StateGame& state)
 {
     state.getPlacementManager()->draw();
+
+    ImGui::Begin("Unit placement");
+    ImGui::Separator();
+    bool const canSellUnits = !state.getUnits()->empty();
+    ImGui::BeginDisabled(!canSellUnits);
+    if (!m_deleteUnitOnclick) {
+        if (ImGui::Button("Sell unit")) {
+            m_deleteUnitOnclick = true;
+            m_unitInterfaceSelected = nullptr;
+            m_selectedUnitType.clear();
+            state.getPlacementManager()->resetActiveUnitType();
+        }
+    } else {
+        if (ImGui::Button("Cancel unit selling")) {
+            m_deleteUnitOnclick = false;
+        }
+    }
+    ImGui::EndDisabled();
+    ImGui::End();
 
     ImGuiWindowFlags window_flags { ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar
         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar
@@ -150,7 +213,7 @@ void PlaceUnits::drawUnitUpgradeWindow(
         auto const cost = upg.info.upgradeCost;
         auto const str = upg.info.name + " (" + std::to_string(cost) + ")";
 
-        const auto canAffordUpgrade = state.getPlacementManager()->getFunds() < cost;
+        auto const canAffordUpgrade = state.getPlacementManager()->getFunds() < cost;
         ImGui::BeginDisabled(canAffordUpgrade);
         if (!upg.icon) {
             upg.icon = std::make_shared<jt::Sprite>(upg.info.iconPath,
