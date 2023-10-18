@@ -19,7 +19,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/barrierweaver.json"
+      "jsonfilename": "assets/units/barrierweaver.aseprite"
     }
   ],
   "upgrades": [

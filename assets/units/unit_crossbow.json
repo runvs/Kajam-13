@@ -23,7 +23,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/crossbow.json"
+      "jsonfilename": "assets/units/crossbow.aseprite"
     }
   ],
   "upgrades": [

@@ -18,7 +18,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/swordman.json"
+      "jsonfilename": "assets/units/swordman.aseprite"
     }
   ],
   "upgrades": [

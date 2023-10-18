@@ -8,8 +8,9 @@
 #include <game_properties.hpp>
 #include <math_helper.hpp>
 #include <rect.hpp>
+#include <strutils.hpp>
 
-Unit::Unit(const UnitInfo& info)
+Unit::Unit(UnitInfo const& info)
     : m_info { info }
 {
     m_hpMax = m_info.hitpointsMax;
@@ -18,7 +19,8 @@ Unit::Unit(const UnitInfo& info)
 void Unit::doCreate()
 {
     m_anim = std::make_shared<jt::Animation>();
-    m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
+    m_anim->loadFromAseprite(m_info.animations.begin()->jsonfilename, textureManager());
+    
     m_anim->play("idle");
     m_anim->setLooping("death", false);
     m_anim->setOffset(GP::UnitAnimationOffset());

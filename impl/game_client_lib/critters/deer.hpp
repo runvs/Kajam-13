@@ -6,7 +6,7 @@
 class Deer : public Critter {
 public:
     Deer()
-        : Critter { "assets/critters/deer.json", "walk" }
+        : Critter { "assets/critters/deer.aseprite", "walk" }
     {
     }
 };

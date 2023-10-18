@@ -13,6 +13,12 @@ jt::RenderWindow::RenderWindow(unsigned int width, unsigned int height, std::str
     ImGui::SFML::Init(*m_window.get());
 }
 
+jt::RenderWindow::~RenderWindow()
+{
+    ImGui::SFML::Shutdown();
+    m_window.reset();
+}
+
 std::shared_ptr<jt::RenderTargetLayer> jt::RenderWindow::createRenderTarget()
 {
     return std::make_shared<jt::RenderTargetLayer>();
@@ -68,6 +74,7 @@ void jt::RenderWindow::setMouseCursorVisible(bool visible)
     m_window->setMouseCursorVisible(visible);
     m_isMouseCursorVisible = visible;
 }
+
 bool jt::RenderWindow::getMouseCursorVisible(void) const { return m_isMouseCursorVisible; }
 
 void jt::RenderWindow::updateGui(float elapsed)
@@ -78,4 +85,5 @@ void jt::RenderWindow::updateGui(float elapsed)
 void jt::RenderWindow::startRenderGui() { m_renderGui = true; }
 
 bool jt::RenderWindow::shouldProcessKeyboard() { return !ImGui::GetIO().WantCaptureKeyboard; }
+
 bool jt::RenderWindow::shouldProcessMouse() { return !ImGui::GetIO().WantCaptureMouse; }

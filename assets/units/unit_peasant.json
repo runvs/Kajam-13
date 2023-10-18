@@ -21,7 +21,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/peasant.json"
+      "jsonfilename": "assets/units/peasant.aseprite"
     }
   ],
   "upgrades": [

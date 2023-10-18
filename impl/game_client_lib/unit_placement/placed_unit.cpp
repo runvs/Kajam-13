@@ -17,7 +17,8 @@ PlacedUnit::PlacedUnit(UnitInfo info)
 void PlacedUnit::doCreate()
 {
     m_anim = std::make_shared<jt::Animation>();
-    m_anim->loadFromJson(m_info.animations.begin()->jsonfilename, textureManager());
+    m_anim->loadFromAseprite(m_info.animations.begin()->jsonfilename, textureManager());
+    
     m_anim->play("idle");
     m_anim->setOffset(GP::UnitAnimationOffset());
 
@@ -26,7 +27,7 @@ void PlacedUnit::doCreate()
     m_glow->setOffset({ -9, -6 });
 }
 
-void PlacedUnit::doUpdate(const float elapsed)
+void PlacedUnit::doUpdate(float const elapsed)
 {
     turnUnitIntoDirection(m_anim, m_playerID == 0);
     m_anim->update(elapsed);
@@ -55,7 +56,7 @@ UnitClientToServerData PlacedUnit::saveState() const
     return unitData;
 }
 
-void PlacedUnit::setPosition(const jt::Vector2f& pos)
+void PlacedUnit::setPosition(jt::Vector2f const& pos)
 {
     m_position = pos;
     m_anim->setPosition(m_position + m_offset);
@@ -63,7 +64,7 @@ void PlacedUnit::setPosition(const jt::Vector2f& pos)
 
 jt::Vector2f PlacedUnit::getPosition() const { return m_position; }
 
-void PlacedUnit::setOffset(const jt::Vector2f& offset) { m_offset = offset; }
+void PlacedUnit::setOffset(jt::Vector2f const& offset) { m_offset = offset; }
 
 jt::Vector2f PlacedUnit::getOffset() const { return m_offset; }
 

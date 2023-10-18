@@ -18,7 +18,7 @@
   },
   "animations": [
     {
-      "jsonfilename": "assets/units/horseman.json"
+      "jsonfilename": "assets/units/horseman.aseprite"
     }
   ],
   "upgrades": [

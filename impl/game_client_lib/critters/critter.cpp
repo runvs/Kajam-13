@@ -4,16 +4,16 @@
 #include <math_helper.hpp>
 #include <random/random.hpp>
 
-Critter::Critter(std::string const assetName, std::string const movingAnimName)
-    : m_assetName { std::move(assetName) }
-    , m_movingAnimName { std::move(movingAnimName) }
+Critter::Critter(std::string const& assetName, std::string const& movingAnimName)
+    : m_assetName { assetName }
+    , m_movingAnimName { movingAnimName }
 {
 }
 
 void Critter::doCreate()
 {
     m_animation = std::make_shared<jt::Animation>();
-    m_animation->loadFromJson(m_assetName.c_str(), textureManager());
+    m_animation->loadFromAseprite(m_assetName.c_str(), textureManager());
 
     auto const numberOfFrames = m_animation->getNumberOfFramesInAnimation("idle");
     m_animation->play("idle", jt::Random::getInt(0, static_cast<int>(numberOfFrames) - 1), true);
@@ -31,7 +31,7 @@ void Critter::doCreate()
     m_animation->setPosition(m_initialPos);
 }
 
-void Critter::doUpdate(const float elapsed)
+void Critter::doUpdate(float const elapsed)
 {
     m_animation->update(elapsed * m_animSpeedFactor);
 
@@ -54,7 +54,7 @@ void Critter::resetForNewRound()
     m_isMoving = false;
 }
 
-void Critter::setClosestUnitPosition(const jt::Vector2f& unitPos)
+void Critter::setClosestUnitPosition(jt::Vector2f const& unitPos)
 {
     if (m_isMoving) {
         return;
