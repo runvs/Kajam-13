@@ -282,7 +282,7 @@ void StateGame::playbackOneFrame(SimulationResultDataForOneFrame const& currentF
     }
 }
 
-std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, const std::string& type)
+std::shared_ptr<Unit> StateGame::findOrCreateUnit(int pid, int uid, std::string const& type)
 {
     for (auto const& u : *m_units) {
         auto currentUnit = u.lock();
@@ -310,6 +310,7 @@ void StateGame::startPlayback()
 {
     m_simulationResultsForAllFrames = m_serverConnection->getRoundData();
     m_tickId = 0;
+    m_units->clear();
 }
 
 void StateGame::resetSimulation()
@@ -520,7 +521,7 @@ std::vector<UnitRemoveClientToServerData> StateGame::getUnitsToBeRemovedAndClear
 
 std::shared_ptr<jt::ObjectGroup<Critter>> StateGame::getCritters() { return m_critters; }
 
-void StateGame::flashUnitsForUpgrade(const std::string& unitType)
+void StateGame::flashUnitsForUpgrade(std::string const& unitType)
 {
     for (auto& u : *m_units) {
         auto unit = u.lock();
