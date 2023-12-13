@@ -11,6 +11,7 @@ struct LogEntry;
 class LogTargetFile : public LogTargetInterface {
 public:
     LogTargetFile();
+    ~LogTargetFile() override;
     void log(LogEntry const& entry) override;
     void setLogLevel(LogLevel level) override;
 

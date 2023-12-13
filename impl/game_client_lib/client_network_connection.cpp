@@ -85,8 +85,8 @@ void ClientNetworkConnection::handleReceive(
 
             std::stringstream ss_log;
             ss_log << "message received from '" << m_receivedFromEndpoint.address() << ":"
-                   << m_receivedFromEndpoint.port() << "'\nwith content\n"
-                   << uncompressed;
+                   << m_receivedFromEndpoint.port()
+                   << "' with content: " << uncompressed.substr(0, 128) << "...";
             m_logger.debug(ss_log.str(), { "network", "ClientNetworkConnection" });
 
             // pass message up to be processed
@@ -119,7 +119,7 @@ void ClientNetworkConnection::stopThread()
     m_thread.join();
 }
 
-void ClientNetworkConnection::sendMessage(const Message& m)
+void ClientNetworkConnection::sendMessage(Message const& m)
 {
 
     if (!m_socket) {
@@ -132,7 +132,7 @@ void ClientNetworkConnection::sendMessage(const Message& m)
     sendString(j.dump());
 }
 
-void ClientNetworkConnection::sendString(const std::string& str)
+void ClientNetworkConnection::sendString(std::string const& str)
 {
     std::string compressed = m_compressor->compress(str);
     NetworkHelpers::freeSendString(compressed, *m_socket, m_logger);

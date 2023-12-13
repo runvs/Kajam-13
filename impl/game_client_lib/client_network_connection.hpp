@@ -55,7 +55,7 @@ private:
     std::atomic_bool m_alreadyReceiving { false };
 
     void startProcessing();
-    void handleReceive(const asio::error_code& error, std::size_t bytes_transferred);
+    void handleReceive(asio::error_code const& error, std::size_t bytes_transferred);
     void stopThread();
     void sendString(std::string const& str);
 

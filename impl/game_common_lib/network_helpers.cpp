@@ -18,7 +18,7 @@ void NetworkHelpers::freeSendString(
     // write size information of string with fixed length
     std::stringstream buffer;
     buffer << std::setfill(' ') << std::setw(32) << str.size() << str;
-    logger.verbose("sending buffer: " + buffer.str());
+    logger.verbose("sending buffer: " + buffer.str().substr(0, 128) + "...");
     // Note: keep payload alive
     auto payload_ptr = std::make_shared<std::string>(buffer.str());
     asio::async_write(socket, asio::buffer(*payload_ptr, payload_ptr->size()),
@@ -35,9 +35,9 @@ void NetworkHelpers::freeSendString(
         });
 }
 
-void NetworkHelpers::freeHandleReceive(const asio::error_code& error, std::size_t bytes_transferred,
+void NetworkHelpers::freeHandleReceive(asio::error_code const& error, std::size_t bytes_transferred,
     asio::ip::tcp::socket& socket, ReceiveBuffer& buffer, jt::LoggerInterface& logger,
-    std::function<void(const std::string&)> handlerFunction)
+    std::function<void(std::string const&)> handlerFunction)
 {
     if (error) {
         std::stringstream ss;

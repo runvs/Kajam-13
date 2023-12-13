@@ -39,32 +39,32 @@ bool jt::LoggingSound::isPlaying() const
 
 void jt::LoggingSound::play()
 {
-    m_logger.debug("Sound play", { "jt", "audio", "sound" });
+    m_logger.verbose("Sound play", { "jt", "audio", "sound" });
     m_decoratee->play();
 }
 
 void jt::LoggingSound::stop()
 {
-    m_logger.debug("Sound stop", { "jt", "audio", "sound" });
+    m_logger.verbose("Sound stop", { "jt", "audio", "sound" });
     m_decoratee->stop();
 }
 
 void jt::LoggingSound::pause()
 {
-    m_logger.debug("Sound pause", { "jt", "audio", "sound" });
+    m_logger.verbose("Sound pause", { "jt", "audio", "sound" });
     m_decoratee->pause();
 }
 
 float jt::LoggingSound::getVolume() const
 {
     auto const volume = m_decoratee->getVolume();
-    m_logger.debug("Sound volume: " + std::to_string(volume), { "jt", "audio", "sound" });
+    m_logger.verbose("Sound volume: " + std::to_string(volume), { "jt", "audio", "sound" });
     return volume;
 }
 
 void jt::LoggingSound::setVolume(float newVolume)
 {
-    m_logger.debug("Sound setVolume " + std::to_string(newVolume), { "jt", "audio", "sound" });
+    m_logger.verbose("Sound setVolume " + std::to_string(newVolume), { "jt", "audio", "sound" });
     m_decoratee->setVolume(newVolume);
 }
 
@@ -77,14 +77,14 @@ void jt::LoggingSound::setLoop(bool doLoop)
 bool jt::LoggingSound::getLoop(void)
 {
     auto const loop = m_decoratee->getLoop();
-    m_logger.debug("Sound getLoop: " + std::to_string(loop), { "jt", "audio", "sound" });
+    m_logger.verbose("Sound getLoop: " + std::to_string(loop), { "jt", "audio", "sound" });
     return loop;
 }
 
 float jt::LoggingSound::getDuration() const
 {
     auto const duration = m_decoratee->getDuration();
-    m_logger.debug("Sound getDuration: " + std::to_string(duration), { "jt", "audio", "sound" });
+    m_logger.verbose("Sound getDuration: " + std::to_string(duration), { "jt", "audio", "sound" });
     return duration;
 }
 
@@ -107,6 +107,7 @@ float jt::LoggingSound::getBlend() const
     m_logger.verbose("Sound getBlend: " + std::to_string(blend), { "jt", "audio", "sound" });
     return blend;
 }
+
 int jt::LoggingSound::getSampleRate() const { return m_decoratee->getSampleRate(); }
 
 void jt::LoggingSound::setPitch(float pitch)
@@ -114,20 +115,23 @@ void jt::LoggingSound::setPitch(float pitch)
     m_logger.debug("Sound setPitch: " + std::to_string(pitch), { "jt", "audio", "sound" });
     m_decoratee->setPitch(pitch);
 }
+
 float jt::LoggingSound::getPitch() const
 {
     auto const pitch = m_decoratee->getPitch();
     m_logger.verbose("Sound getPitch: " + std::to_string(pitch), { "jt", "audio", "sound" });
     return pitch;
 }
+
 void jt::LoggingSound::setVolumeProvider(jt::GroupVolumeGetterInterface& provider)
 {
-    m_logger.debug("SetVolumeProvider", { "jt", "audio", "sound", "volumeProvider" });
+    m_logger.verbose("SetVolumeProvider", { "jt", "audio", "sound", "volumeProvider" });
     m_decoratee->setVolumeProvider(provider);
 }
+
 void jt::LoggingSound::setVolumeGroup(std::string const& volumeGroupName)
 {
-    m_logger.info(
+    m_logger.verbose(
         "SetVolumeGroup: '" + volumeGroupName + "'", { "jt", "audio", "sound", "volumeGroup" });
     m_decoratee->setVolumeGroup(volumeGroupName);
 }
