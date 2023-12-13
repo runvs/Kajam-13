@@ -50,6 +50,10 @@ public:
 
     static int IncomeLoserBonus();
 
+    static int CreditPayout();
+
+    static int CreditPayback();
+
     static int RequiredLostRoundsForLoserBonus();
 
     static int UnitLevelMax();

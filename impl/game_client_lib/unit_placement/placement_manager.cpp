@@ -10,6 +10,7 @@
 #include <object_group.hpp>
 #include <unit_placement/placed_unit.hpp>
 #include <unit_placement/upgrade_manager.hpp>
+#include <format>
 #include <imgui.h>
 #include <memory>
 #include <string>
@@ -207,9 +208,11 @@ void PlacementManager::doDraw() const
 
         bool const canTakeCredit = m_creditDebt == 0;
         ImGui::BeginDisabled(!canTakeCredit);
-        if (ImGui::Button("Take credit (+100 now, -150 next round)")) {
-            m_availableFunds += 100;
-            m_creditDebt = 150;
+        if (ImGui::Button(std::format(
+                "Take credit (+{} now, -{} next round)", GP::CreditPayout(), GP::CreditPayback())
+                              .c_str())) {
+            m_availableFunds += GP::CreditPayout();
+            m_creditDebt = GP::CreditPayback();
         }
         ImGui::EndDisabled();
 

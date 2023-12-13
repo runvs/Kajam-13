@@ -37,6 +37,10 @@ int GP::IncomePerRoundMax() { return 440; }
 
 int GP::IncomeLoserBonus() { return 100; }
 
+int GP::CreditPayout() { return 200; }
+
+int GP::CreditPayback() { return 250; }
+
 int GP::RequiredLostRoundsForLoserBonus() { return 3; }
 
 int GP::UnitLevelMax() { return 6; }
