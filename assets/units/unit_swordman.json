@@ -1,7 +1,7 @@
 {
   "type": "swordman",
   "description": "well armed fighter with decent armor.",
-  "expRequiredForLevelUp": 60,
+  "expRequiredForLevelUp": 80,
   "expGainWhenKilled": 30,
   "hitpoints": 90.0,
   "damage": {
